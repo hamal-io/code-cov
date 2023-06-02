@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Transaction.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.repository.sqlite.internal</a> &gt; <span class="el_source">Transaction.kt</span></div><h1>Transaction.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.repository.sqlite.internal
+
+interface Transaction {
+    fun execute(sql: String)
+    fun execute(sql: String, block: NamedPreparedStatementDelegate.() -&gt; NamedPreparedStatementDelegate)
+    fun &lt;T : Any&gt; execute(
+        sql: String,
+        block: NamedPreparedStatementResultSetDelegate&lt;T&gt;.() -&gt; NamedPreparedStatementResultSetDelegate&lt;T&gt;
+    ): T?
+
+    fun executeUpdate(sql: String): Int
+    fun executeUpdate(sql: String, block: NamedPreparedStatementDelegate.() -&gt; NamedPreparedStatementDelegate): Int
+    fun &lt;T : Any&gt; executeQuery(
+        sql: String,
+        block: NamedPreparedStatementResultSetDelegate&lt;T&gt;.() -&gt; NamedPreparedStatementResultSetDelegate&lt;T&gt;
+    ): List&lt;T&gt;
+
+    fun &lt;T : Any&gt; executeQueryOne(
+        sql: String,
+        block: NamedPreparedStatementResultSetDelegate&lt;T&gt;.() -&gt; NamedPreparedStatementResultSetDelegate&lt;T&gt;
+<span class="nc" id="L21">    ): T? = executeQuery(sql, block).firstOrNull()</span>
+
+    fun abort()
+
+<span class="fc" id="L25">    class AbortException : RuntimeException()</span>
+}
+
+<span class="pc" id="L28">internal class DefaultTransaction(</span>
+<span class="fc" id="L29">    private val delegate: Connection</span>
+) : Transaction {
+<span class="fc" id="L31">    override fun execute(sql: String) = delegate.execute(sql)</span>
+
+    override fun execute(
+        sql: String,
+        block: NamedPreparedStatementDelegate.() -&gt; NamedPreparedStatementDelegate
+<span class="fc" id="L36">    ) = delegate.execute(sql, block)</span>
+
+    override fun &lt;T : Any&gt; execute(
+        sql: String,
+        block: NamedPreparedStatementResultSetDelegate&lt;T&gt;.() -&gt; NamedPreparedStatementResultSetDelegate&lt;T&gt;
+<span class="nc" id="L41">    ): T? = delegate.execute(sql, block)</span>
+
+<span class="nc" id="L43">    override fun executeUpdate(sql: String): Int = delegate.executeUpdate(sql)</span>
+
+    override fun executeUpdate(
+        sql: String,
+        block: NamedPreparedStatementDelegate.() -&gt; NamedPreparedStatementDelegate
+<span class="nc" id="L48">    ): Int = delegate.executeUpdate(sql, block)</span>
+
+    override fun &lt;T : Any&gt; executeQuery(
+        sql: String,
+        block: NamedPreparedStatementResultSetDelegate&lt;T&gt;.() -&gt; NamedPreparedStatementResultSetDelegate&lt;T&gt;
+<span class="fc" id="L53">    ): List&lt;T&gt; = delegate.executeQuery(sql, block)</span>
+
+    override fun abort() {
+<span class="fc" id="L56">        throw Transaction.AbortException()</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TimeUtils.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.common.util</a> &gt; <span class="el_source">TimeUtils.kt</span></div><h1>TimeUtils.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.common.util
+
+import java.time.Instant
+
+object TimeUtils {
+<span class="pc bpc" id="L6" title="1 of 2 branches missed.">    fun now(): Instant = injectedNow.get() ?: Instant.now()</span>
+
+<span class="pc" id="L8">    internal val injectedNow: ThreadLocal&lt;Instant&gt; = ThreadLocal.withInitial { null }</span>
+
+    fun &lt;T&gt; withEpochMilli(millis: Long, fn: () -&gt; T): T {
+<span class="nc" id="L11">        return withInstant(Instant.ofEpochMilli(millis), fn)</span>
+    }
+
+    fun &lt;T&gt; withInstant(instant: Instant, fn: () -&gt; T): T {
+<span class="nc" id="L15">        injectedNow.set(instant)</span>
+<span class="nc" id="L16">        try {</span>
+<span class="nc" id="L17">            return fn()</span>
+        } finally {
+<span class="nc" id="L19">            injectedNow.remove()</span>
+        }
+    }
+
+
+}
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

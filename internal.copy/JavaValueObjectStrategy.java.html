@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JavaValueObjectStrategy.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">internal.copy</a> &gt; <span class="el_source">JavaValueObjectStrategy.java</span></div><h1>JavaValueObjectStrategy.java</h1><pre class="source lang-java linenums">package internal.copy;
+
+import internal.JavaReflection;
+import io.hamal.lib.common.ddd.ValueObject;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.ParameterizedType;
+import java.util.Arrays;
+import java.util.List;
+
+import static internal.copy.JavaCopy.copyValue;
+import static internal.copy.JavaUtil.findEquivalent;
+import static internal.copy.JavaUtil.isPrimitive;
+
+/*
+    cases:
+    primitive -&gt; ValueObject&lt;Equivalent&gt;
+    Equivalent -&gt; ValueObject&lt;Equivalent&gt;
+    ValueObject&lt;T&gt; -&gt; ValueObject&lt;T&gt;
+    ValueObject&lt;Equivalent&gt; -&gt; primitive
+    ValueObject&lt;Equivalent&gt; -&gt; Equivalent
+ */
+public class JavaValueObjectStrategy extends JavaCopy.Strategy {
+
+    public JavaValueObjectStrategy(CopyStrategy delegate) {
+<span class="nc" id="L28">        super(delegate);</span>
+<span class="nc" id="L29">    }</span>
+
+    @Override
+    public boolean supports(Class&lt;?&gt; sourceClass, Class&lt;?&gt; targetClass) {
+<span class="nc" id="L33">        var sourceIsValueObject = JavaReflection.Interfaces.implementsInterface(sourceClass, ValueObject.class);</span>
+<span class="nc" id="L34">        var targetIsValueObject = JavaReflection.Interfaces.implementsInterface(targetClass, ValueObject.class);</span>
+
+<span class="nc bnc" id="L36" title="All 4 branches missed.">        if (!sourceIsValueObject &amp;&amp; !targetIsValueObject) {</span>
+<span class="nc" id="L37">            return false;</span>
+        }
+
+<span class="nc bnc" id="L40" title="All 2 branches missed.">        if (sourceClass.equals(targetClass)) {</span>
+<span class="nc" id="L41">            return underlyingTypeIsSupported(sourceClass);</span>
+        }
+
+<span class="nc bnc" id="L44" title="All 4 branches missed.">        if (sourceIsValueObject &amp;&amp; targetIsValueObject) {</span>
+<span class="nc" id="L45">            var sourceUnderlyingType = ((ParameterizedType) sourceClass.getGenericSuperclass()).getActualTypeArguments()[0];</span>
+<span class="nc" id="L46">            var targetUnderlyingType = ((ParameterizedType) targetClass.getGenericSuperclass()).getActualTypeArguments()[0];</span>
+<span class="nc" id="L47">            return sourceUnderlyingType.equals(targetUnderlyingType);</span>
+        }
+
+<span class="nc bnc" id="L50" title="All 2 branches missed.">        if (!sourceIsValueObject) {</span>
+<span class="nc" id="L51">            return underlyingTypeIsSupported(targetClass);</span>
+        }
+
+<span class="nc" id="L54">        return underlyingTypeIsSupported(sourceClass);</span>
+    }
+
+    private boolean underlyingTypeIsSupported(Class&lt;?&gt; clazz) {
+<span class="nc" id="L58">        var underlyingClass = ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments()[0];</span>
+<span class="nc" id="L59">        return copyStrategy.supports(promotePrimitiveIfPossible((Class&lt;?&gt;) underlyingClass));</span>
+    }
+
+    @Override
+    public boolean apply(Object target, Class&lt;?&gt; sourceClass, Object sourceValue, Class&lt;?&gt; targetClass, Field targetField) {
+        try {
+<span class="nc bnc" id="L65" title="All 2 branches missed.">            if (isValueObject(sourceClass)) {</span>
+<span class="nc" id="L66">                var valueMethodFromInterface = sourceClass.getMethod(&quot;getValue&quot;);</span>
+<span class="nc" id="L67">                var value = valueMethodFromInterface.invoke(sourceValue);</span>
+
+<span class="nc" id="L69">                var copiedValue = copyValue(value, value.getClass());</span>
+
+<span class="nc bnc" id="L71" title="All 2 branches missed.">                if (isValueObject(targetClass)) {</span>
+<span class="nc" id="L72">                    var ctor = getAccessibleConstructor(targetClass, value.getClass());</span>
+<span class="nc" id="L73">                    var instance = ctor.newInstance(copiedValue);</span>
+
+<span class="nc" id="L75">                    targetField.set(target, instance);</span>
+
+<span class="nc" id="L77">                } else {</span>
+<span class="nc" id="L78">                    targetField.set(target, value);</span>
+                }
+
+<span class="nc" id="L81">            } else {</span>
+<span class="nc" id="L82">                Class&lt;?&gt; normalizedSourceClass = findEquivalent(sourceClass).orElse(sourceClass);</span>
+<span class="nc" id="L83">                var copiedValue = copyValue(sourceValue, normalizedSourceClass);</span>
+
+<span class="nc" id="L85">                var ctor = getAccessibleConstructor(targetClass, normalizedSourceClass);</span>
+<span class="nc" id="L86">                var instance = ctor.newInstance(copiedValue);</span>
+<span class="nc" id="L87">                targetField.set(target, instance);</span>
+            }
+<span class="nc" id="L89">            return true;</span>
+<span class="nc" id="L90">        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |</span>
+                 NoSuchMethodException e) {
+<span class="nc" id="L92">            throw new RuntimeException(e);</span>
+        }
+    }
+
+    private Constructor&lt;?&gt; getAccessibleConstructor(Class&lt;?&gt; targetClass, Class&lt;?&gt; parameterClass) {
+<span class="nc" id="L97">        return Arrays.stream(targetClass.getDeclaredConstructors())</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">                .filter(ctor -&gt; ctor.getParameterCount() == 1)</span>
+<span class="nc" id="L99">                .filter(ctor -&gt; {</span>
+<span class="nc" id="L100">                    var ctorParameterClass = ctor.getParameterTypes()[0];</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">                    if (ctorParameterClass == parameterClass) {</span>
+<span class="nc" id="L102">                        return true;</span>
+                    }
+
+<span class="nc bnc" id="L105" title="All 2 branches missed.">                    if (isPrimitive(ctorParameterClass)) {</span>
+<span class="nc" id="L106">                        var equivalent = findEquivalent(ctorParameterClass)</span>
+<span class="nc" id="L107">                                .orElseThrow(() -&gt; new IllegalStateException(&quot;unable to find equivalent for primitive &quot; + ctorParameterClass, null));</span>
+
+<span class="nc" id="L109">                        return equivalent.equals(parameterClass);</span>
+                    }
+<span class="nc" id="L111">                    return false;</span>
+                })
+<span class="nc" id="L113">                .peek(ctor -&gt; ctor.setAccessible(true))</span>
+<span class="nc" id="L114">                .findAny()</span>
+<span class="nc" id="L115">                .orElseThrow(() -&gt; new IllegalStateException(&quot;unable to find suitable constructor&quot;, null));</span>
+    }
+
+    private boolean isValueObject(Class&lt;?&gt; clazz) {
+<span class="nc" id="L119">        return JavaReflection.Interfaces.implementsInterface(clazz, ValueObject.class);</span>
+    }
+
+    private Class&lt;?&gt; promotePrimitiveIfPossible(Class&lt;?&gt; maybePrimitiveClass) {
+<span class="nc" id="L123">        return findEquivalent(maybePrimitiveClass).orElse(maybePrimitiveClass);</span>
+    }
+
+    public static class CopyStrategy implements JavaCopy.CopyStrategy {
+
+        private final List&lt;? extends JavaCopy.Strategy&gt; strategies;
+
+<span class="nc" id="L130">        public CopyStrategy(List&lt;? extends JavaCopy.Strategy&gt; strategies) {</span>
+<span class="nc" id="L131">            this.strategies = strategies;</span>
+<span class="nc" id="L132">        }</span>
+
+        @Override
+        public boolean supports(Class&lt;?&gt; valueClass) {
+<span class="nc" id="L136">            return strategies.stream()</span>
+<span class="nc" id="L137">                    .anyMatch(strategy -&gt; strategy.copyStrategy.supports(valueClass));</span>
+        }
+
+        @Override
+        public Object apply(Class&lt;?&gt; valueClass, Object value) {
+<span class="nc" id="L142">            return strategies.stream()</span>
+<span class="nc" id="L143">                    .filter(strategy -&gt; strategy.copyStrategy.supports(valueClass))</span>
+<span class="nc" id="L144">                    .map(strategy -&gt; strategy.copyStrategy.apply(valueClass, value))</span>
+<span class="nc" id="L145">                    .findFirst()</span>
+<span class="nc" id="L146">                    .orElseThrow(() -&gt; new IllegalStateException(&quot;Unable to apply any strategy&quot;, null));</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

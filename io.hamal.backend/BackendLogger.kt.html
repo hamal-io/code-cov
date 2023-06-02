@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BackendLogger.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend</a> &gt; <span class="el_source">BackendLogger.kt</span></div><h1>BackendLogger.kt</h1><pre class="source lang-java linenums">package io.hamal.backend
+
+import BackendLogger
+import org.slf4j.LoggerFactory
+import kotlin.reflect.KClass
+
+fun &lt;T : Any&gt; logger(forClass: KClass&lt;T&gt;): BackendLogger {
+<span class="nc" id="L8">    return logger(forClass.java.name)</span>
+}
+
+fun logger(name: String): BackendLogger {
+<span class="nc" id="L12">    return DefaultBackendLogger(</span>
+<span class="nc" id="L13">        LoggerFactory.getLogger(name)</span>
+    )
+}
+
+
+<span class="nc" id="L18">class DefaultBackendLogger(</span>
+<span class="nc" id="L19">    private val delegate: org.slf4j.Logger</span>
+) : BackendLogger {
+    override fun trace(msg: String) {
+<span class="nc" id="L22">        delegate.trace(msg)</span>
+<span class="nc" id="L23">    }</span>
+
+    override fun debug(msg: String) {
+<span class="nc" id="L26">        delegate.debug(msg)</span>
+<span class="nc" id="L27">    }</span>
+
+    override fun info(msg: String) {
+<span class="nc" id="L30">        delegate.info(msg)</span>
+<span class="nc" id="L31">    }</span>
+
+
+    override fun warn(msg: String) {
+<span class="nc" id="L35">        delegate.warn(msg)</span>
+<span class="nc" id="L36">    }</span>
+
+    override fun error(msg: String) {
+<span class="nc" id="L39">        delegate.warn(msg)</span>
+<span class="nc" id="L40">    }</span>
+
+    override fun error(msg: String, throwable: Throwable) {
+<span class="nc" id="L43">        delegate.error(msg, throwable)</span>
+<span class="nc" id="L44">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

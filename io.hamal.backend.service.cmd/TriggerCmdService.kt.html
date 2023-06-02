@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TriggerCmdService.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.service.cmd</a> &gt; <span class="el_source">TriggerCmdService.kt</span></div><h1>TriggerCmdService.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.service.cmd
+
+import io.hamal.backend.component.EventEmitter
+import io.hamal.backend.event.TriggerCreatedEvent
+import io.hamal.backend.repository.api.TriggerCmdRepository
+import io.hamal.backend.repository.api.createFixedRateTrigger
+import io.hamal.backend.repository.api.domain.Trigger
+import io.hamal.lib.common.Shard
+import io.hamal.lib.domain.ComputeId
+import io.hamal.lib.domain._enum.TriggerType
+import io.hamal.lib.domain.vo.FuncId
+import io.hamal.lib.domain.vo.TriggerName
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
+import kotlin.time.Duration
+
+<span class="fc" id="L17">@Service</span>
+class TriggerCmdService
+<span class="fc" id="L19">@Autowired constructor(</span>
+<span class="pc" id="L20">    val triggerCmdRepository: TriggerCmdRepository,</span>
+<span class="pc" id="L21">    val eventEmitter: EventEmitter</span>
+) {
+    fun create(computeId: ComputeId, triggerToCreate: TriggerToCreate): Trigger =
+<span class="nc" id="L24">        createTrigger(computeId, triggerToCreate).also { emitEvent(computeId, it) }</span>
+
+<span class="nc" id="L26">    data class TriggerToCreate(</span>
+<span class="nc" id="L27">        val shard: Shard,</span>
+<span class="nc" id="L28">        val type: TriggerType,</span>
+<span class="nc" id="L29">        val name: TriggerName,</span>
+<span class="nc" id="L30">        val funcId: FuncId,</span>
+<span class="nc" id="L31">        val duration: Duration?</span>
+    )
+}
+
+private fun TriggerCmdService.createTrigger(computeId: ComputeId, triggerToCreate: TriggerCmdService.TriggerToCreate): Trigger {
+<span class="nc" id="L36">    return triggerCmdRepository.request(computeId) {</span>
+<span class="nc" id="L37">        createFixedRateTrigger {</span>
+<span class="nc" id="L38">            name = triggerToCreate.name</span>
+<span class="nc" id="L39">            funcId = triggerToCreate.funcId</span>
+<span class="nc" id="L40">            duration = triggerToCreate.duration!! //FIXME</span>
+<span class="nc" id="L41">        }</span>
+<span class="nc" id="L42">    }.first()</span>
+}
+
+private fun TriggerCmdService.emitEvent(computeId: ComputeId, trigger: Trigger) {
+<span class="nc" id="L46">    eventEmitter.emit(</span>
+<span class="nc" id="L47">        computeId, TriggerCreatedEvent(</span>
+//            computeId = ComputeId(123), //FIXME
+<span class="nc" id="L49">            shard = trigger.shard,</span>
+<span class="nc" id="L50">            trigger</span>
+        )
+    )
+<span class="nc" id="L53">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

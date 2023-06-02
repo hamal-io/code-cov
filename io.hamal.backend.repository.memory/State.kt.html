@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>State.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.repository.memory</a> &gt; <span class="el_source">State.kt</span></div><h1>State.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.repository.memory
+
+import io.hamal.backend.repository.api.StateCmdRepository
+import io.hamal.backend.repository.api.StateQueryRepository
+import io.hamal.backend.repository.api.domain.State
+import io.hamal.lib.domain.Correlation
+import io.hamal.lib.domain.ComputeId
+
+object MemoryStateRepository : StateCmdRepository, StateQueryRepository {
+
+<span class="fc" id="L11">    private val states = mutableMapOf&lt;Correlation, State&gt;()</span>
+
+    override fun set(computeId: ComputeId, stateToSet: StateCmdRepository.StateToSet): State {
+<span class="nc" id="L14">        return State(</span>
+<span class="nc" id="L15">            correlation = stateToSet.correlation,</span>
+<span class="nc" id="L16">            payload = stateToSet.payload,</span>
+<span class="nc" id="L17">        ).also { states[it.correlation] = it }</span>
+    }
+
+<span class="nc" id="L20">    override fun find(correlation: Correlation) = states[correlation]</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

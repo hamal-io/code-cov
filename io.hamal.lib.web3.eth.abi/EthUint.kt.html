@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EthUint.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.web3.eth.abi</a> &gt; <span class="el_source">EthUint.kt</span></div><h1>EthUint.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.web3.eth.abi
+
+import io.hamal.lib.web3.util.Web3Formatter
+import java.math.BigInteger
+
+<span class="nc" id="L6">sealed class EthUnsigned(</span>
+<span class="nc" id="L7">    final override val value: BigInteger,</span>
+    numberOfBits: Int
+) : EthType&lt;BigInteger&gt; {
+<span class="nc" id="L10">    init {</span>
+<span class="nc bnc" id="L11" title="All 4 branches missed.">        require(value &gt;= BigInteger.ZERO) { &quot;Value must be positive&quot; }</span>
+<span class="nc" id="L12">        val maxValue = BigInteger.ONE.shiftLeft(numberOfBits).subtract(BigInteger.ONE)</span>
+<span class="nc bnc" id="L13" title="All 4 branches missed.">        require(value &lt; maxValue) { &quot;Value must be &lt;= $maxValue&quot; }</span>
+<span class="nc" id="L14">    }</span>
+
+<span class="nc" id="L16">    override fun toByteArray(): ByteArray = value.toByteArray()</span>
+
+<span class="nc" id="L18">    fun toEthPrefixedString(): EthPrefixedHexString = EthPrefixedHexString(</span>
+<span class="nc" id="L19">        &quot;0x${Web3Formatter.formatWithoutLeadingZeros(value.toByteArray())}&quot;</span>
+<span class="nc" id="L20">    )</span>
+
+<span class="nc" id="L22">    override fun toByteWindow() = toEthPrefixedString().toByteWindow()</span>
+    override fun equals(other: Any?): Boolean {
+<span class="nc bnc" id="L24" title="All 2 branches missed.">        if (this === other) return true</span>
+<span class="nc bnc" id="L25" title="All 4 branches missed.">        if (javaClass != other?.javaClass) return false</span>
+<span class="nc" id="L26">        other as EthUnsigned</span>
+<span class="nc" id="L27">        return value == other.value</span>
+    }
+
+    override fun hashCode(): Int {
+<span class="nc" id="L31">        return value.hashCode()</span>
+    }
+}
+
+<span class="nc" id="L35">class EthUint8(value: BigInteger) : EthUnsigned(value, 8)</span>
+<span class="nc" id="L36">class EthUint16(value: BigInteger) : EthUnsigned(value, 16)</span>
+<span class="nc" id="L37">class EthUint32(value: BigInteger) : EthUnsigned(value, 32)</span>
+<span class="nc" id="L38">class EthUint64(value: BigInteger) : EthUnsigned(value, 64)</span>
+<span class="nc" id="L39">class EthUint112(value: BigInteger) : EthUnsigned(value, 112)</span>
+<span class="nc" id="L40">class EthUint128(value: BigInteger) : EthUnsigned(value, 128)</span>
+<span class="nc" id="L41">class EthUint160(value: BigInteger) : EthUnsigned(value, 160)</span>
+<span class="nc" id="L42">class EthUint256(value: BigInteger) : EthUnsigned(value, 256)</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

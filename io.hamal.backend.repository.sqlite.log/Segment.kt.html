@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Segment.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.repository.sqlite.log</a> &gt; <span class="el_source">Segment.kt</span></div><h1>Segment.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.repository.sqlite.log
+
+import io.hamal.backend.repository.api.log.LogChunk
+import io.hamal.backend.repository.api.log.LogChunkId
+import io.hamal.backend.repository.api.log.LogSegment
+import io.hamal.backend.repository.api.log.LogSegmentRepository
+import io.hamal.backend.repository.sqlite.BaseRepository
+import io.hamal.backend.repository.sqlite.internal.Connection
+import io.hamal.lib.common.Shard
+import io.hamal.lib.common.util.TimeUtils
+import io.hamal.lib.domain.ComputeId
+import java.nio.file.Path
+
+
+<span class="fc" id="L15">internal class DefaultLogSegmentRepository(</span>
+<span class="fc" id="L16">    internal val segment: LogSegment,</span>
+<span class="fc" id="L17">) : BaseRepository(object : Config {</span>
+<span class="fc" id="L18">    override val path: Path get() = segment.path</span>
+<span class="fc" id="L19">    override val filename: String get() = String.format(&quot;%020d.db&quot;, segment.id.value.toLong())</span>
+<span class="nc" id="L20">    override val shard: Shard get() = segment.shard</span>
+}), LogSegmentRepository {
+
+    override fun append(computeId: ComputeId, bytes: ByteArray) {
+<span class="fc" id="L24">        connection.tx {</span>
+<span class="fc" id="L25">            execute(&quot;INSERT OR IGNORE INTO chunks (req_id,bytes,instant) VALUES (:computeId, :bytes,:now)&quot;) {</span>
+<span class="fc" id="L26">                set(&quot;computeId&quot;, computeId)</span>
+<span class="fc" id="L27">                set(&quot;bytes&quot;, bytes)</span>
+<span class="fc" id="L28">                set(&quot;now&quot;, TimeUtils.now())</span>
+            }
+<span class="fc" id="L30">        }</span>
+<span class="fc" id="L31">    }</span>
+
+    override fun read(firstId: LogChunkId, limit: Int): List&lt;LogChunk&gt; {
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">        if (limit &lt; 1) {</span>
+<span class="nc" id="L35">            return listOf()</span>
+        }
+<span class="fc" id="L37">        return connection.executeQuery&lt;LogChunk&gt;(</span>
+<span class="fc" id="L38">            &quot;&quot;&quot;SELECT id, bytes, instant FROM chunks WHERE id &gt;= :firstId LIMIT :limit &quot;&quot;&quot;.trimIndent()</span>
+        ) {
+<span class="fc" id="L40">            with {</span>
+<span class="fc" id="L41">                set(&quot;firstId&quot;, firstId)</span>
+<span class="fc" id="L42">                set(&quot;limit&quot;, limit)</span>
+            }
+<span class="fc" id="L44">            map {</span>
+<span class="fc" id="L45">                LogChunk(</span>
+<span class="fc" id="L46">                    id = it.getDomainId(&quot;id&quot;, ::LogChunkId),</span>
+<span class="fc" id="L47">                    segmentId = segment.id,</span>
+<span class="fc" id="L48">                    shard = segment.shard,</span>
+<span class="fc" id="L49">                    topicId = segment.topicId,</span>
+<span class="fc" id="L50">                    bytes = it.getBytes(&quot;bytes&quot;),</span>
+<span class="fc" id="L51">                    instant = it.getInstant(&quot;instant&quot;)</span>
+                )
+            }
+        }
+    }
+
+    override fun setupConnection(connection: Connection) {
+<span class="fc" id="L58">        connection.execute(&quot;&quot;&quot;PRAGMA journal_mode = wal;&quot;&quot;&quot;)</span>
+<span class="fc" id="L59">        connection.execute(&quot;&quot;&quot;PRAGMA locking_mode = exclusive;&quot;&quot;&quot;)</span>
+<span class="fc" id="L60">        connection.execute(&quot;&quot;&quot;PRAGMA temp_store = memory;&quot;&quot;&quot;)</span>
+<span class="fc" id="L61">        connection.execute(&quot;&quot;&quot;PRAGMA synchronous = off;&quot;&quot;&quot;)</span>
+<span class="fc" id="L62">    }</span>
+
+    override fun setupSchema(connection: Connection) {
+<span class="fc" id="L65">        connection.tx {</span>
+<span class="fc" id="L66">            execute(</span>
+                &quot;&quot;&quot;
+             CREATE TABLE IF NOT EXISTS chunks (
+                id INTEGER PRIMARY KEY AUTOINCREMENT ,
+                req_id INTEGER NOT NULL UNIQUE,
+                bytes BLOB NOT NULL ,
+                instant DATETIME NOT NULL
+            );
+<span class="fc" id="L74">        &quot;&quot;&quot;.trimIndent()</span>
+            )
+<span class="fc" id="L76">        }</span>
+<span class="fc" id="L77">    }</span>
+
+    override fun clear() {
+<span class="nc" id="L80">        connection.tx {</span>
+<span class="nc" id="L81">            execute(&quot;DELETE FROM chunks&quot;)</span>
+<span class="nc" id="L82">            execute(&quot;DELETE FROM sqlite_sequence&quot;)</span>
+<span class="nc" id="L83">        }</span>
+<span class="nc" id="L84">    }</span>
+
+    override fun close() {
+<span class="fc" id="L87">        connection.close()</span>
+<span class="fc" id="L88">    }</span>
+
+<span class="nc bnc" id="L90" title="All 2 branches missed.">    override fun count() = connection.executeQueryOne(&quot;SELECT COUNT(*) as count from chunks&quot;) {</span>
+<span class="nc" id="L91">        map {</span>
+<span class="nc" id="L92">            it.getLong(&quot;count&quot;).toULong()</span>
+        }
+<span class="nc" id="L94">    } ?: 0UL</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

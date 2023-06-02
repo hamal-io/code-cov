@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BrokerTopics.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.repository.sqlite.log</a> &gt; <span class="el_source">BrokerTopics.kt</span></div><h1>BrokerTopics.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.repository.sqlite.log
+
+import io.hamal.backend.repository.api.log.LogBroker
+import io.hamal.backend.repository.api.log.LogBrokerTopicsRepository
+import io.hamal.backend.repository.api.log.LogTopic
+import io.hamal.backend.repository.sqlite.BaseRepository
+import io.hamal.backend.repository.sqlite.internal.Connection
+import io.hamal.lib.common.KeyedOnce
+import io.hamal.lib.common.util.TimeUtils
+import io.hamal.lib.common.Shard
+import io.hamal.lib.domain.vo.TopicId
+import io.hamal.lib.domain.vo.TopicName
+import java.nio.file.Path
+
+<span class="fc" id="L15">data class BrokerTopics(</span>
+<span class="fc" id="L16">    val logBrokerId: LogBroker.Id,</span>
+<span class="fc" id="L17">    val path: Path</span>
+)
+
+<span class="fc" id="L20">class DefaultLogBrokerTopicsRepository(</span>
+<span class="fc" id="L21">    internal val brokerTopics: BrokerTopics,</span>
+<span class="fc" id="L22">) : BaseRepository(object : Config {</span>
+<span class="fc" id="L23">    override val path: Path get() = brokerTopics.path</span>
+<span class="fc" id="L24">    override val filename: String get() = &quot;topics.db&quot;</span>
+<span class="nc" id="L25">    override val shard: Shard get() = Shard(0)</span>
+
+}), LogBrokerTopicsRepository {
+
+<span class="fc" id="L29">    private val topicMapping = KeyedOnce.default&lt;TopicName, LogTopic&gt;()</span>
+    override fun setupConnection(connection: Connection) {
+<span class="fc" id="L31">        connection.execute(&quot;&quot;&quot;PRAGMA journal_mode = wal;&quot;&quot;&quot;)</span>
+<span class="fc" id="L32">        connection.execute(&quot;&quot;&quot;PRAGMA locking_mode = exclusive;&quot;&quot;&quot;)</span>
+<span class="fc" id="L33">        connection.execute(&quot;&quot;&quot;PRAGMA temp_store = memory;&quot;&quot;&quot;)</span>
+<span class="fc" id="L34">        connection.execute(&quot;&quot;&quot;PRAGMA synchronous = off;&quot;&quot;&quot;)</span>
+<span class="fc" id="L35">    }</span>
+
+    override fun setupSchema(connection: Connection) {
+<span class="fc" id="L38">        connection.tx {</span>
+<span class="fc" id="L39">            execute(</span>
+<span class="fc" id="L40">                &quot;&quot;&quot;</span>
+         CREATE TABLE IF NOT EXISTS topics (
+            id INTEGER PRIMARY KEY AUTOINCREMENT ,
+            name TEXT NOT NULL ,
+            instant DATETIME NOT NULL,
+            UNIQUE(name)
+        );
+        &quot;&quot;&quot;
+            )
+<span class="fc" id="L49">        }</span>
+<span class="fc" id="L50">    }</span>
+
+    override fun resolveTopic(name: TopicName): LogTopic {
+<span class="fc" id="L53">        return topicMapping.invoke(name) {</span>
+<span class="fc" id="L54">            connection.tx {</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">                val id = findTopicId(name) ?: createTopic(name)</span>
+<span class="fc" id="L56">                LogTopic(</span>
+<span class="fc" id="L57">                    id = id,</span>
+<span class="fc" id="L58">                    logBrokerId = brokerTopics.logBrokerId,</span>
+<span class="fc" id="L59">                    name = name,</span>
+<span class="fc" id="L60">                    path = brokerTopics.path,</span>
+<span class="fc" id="L61">                    shard = Shard(0)</span>
+                )
+<span class="fc" id="L63">            }!!</span>
+        }
+    }
+
+<span class="nc" id="L67">    override fun find(topicId: TopicId): LogTopic? = findById(topicId)</span>
+
+
+    override fun clear() {
+<span class="nc" id="L71">        connection.tx {</span>
+<span class="nc" id="L72">            execute(&quot;DELETE FROM topics&quot;)</span>
+<span class="nc" id="L73">            execute(&quot;DELETE FROM sqlite_sequence&quot;)</span>
+<span class="nc" id="L74">        }</span>
+<span class="nc" id="L75">    }</span>
+
+    override fun close() {
+<span class="fc" id="L78">        connection.close()</span>
+<span class="fc" id="L79">    }</span>
+}
+
+<span class="nc bnc" id="L82" title="All 2 branches missed.">fun DefaultLogBrokerTopicsRepository.count() = connection.executeQueryOne(&quot;SELECT COUNT(*) as count from topics&quot;) {</span>
+<span class="nc" id="L83">    map {</span>
+<span class="nc" id="L84">        it.getLong(&quot;count&quot;).toULong()</span>
+    }
+<span class="nc" id="L86">} ?: 0UL</span>
+
+private fun DefaultLogBrokerTopicsRepository.findById(topicId: TopicId): LogTopic? {
+<span class="nc" id="L89">    return connection.executeQueryOne(&quot;SELECT id,name FROM topics WHERE id = :id&quot;) {</span>
+<span class="nc" id="L90">        with {</span>
+<span class="nc" id="L91">            set(&quot;id&quot;, topicId.value)</span>
+        }
+<span class="nc" id="L93">        map { rs -&gt;</span>
+<span class="nc" id="L94">            LogTopic(</span>
+<span class="nc" id="L95">                id = TopicId(rs.getInt(&quot;id&quot;)),</span>
+<span class="nc" id="L96">                logBrokerId = brokerTopics.logBrokerId,</span>
+<span class="nc" id="L97">                name = TopicName(rs.getString(&quot;name&quot;)),</span>
+<span class="nc" id="L98">                path = brokerTopics.path,</span>
+<span class="nc" id="L99">                shard = Shard(0)</span>
+            )
+        }
+    }
+}
+
+private fun DefaultLogBrokerTopicsRepository.findTopicId(name: TopicName): TopicId? {
+<span class="fc" id="L106">    return connection.executeQueryOne(&quot;SELECT id FROM topics WHERE name = :name&quot;) {</span>
+<span class="fc" id="L107">        with {</span>
+<span class="fc" id="L108">            set(&quot;name&quot;, name.value)</span>
+        }
+<span class="fc" id="L110">        map {</span>
+<span class="fc" id="L111">            TopicId(it.getInt(&quot;id&quot;))</span>
+        }
+    }
+}
+
+private fun DefaultLogBrokerTopicsRepository.createTopic(name: TopicName): TopicId {
+<span class="fc" id="L117">    return connection.execute&lt;TopicId&gt;(&quot;INSERT INTO topics(name, instant) VALUES (:name, :now) RETURNING id&quot;) {</span>
+<span class="fc" id="L118">        with {</span>
+<span class="fc" id="L119">            set(&quot;name&quot;, name.value)</span>
+<span class="fc" id="L120">            set(&quot;now&quot;, TimeUtils.now())</span>
+        }
+<span class="fc" id="L122">        map { TopicId(it.getInt(&quot;id&quot;)) }</span>
+    }!!
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

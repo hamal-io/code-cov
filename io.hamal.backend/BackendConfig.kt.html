@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BackendConfig.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend</a> &gt; <span class="el_source">BackendConfig.kt</span></div><h1>BackendConfig.kt</h1><pre class="source lang-java linenums">package io.hamal.backend
+
+import io.hamal.backend.component.EventEmitter
+import io.hamal.backend.event.*
+import io.hamal.backend.event_handler.exec.*
+import io.hamal.backend.event_handler.trigger.TriggerCreatedHandler
+import io.hamal.backend.service.EventServiceFactory
+import io.hamal.backend.service.OrchestrationService
+import io.hamal.backend.service.FixedRateTriggerService
+import io.hamal.backend.service.cmd.ExecCmdService
+import io.hamal.backend.req.Request
+import io.hamal.backend.service.cmd.StateCmdService
+import io.hamal.backend.service.query.ExecQueryService
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration
+import org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration
+import org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+import org.springframework.context.ApplicationListener
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.Configuration
+import org.springframework.context.event.ContextRefreshedEvent
+import org.springframework.scheduling.annotation.EnableScheduling
+
+<span class="fc" id="L28">@Configuration</span>
+@ComponentScan
+@EnableScheduling
+@EnableAutoConfiguration(
+    exclude = [
+        DataSourceAutoConfiguration::class,
+        DataSourceTransactionManagerAutoConfiguration::class,
+        HibernateJpaAutoConfiguration::class,
+        JdbcTemplateAutoConfiguration::class,
+        SpringApplicationAdminJmxAutoConfiguration::class,
+        JmxAutoConfiguration::class
+    ]
+)
+<span class="fc" id="L41">open class BackendConfig : ApplicationListener&lt;ContextRefreshedEvent&gt; {</span>
+
+    @Bean
+    open fun backendEventConsumer(
+        eventServiceFactory: EventServiceFactory,
+        execCmdService: ExecCmdService,
+        execQueryService: ExecQueryService,
+        stateCmdService: StateCmdService,
+        fixedRateTriggerService: FixedRateTriggerService,
+        orchestrationService: OrchestrationService,
+        request: Request,
+        eventEmitter: EventEmitter
+<span class="fc" id="L53">    ) = eventServiceFactory</span>
+<span class="fc" id="L54">        .register(TriggerCreatedEvent::class, TriggerCreatedHandler(fixedRateTriggerService))</span>
+
+<span class="fc" id="L56">        .register(ExecPlannedEvent::class, ExecPlannedHandler(orchestrationService))</span>
+<span class="fc" id="L57">        .register(ExecScheduledEvent::class, ExecScheduledHandler(execCmdService))</span>
+<span class="fc" id="L58">        .register(ExecutionQueuedEvent::class, ExecQueuedHandler())</span>
+<span class="fc" id="L59">        .register(ExecutionCompletedEvent::class, ExecCompletedHandler(orchestrationService))</span>
+<span class="fc" id="L60">        .register(ExecutionFailedEvent::class, ExecFailedHandler(orchestrationService))</span>
+
+<span class="fc" id="L62">        .create()</span>
+
+    override fun onApplicationEvent(event: ContextRefreshedEvent) {
+<span class="fc" id="L65">    }</span>
+
+}
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

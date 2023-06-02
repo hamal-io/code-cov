@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExecCmdService.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.service.cmd</a> &gt; <span class="el_source">ExecCmdService.kt</span></div><h1>ExecCmdService.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.service.cmd
+
+import io.hamal.backend.component.EventEmitter
+import io.hamal.backend.event.*
+import io.hamal.backend.repository.api.ExecCmdRepository
+import io.hamal.backend.repository.api.ExecCmdRepository.ExecToPlan
+import io.hamal.backend.repository.api.domain.*
+import io.hamal.backend.service.cmd.ExecCmdService.ToPlan
+import io.hamal.lib.common.Shard
+import io.hamal.lib.domain.ComputeId
+import io.hamal.lib.domain.Correlation
+import io.hamal.lib.domain.vo.Code
+import io.hamal.lib.domain.vo.ExecId
+import io.hamal.lib.domain.vo.ExecInputs
+import io.hamal.lib.domain.vo.ExecSecrets
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
+
+<span class="fc" id="L19">@Service</span>
+<span class="fc" id="L20">class ExecCmdService(</span>
+<span class="fc" id="L21">    @Autowired val execCmdRepository: ExecCmdRepository,</span>
+<span class="fc" id="L22">    @Autowired val eventEmitter: EventEmitter</span>
+) {
+
+    fun plan(computeId: ComputeId, toPlan: ToPlan): PlannedExec =
+<span class="fc" id="L26">        planExec(computeId, toPlan).also { emitEvent(computeId, it) }</span>
+
+    fun schedule(computeId: ComputeId, plannedExec: PlannedExec): ScheduledExec =
+<span class="fc" id="L29">        execCmdRepository.schedule(computeId, plannedExec).also { emitEvent(computeId, it) }</span>
+
+    fun enqueue(computeId: ComputeId, scheduledExec: ScheduledExec): QueuedExec =
+<span class="fc" id="L32">        execCmdRepository.enqueue(computeId, scheduledExec).also { emitEvent(computeId, it) }</span>
+
+    fun dequeue(computeId: ComputeId): List&lt;InFlightExec&gt; =
+<span class="fc" id="L35">        execCmdRepository.dequeue(computeId).also { emitEvents(computeId, it) }</span>
+
+    fun complete(computeId: ComputeId, inFlightExec: InFlightExec): CompletedExec =
+<span class="fc" id="L38">        execCmdRepository.complete(computeId, inFlightExec).also { emitEvent(computeId, it) }</span>
+
+<span class="fc" id="L40">    data class ToPlan(</span>
+<span class="fc" id="L41">        val execId: ExecId,</span>
+<span class="fc" id="L42">        val shard: Shard,</span>
+<span class="fc" id="L43">        val correlation: Correlation?,</span>
+<span class="fc" id="L44">        val inputs: ExecInputs,</span>
+<span class="fc" id="L45">        val secrets: ExecSecrets,</span>
+<span class="fc" id="L46">        val code: Code,</span>
+<span class="fc" id="L47">        val invocation: Invocation</span>
+    )
+
+}
+
+private fun ExecCmdService.planExec(computeId: ComputeId, toPlan: ToPlan): PlannedExec {
+<span class="fc" id="L53">    return execCmdRepository.plan(</span>
+<span class="fc" id="L54">        computeId, ExecToPlan(</span>
+<span class="fc" id="L55">            id = toPlan.execId,</span>
+<span class="fc" id="L56">            shard = toPlan.shard,</span>
+<span class="fc" id="L57">            correlation = toPlan.correlation,</span>
+<span class="fc" id="L58">            inputs = toPlan.inputs,</span>
+<span class="fc" id="L59">            secrets = toPlan.secrets,</span>
+<span class="fc" id="L60">            code = toPlan.code,</span>
+<span class="fc" id="L61">            trigger = toPlan.invocation</span>
+        )
+    )
+}
+
+private fun ExecCmdService.emitEvent(computeId: ComputeId, exec: PlannedExec) {
+<span class="fc" id="L67">    eventEmitter.emit(</span>
+<span class="fc" id="L68">        computeId, ExecPlannedEvent(</span>
+<span class="fc" id="L69">            shard = exec.shard,</span>
+<span class="fc" id="L70">            plannedExec = exec</span>
+        )
+    )
+<span class="fc" id="L73">}</span>
+
+
+private fun ExecCmdService.emitEvent(computeId: ComputeId, exec: ScheduledExec) {
+<span class="fc" id="L77">    eventEmitter.emit(</span>
+<span class="fc" id="L78">        computeId, ExecScheduledEvent(</span>
+<span class="fc" id="L79">            shard = exec.shard,</span>
+<span class="fc" id="L80">            scheduledExec = exec</span>
+        )
+    )
+<span class="fc" id="L83">}</span>
+
+
+private fun ExecCmdService.emitEvent(computeId: ComputeId, exec: QueuedExec) {
+<span class="fc" id="L87">    eventEmitter.emit(</span>
+<span class="fc" id="L88">        computeId, ExecutionQueuedEvent(</span>
+<span class="fc" id="L89">            shard = exec.shard,</span>
+<span class="fc" id="L90">            queuedExec = exec</span>
+        )
+    )
+<span class="fc" id="L93">}</span>
+
+private fun ExecCmdService.emitEvents(computeId: ComputeId, execs: List&lt;InFlightExec&gt;) {
+<span class="fc" id="L96">    execs.forEach {</span>
+<span class="fc" id="L97">        eventEmitter.emit(</span>
+<span class="fc" id="L98">            computeId, ExecutionStartedEvent(</span>
+<span class="fc" id="L99">                shard = it.shard,</span>
+<span class="fc" id="L100">                inFlightExec = it</span>
+            )
+        )
+<span class="fc" id="L103">    }</span>
+<span class="fc" id="L104">}</span>
+
+
+private fun ExecCmdService.emitEvent(computeId: ComputeId, exec: CompletedExec) {
+<span class="fc" id="L108">    eventEmitter.emit(</span>
+<span class="fc" id="L109">        computeId, ExecutionCompletedEvent(</span>
+<span class="fc" id="L110">            shard = exec.shard,</span>
+<span class="fc" id="L111">            completedExec = exec</span>
+        )
+    )
+<span class="fc" id="L114">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

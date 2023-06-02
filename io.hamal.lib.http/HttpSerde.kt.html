@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HttpSerde.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.http</a> &gt; <span class="el_source">HttpSerde.kt</span></div><h1>HttpSerde.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.http
+
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.InternalSerializationApi
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
+import kotlinx.serialization.serializer
+import java.io.BufferedInputStream
+import java.io.ByteArrayOutputStream
+import java.io.InputStream
+import kotlin.reflect.KClass
+
+interface HttpSerdeFactory {
+    var errorDeserializer: HttpErrorDeserializer
+    var contentDeserializer: HttpContentDeserializer
+    var contentSerializer: HttpContentSerializer
+}
+
+object DefaultHttpSerdeFactory : HttpSerdeFactory {
+<span class="pc" id="L20">    override var errorDeserializer: HttpErrorDeserializer = DefaultErrorDeserializer</span>
+<span class="pc" id="L21">    override var contentDeserializer: HttpContentDeserializer = KotlinJsonHttpContentDeserializer</span>
+<span class="pc" id="L22">    override var contentSerializer: HttpContentSerializer = KotlinJsonHttpContentSerializer</span>
+}
+
+interface HttpErrorDeserializer {
+    fun deserialize(inputStream: InputStream): Throwable
+}
+
+object DefaultErrorDeserializer : HttpErrorDeserializer {
+    override fun deserialize(inputStream: InputStream): HttpError {
+<span class="nc" id="L31">        val bis = BufferedInputStream(inputStream)</span>
+<span class="nc" id="L32">        val out = ByteArrayOutputStream()</span>
+<span class="nc" id="L33">        var result = bis.read()</span>
+<span class="nc bnc" id="L34" title="All 2 branches missed.">        while (result != -1) {</span>
+<span class="nc" id="L35">            out.write(result.toByte().toInt())</span>
+<span class="nc" id="L36">            result = bis.read()</span>
+        }
+<span class="nc" id="L38">        return HttpError(out.toString(&quot;UTF-8&quot;))</span>
+    }
+}
+
+interface HttpContentDeserializer {
+    fun &lt;VALUE : Any&gt; deserialize(inputStream: InputStream, clazz: KClass&lt;VALUE&gt;): VALUE
+}
+
+object KotlinJsonHttpContentDeserializer : HttpContentDeserializer {
+    @OptIn(InternalSerializationApi::class, ExperimentalSerializationApi::class)
+    override fun &lt;VALUE : Any&gt; deserialize(inputStream: InputStream, clazz: KClass&lt;VALUE&gt;): VALUE {
+<span class="fc" id="L49">        return delegate.decodeFromStream(clazz.serializer(), inputStream)</span>
+    }
+
+<span class="fc" id="L52">    private val delegate = Json { ignoreUnknownKeys = true }</span>
+}
+
+interface HttpContentSerializer {
+    fun &lt;VALUE : Any&gt; serialize(value: VALUE, clazz: KClass&lt;VALUE&gt;): String
+}
+
+object KotlinJsonHttpContentSerializer : HttpContentSerializer {
+    @OptIn(InternalSerializationApi::class)
+    override fun &lt;VALUE : Any&gt; serialize(value: VALUE, clazz: KClass&lt;VALUE&gt;): String {
+<span class="fc" id="L62">        return delegate.encodeToString(clazz.serializer(), value)</span>
+    }
+
+<span class="fc" id="L65">    private val delegate = Json { ignoreUnknownKeys = true }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

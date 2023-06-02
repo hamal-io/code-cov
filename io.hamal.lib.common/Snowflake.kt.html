@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Snowflake.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.common</a> &gt; <span class="el_source">Snowflake.kt</span></div><h1>Snowflake.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.common
+
+import io.hamal.lib.common.SnowflakeId.ElapsedSource.Elapsed
+import io.hamal.lib.common.SnowflakeId.SequenceSource
+import io.hamal.lib.common.SnowflakeId.SequenceSource.*
+import io.hamal.lib.common.util.BitUtils
+import io.hamal.lib.domain.Tuple2
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import java.util.concurrent.locks.Lock
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
+
+
+<span class="nc" id="L20">@JvmInline</span>
+@Serializable(with = SnowflakeId.Serializer::class)
+<span class="nc" id="L22">value class SnowflakeId(val value: Long) : Comparable&lt;SnowflakeId&gt; {</span>
+
+    interface ElapsedSource {
+        fun elapsed(): Elapsed
+
+        @JvmInline
+<span class="nc" id="L28">        value class Elapsed(val value: Long) : Comparable&lt;Elapsed&gt; {</span>
+<span class="pc" id="L29">            override fun compareTo(other: Elapsed) = value.compareTo(other.value)</span>
+        }
+    }
+
+    interface ShardSource {
+        fun get(): Shard
+    }
+
+    interface SequenceSource {
+        /**
+         * Blocks if sequence is exhausted until next milliseconds
+         */
+        fun next(elapsedSource: () -&gt; Elapsed): Tuple2&lt;Elapsed, Sequence&gt;
+
+        @JvmInline
+<span class="nc" id="L44">        value class Sequence(val value: Short) {</span>
+<span class="fc" id="L45">            constructor(value: Int) : this(value.toShort())</span>
+
+            init {
+<span class="pc bpc" id="L48" title="2 of 4 branches missed.">                require(value &gt; 0) { &quot;Sequence must be positive - [1, 4096]&quot; }</span>
+<span class="pc bpc" id="L49" title="2 of 4 branches missed.">                require(value &lt;= 4096) { &quot;Sequence is limited to 12 bits - [1, 4096]&quot; }</span>
+            }
+        }
+    }
+
+    interface Generator {
+        fun next(): SnowflakeId
+    }
+
+<span class="fc" id="L58">    override fun compareTo(other: SnowflakeId) = value.compareTo(other.value)</span>
+
+<span class="fc" id="L60">    fun shard(): Shard = Shard(</span>
+<span class="fc" id="L61">        BitUtils.extractRange(</span>
+<span class="fc" id="L62">            value = value,</span>
+<span class="fc" id="L63">            startIndex = 53,</span>
+<span class="fc" id="L64">            numberOfBits = 10</span>
+<span class="fc" id="L65">        ).toInt()</span>
+<span class="fc" id="L66">    )</span>
+
+<span class="nc" id="L68">    fun sequence(): Sequence = Sequence(</span>
+<span class="nc" id="L69">        BitUtils.extractRange(</span>
+<span class="nc" id="L70">            value = value,</span>
+<span class="nc" id="L71">            startIndex = 41,</span>
+<span class="nc" id="L72">            numberOfBits = 12</span>
+<span class="nc" id="L73">        ).toShort()</span>
+<span class="nc" id="L74">    )</span>
+
+
+<span class="nc" id="L77">    fun elapsed(): Elapsed = Elapsed(</span>
+<span class="nc" id="L78">        BitUtils.extractRange(</span>
+<span class="nc" id="L79">            value = value,</span>
+<span class="nc" id="L80">            startIndex = 0,</span>
+<span class="nc" id="L81">            numberOfBits = 41</span>
+        )
+<span class="nc" id="L83">    )</span>
+
+<span class="nc" id="L85">    override fun toString(): String {</span>
+<span class="nc" id="L86">        return &quot;$value&quot;</span>
+<span class="nc" id="L87">    }</span>
+
+    object Serializer : KSerializer&lt;SnowflakeId&gt; {
+        override val descriptor: SerialDescriptor
+<span class="nc" id="L91">            get() = PrimitiveSerialDescriptor(&quot;SnowflakeId&quot;, PrimitiveKind.LONG)</span>
+
+<span class="nc" id="L93">        override fun deserialize(decoder: Decoder) = SnowflakeId(decoder.decodeLong())</span>
+
+        override fun serialize(encoder: Encoder, value: SnowflakeId) {
+<span class="nc" id="L96">            encoder.encodeLong(value.value)</span>
+<span class="nc" id="L97">        }</span>
+    }
+}
+
+
+<span class="fc" id="L102">class DefaultElapsedSource(</span>
+<span class="pc" id="L103">    val epoch: Long = 1682116276624 // 2023-04-22 some when in the morning AEST</span>
+) : SnowflakeId.ElapsedSource {
+<span class="fc" id="L105">    override fun elapsed() = Elapsed(millis())</span>
+
+<span class="fc" id="L107">    private fun millis() = System.currentTimeMillis() - epoch</span>
+<span class="fc" id="L108">}</span>
+
+<span class="fc" id="L110">class DefaultShardSource(</span>
+<span class="fc" id="L111">    private val shard: Shard</span>
+) : SnowflakeId.ShardSource {
+<span class="fc" id="L113">    constructor(value: Int) : this(Shard(value))</span>
+
+<span class="fc" id="L115">    override fun get() = shard</span>
+}
+
+<span class="fc" id="L118">class DefaultSequenceSource : SequenceSource {</span>
+
+<span class="fc" id="L120">    private var previousCalledAt: Elapsed = Elapsed(0)</span>
+    private var nextSequence = 0
+<span class="fc" id="L122">    private val maxSequence = 4096</span>
+
+    override fun next(elapsedSource: () -&gt; Elapsed): Tuple2&lt;Elapsed, Sequence&gt; {
+<span class="fc" id="L125">        val elapsed = elapsedSource()</span>
+<span class="pc bpc" id="L126" title="2 of 4 branches missed.">        check(elapsed &gt;= previousCalledAt) { &quot;Elapsed must be monotonic&quot; }</span>
+
+<span class="pc bpc" id="L128" title="1 of 2 branches missed.">        if (elapsed == previousCalledAt) {</span>
+<span class="nc bnc" id="L129" title="All 2 branches missed.">            if (nextSequence &gt;= maxSequence) {</span>
+<span class="nc" id="L130">                while (true) {</span>
+<span class="nc" id="L131">                    val currentElapsed = elapsedSource()</span>
+<span class="nc bnc" id="L132" title="All 2 branches missed.">                    if (elapsed != currentElapsed) {</span>
+<span class="nc" id="L133">                        nextSequence = 0</span>
+<span class="nc" id="L134">                        previousCalledAt = currentElapsed</span>
+<span class="nc" id="L135">                        break</span>
+                    }
+                }
+            } else {
+<span class="nc" id="L139">                nextSequence</span>
+<span class="nc" id="L140">                previousCalledAt = elapsed</span>
+            }
+
+        } else {
+<span class="fc" id="L144">            previousCalledAt = elapsed</span>
+<span class="fc" id="L145">            nextSequence = 0</span>
+        }
+
+<span class="fc" id="L148">        return Tuple2(previousCalledAt, Sequence(++nextSequence))</span>
+    }
+}
+
+<span class="nc" id="L152">class FixedElapsedSource(val value: Long) : SnowflakeId.ElapsedSource {</span>
+<span class="nc" id="L153">    override fun elapsed() = Elapsed(value)</span>
+}
+
+<span class="fc" id="L156">class SnowflakeGenerator(</span>
+<span class="fc" id="L157">    private val shardSource: SnowflakeId.ShardSource,</span>
+<span class="fc" id="L158">    private val elapsedSource: SnowflakeId.ElapsedSource = DefaultElapsedSource(),</span>
+<span class="fc" id="L159">    private val sequenceSource: SequenceSource = DefaultSequenceSource(),</span>
+<span class="fc" id="L160">    private val lock: Lock = ReentrantLock()</span>
+) : SnowflakeId.Generator {
+
+    override fun next(): SnowflakeId {
+<span class="fc" id="L164">        return lock.withLock {</span>
+<span class="fc" id="L165">            val shard = shardSource.get()</span>
+<span class="fc" id="L166">            val (elapsed, sequence) = sequenceSource.next(elapsedSource::elapsed)</span>
+<span class="fc" id="L167">            generate(elapsed, shard, sequence)</span>
+        }
+    }
+
+    private fun generate(
+        elapsed: Elapsed,
+        shard: Shard,
+        sequence: Sequence
+    ): SnowflakeId {
+<span class="fc" id="L176">        val shardValue = shard.value.toLong().shl(53)</span>
+<span class="fc" id="L177">        val sequenceValue = sequence.value.toLong().shl(41)</span>
+<span class="fc" id="L178">        val elapsedValue = elapsed.value</span>
+<span class="fc" id="L179">        val result = shardValue + sequenceValue + elapsedValue</span>
+<span class="fc" id="L180">        return SnowflakeId(result)</span>
+    }
+<span class="fc" id="L182">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

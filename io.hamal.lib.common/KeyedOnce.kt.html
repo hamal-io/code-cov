@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>KeyedOnce.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.common</a> &gt; <span class="el_source">KeyedOnce.kt</span></div><h1>KeyedOnce.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.common
+
+import io.hamal.lib.domain.Once
+import java.util.concurrent.ConcurrentHashMap
+
+interface KeyedOnce&lt;KEY : Any, VALUE : Any&gt; {
+    operator fun invoke(key: KEY, fn: () -&gt; VALUE): VALUE
+
+    fun keys(): Set&lt;KEY&gt;
+
+    companion object {
+        fun &lt;KEY : Any, VALUE : Any&gt; default(): KeyedOnce&lt;KEY, VALUE&gt; {
+<span class="fc" id="L13">            return DefaultImpl()</span>
+        }
+
+        fun &lt;KEY : Any, VALUE : Any&gt; lru(capacity: Int): KeyedOnce&lt;KEY, VALUE&gt; {
+<span class="nc" id="L17">            return LruImpl(capacity)</span>
+        }
+    }
+
+<span class="fc" id="L21">    class DefaultImpl&lt;KEY : Any, VALUE : Any&gt; : KeyedOnce&lt;KEY, VALUE&gt; {</span>
+<span class="fc" id="L22">        private val onceStore: ConcurrentHashMap&lt;KEY, Once&lt;VALUE&gt;&gt; = ConcurrentHashMap&lt;KEY, Once&lt;VALUE&gt;&gt;()</span>
+
+        override fun invoke(key: KEY, fn: () -&gt; VALUE): VALUE {
+<span class="fc" id="L25">            onceStore.putIfAbsent(key, Once.default())</span>
+<span class="fc" id="L26">            return onceStore[key]!!.invoke(fn)</span>
+        }
+
+        override fun keys(): Set&lt;KEY&gt; {
+<span class="fc" id="L30">            return onceStore.keys</span>
+        }
+    }
+
+<span class="nc" id="L34">    class LruImpl&lt;KEY : Any, VALUE : Any&gt;(maxCapacity: Int) : KeyedOnce&lt;KEY, VALUE&gt; {</span>
+<span class="nc" id="L35">        private val onceStore: LruCache&lt;KEY, Once&lt;VALUE&gt;&gt; = LruCache.DefaultImpl(maxCapacity)</span>
+
+        override fun invoke(key: KEY, fn: () -&gt; VALUE): VALUE {
+<span class="nc" id="L38">            onceStore.putIfAbsent(key, Once.default())</span>
+<span class="nc" id="L39">            return onceStore[key].invoke(fn)</span>
+        }
+
+        override fun keys(): Set&lt;KEY&gt; {
+<span class="nc" id="L43">            return onceStore.keys()</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Exec.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.repository.memory</a> &gt; <span class="el_source">Exec.kt</span></div><h1>Exec.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.repository.memory
+
+import io.hamal.backend.repository.api.ExecCmdRepository
+import io.hamal.backend.repository.api.ExecQueryRepository
+import io.hamal.backend.repository.api.domain.*
+import io.hamal.lib.domain.ComputeId
+import io.hamal.lib.domain.vo.CompletedAt
+import io.hamal.lib.domain.vo.ExecId
+import io.hamal.lib.domain.vo.QueuedAt
+import io.hamal.lib.domain.vo.ScheduledAt
+
+object MemoryExecRepository : ExecCmdRepository, ExecQueryRepository {
+
+<span class="fc" id="L14">    private val execs = mutableMapOf&lt;ExecId, Exec&gt;()</span>
+
+<span class="fc" id="L16">    private val queue = mutableListOf&lt;QueuedExec&gt;()</span>
+<span class="fc" id="L17">    private val inFlightExecs = mutableListOf&lt;InFlightExec&gt;()</span>
+
+    override fun plan(computeId: ComputeId, execToPlan: ExecCmdRepository.ExecToPlan): PlannedExec {
+<span class="fc" id="L20">        return PlannedExec(</span>
+<span class="fc" id="L21">            id = execToPlan.id,</span>
+<span class="fc" id="L22">            computeId = computeId,</span>
+<span class="fc" id="L23">            correlation = execToPlan.correlation,</span>
+<span class="fc" id="L24">            inputs = execToPlan.inputs,</span>
+<span class="fc" id="L25">            secrets = execToPlan.secrets,</span>
+<span class="fc" id="L26">            code = execToPlan.code,</span>
+<span class="fc" id="L27">            invocation = execToPlan.trigger</span>
+<span class="fc" id="L28">        ).also { execs[it.id] = it }</span>
+    }
+
+    override fun schedule(computeId: ComputeId, planedExec: PlannedExec): ScheduledExec {
+<span class="fc" id="L32">        return ScheduledExec(</span>
+<span class="fc" id="L33">            id = planedExec.id,</span>
+<span class="fc" id="L34">            computeId = computeId,</span>
+<span class="fc" id="L35">            scheduledAt = ScheduledAt.now(),</span>
+<span class="fc" id="L36">            plannedExec = planedExec</span>
+<span class="fc" id="L37">        ).also { execs[it.id] = it }</span>
+    }
+
+    override fun enqueue(computeId: ComputeId, scheduledExec: ScheduledExec): QueuedExec {
+<span class="fc" id="L41">        val result = QueuedExec(</span>
+<span class="fc" id="L42">            id = scheduledExec.id,</span>
+<span class="fc" id="L43">            computeId = computeId,</span>
+<span class="fc" id="L44">            queuedAt = QueuedAt.now(),</span>
+<span class="fc" id="L45">            scheduledExec = scheduledExec</span>
+<span class="fc" id="L46">        ).also { execs[it.id] = it }</span>
+<span class="fc" id="L47">        queue.add(result)</span>
+<span class="fc" id="L48">        return result</span>
+    }
+
+    override fun complete(computeId: ComputeId, inFlightExec: InFlightExec): CompletedExec {
+<span class="fc" id="L52">        inFlightExecs.removeIf { it.id == inFlightExec.id }</span>
+<span class="fc" id="L53">        return CompletedExec(</span>
+<span class="fc" id="L54">            id = inFlightExec.id,</span>
+<span class="fc" id="L55">            computeId = computeId,</span>
+<span class="fc" id="L56">            completedAt = CompletedAt.now(),</span>
+<span class="fc" id="L57">            inFlightExec = inFlightExec</span>
+<span class="fc" id="L58">        ).also { execs[it.id] = it }</span>
+    }
+
+
+    override fun dequeue(computeId: ComputeId): List&lt;InFlightExec&gt; {
+<span class="fc bfc" id="L63" title="All 2 branches covered.">        if (queue.isEmpty()) {</span>
+<span class="fc" id="L64">            return listOf()</span>
+        }
+
+<span class="fc" id="L67">        val result = mutableListOf&lt;InFlightExec&gt;()</span>
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">        for (idx in 0 until 10) {</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">            if (queue.isEmpty()) {</span>
+<span class="fc" id="L70">                break</span>
+            }
+<span class="fc" id="L72">            val inFlightExec = queue.removeFirst().let {</span>
+<span class="fc" id="L73">                InFlightExec(</span>
+<span class="fc" id="L74">                    id = it.id,</span>
+<span class="fc" id="L75">                    computeId = computeId,</span>
+<span class="fc" id="L76">                    queuedExec = it</span>
+<span class="fc" id="L77">                ).also { execs[it.id] = it }</span>
+            }
+
+<span class="fc" id="L80">            inFlightExecs.add(inFlightExec)</span>
+<span class="fc" id="L81">            result.add(inFlightExec)</span>
+        }
+
+<span class="fc" id="L84">        return result</span>
+    }
+
+    override fun find(execId: ExecId): Exec? {
+<span class="fc" id="L88">        return execs[execId]</span>
+    }
+
+    override fun list(afterId: ExecId, limit: Int): List&lt;Exec&gt; {
+<span class="nc" id="L92">        return execs.keys.sorted()</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">            .dropWhile { it &lt;= afterId }</span>
+<span class="nc" id="L94">            .take(limit)</span>
+<span class="nc" id="L95">            .map { execs.get(it)!! }</span>
+<span class="nc" id="L96">            .reversed()</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

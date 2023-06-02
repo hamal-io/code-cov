@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BaseRepository.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.repository.sqlite</a> &gt; <span class="el_source">BaseRepository.kt</span></div><h1>BaseRepository.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.repository.sqlite
+
+import io.hamal.backend.repository.sqlite.internal.Connection
+import io.hamal.backend.repository.sqlite.internal.DefaultConnection
+import io.hamal.lib.common.util.FileUtils
+import io.hamal.lib.domain.Once
+import io.hamal.lib.common.Shard
+import logger
+import java.io.Closeable
+import java.nio.file.Path
+import kotlin.io.path.Path
+
+<span class="fc" id="L13">abstract class BaseRepository(</span>
+<span class="fc" id="L14">    val config: Config</span>
+) : Closeable {
+
+<span class="fc" id="L17">    protected val log = logger(this::class)</span>
+
+<span class="fc" id="L19">    private val connectionOnce = Once.default&lt;Connection&gt;()</span>
+
+    internal val connection: Connection
+<span class="fc" id="L22">        get() = connectionOnce {</span>
+<span class="fc" id="L23">            val result = DefaultConnection(</span>
+<span class="fc" id="L24">                this::class,</span>
+<span class="fc" id="L25">                &quot;jdbc:sqlite:${ensureFilePath(config)}&quot;</span>
+            )
+<span class="fc" id="L27">            log.debug(&quot;Setup connection&quot;)</span>
+<span class="fc" id="L28">            setupConnection(result)</span>
+<span class="fc" id="L29">            log.debug(&quot;Setup schema&quot;)</span>
+<span class="fc" id="L30">            setupSchema(result)</span>
+<span class="fc" id="L31">            result</span>
+<span class="fc" id="L32">        }</span>
+
+    interface Config {
+        val path: Path
+        val filename: String
+        val shard: Shard
+    }
+
+    abstract fun setupConnection(connection: Connection)
+    abstract fun setupSchema(connection: Connection)
+    abstract fun clear()
+
+    override fun close() {
+<span class="nc bnc" id="L45" title="All 2 branches missed.">        if (connection.isOpen) {</span>
+<span class="nc" id="L46">            connection.close()</span>
+        }
+<span class="nc" id="L48">    }</span>
+}
+
+private fun ensureFilePath(config: BaseRepository.Config): Path {
+<span class="fc" id="L52">    return FileUtils.createDirectories(config.path)</span>
+<span class="fc" id="L53">        .resolve(Path(config.filename))</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

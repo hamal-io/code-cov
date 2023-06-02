@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EthString.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.web3.eth.abi</a> &gt; <span class="el_source">EthString.kt</span></div><h1>EthString.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.web3.eth.abi
+
+import io.hamal.lib.web3.util.ByteWindow
+import io.hamal.lib.web3.util.Web3Parser
+
+sealed class EthString : EthType&lt;String&gt; {
+<span class="nc" id="L7">    operator fun get(idx: Int): Char = value[idx]</span>
+
+<span class="nc" id="L9">    fun lowercase(): String = value.lowercase()</span>
+
+    fun filter(predicate: (Char) -&gt; Boolean): String {
+<span class="nc" id="L12">        return value.filter(predicate)</span>
+    }
+
+    fun all(predicate: (Char) -&gt; Boolean): Boolean {
+<span class="nc" id="L16">        return value.all(predicate)</span>
+    }
+}
+
+<span class="nc" id="L20">data class EthHexString(</span>
+<span class="nc" id="L21">    override val value: String</span>
+<span class="nc" id="L22">) : EthString() {</span>
+
+<span class="nc" id="L24">    init {</span>
+<span class="nc" id="L25">        ValidateHexString(value)</span>
+<span class="nc" id="L26">    }</span>
+
+<span class="nc" id="L28">    override fun toByteArray(): ByteArray = Web3Parser.parseHex(value)</span>
+<span class="nc" id="L29">    override fun toByteWindow() = ByteWindow.of(this)</span>
+<span class="nc" id="L30">    override fun toString(): String = value</span>
+}
+
+<span class="nc" id="L33">data class EthPrefixedHexString(</span>
+<span class="nc" id="L34">    override val value: String</span>
+<span class="nc" id="L35">) : EthString() {</span>
+<span class="nc" id="L36">    init {</span>
+<span class="nc bnc" id="L37" title="All 2 branches missed.">        require(value.startsWith(&quot;0x&quot;)) { &quot;$value does not start with 0x&quot; }</span>
+<span class="nc" id="L38">        ValidateHexString(value.substring(2))</span>
+<span class="nc" id="L39">    }</span>
+
+<span class="nc" id="L41">    fun toHexString(): EthHexString = EthHexString(value.substring(2))</span>
+<span class="nc" id="L42">    override fun toByteArray(): ByteArray = toHexString().toByteArray()</span>
+<span class="nc" id="L43">    override fun toByteWindow() = ByteWindow.of(this)</span>
+<span class="nc" id="L44">    override fun toString(): String = value</span>
+}
+
+
+internal object ValidateHexString {
+    operator fun invoke(hexCandidate: String) {
+<span class="nc bnc" id="L50" title="All 4 branches missed.">        require(hexPattern.find(hexCandidate) != null) { &quot;$hexCandidate does not match hex pattern&quot; }</span>
+
+<span class="nc" id="L52">    }</span>
+
+<span class="nc" id="L54">    private val hexPattern = Regex(&quot;&quot;&quot;^[0-9a-fA-F]*$&quot;&quot;&quot;)</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Assignment.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.script.impl.ast.stmt</a> &gt; <span class="el_source">Assignment.kt</span></div><h1>Assignment.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.script.impl.ast.stmt
+
+import io.hamal.lib.script.api.ast.Expression
+import io.hamal.lib.script.api.ast.Statement
+import io.hamal.lib.script.impl.ast.Parser.Context
+import io.hamal.lib.script.impl.ast.expr.IdentifierLiteral
+import io.hamal.lib.script.impl.ast.expr.Precedence
+import io.hamal.lib.script.impl.ast.parseExpression
+import io.hamal.lib.script.impl.token.Token.Type.*
+
+interface Assignment : Statement {
+    val identifiers: List&lt;IdentifierLiteral&gt;
+    val expressions: List&lt;Expression&gt;
+
+<span class="fc" id="L15">    data class Global(</span>
+<span class="fc" id="L16">        override val identifiers: List&lt;IdentifierLiteral&gt;,</span>
+<span class="fc" id="L17">        override val expressions: List&lt;Expression&gt;</span>
+    ) : Assignment {
+<span class="nc" id="L19">        constructor(identifier: IdentifierLiteral, expression: Expression) : this(</span>
+<span class="nc" id="L20">            listOf(identifier),</span>
+<span class="nc" id="L21">            listOf(expression)</span>
+<span class="nc" id="L22">        )</span>
+
+<span class="fc" id="L24">        init {</span>
+<span class="pc bpc" id="L25" title="3 of 6 branches missed.">            assert(identifiers.isNotEmpty())</span>
+<span class="pc bpc" id="L26" title="3 of 6 branches missed.">            assert(identifiers.size == expressions.size)</span>
+<span class="fc" id="L27">        }</span>
+
+        internal object Parse : ParseStatement&lt;Global&gt; {
+            override fun invoke(ctx: Context): Global {
+<span class="fc" id="L31">                ctx.expectCurrentTokenTypToBe(Identifier)</span>
+<span class="fc" id="L32">                val identifiers = ctx.parseIdentifiers()</span>
+<span class="fc" id="L33">                ctx.expectCurrentTokenTypToBe(Equal)</span>
+<span class="fc" id="L34">                ctx.advance()</span>
+<span class="fc" id="L35">                val expressions = ctx.parseExpressions()</span>
+<span class="fc" id="L36">                return Global(identifiers, expressions)</span>
+            }
+        }
+    }
+
+<span class="fc" id="L41">    data class Local(</span>
+<span class="fc" id="L42">        override val identifiers: List&lt;IdentifierLiteral&gt;,</span>
+<span class="fc" id="L43">        override val expressions: List&lt;Expression&gt;</span>
+    ) : Assignment {
+<span class="nc" id="L45">        constructor(identifier: IdentifierLiteral, expression: Expression) : this(</span>
+<span class="nc" id="L46">            listOf(identifier),</span>
+<span class="nc" id="L47">            listOf(expression)</span>
+<span class="nc" id="L48">        )</span>
+
+<span class="fc" id="L50">        init {</span>
+<span class="pc bpc" id="L51" title="3 of 6 branches missed.">            assert(identifiers.isNotEmpty())</span>
+<span class="pc bpc" id="L52" title="3 of 6 branches missed.">            assert(identifiers.size == expressions.size)</span>
+<span class="fc" id="L53">        }</span>
+
+        internal object Parse : ParseStatement&lt;Local&gt; {
+            override fun invoke(ctx: Context): Local {
+<span class="fc" id="L57">                ctx.expectCurrentTokenTypToBe(Local)</span>
+<span class="fc" id="L58">                ctx.advance()</span>
+<span class="fc" id="L59">                ctx.expectCurrentTokenTypToBe(Identifier)</span>
+<span class="fc" id="L60">                val identifiers = ctx.parseIdentifiers()</span>
+<span class="fc" id="L61">                ctx.expectCurrentTokenTypToBe(Equal)</span>
+<span class="fc" id="L62">                ctx.advance()</span>
+<span class="fc" id="L63">                val expressions = ctx.parseExpressions()</span>
+<span class="fc" id="L64">                return Local(identifiers, expressions)</span>
+            }
+        }
+    }
+}
+
+
+private fun Context.parseIdentifiers(): List&lt;IdentifierLiteral&gt; {
+<span class="fc" id="L72">    val result = mutableListOf&lt;IdentifierLiteral&gt;()</span>
+    do {
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">        if (currentTokenType() == Comma) {</span>
+<span class="nc" id="L75">            advance()</span>
+        }
+<span class="fc" id="L77">        result.add(IdentifierLiteral.Parse(this))</span>
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">    } while (currentTokenType() == Comma)</span>
+<span class="fc" id="L79">    return result</span>
+}
+
+private fun Context.parseExpressions(): List&lt;Expression&gt; {
+<span class="fc" id="L83">    val result = mutableListOf&lt;Expression&gt;()</span>
+    do {
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">        if (currentTokenType() == Comma) {</span>
+<span class="nc" id="L86">            advance()</span>
+        }
+<span class="fc" id="L88">        result.add(parseExpression(Precedence.Lowest))</span>
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">    } while (currentTokenType() == Comma)</span>
+<span class="fc" id="L90">    return result</span>
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
