@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RepositoryConfig.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.config</a> &gt; <span class="el_source">RepositoryConfig.kt</span></div><h1>RepositoryConfig.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.config
+
+import io.hamal.backend.repository.api.*
+import io.hamal.backend.repository.api.log.LogBroker
+import io.hamal.backend.repository.api.log.LogBrokerRepository
+import io.hamal.backend.repository.memory.*
+import io.hamal.backend.repository.sqlite.log.DefaultLogBrokerRepository
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import kotlin.io.path.Path
+
+<span class="nc" id="L12">@Configuration</span>
+<span class="nc" id="L13">open class RepositoryConfig {</span>
+    @Bean
+    open fun brokerRepository(): LogBrokerRepository {
+<span class="nc" id="L16">        return DefaultLogBrokerRepository(LogBroker(LogBroker.Id(1), Path(&quot;/tmp/hamal&quot;)))</span>
+    }
+
+    @Bean
+<span class="nc" id="L20">    open fun funcCmdRepository(): FuncCmdRepository = MemoryFuncRepository</span>
+
+    @Bean
+<span class="nc" id="L23">    open fun funcQueryRepository(): FuncQueryRepository = MemoryFuncRepository</span>
+
+    @Bean
+<span class="nc" id="L26">    open fun execCmdRepository(): ExecCmdRepository = MemoryExecRepository</span>
+
+    @Bean
+<span class="nc" id="L29">    open fun execQueryRepository(): ExecQueryRepository = MemoryExecRepository</span>
+
+    @Bean
+<span class="nc" id="L32">    open fun triggerCmdRepository(): TriggerCmdRepository = MemoryTriggerRepository</span>
+
+    @Bean
+<span class="nc" id="L35">    open fun triggerQueryRepository(): TriggerQueryRepository = MemoryTriggerRepository</span>
+
+    @Bean
+<span class="nc" id="L38">    open fun stateCmdRepository(): StateCmdRepository = MemoryStateRepository</span>
+
+    @Bean
+<span class="nc" id="L41">    open fun stateQueryRepository(): StateQueryRepository = MemoryStateRepository</span>
+
+    @Bean
+<span class="nc" id="L44">    open fun reqCmdRepository(): ReqCmdRepository = MemoryReqRepository</span>
+
+    @Bean
+<span class="nc" id="L47">    open fun reqQueryRepository(): ReqQueryRepository = MemoryReqRepository</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

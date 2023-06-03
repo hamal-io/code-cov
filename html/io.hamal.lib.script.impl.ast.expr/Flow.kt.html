@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Flow.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.script.impl.ast.expr</a> &gt; <span class="el_source">Flow.kt</span></div><h1>Flow.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.script.impl.ast.expr
+
+import io.hamal.lib.script.api.ast.Expression
+import io.hamal.lib.script.impl.ast.Parser
+import io.hamal.lib.script.impl.ast.expr.Precedence.Lowest
+import io.hamal.lib.script.impl.ast.parseBlockStatement
+import io.hamal.lib.script.impl.ast.parseExpression
+import io.hamal.lib.script.impl.ast.stmt.Block
+import io.hamal.lib.script.impl.ast.stmt.DoStmt
+import io.hamal.lib.script.impl.token.Token.Type.*
+
+<span class="fc" id="L12">data class ConditionalExpression(</span>
+<span class="fc" id="L13">    val condition: Expression,</span>
+<span class="fc" id="L14">    val block: Block</span>
+)
+
+<span class="fc" id="L17">data class IfExpression(</span>
+<span class="fc" id="L18">    val conditionalExpression: List&lt;ConditionalExpression&gt;</span>
+) : Expression {
+    internal object Parse : ParseExpression&lt;IfExpression&gt; {
+        override fun invoke(ctx: Parser.Context): IfExpression {
+<span class="fc" id="L22">            val conditionals = mutableListOf&lt;ConditionalExpression&gt;()</span>
+<span class="fc" id="L23">            ctx.expectCurrentTokenTypToBe(If)</span>
+<span class="fc" id="L24">            ctx.advance()</span>
+
+<span class="fc" id="L26">            conditionals.add(ctx.parseIf())</span>
+<span class="fc" id="L27">            conditionals.addAll(ctx.parseElseIf())</span>
+<span class="fc bfc" id="L28" title="All 2 branches covered.">            ctx.parseElse()?.let(conditionals::add)</span>
+
+<span class="fc" id="L30">            ctx.expectCurrentTokenTypToBe(End)</span>
+<span class="fc" id="L31">            ctx.advance()</span>
+<span class="fc" id="L32">            return IfExpression(conditionals)</span>
+        }
+
+
+        private fun Parser.Context.parseIf(): ConditionalExpression {
+<span class="fc" id="L37">            val condition = parseExpression(Lowest)</span>
+<span class="fc" id="L38">            expectCurrentTokenTypToBe(Then)</span>
+<span class="fc" id="L39">            advance()</span>
+<span class="fc" id="L40">            return ConditionalExpression(</span>
+<span class="fc" id="L41">                condition = condition,</span>
+<span class="fc" id="L42">                block = parseBlockStatement()</span>
+            )
+        }
+
+        private fun Parser.Context.parseElseIf(): List&lt;ConditionalExpression&gt; {
+<span class="fc" id="L47">            val result = mutableListOf&lt;ConditionalExpression&gt;()</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">            while (currentTokenType() == ElseIf) {</span>
+<span class="fc" id="L49">                advance()</span>
+<span class="fc" id="L50">                val condition = parseExpression(Lowest)</span>
+<span class="fc" id="L51">                expectCurrentTokenTypToBe(Then)</span>
+<span class="fc" id="L52">                advance()</span>
+<span class="fc" id="L53">                result.add(</span>
+<span class="fc" id="L54">                    ConditionalExpression(</span>
+<span class="fc" id="L55">                        condition = condition,</span>
+<span class="fc" id="L56">                        block = parseBlockStatement()</span>
+                    )
+                )
+            }
+<span class="fc" id="L60">            return result</span>
+        }
+
+        private fun Parser.Context.parseElse(): ConditionalExpression? {
+<span class="fc bfc" id="L64" title="All 2 branches covered.">            if (currentTokenType() != Else) {</span>
+<span class="fc" id="L65">                return null</span>
+            }
+<span class="fc" id="L67">            advance()</span>
+<span class="fc" id="L68">            return ConditionalExpression(</span>
+<span class="fc" id="L69">                condition = TrueLiteral,</span>
+<span class="fc" id="L70">                block = parseBlockStatement()</span>
+            )
+        }
+    }
+}
+
+<span class="fc" id="L76">data class ForLoopExpression(</span>
+<span class="fc" id="L77">    val identifier: IdentifierLiteral,</span>
+<span class="fc" id="L78">    val startExpression: Expression,</span>
+<span class="fc" id="L79">    val endExpression: Expression,</span>
+<span class="fc" id="L80">    val stepExpression: Expression,</span>
+<span class="fc" id="L81">    val block: DoStmt</span>
+) : Expression {
+    internal object Parse : ParseExpression&lt;ForLoopExpression&gt; {
+        override fun invoke(ctx: Parser.Context): ForLoopExpression {
+<span class="fc" id="L85">            ctx.expectCurrentTokenTypToBe(For)</span>
+<span class="fc" id="L86">            ctx.advance()</span>
+
+<span class="fc" id="L88">            val identifier = ctx.parseIdentifier()</span>
+<span class="fc" id="L89">            ctx.expectCurrentTokenTypToBe(Equal)</span>
+<span class="fc" id="L90">            ctx.advance()</span>
+<span class="fc" id="L91">            val startExpression = ctx.parseExpression(Lowest)</span>
+<span class="fc" id="L92">            ctx.expectCurrentTokenTypToBe(Comma)</span>
+<span class="fc" id="L93">            ctx.advance()</span>
+<span class="fc" id="L94">            val endExpression = ctx.parseExpression(Lowest)</span>
+
+
+<span class="fc bfc" id="L97" title="All 2 branches covered.">            val stepExpression = if (ctx.currentTokenType() == Comma) {</span>
+<span class="fc" id="L98">                ctx.advance()</span>
+<span class="fc" id="L99">                ctx.parseExpression(Lowest)</span>
+            } else {
+<span class="fc" id="L101">                NumberLiteral(1)</span>
+            }
+
+<span class="fc" id="L104">            return ForLoopExpression(</span>
+<span class="fc" id="L105">                identifier = identifier,</span>
+<span class="fc" id="L106">                startExpression = startExpression,</span>
+<span class="fc" id="L107">                endExpression = endExpression,</span>
+<span class="fc" id="L108">                stepExpression = stepExpression,</span>
+<span class="fc" id="L109">                block = DoStmt.Parse(ctx)</span>
+            )
+
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

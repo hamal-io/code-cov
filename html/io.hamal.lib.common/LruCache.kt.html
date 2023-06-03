@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LruCache.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.common</a> &gt; <span class="el_source">LruCache.kt</span></div><h1>LruCache.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.common
+
+import java.util.concurrent.locks.ReadWriteLock
+import java.util.concurrent.locks.ReentrantReadWriteLock
+import kotlin.concurrent.withLock
+
+interface LruCache&lt;KEY : Any, VALUE : Any&gt; {
+
+    fun put(key: KEY, value: VALUE)
+
+    fun putIfAbsent(key: KEY, value: VALUE)
+
+    fun find(key: KEY): VALUE?
+
+    operator fun get(key: KEY): VALUE {
+<span class="pc bpc" id="L16" title="1 of 2 branches missed.">        return find(key) ?: throw IllegalArgumentException(&quot;$key&quot;)</span>
+    }
+
+    fun computeIfAbsent(key: KEY, mapper: (KEY) -&gt; VALUE): VALUE
+
+    fun size(): Int
+
+    fun keys(): Set&lt;KEY&gt;
+
+<span class="fc" id="L25">    class DefaultImpl&lt;KEY : Any, VALUE : Any&gt;(capacity: Int) : LruCache&lt;KEY, VALUE&gt; {</span>
+        private var store: LinkedHashMap&lt;KEY, VALUE&gt;
+<span class="fc" id="L27">        private val lock: ReadWriteLock = ReentrantReadWriteLock()</span>
+
+<span class="fc" id="L29">        init {</span>
+<span class="fc" id="L30">            store = object : LinkedHashMap&lt;KEY, VALUE&gt;(capacity, 0.75f, true) {</span>
+                override fun removeEldestEntry(eldest: Map.Entry&lt;KEY, VALUE&gt;): Boolean {
+<span class="fc bfc" id="L32" title="All 2 branches covered.">                    return size &gt; capacity</span>
+                }
+            }
+<span class="fc" id="L35">        }</span>
+
+        override fun put(key: KEY, value: VALUE) {
+<span class="fc" id="L38">            lock.writeLock().withLock {</span>
+<span class="fc" id="L39">                store[key] = value</span>
+<span class="fc" id="L40">            }</span>
+<span class="fc" id="L41">        }</span>
+
+        override fun putIfAbsent(key: KEY, value: VALUE) {
+<span class="fc" id="L44">            lock.writeLock().withLock {</span>
+<span class="fc" id="L45">                store.putIfAbsent(key, value)</span>
+            }
+<span class="fc" id="L47">        }</span>
+
+        override fun find(key: KEY): VALUE? {
+<span class="fc" id="L50">            return lock.readLock().withLock {</span>
+<span class="fc" id="L51">                store[key]</span>
+            }
+        }
+
+        override fun computeIfAbsent(key: KEY, mapper: (KEY) -&gt; VALUE): VALUE {
+<span class="fc" id="L56">            return lock.writeLock().withLock {</span>
+<span class="fc" id="L57">                store.computeIfAbsent(key, mapper)</span>
+            }
+        }
+
+
+        override fun size(): Int {
+<span class="fc" id="L63">            return lock.readLock()</span>
+<span class="fc" id="L64">                .withLock {</span>
+<span class="fc" id="L65">                    store.size</span>
+                }
+        }
+
+        override fun keys(): Set&lt;KEY&gt; {
+<span class="nc" id="L70">            return lock.readLock().withLock { store.keys }</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

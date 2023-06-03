@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InvokeEventHandler.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.req.handler.invocation</a> &gt; <span class="el_source">InvokeEventHandler.kt</span></div><h1>InvokeEventHandler.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.req.handler.invocation
+
+import io.hamal.backend.repository.api.domain.EventInvocation
+import io.hamal.backend.repository.api.domain.InvokeEventReq
+import io.hamal.backend.req.ReqHandler
+import io.hamal.backend.req.handler.computeId
+import io.hamal.backend.req.handler.toExecInputs
+import io.hamal.backend.req.handler.toExecSecrets
+import io.hamal.backend.service.cmd.ExecCmdService
+import io.hamal.backend.service.cmd.ExecCmdService.ToPlan
+import io.hamal.backend.service.query.FuncQueryService
+import io.hamal.lib.domain.Correlation
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
+
+@Component
+<span class="nc" id="L17">class InvokeEventHandler(</span>
+<span class="nc" id="L18">    @Autowired private val execCmdService: ExecCmdService,</span>
+<span class="nc" id="L19">    @Autowired private val funcQueryService: FuncQueryService</span>
+<span class="nc" id="L20">) : ReqHandler&lt;InvokeEventReq&gt;(InvokeEventReq::class) {</span>
+    override fun invoke(req: InvokeEventReq) {
+<span class="nc" id="L22">        val func = funcQueryService.get(req.funcId)</span>
+<span class="nc" id="L23">        execCmdService.plan(</span>
+<span class="nc" id="L24">            req.computeId(), ToPlan(</span>
+<span class="nc" id="L25">                execId = req.execId,</span>
+<span class="nc" id="L26">                shard = func.shard,</span>
+<span class="nc" id="L27">                code = func.code,</span>
+<span class="nc" id="L28">                correlation = Correlation(</span>
+<span class="nc" id="L29">                    correlationId = req.correlationId,</span>
+<span class="nc" id="L30">                    funcId = func.id</span>
+                ),
+<span class="nc" id="L32">                inputs = req.inputs.toExecInputs(),</span>
+<span class="nc" id="L33">                secrets = req.secrets.toExecSecrets(),</span>
+                // FIXME func for audit purpose ?
+<span class="nc" id="L35">                invocation = EventInvocation()</span>
+            )
+        )
+<span class="nc" id="L38">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

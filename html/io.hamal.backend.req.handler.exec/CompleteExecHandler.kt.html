@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CompleteExecHandler.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.req.handler.exec</a> &gt; <span class="el_source">CompleteExecHandler.kt</span></div><h1>CompleteExecHandler.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.req.handler.exec
+
+import io.hamal.backend.repository.api.domain.CompleteExecReq
+import io.hamal.backend.repository.api.domain.InFlightExec
+import io.hamal.backend.req.ReqHandler
+import io.hamal.backend.req.handler.computeId
+import io.hamal.backend.service.cmd.ExecCmdService
+import io.hamal.backend.service.cmd.StateCmdService
+import io.hamal.backend.service.query.ExecQueryService
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
+
+@Component
+<span class="nc" id="L14">class CompleteExecHandler(</span>
+<span class="nc" id="L15">    @Autowired private val execQueryService: ExecQueryService,</span>
+<span class="nc" id="L16">    @Autowired private val execCmdService: ExecCmdService,</span>
+<span class="nc" id="L17">    @Autowired private val stateCmdService: StateCmdService,</span>
+<span class="nc" id="L18">) : ReqHandler&lt;CompleteExecReq&gt;(CompleteExecReq::class) {</span>
+
+
+    override fun invoke(req: CompleteExecReq) {
+<span class="nc" id="L22">        val computeId = req.computeId()</span>
+
+<span class="nc" id="L24">        execQueryService.find(req.execId)</span>
+<span class="nc bnc" id="L25" title="All 2 branches missed.">            ?.let { exec -&gt;</span>
+<span class="nc bnc" id="L26" title="All 2 branches missed.">                if (exec is InFlightExec) {</span>
+
+<span class="nc bnc" id="L28" title="All 2 branches missed.">                    if (exec.correlation != null) {</span>
+<span class="nc" id="L29">                        stateCmdService.set(</span>
+<span class="nc" id="L30">                            computeId, StateCmdService.StateToSet(</span>
+<span class="nc" id="L31">                                shard = req.shard,</span>
+<span class="nc" id="L32">                                correlation = exec.correlation!!,</span>
+<span class="nc" id="L33">                                payload = req.statePayload</span>
+                            )
+                        )
+                    }
+
+<span class="nc" id="L38">                    execCmdService.complete(</span>
+<span class="nc" id="L39">                        computeId = computeId,</span>
+<span class="nc" id="L40">                        inFlightExec = exec</span>
+                    )
+                }
+<span class="nc" id="L43">            }</span>
+<span class="nc" id="L44">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

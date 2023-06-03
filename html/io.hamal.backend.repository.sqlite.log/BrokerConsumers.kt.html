@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BrokerConsumers.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.repository.sqlite.log</a> &gt; <span class="el_source">BrokerConsumers.kt</span></div><h1>BrokerConsumers.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.repository.sqlite.log
+
+import io.hamal.backend.repository.api.log.*
+import io.hamal.backend.repository.sqlite.BaseRepository
+import io.hamal.backend.repository.sqlite.internal.Connection
+import io.hamal.lib.common.Shard
+import io.hamal.lib.domain.vo.TopicId
+import java.nio.file.Path
+
+<span class="fc" id="L10">data class BrokerConsumers(</span>
+<span class="pc" id="L11">    val logBrokerId: LogBroker.Id,</span>
+<span class="fc" id="L12">    val path: Path</span>
+)
+
+<span class="fc" id="L15">class DefaultLogBrokerConsumersRepository(</span>
+<span class="pc" id="L16">    internal val brokerConsumers: BrokerConsumers,</span>
+<span class="fc" id="L17">) : BaseRepository(</span>
+<span class="fc" id="L18">    object : Config {</span>
+<span class="fc" id="L19">        override val path: Path get() = brokerConsumers.path</span>
+<span class="fc" id="L20">        override val filename: String get() = &quot;consumers.db&quot;</span>
+<span class="nc" id="L21">        override val shard: Shard get() = Shard(0)</span>
+
+    }
+), LogBrokerConsumersRepository {
+
+    override fun setupConnection(connection: Connection) {
+<span class="fc" id="L27">        connection.execute(&quot;&quot;&quot;PRAGMA journal_mode = wal;&quot;&quot;&quot;)</span>
+<span class="fc" id="L28">        connection.execute(&quot;&quot;&quot;PRAGMA locking_mode = exclusive;&quot;&quot;&quot;)</span>
+<span class="fc" id="L29">        connection.execute(&quot;&quot;&quot;PRAGMA temp_store = memory;&quot;&quot;&quot;)</span>
+<span class="fc" id="L30">        connection.execute(&quot;&quot;&quot;PRAGMA synchronous = off;&quot;&quot;&quot;)</span>
+<span class="fc" id="L31">    }</span>
+
+    override fun setupSchema(connection: Connection) {
+<span class="fc" id="L34">        connection.tx {</span>
+<span class="fc" id="L35">            execute(</span>
+                &quot;&quot;&quot;
+                CREATE TABLE IF NOT EXISTS consumers (
+                   group_id TEXT NOT NULL ,
+                   topic_id INTEGER NOT NULL ,
+                   next_chunk_id INTEGER NOT NULL ,
+                   PRIMARY KEY (topic_id,group_id)
+               )
+<span class="fc" id="L43">            &quot;&quot;&quot;.trimIndent()</span>
+            )
+<span class="fc" id="L45">        }</span>
+<span class="fc" id="L46">    }</span>
+
+    override fun nextChunkId(groupId: GroupId, topicId: TopicId): LogChunkId {
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        return connection.executeQueryOne(</span>
+<span class="fc" id="L50">            &quot;&quot;&quot;SELECT next_chunk_id FROM consumers WHERE group_id = :groupId and topic_id = :topicId&quot;&quot;&quot;</span>
+        ) {
+<span class="fc" id="L52">            with {</span>
+<span class="fc" id="L53">                set(&quot;groupId&quot;, groupId.value)</span>
+<span class="fc" id="L54">                set(&quot;topicId&quot;, topicId.value)</span>
+            }
+<span class="fc" id="L56">            map {</span>
+<span class="fc" id="L57">                LogChunkId(it.getSnowflakeId(&quot;next_chunk_id&quot;))</span>
+            }
+<span class="fc" id="L59">        } ?: LogChunkId(0)</span>
+    }
+
+    override fun commit(groupId: GroupId, topicId: TopicId, chunkId: LogChunkId) {
+<span class="fc" id="L63">        connection.execute(</span>
+            &quot;&quot;&quot;
+            INSERT INTO consumers(group_id, topic_id, next_chunk_id)
+                  VALUES(:groupId, :topicId, :nextChunkId)
+                     ON CONFLICT(group_id, topic_id) DO UPDATE SET
+                        next_chunk_id=excluded.next_chunk_id
+                        WHERE
+                            excluded.group_id  == consumers.group_id AND
+                            excluded.topic_id  == consumers.topic_id;
+<span class="fc" id="L72">                    &quot;&quot;&quot;.trimIndent(),</span>
+        ) {
+<span class="fc" id="L74">            set(&quot;groupId&quot;, groupId.value)</span>
+<span class="fc" id="L75">            set(&quot;topicId&quot;, topicId.value)</span>
+<span class="fc" id="L76">            set(&quot;nextChunkId&quot;, chunkId.value.value + 1)</span>
+        }
+<span class="fc" id="L78">    }</span>
+
+    override fun clear() {
+<span class="fc" id="L81">        connection.execute(&quot;DELETE FROM consumers&quot;)</span>
+<span class="fc" id="L82">    }</span>
+
+
+    override fun close() {
+<span class="fc" id="L86">        connection.close()</span>
+<span class="fc" id="L87">    }</span>
+}
+
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">fun DefaultLogBrokerConsumersRepository.count() = connection.executeQueryOne(&quot;SELECT COUNT(*) as count from consumers&quot;) {</span>
+<span class="fc" id="L91">    map {</span>
+<span class="fc" id="L92">        it.getLong(&quot;count&quot;).toULong()</span>
+    }
+<span class="pc" id="L94">} ?: 0UL</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Call.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.script.impl.ast.expr</a> &gt; <span class="el_source">Call.kt</span></div><h1>Call.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.script.impl.ast.expr
+
+import io.hamal.lib.script.api.ast.Expression
+import io.hamal.lib.script.impl.ast.Parser.Context
+import io.hamal.lib.script.impl.ast.parseExpression
+import io.hamal.lib.script.impl.token.Token
+
+<span class="fc" id="L8">data class CallExpression(</span>
+<span class="fc" id="L9">    val identifier: Expression,</span>
+<span class="fc" id="L10">    val parameters: List&lt;Expression&gt;</span>
+) : Expression {
+    internal object Parse : ParseInfixExpression {
+        override fun invoke(ctx: Context, lhs: Expression): CallExpression {
+<span class="fc" id="L14">            return CallExpression(</span>
+<span class="fc" id="L15">                lhs,</span>
+<span class="fc" id="L16">                ctx.parseParameters()</span>
+            )
+        }
+
+        private fun Context.parseParameters(): List&lt;Expression&gt; {
+<span class="fc" id="L21">            expectCurrentTokenTypToBe(Token.Type.LeftParenthesis)</span>
+<span class="fc" id="L22">            advance()</span>
+
+<span class="fc bfc" id="L24" title="All 2 branches covered.">            if (currentTokenType() == Token.Type.RightParenthesis) {</span>
+<span class="fc" id="L25">                advance()</span>
+<span class="fc" id="L26">                return listOf()</span>
+            }
+
+<span class="fc" id="L29">            val result = mutableListOf&lt;Expression&gt;()</span>
+<span class="fc bfc" id="L30" title="All 2 branches covered.">            while (currentTokenType() != Token.Type.RightParenthesis) {</span>
+<span class="fc" id="L31">                result.add(parseExpression(Precedence.Lowest))</span>
+<span class="fc bfc" id="L32" title="All 2 branches covered.">                if (currentTokenType() == Token.Type.Comma) {</span>
+<span class="fc" id="L33">                    advance()</span>
+                }
+            }
+<span class="fc" id="L36">            advance()</span>
+<span class="fc" id="L37">            return result</span>
+        }
+    }
+
+<span class="nc" id="L41">    override fun toString() = &quot;$identifier(${parameters.joinToString(&quot;,&quot;) { it.toString() }})&quot;</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

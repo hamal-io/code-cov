@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Infix.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.script.impl.ast.expr</a> &gt; <span class="el_source">Infix.kt</span></div><h1>Infix.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.script.impl.ast.expr
+
+import io.hamal.lib.script.api.ast.Expression
+import io.hamal.lib.script.impl.ast.Parser.Context
+import io.hamal.lib.script.impl.ast.expr.Operator.*
+import io.hamal.lib.script.impl.ast.parseExpression
+import io.hamal.lib.script.impl.token.Token
+
+<span class="fc" id="L9">private val infixParseFnMapping = mapOf(</span>
+<span class="fc" id="L10">    IndexBasedAccess to TableAccessExpression.Parse,</span>
+<span class="fc" id="L11">    KeyBasedAccess to TableAccessExpression.Parse,</span>
+<span class="fc" id="L12">    Call to CallExpression.Parse,</span>
+
+<span class="fc" id="L14">    And to InfixExpression.Parse,</span>
+<span class="fc" id="L15">    Concat to InfixExpression.Parse,</span>
+<span class="fc" id="L16">    Equals to InfixExpression.Parse,</span>
+<span class="fc" id="L17">    Exponential to InfixExpression.Parse,</span>
+<span class="fc" id="L18">    Divide to InfixExpression.Parse,</span>
+<span class="fc" id="L19">    GreaterThan to InfixExpression.Parse,</span>
+<span class="fc" id="L20">    GreaterThanEquals to InfixExpression.Parse,</span>
+<span class="fc" id="L21">    LessThan to InfixExpression.Parse,</span>
+<span class="fc" id="L22">    LessThanEquals to InfixExpression.Parse,</span>
+<span class="fc" id="L23">    Minus to InfixExpression.Parse,</span>
+<span class="fc" id="L24">    Modulo to InfixExpression.Parse,</span>
+<span class="fc" id="L25">    Multiply to InfixExpression.Parse,</span>
+<span class="fc" id="L26">    NotEqual to InfixExpression.Parse,</span>
+<span class="fc" id="L27">    Or to InfixExpression.Parse,</span>
+<span class="fc" id="L28">    Plus to InfixExpression.Parse,</span>
+<span class="fc" id="L29">    ShiftLeft to InfixExpression.Parse,</span>
+<span class="fc" id="L30">    ShiftRight to InfixExpression.Parse,</span>
+)
+
+internal fun infixFn(type: Token.Type): ParseInfixExpression? =
+<span class="fc" id="L34">    infixParseFnMapping[Operator.from(type)]</span>
+
+internal interface ParseInfixExpression {
+    operator fun invoke(ctx: Context, lhs: Expression): Expression
+}
+
+
+<span class="fc" id="L41">data class InfixExpression(</span>
+<span class="fc" id="L42">    val lhs: Expression,</span>
+<span class="fc" id="L43">    val operator: Operator,</span>
+<span class="fc" id="L44">    var rhs: Expression</span>
+) : Expression {
+    internal object Parse : ParseInfixExpression {
+        override fun invoke(ctx: Context, lhs: Expression): Expression {
+<span class="fc" id="L48">            val precedence = ctx.currentPrecedence()</span>
+<span class="fc" id="L49">            val operator = Parse(ctx)</span>
+<span class="fc" id="L50">            val rhs = ctx.parseExpression(precedence)</span>
+
+<span class="fc bfc" id="L52" title="All 4 branches covered.">            if (operator.rightAssociative() &amp;&amp; lhs is InfixExpression) {</span>
+<span class="fc" id="L53">                return injectRightAssociativeExpression(lhs, operator, rhs)</span>
+            }
+<span class="fc" id="L55">            return InfixExpression(lhs = lhs, operator = operator, rhs)</span>
+        }
+
+<span class="fc bfc" id="L58" title="All 4 branches covered.">        private fun Operator.rightAssociative(): Boolean = this == Exponential || this == Concat</span>
+
+        private fun injectRightAssociativeExpression(
+            lhs: InfixExpression,
+            operator: Operator,
+            rhs: Expression
+        ): InfixExpression {
+<span class="fc" id="L65">            var nodeToInject: InfixExpression = lhs</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">            while (nodeToInject.rhs is InfixExpression) {</span>
+<span class="fc" id="L67">                nodeToInject = nodeToInject.rhs as InfixExpression</span>
+            }
+<span class="fc" id="L69">            val newRhs = InfixExpression(</span>
+<span class="fc" id="L70">                lhs = nodeToInject.rhs,</span>
+<span class="fc" id="L71">                operator = operator,</span>
+<span class="fc" id="L72">                rhs = rhs</span>
+            )
+<span class="fc" id="L74">            nodeToInject.rhs = newRhs</span>
+<span class="fc" id="L75">            return lhs</span>
+        }
+
+    }
+
+    override fun toString(): String {
+<span class="fc" id="L81">        return &quot;$lhs $operator $rhs&quot;</span>
+    }
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

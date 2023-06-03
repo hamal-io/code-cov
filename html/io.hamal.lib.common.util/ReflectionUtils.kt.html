@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReflectionUtils.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.common.util</a> &gt; <span class="el_source">ReflectionUtils.kt</span></div><h1>ReflectionUtils.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.common.util
+
+import java.lang.reflect.Field
+import kotlin.reflect.KClass
+import kotlin.reflect.KProperty
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.memberProperties
+
+object ReflectionUtils {
+
+    fun declaredProperty(obj: Any, name: String): KProperty&lt;*&gt;? {
+<span class="fc" id="L12">        return declaredPropertiesOf(obj::class)</span>
+<span class="fc" id="L13">            .firstOrNull { it.name == name }</span>
+    }
+
+    fun memberProperty(obj: Any, name: String): KProperty&lt;*&gt;? {
+<span class="fc" id="L17">        return memberPropertiesOf(obj::class)</span>
+<span class="fc" id="L18">            .firstOrNull { it.name == name }</span>
+    }
+
+    fun &lt;TYPE : Any&gt; allFields(clazz: KClass&lt;out TYPE&gt;): List&lt;Field&gt; {
+<span class="fc" id="L22">        return allFields(clazz.java)</span>
+    }
+
+    fun &lt;TYPE : Any&gt; allFields(clazz: Class&lt;out TYPE&gt;): List&lt;Field&gt; {
+<span class="fc" id="L26">        return internal.JavaReflection.Fields.allFieldsOf(clazz)</span>
+<span class="fc" id="L27">            .filterNot { it.name.contains(&quot;this$&quot;) }</span>
+    }
+
+    fun &lt;TYPE : Any&gt; allFields(obj: TYPE): List&lt;Field&gt; {
+<span class="fc" id="L31">        return allFields(obj::class)</span>
+    }
+
+    fun &lt;TYPE : Any&gt; getValue(obj: TYPE, path: String): Any {
+<span class="fc" id="L35">        var currentObj = obj as Any</span>
+        fun throwNotFound() {
+<span class="fc" id="L37">            throw IllegalArgumentException(&quot;${obj::class.simpleName} does have field '$path'&quot;)</span>
+        }
+
+<span class="fc" id="L40">        val pathParts = path.split(&quot;.&quot;)</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        for (idx in 0 until pathParts.size - 1) {</span>
+<span class="fc bfc" id="L42" title="All 6 branches covered.">            currentObj = allFields(currentObj).find { it.name == pathParts[idx] }</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">                ?.let {</span>
+<span class="fc" id="L44">                    it.isAccessible = true</span>
+<span class="fc" id="L45">                    it.get(currentObj)</span>
+<span class="nc" id="L46">                } ?: throwNotFound()</span>
+        }
+
+<span class="pc bpc" id="L49" title="1 of 8 branches missed.">        return allFields(currentObj).find { it.name == pathParts.last() }?.let {</span>
+<span class="fc" id="L50">            it.isAccessible = true</span>
+            @Suppress(&quot;UNCHECKED_CAST&quot;)
+<span class="fc" id="L52">            it.get(currentObj) as TYPE</span>
+<span class="nc" id="L53">        } ?: throwNotFound()</span>
+    }
+
+    fun memberPropertiesOf(clazz: KClass&lt;*&gt;): List&lt;KProperty&lt;*&gt;&gt; {
+<span class="fc" id="L57">        return clazz::memberProperties.get()</span>
+<span class="fc" id="L58">            .filterNot { it.name.startsWith(&quot;__$&quot;) }</span>
+<span class="fc" id="L59">            .toList()</span>
+    }
+
+    fun declaredPropertiesOf(clazz: KClass&lt;*&gt;): List&lt;KProperty&lt;*&gt;&gt; {
+<span class="fc" id="L63">        return clazz::declaredMemberProperties.get()</span>
+<span class="fc" id="L64">            .filterNot { it.name.startsWith(&quot;__$&quot;) }</span>
+<span class="fc" id="L65">            .toList()</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

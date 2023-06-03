@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DepEnvironmentValue.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.script.api.value</a> &gt; <span class="el_source">DepEnvironmentValue.kt</span></div><h1>DepEnvironmentValue.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.script.api.value
+
+<span class="pc" id="L3">class DepEnvironmentValue(</span>
+<span class="fc" id="L4">    val identifier: DepIdentifier,</span>
+<span class="fc" id="L5">    values: Map&lt;DepIdentifier, DepValue&gt;? = null,</span>
+<span class="fc" id="L6">    global: DepEnvironmentValue? = null,</span>
+<span class="fc" id="L7">    parent: DepEnvironmentValue? = null</span>
+) : DepValue {
+
+<span class="pc" id="L10">    override val metaTable: DepMetaTable = DepMetaTableNotImplementedYet</span>
+
+<span class="nc" id="L12">    internal val global: DepEnvironmentValue</span>
+<span class="nc" id="L13">    internal val parent: DepEnvironmentValue</span>
+
+<span class="fc" id="L15">    private val values = mutableMapOf&lt;DepIdentifier, DepValue&gt;()</span>
+
+<span class="fc" id="L17">    init {</span>
+<span class="fc bfc" id="L18" title="All 2 branches covered.">        this.global = global ?: this</span>
+<span class="fc bfc" id="L19" title="All 2 branches covered.">        this.parent = parent ?: this</span>
+<span class="fc bfc" id="L20" title="All 2 branches covered.">        values?.let(this.values::putAll)</span>
+<span class="fc" id="L21">    }</span>
+
+    fun enterScope(): DepEnvironmentValue {
+<span class="fc" id="L24">        return DepEnvironmentValue(</span>
+<span class="fc" id="L25">            identifier = identifier,</span>
+<span class="fc" id="L26">            values = mutableMapOf(),</span>
+<span class="fc" id="L27">            global = this.global,</span>
+<span class="fc" id="L28">            parent = this</span>
+        )
+    }
+
+    fun leaveScope(): DepEnvironmentValue {
+<span class="fc" id="L33">        return parent</span>
+    }
+
+
+    fun addLocal(identifier: DepIdentifier, value: DepValue) {
+<span class="fc" id="L38">        values[identifier] = value</span>
+<span class="fc" id="L39">    }</span>
+
+    fun addGlobal(identifier: DepIdentifier, value: DepValue) {
+<span class="fc" id="L42">        global.values[identifier] = value</span>
+<span class="fc" id="L43">    }</span>
+
+    operator fun get(identifier: DepIdentifier): DepValue {
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        return find(identifier) ?: DepNilValue</span>
+    }
+
+<span class="fc" id="L49">    operator fun get(identifier: String) = get(DepIdentifier(identifier))</span>
+
+    fun find(identifier: DepIdentifier): DepValue? {
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        return if (parent == this) values[identifier]</span>
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">        else values[identifier] ?: parent.find(identifier)</span>
+    }
+
+    fun findFunctionValue(identifier: DepIdentifier): DepFunctionValue? {
+<span class="fc" id="L57">        val result = find(identifier)</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">        return if (result is DepFunctionValue) {</span>
+<span class="fc" id="L59">            result</span>
+        } else {
+<span class="fc" id="L61">            null</span>
+        }
+    }
+
+    fun findEnvironmentValue(identifier: DepIdentifier): DepEnvironmentValue? {
+<span class="fc" id="L66">        val result = find(identifier)</span>
+<span class="pc bpc" id="L67" title="1 of 2 branches missed.">        return if (result is DepEnvironmentValue) {</span>
+<span class="fc" id="L68">            result</span>
+        } else {
+<span class="nc" id="L70">            null</span>
+        }
+    }
+
+    fun findProtoTypeValue(identifier: DepIdentifier): DepPrototypeValue? {
+<span class="fc" id="L75">        val result = find(identifier)</span>
+<span class="pc bpc" id="L76" title="1 of 2 branches missed.">        return if (result is DepPrototypeValue) {</span>
+<span class="fc" id="L77">            result</span>
+        } else {
+<span class="nc" id="L79">            null</span>
+        }
+    }
+
+<span class="fc" id="L83">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

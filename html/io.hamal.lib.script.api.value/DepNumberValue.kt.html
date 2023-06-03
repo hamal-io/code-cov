@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DepNumberValue.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.script.api.value</a> &gt; <span class="el_source">DepNumberValue.kt</span></div><h1>DepNumberValue.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.script.api.value
+
+import io.hamal.lib.script.api.value.DepValueOperation.Type.*
+import java.math.BigDecimal
+import java.math.MathContext
+import java.math.RoundingMode
+
+
+<span class="fc" id="L9">data class DepNumberValue(</span>
+<span class="fc" id="L10">    private val delegate: BigDecimal,</span>
+<span class="fc" id="L11">    override val metaTable: DepMetaTable = DefaultNumberMetaTable</span>
+<span class="fc" id="L12">) : Number(), DepValue, Comparable&lt;DepNumberValue&gt; {</span>
+
+    companion object {
+<span class="fc" id="L15">        val Zero = DepNumberValue(0)</span>
+<span class="pc" id="L16">        val One = DepNumberValue(1)</span>
+<span class="fc" id="L17">        val mathContext = MathContext.DECIMAL128</span>
+
+<span class="fc" id="L19">        operator fun invoke(value: Byte): DepNumberValue = DepNumberValue(BigDecimal.valueOf(value.toLong()))</span>
+<span class="fc" id="L20">        operator fun invoke(value: Short): DepNumberValue = DepNumberValue(BigDecimal.valueOf(value.toLong()))</span>
+<span class="fc" id="L21">        operator fun invoke(value: Int): DepNumberValue = DepNumberValue(BigDecimal.valueOf(value.toLong()))</span>
+<span class="nc" id="L22">        operator fun invoke(value: Long): DepNumberValue = DepNumberValue(BigDecimal.valueOf(value))</span>
+
+        operator fun invoke(value: Float): DepNumberValue {
+<span class="fc bfc" id="L25" title="All 4 branches covered.">            require(!value.isNaN()) { IllegalArgumentException(&quot;NaN&quot;) }</span>
+<span class="pc bpc" id="L26" title="2 of 4 branches missed.">            require(!value.isInfinite()) { IllegalArgumentException(&quot;Infinity&quot;) }</span>
+<span class="nc" id="L27">            return DepNumberValue(BigDecimal.valueOf(value.toDouble()))</span>
+        }
+
+        operator fun invoke(value: Double): DepNumberValue {
+<span class="fc bfc" id="L31" title="All 4 branches covered.">            require(!value.isNaN()) { IllegalArgumentException(&quot;NaN&quot;) }</span>
+<span class="fc bfc" id="L32" title="All 4 branches covered.">            require(!value.isInfinite()) { IllegalArgumentException(&quot;Infinity&quot;) }</span>
+<span class="fc" id="L33">            return DepNumberValue(BigDecimal.valueOf(value))</span>
+        }
+
+        operator fun invoke(value: String): DepNumberValue {
+<span class="fc bfc" id="L37" title="All 2 branches covered.">            require(value.isNumber()) { IllegalArgumentException(&quot;NaN&quot;) }</span>
+<span class="fc" id="L38">            return DepNumberValue(BigDecimal(value.trim(), mathContext))</span>
+        }
+
+        private fun String.isNumber(): Boolean {
+<span class="fc" id="L42">            val regex = &quot;-?[0-9]+(\\.[0-9]+)?&quot;.toRegex()</span>
+<span class="fc" id="L43">            return matches(regex)</span>
+        }
+    }
+
+
+    fun plus(other: DepNumberValue) =
+<span class="fc" id="L49">        DepNumberValue(delegate.add(other.delegate, mathContext), metaTable)</span>
+
+    fun minus(other: DepNumberValue) =
+<span class="fc" id="L52">        DepNumberValue(delegate.subtract(other.delegate, mathContext), metaTable)</span>
+
+    fun multiply(other: DepNumberValue) =
+<span class="fc" id="L55">        DepNumberValue(delegate.multiply(other.delegate, mathContext), metaTable)</span>
+
+    fun divide(other: DepNumberValue) =
+<span class="fc" id="L58">        DepNumberValue(delegate.divide(other.delegate, mathContext), metaTable)</span>
+
+    fun pow(other: DepNumberValue) =
+<span class="fc" id="L61">        DepNumberValue(delegate.pow(other.delegate.toInt(), mathContext), metaTable)</span>
+
+    fun remainder(other: DepNumberValue) =
+<span class="fc" id="L64">        DepNumberValue(delegate.remainder(other.delegate, mathContext), metaTable)</span>
+
+<span class="fc" id="L66">    fun floor() = DepNumberValue(delegate.setScale(0, RoundingMode.FLOOR), metaTable)</span>
+
+<span class="fc" id="L68">    fun ceil() = DepNumberValue(delegate.setScale(0, RoundingMode.CEILING), metaTable)</span>
+
+    fun ln(): DepNumberValue {
+        // Algorithm: http://functions.wolfram.com/ElementaryFunctions/Log/10/
+        // https://stackoverjob.com/a/6169691/6444586
+        val result: DepNumberValue
+<span class="fc bfc" id="L74" title="All 2 branches covered.">        require(isPositive()) { IllegalStateException(&quot;Value must &gt;= 1&quot;) }</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        if (delegate == BigDecimal.ONE) {</span>
+<span class="fc" id="L76">            return DepNumberValue(BigDecimal.ZERO, metaTable)</span>
+        } else {
+<span class="fc" id="L78">            val iterations = 25000L</span>
+<span class="fc" id="L79">            val x = delegate.subtract(BigDecimal.ONE)</span>
+<span class="fc" id="L80">            var ret = BigDecimal(iterations + 1)</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">            for (i in iterations downTo 0) {</span>
+<span class="fc" id="L82">                var N = BigDecimal(i / 2 + 1).pow(2)</span>
+<span class="fc" id="L83">                N = N.multiply(x, mathContext)</span>
+<span class="fc" id="L84">                ret = N.divide(ret, mathContext)</span>
+<span class="fc" id="L85">                N = BigDecimal(i + 1)</span>
+<span class="fc" id="L86">                ret = ret.add(N, mathContext)</span>
+            }
+<span class="fc" id="L88">            ret = x.divide(ret, mathContext)</span>
+<span class="fc" id="L89">            result = DepNumberValue(ret, metaTable)</span>
+        }
+<span class="fc" id="L91">        return result</span>
+    }
+
+    fun sqrt(): DepNumberValue {
+<span class="fc bfc" id="L95" title="All 4 branches covered.">        require(!isNegative()) { throw IllegalStateException(&quot;Value must &gt;= 0&quot;) }</span>
+<span class="fc" id="L96">        return DepNumberValue(delegate.sqrt(mathContext), metaTable)</span>
+    }
+
+<span class="fc" id="L99">    fun abs() = DepNumberValue(delegate.abs(mathContext), metaTable)</span>
+
+<span class="fc" id="L101">    fun negate() = DepNumberValue(delegate.negate(mathContext), metaTable)</span>
+
+
+<span class="fc" id="L104">    override fun toString() = delegate.toString()</span>
+
+<span class="fc" id="L106">    override operator fun compareTo(other: DepNumberValue) = delegate.compareTo(other.delegate)</span>
+
+<span class="fc bfc" id="L108" title="All 2 branches covered.">    fun isLessThan(other: DepNumberValue) = compareTo(other) &lt; 0</span>
+
+<span class="fc bfc" id="L110" title="All 2 branches covered.">    fun isLessThanEqual(other: DepNumberValue) = compareTo(other) &lt;= 0</span>
+
+<span class="fc bfc" id="L112" title="All 2 branches covered.">    fun isGreaterThan(other: DepNumberValue) = compareTo(other) &gt; 0</span>
+
+<span class="fc bfc" id="L114" title="All 2 branches covered.">    fun isGreaterThanEqual(other: DepNumberValue) = compareTo(other) &gt;= 0</span>
+
+<span class="fc bfc" id="L116" title="All 2 branches covered.">    fun isNegative() = delegate.signum() &lt; 0</span>
+
+<span class="fc bfc" id="L118" title="All 2 branches covered.">    fun isPositive() = delegate.signum() &gt; 0</span>
+
+<span class="fc bfc" id="L120" title="All 2 branches covered.">    fun isZero() = delegate.signum() == 0</span>
+
+<span class="fc" id="L122">    override fun toByte() = delegate.toByte()</span>
+
+<span class="fc" id="L124">    override fun toShort() = delegate.toShort()</span>
+
+<span class="fc" id="L126">    override fun toInt() = delegate.toInt()</span>
+
+<span class="fc" id="L128">    override fun toLong() = delegate.toLong()</span>
+
+<span class="fc" id="L130">    override fun toFloat() = delegate.toFloat()</span>
+
+<span class="nc" id="L132">    override fun toChar() = delegate.toChar()</span>
+
+<span class="fc" id="L134">    override fun toDouble() = delegate.toDouble()</span>
+
+<span class="nc" id="L136">    fun toBigDecimal() = delegate</span>
+
+<span class="fc" id="L138">}</span>
+
+
+object DefaultNumberMetaTable : DepMetaTable {
+<span class="fc" id="L142">    override val type = &quot;number&quot;</span>
+<span class="fc" id="L143">    override val operations = listOf(</span>
+<span class="fc" id="L144">        numberInfix(Add) { self, other -&gt; self.plus(other) },</span>
+<span class="fc" id="L145">        numberInfix(Div) { self, other -&gt; self.divide(other) },</span>
+<span class="fc" id="L146">        numberInfix(Eq) { self, other -&gt; booleanOf(self == other) },</span>
+<span class="fc" id="L147">        numberInfix(Gt) { self, other -&gt; booleanOf(self.isGreaterThan(other)) },</span>
+<span class="fc" id="L148">        numberInfix(Gte) { self, other -&gt; booleanOf(self.isGreaterThanEqual(other)) },</span>
+<span class="fc" id="L149">        numberInfix(Lt) { self, other -&gt; booleanOf(self.isLessThan(other)) },</span>
+<span class="fc" id="L150">        numberInfix(Lte) { self, other -&gt; booleanOf(self.isLessThanEqual(other)) },</span>
+<span class="fc" id="L151">        numberInfix(Mod) { self, other -&gt; self.remainder(other) },</span>
+<span class="fc" id="L152">        numberInfix(Mul) { self, other -&gt; self.multiply(other) },</span>
+<span class="fc" id="L153">        numberPrefix(Negate) { self -&gt; self.negate() },</span>
+<span class="fc" id="L154">        numberInfix(Pow) { self, other -&gt; self.pow(other) },</span>
+<span class="fc" id="L155">        numberInfix(Sub) { self, other -&gt; self.minus(other) },</span>
+
+
+<span class="fc" id="L158">        object : DepInfixValueOperation {</span>
+<span class="pc" id="L159">            override val selfType = &quot;number&quot;</span>
+<span class="pc" id="L160">            override val otherType = &quot;nil&quot;</span>
+<span class="pc" id="L161">            override val operationType = Eq</span>
+<span class="nc" id="L162">            override fun invoke(self: DepValue, other: DepValue) = DepFalseValue</span>
+        },
+
+<span class="fc" id="L165">        object : DepInfixValueOperation {</span>
+<span class="pc" id="L166">            override val selfType = &quot;number&quot;</span>
+<span class="pc" id="L167">            override val otherType = &quot;nil&quot;</span>
+<span class="pc" id="L168">            override val operationType = Neq</span>
+<span class="nc" id="L169">            override fun invoke(self: DepValue, other: DepValue) = DepTrueValue</span>
+        },
+
+        )
+}
+
+private fun numberInfix(
+    operation: DepValueOperation.Type,
+    fn: (self: DepNumberValue, other: DepNumberValue) -&gt; DepValue
+): DepInfixValueOperation {
+<span class="fc" id="L179">    return object : DepInfixValueOperation {</span>
+<span class="fc" id="L180">        override val operationType = operation</span>
+<span class="pc" id="L181">        override val selfType = &quot;number&quot;</span>
+<span class="fc" id="L182">        override val otherType = &quot;number&quot;</span>
+        override operator fun invoke(self: DepValue, other: DepValue): DepValue {
+<span class="pc bpc" id="L184" title="1 of 2 branches missed.">            require(self is DepNumberValue)</span>
+<span class="pc bpc" id="L185" title="1 of 2 branches missed.">            require(other is DepNumberValue)</span>
+<span class="fc" id="L186">            return fn(self, other)</span>
+        }
+    }
+}
+
+private fun numberPrefix(
+    operation: DepValueOperation.Type,
+    fn: (self: DepNumberValue) -&gt; DepValue
+): DepPrefixValueOperation {
+<span class="fc" id="L195">    return object : DepPrefixValueOperation {</span>
+<span class="fc" id="L196">        override val operationType = operation</span>
+<span class="pc" id="L197">        override val selfType = &quot;number&quot;</span>
+        override operator fun invoke(self: DepValue): DepValue {
+<span class="pc bpc" id="L199" title="1 of 2 branches missed.">            require(self is DepNumberValue)</span>
+<span class="fc" id="L200">            return fn(self)</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

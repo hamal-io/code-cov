@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FuncRepository.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.repository.api</a> &gt; <span class="el_source">FuncRepository.kt</span></div><h1>FuncRepository.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.repository.api
+
+import io.hamal.backend.repository.api.FuncCmdRepository.Command.FuncToCreate
+import io.hamal.backend.repository.api.domain.Func
+import io.hamal.lib.common.Shard
+import io.hamal.lib.domain.ComputeId
+import io.hamal.lib.domain.vo.Code
+import io.hamal.lib.domain.vo.FuncId
+import io.hamal.lib.domain.vo.FuncName
+import io.hamal.lib.domain.vo.port.DomainIdGeneratorAdapter
+import io.hamal.lib.domain.vo.port.GenerateDomainId
+
+
+interface FuncCmdRepository {
+
+    fun get(id: FuncId): Func
+
+    fun execute(computeId: ComputeId, commands: List&lt;Command&gt;): List&lt;Func&gt;
+
+    fun request(computeId: ComputeId, record: Recorder.() -&gt; Unit): List&lt;Func&gt; {
+<span class="nc" id="L21">        val recorder = Recorder(DomainIdGeneratorAdapter) //FIXME</span>
+<span class="nc" id="L22">        record(recorder)</span>
+<span class="nc" id="L23">        return execute(computeId, recorder.commands)</span>
+    }
+
+    interface Command {
+
+        enum class Order {
+<span class="fc" id="L29">            InsertPrimary,</span>
+<span class="fc" id="L30">            InsertSecondary,</span>
+<span class="fc" id="L31">            Update,</span>
+<span class="fc" id="L32">            Delete</span>
+        }
+
+        val order: Order
+        val funcId: FuncId
+
+<span class="fc" id="L38">        data class FuncToCreate(</span>
+<span class="fc" id="L39">            override val funcId: FuncId,</span>
+<span class="pc" id="L40">            var name: FuncName,</span>
+<span class="pc" id="L41">            var code: Code</span>
+        ) : Command {
+<span class="pc" id="L43">            override val order = Order.InsertPrimary</span>
+        }
+    }
+
+<span class="fc" id="L47">    class Recorder(</span>
+<span class="fc" id="L48">        val generateDomainId: GenerateDomainId</span>
+    ) {
+
+<span class="fc" id="L51">        internal val commands = mutableListOf&lt;Command&gt;()</span>
+        fun commands(): List&lt;Command&gt; {
+<span class="fc" id="L53">            return commands.toList()</span>
+        }
+    }
+}
+
+interface FuncQueryRepository {
+    fun find(funcId: FuncId): Func?
+
+    fun list(afterId: FuncId, limit: Int): List&lt;Func&gt;
+}
+
+fun FuncCmdRepository.Recorder.createFunc(block: FuncToCreate.() -&gt; Unit): FuncId {
+<span class="fc" id="L65">    val result = generateDomainId(Shard(0), ::FuncId)</span>
+<span class="fc" id="L66">    commands.add(</span>
+<span class="fc" id="L67">        FuncToCreate(</span>
+<span class="fc" id="L68">            funcId = result,</span>
+<span class="fc" id="L69">            name = FuncName(&quot;TBD&quot;),</span>
+<span class="fc" id="L70">            code = Code(&quot;&quot;)</span>
+<span class="fc" id="L71">        ).apply(block)</span>
+    )
+<span class="fc" id="L73">    return result</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

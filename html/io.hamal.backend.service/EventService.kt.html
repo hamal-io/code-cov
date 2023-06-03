@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EventService.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.service</a> &gt; <span class="el_source">EventService.kt</span></div><h1>EventService.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.service
+
+import io.hamal.backend.component.EventHandlerContainer
+import io.hamal.backend.event.Event
+import io.hamal.backend.event_handler.EventHandler
+import io.hamal.backend.repository.api.log.GroupId
+import io.hamal.backend.repository.api.log.LogBrokerRepository
+import io.hamal.backend.repository.sqlite.log.ProtobufLogConsumer
+import io.hamal.lib.common.util.HashUtils.md5
+import io.hamal.lib.domain.ComputeId
+import io.hamal.lib.domain.vo.TopicName
+import org.springframework.beans.factory.DisposableBean
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler
+import java.time.Duration
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.ScheduledFuture
+import kotlin.reflect.KClass
+
+interface EventService {
+    fun cancel()
+}
+
+interface EventServiceFactory {
+
+    fun &lt;EVENT : Event&gt; register(
+        clazz: KClass&lt;EVENT&gt;,
+        handler: EventHandler&lt;EVENT&gt;
+    ): EventServiceFactory
+
+    fun create(): EventService
+}
+
+<span class="nc" id="L33">class DefaultEventService(</span>
+<span class="nc" id="L34">    val scheduledExecutorService: ThreadPoolTaskScheduler,</span>
+<span class="nc" id="L35">    val logBrokerRepository: LogBrokerRepository</span>
+) : EventServiceFactory {
+
+<span class="nc" id="L38">    private val handlerContainer = EventHandlerContainer()</span>
+
+    override fun &lt;EVENT : Event&gt; register(
+        clazz: KClass&lt;EVENT&gt;,
+        handler: EventHandler&lt;EVENT&gt;
+    ): EventServiceFactory {
+<span class="nc" id="L44">        handlerContainer.register(clazz, handler)</span>
+<span class="nc" id="L45">        return this</span>
+    }
+
+    override fun create(): EventService {
+<span class="nc" id="L49">        return object : EventService, DisposableBean {</span>
+
+<span class="nc" id="L51">            private val scheduledTasks = mutableListOf&lt;ScheduledFuture&lt;*&gt;&gt;()</span>
+
+<span class="nc" id="L53">            init {</span>
+<span class="nc" id="L54">                val allDomainTopics = handlerContainer.topics()</span>
+<span class="nc" id="L55">                    .map { TopicName(it) }</span>
+<span class="nc" id="L56">                    .map(logBrokerRepository::resolveTopic)</span>
+
+<span class="nc" id="L58">                allDomainTopics.forEach { topic -&gt;</span>
+<span class="nc" id="L59">                    val consumer = ProtobufLogConsumer(</span>
+<span class="nc" id="L60">                        GroupId(&quot;event-service&quot;),</span>
+<span class="nc" id="L61">                        topic,</span>
+<span class="nc" id="L62">                        logBrokerRepository,</span>
+                        Event::class
+                    )
+
+<span class="nc" id="L66">                    scheduledTasks.add(</span>
+<span class="nc" id="L67">                        scheduledExecutorService.scheduleAtFixedRate(</span>
+                            {
+<span class="nc" id="L69">                                consumer.consume(100) { chunkId, evt -&gt;</span>
+<span class="nc" id="L70">                                    CompletableFuture.runAsync {</span>
+<span class="nc" id="L71">                                        handlerContainer[evt::class].forEach { handler -&gt;</span>
+<span class="nc" id="L72">                                            try {</span>
+<span class="nc" id="L73">                                                val computeId = ComputeId(md5(&quot;${evt.topic}-${chunkId.value.value}&quot;))</span>
+<span class="nc" id="L74">                                                handler.handle(computeId, evt)</span>
+<span class="nc" id="L75">                                            } catch (t: Throwable) {</span>
+<span class="nc" id="L76">                                                throw Error(t)</span>
+                                            }
+<span class="nc" id="L78">                                        }</span>
+<span class="nc" id="L79">                                    }</span>
+                                }
+<span class="nc" id="L81">                            }, Duration.ofMillis(10)</span>
+                        )
+                    )
+<span class="nc" id="L84">                }</span>
+<span class="nc" id="L85">            }</span>
+
+            override fun cancel() {
+<span class="nc" id="L88">                scheduledTasks.forEach {</span>
+<span class="nc" id="L89">                    it.cancel(false)</span>
+<span class="nc" id="L90">                }</span>
+<span class="nc" id="L91">            }</span>
+
+            override fun destroy() {
+<span class="nc" id="L94">                cancel()</span>
+<span class="nc" id="L95">            }</span>
+        }
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

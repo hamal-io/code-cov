@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JavaCopy.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">internal.copy</a> &gt; <span class="el_source">JavaCopy.java</span></div><h1>JavaCopy.java</h1><pre class="source lang-java linenums">package internal.copy;
+
+import internal.JavaReflection;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Collection;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+public interface JavaCopy {
+
+    static Object copyValue(Object source, Class&lt;?&gt; sourceClass) {
+<span class="fc" id="L15">        return copyValue(sourceClass, source, Set.of(</span>
+                new JavaPrimitiveStrategy(),
+                new JavaEnumStrategy(),
+                new JavaImmutableStrategy(JavaImmutableStrategy.defaultImmutableClasses)
+        ));
+    }
+
+    static Object copyValue(Class&lt;?&gt; sourceClass, Object source, Collection&lt;Strategy&gt; strategies) {
+<span class="pc bpc" id="L23" title="1 of 2 branches missed.">        for (var strategy : strategies) {</span>
+<span class="fc" id="L24">            var copyStrategy = strategy.copyStrategy;</span>
+<span class="fc bfc" id="L25" title="All 2 branches covered.">            if (copyStrategy.supports(sourceClass)) {</span>
+<span class="fc" id="L26">                return copyStrategy.apply(sourceClass, source);</span>
+            }
+<span class="fc" id="L28">        }</span>
+<span class="nc" id="L29">        throw new IllegalStateException(&quot;Not implemented&quot;);</span>
+    }
+
+    static &lt;T&gt; T copyFields(Object source, T target, Collection&lt;Strategy&gt; strategies) {
+
+<span class="pc bpc" id="L34" title="2 of 4 branches missed.">        if (source == null || target == null) {</span>
+<span class="nc" id="L35">            return target;</span>
+        }
+
+<span class="fc" id="L38">        var sourceClass = source.getClass();</span>
+<span class="fc" id="L39">        var targetClass = target.getClass();</span>
+
+<span class="fc" id="L41">        var sourceFields = JavaReflection.Fields.allFieldsOf(sourceClass).stream()</span>
+<span class="pc bpc" id="L42" title="1 of 2 branches missed.">                .filter(field -&gt; !Modifier.isStatic(field.getModifiers()))</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">                .filter(field -&gt; !field.getName().contains(&quot;$&quot;))</span>
+<span class="fc" id="L44">                .peek(field -&gt; field.setAccessible(true))</span>
+<span class="fc" id="L45">                .collect(Collectors.toSet());</span>
+
+<span class="fc" id="L47">        var targetFields = JavaReflection.Fields.allFieldsOf(targetClass).stream()</span>
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">                .filter(field -&gt; !Modifier.isStatic(field.getModifiers()))</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">                .filter(field -&gt; !field.getName().contains(&quot;$&quot;))</span>
+<span class="fc" id="L50">                .peek(field -&gt; field.setAccessible(true))</span>
+<span class="fc" id="L51">                .collect(Collectors.toMap(Field::getName, Function.identity()));</span>
+
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        for (var sourceField : sourceFields) {</span>
+<span class="fc" id="L54">            var sourceName = sourceField.getName();</span>
+
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">            if (!targetFields.containsKey(sourceName)) {</span>
+<span class="nc" id="L57">                continue;</span>
+            }
+<span class="fc" id="L59">            var targetField = targetFields.get(sourceName);</span>
+
+            try {
+<span class="fc" id="L62">                Object sourceValue = sourceField.get(source);</span>
+<span class="fc" id="L63">                var sourceFieldType = sourceField.getType();</span>
+<span class="fc" id="L64">                var targetFieldType = targetField.getType();</span>
+
+<span class="fc bfc" id="L66" title="All 2 branches covered.">                for (Strategy strategy : strategies) {</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">                    if (strategy.supports(sourceFieldType, targetFieldType)) {</span>
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">                        if (strategy.apply(target, sourceFieldType, sourceValue, targetFieldType, targetField)) {</span>
+<span class="fc" id="L69">                            break;</span>
+                        }
+                    }
+
+<span class="fc" id="L73">                }</span>
+<span class="fc" id="L74">            } catch (IllegalArgumentException | IllegalAccessException e) {</span>
+<span class="fc" id="L75">                throw new RuntimeException(e);</span>
+<span class="fc" id="L76">            }</span>
+<span class="fc" id="L77">        }</span>
+<span class="fc" id="L78">        return target;</span>
+    }
+
+    interface CopyStrategy {
+        boolean supports(Class&lt;?&gt; valueClass);
+
+        Object apply(Class&lt;?&gt; valueClass, Object value);
+    }
+
+    abstract class Strategy {
+
+        protected final JavaCopy.CopyStrategy copyStrategy;
+
+<span class="fc" id="L91">        protected Strategy(JavaCopy.CopyStrategy copyStrategy) {</span>
+<span class="fc" id="L92">            this.copyStrategy = copyStrategy;</span>
+<span class="fc" id="L93">        }</span>
+
+        abstract public boolean supports(Class&lt;?&gt; sourceClass, Class&lt;?&gt; targetClass);
+
+        public boolean apply(Object target, Class&lt;?&gt; sourceClass, Object sourceValue, Class&lt;?&gt; targetClass, Field targetField) {
+            try {
+<span class="fc" id="L99">                targetField.set(target, copyStrategy.apply(sourceClass, sourceValue));</span>
+<span class="fc" id="L100">                return true;</span>
+<span class="nc" id="L101">            } catch (IllegalAccessException e) {</span>
+<span class="nc" id="L102">                throw new RuntimeException(e);</span>
+            }
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
