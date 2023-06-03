@@ -2,31 +2,29 @@
 
 import io.hamal.backend.repository.api.domain.*
 import io.hamal.lib.common.Shard
-import io.hamal.lib.domain.Correlation
 import io.hamal.lib.domain.ComputeId
+import io.hamal.lib.domain.Correlation
 import io.hamal.lib.domain.vo.Code
 import io.hamal.lib.domain.vo.ExecId
 import io.hamal.lib.domain.vo.ExecInputs
 import io.hamal.lib.domain.vo.ExecSecrets
 
 interface ExecCmdRepository {
-
     fun plan(computeId: ComputeId, execToPlan: ExecToPlan): PlannedExec
     fun schedule(computeId: ComputeId, planedExec: PlannedExec): ScheduledExec
     fun enqueue(computeId: ComputeId, scheduledExec: ScheduledExec): QueuedExec
     fun complete(computeId: ComputeId, inFlightExec: InFlightExec): CompletedExec
     fun dequeue(computeId: ComputeId): List&lt;InFlightExec&gt;
 
-<span class="nc" id="L20">    data class ExecToPlan(</span>
-<span class="nc" id="L21">        val id: ExecId,</span>
-<span class="nc" id="L22">        val shard: Shard,</span>
-<span class="nc" id="L23">        val correlation: Correlation?,</span>
-<span class="nc" id="L24">        val inputs: ExecInputs,</span>
-<span class="nc" id="L25">        val secrets: ExecSecrets,</span>
-<span class="nc" id="L26">        val code: Code,</span>
-<span class="nc" id="L27">        val trigger: Invocation</span>
+<span class="nc" id="L19">    data class ExecToPlan(</span>
+<span class="nc" id="L20">        val id: ExecId,</span>
+<span class="nc" id="L21">        val shard: Shard,</span>
+<span class="nc" id="L22">        val correlation: Correlation?,</span>
+<span class="nc" id="L23">        val inputs: ExecInputs,</span>
+<span class="nc" id="L24">        val secrets: ExecSecrets,</span>
+<span class="nc" id="L25">        val code: Code,</span>
+<span class="nc" id="L26">        val trigger: Invocation</span>
     )
-
 }
 
 interface ExecQueryRepository {
