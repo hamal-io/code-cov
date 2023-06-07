@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Repository.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.repository.sqlite.record</a> &gt; <span class="el_source">Repository.kt</span></div><h1>Repository.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.repository.sqlite.record
+
+import io.hamal.backend.repository.record.CreateDomainObject
+import io.hamal.backend.repository.record.Record
+import io.hamal.backend.repository.sqlite.BaseRepository
+import io.hamal.backend.repository.sqlite.internal.Connection
+import io.hamal.lib.domain.DomainObject
+import io.hamal.lib.domain.vo.base.DomainId
+import kotlin.reflect.KClass
+
+
+<span class="nc" id="L12">abstract class SqliteRecordRepository&lt;ID : DomainId, RECORD : Record&lt;ID&gt;, OBJ : DomainObject&lt;ID&gt;&gt;(</span>
+    config: Config,
+<span class="nc" id="L14">    private val createDomainObject: CreateDomainObject&lt;ID, RECORD, OBJ&gt;,</span>
+<span class="nc" id="L15">    private val recordClass: KClass&lt;RECORD&gt;,</span>
+<span class="nc" id="L16">    private val recordCache: RecordCache&lt;ID, RECORD, OBJ&gt; = RecordCache(</span>
+<span class="nc" id="L17">        RecordLoader(recordClass)</span>
+    ),
+<span class="nc" id="L19">    private val projections: List&lt;Projection&lt;ID, RECORD, OBJ&gt;&gt;</span>
+<span class="nc" id="L20">) : BaseRepository(object : Config {</span>
+<span class="nc" id="L21">    override val path = config.path</span>
+<span class="nc" id="L22">    override val filename = String.format(&quot;${config.filename}-%04d.db&quot;, config.shard.value)</span>
+<span class="nc" id="L23">    override val shard = config.shard</span>
+}) {
+
+    override fun setupConnection(connection: Connection) {
+<span class="nc" id="L27">        connection.execute(&quot;&quot;&quot;PRAGMA journal_mode = wal;&quot;&quot;&quot;)</span>
+<span class="nc" id="L28">        connection.execute(&quot;&quot;&quot;PRAGMA locking_mode = exclusive;&quot;&quot;&quot;)</span>
+<span class="nc" id="L29">        connection.execute(&quot;&quot;&quot;PRAGMA temp_store = memory;&quot;&quot;&quot;)</span>
+<span class="nc" id="L30">        connection.execute(&quot;&quot;&quot;PRAGMA synchronous = off;&quot;&quot;&quot;)</span>
+<span class="nc" id="L31">    }</span>
+
+    override fun setupSchema(connection: Connection) {
+<span class="nc" id="L34">        connection.execute(</span>
+            &quot;&quot;&quot;
+            CREATE TABLE IF NOT EXISTS records (
+                 cmd_id         NUMERIC NOT NULL,
+                 entity_id      INTEGER NOT NULL,
+                 sequence       INTEGER NOT NULL DEFAULT 0,
+                 data           BLOB NOT NULL,
+                 PRIMARY KEY    (entity_id, sequence),
+                 UNIQUE         (entity_id, cmd_id)
+            );
+<span class="nc" id="L44">        &quot;&quot;&quot;.trimIndent()</span>
+        )
+<span class="nc" id="L46">        connection.execute(</span>
+            &quot;&quot;&quot;
+             CREATE TRIGGER IF NOT EXISTS auto_sequence
+                AFTER INSERT ON records
+                WHEN new.sequence = 0
+                BEGIN
+                    UPDATE records
+                    SET sequence = (SELECT IFNULL(MAX(sequence), 1) + 1 FROM records WHERE entity_id = new.entity_id)
+                    WHERE entity_id = new.entity_id AND sequence = new.sequence;
+                END;
+<span class="nc" id="L56">        &quot;&quot;&quot;.trimIndent()</span>
+        )
+
+<span class="nc" id="L59">        projections.forEach { projection -&gt; projection.setupSchema(connection) }</span>
+
+<span class="nc" id="L61">    }</span>
+
+    override fun clear() {
+<span class="nc" id="L64">        connection.execute(&quot;DELETE FROM records&quot;)</span>
+<span class="nc" id="L65">        projections.forEach { projection -&gt; projection.clear(connection) }</span>
+<span class="nc" id="L66">    }</span>
+
+    fun &lt;T&gt; tx(block: RecordTransaction&lt;ID, RECORD, OBJ&gt;.() -&gt; T): T {
+<span class="nc" id="L69">        return try {</span>
+<span class="nc" id="L70">            connection.tx {</span>
+<span class="nc" id="L71">                block(</span>
+<span class="nc" id="L72">                    SqliteRecordTransaction(</span>
+<span class="nc" id="L73">                        createDomainObject,</span>
+<span class="nc" id="L74">                        recordClass,</span>
+<span class="nc" id="L75">                        this,</span>
+<span class="nc" id="L76">                        recordCache</span>
+                    )
+                )
+            }
+<span class="nc" id="L80">        } catch (t: Throwable) {</span>
+            /**
+             * Exception / errors during block execution lead to inconsistent data.
+             * 2 Options -  Make the Cache transactional or wipe all cache data
+             * As this should rarely happen --&gt; simpler and cheaper execution for happy path
+             */
+<span class="nc" id="L86">            recordCache.invalidate()</span>
+<span class="nc" id="L87">            projections.forEach(Projection&lt;ID, RECORD, OBJ&gt;::invalidate)</span>
+<span class="nc" id="L88">            throw t</span>
+        }
+    }
+
+<span class="nc" id="L92">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

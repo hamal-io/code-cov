@@ -8,7 +8,7 @@ import io.hamal.backend.repository.sqlite.BaseRepository
 import io.hamal.backend.repository.sqlite.internal.Connection
 import io.hamal.lib.common.Shard
 import io.hamal.lib.common.util.TimeUtils
-import io.hamal.lib.domain.ComputeId
+import io.hamal.lib.domain.CmdId
 import java.nio.file.Path
 
 
@@ -20,10 +20,10 @@ import java.nio.file.Path
 <span class="nc" id="L20">    override val shard: Shard get() = segment.shard</span>
 }), LogSegmentRepository {
 
-    override fun append(computeId: ComputeId, bytes: ByteArray) {
+    override fun append(cmdId: CmdId, bytes: ByteArray) {
 <span class="fc" id="L24">        connection.tx {</span>
-<span class="fc" id="L25">            execute(&quot;INSERT OR IGNORE INTO chunks (req_id,bytes,instant) VALUES (:computeId, :bytes,:now)&quot;) {</span>
-<span class="fc" id="L26">                set(&quot;computeId&quot;, computeId)</span>
+<span class="fc" id="L25">            execute(&quot;INSERT OR IGNORE INTO chunks (req_id,bytes,instant) VALUES (:cmdId, :bytes,:now)&quot;) {</span>
+<span class="fc" id="L26">                set(&quot;cmdId&quot;, cmdId)</span>
 <span class="fc" id="L27">                set(&quot;bytes&quot;, bytes)</span>
 <span class="fc" id="L28">                set(&quot;now&quot;, TimeUtils.now())</span>
             }
@@ -37,7 +37,7 @@ import java.nio.file.Path
 <span class="fc" id="L37">        return connection.executeQuery&lt;LogChunk&gt;(</span>
 <span class="fc" id="L38">            &quot;&quot;&quot;SELECT id, bytes, instant FROM chunks WHERE id &gt;= :firstId LIMIT :limit &quot;&quot;&quot;.trimIndent()</span>
         ) {
-<span class="fc" id="L40">            with {</span>
+<span class="fc" id="L40">            query {</span>
 <span class="fc" id="L41">                set(&quot;firstId&quot;, firstId)</span>
 <span class="fc" id="L42">                set(&quot;limit&quot;, limit)</span>
             }

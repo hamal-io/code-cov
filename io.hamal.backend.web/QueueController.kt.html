@@ -2,35 +2,37 @@
 
 import io.hamal.backend.service.cmd.ExecCmdService
 import io.hamal.backend.service.query.StateQueryService
-import io.hamal.lib.domain.ComputeId
+import io.hamal.lib.domain.CmdId
 import io.hamal.lib.domain.vo.FuncName
 import io.hamal.lib.sdk.domain.ApiAgentExecRequests
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
+import java.math.BigInteger
+import java.security.SecureRandom
 
-<span class="nc" id="L12">@RestController</span>
+<span class="nc" id="L14">@RestController</span>
 class QueueController
-<span class="nc" id="L14">@Autowired constructor(</span>
-<span class="nc" id="L15">    val execCmdService: ExecCmdService,</span>
-<span class="nc" id="L16">    val stateQueryService: StateQueryService</span>
+<span class="nc" id="L16">@Autowired constructor(</span>
+<span class="nc" id="L17">    val execCmdService: ExecCmdService,</span>
+<span class="nc" id="L18">    val stateQueryService: StateQueryService</span>
 ) {
     @PostMapping(&quot;/v1/dequeue&quot;)
     fun dequeueExec(): ApiAgentExecRequests {
 
         //FIXME is this the only request which can not be handled in typical request manner?
-<span class="nc" id="L22">        val result = execCmdService.dequeue(ComputeId(1111))</span>
+<span class="nc" id="L24">        val result = execCmdService.start(CmdId(BigInteger(128, SecureRandom())))</span>
 
-<span class="nc" id="L24">        return ApiAgentExecRequests(</span>
-<span class="nc" id="L25">            requests = result.map {</span>
-<span class="nc" id="L26">                ApiAgentExecRequests.ExecRequest(</span>
-<span class="nc" id="L27">                    id = it.id,</span>
-<span class="nc" id="L28">                    funcName = FuncName(&quot;some-name&quot;),</span>
-<span class="nc" id="L29">                    correlation = it.correlation,</span>
-<span class="nc" id="L30">                    inputs = it.inputs,</span>
-<span class="nc" id="L31">                    secrets = it.secrets,</span>
-<span class="nc bnc" id="L32" title="All 4 branches missed.">                    statePayload = it.correlation?.let { stateQueryService.find(it) }?.payload,</span>
-<span class="nc" id="L33">                    code = it.code</span>
+<span class="nc" id="L26">        return ApiAgentExecRequests(</span>
+<span class="nc" id="L27">            requests = result.map {</span>
+<span class="nc" id="L28">                ApiAgentExecRequests.ExecRequest(</span>
+<span class="nc" id="L29">                    id = it.id,</span>
+<span class="nc" id="L30">                    funcName = FuncName(&quot;some-name&quot;),</span>
+<span class="nc" id="L31">                    correlation = it.correlation,</span>
+<span class="nc" id="L32">                    inputs = it.inputs,</span>
+<span class="nc" id="L33">                    secrets = it.secrets,</span>
+<span class="nc bnc" id="L34" title="All 4 branches missed.">                    statePayload = it.correlation?.let { stateQueryService.find(it) }?.payload,</span>
+<span class="nc" id="L35">                    code = it.code</span>
                 )
             })
     }

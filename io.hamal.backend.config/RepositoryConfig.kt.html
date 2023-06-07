@@ -3,47 +3,82 @@
 import io.hamal.backend.repository.api.*
 import io.hamal.backend.repository.api.log.LogBroker
 import io.hamal.backend.repository.api.log.LogBrokerRepository
-import io.hamal.backend.repository.memory.*
+import io.hamal.backend.repository.memory.MemoryReqRepository
+import io.hamal.backend.repository.memory.MemoryStateRepository
 import io.hamal.backend.repository.sqlite.log.DefaultLogBrokerRepository
+import io.hamal.backend.repository.sqlite.record.exec.SqliteExecRepository
+import io.hamal.backend.repository.sqlite.record.func.SqliteFuncRepository
+import io.hamal.backend.repository.sqlite.record.trigger.SqliteTriggerRepository
+import io.hamal.lib.common.Shard
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import kotlin.io.path.Path
 
-<span class="nc" id="L12">@Configuration</span>
-<span class="nc" id="L13">open class RepositoryConfig {</span>
+<span class="nc" id="L17">@Configuration</span>
+<span class="nc" id="L18">open class RepositoryConfig {</span>
     @Bean
     open fun brokerRepository(): LogBrokerRepository {
-<span class="nc" id="L16">        return DefaultLogBrokerRepository(LogBroker(LogBroker.Id(1), Path(&quot;/tmp/hamal&quot;)))</span>
+<span class="nc" id="L21">        return DefaultLogBrokerRepository(LogBroker(LogBroker.Id(1), Path(&quot;/tmp/hamal&quot;)))</span>
     }
 
     @Bean
-<span class="nc" id="L20">    open fun funcCmdRepository(): FuncCmdRepository = MemoryFuncRepository</span>
+    open fun sqliteFuncRepository() =
+<span class="nc" id="L26">        SqliteFuncRepository(</span>
+<span class="nc" id="L27">            SqliteFuncRepository.Config(</span>
+<span class="nc" id="L28">                path = Path(&quot;/tmp/hamal&quot;),</span>
+<span class="nc" id="L29">                shard = Shard(1)</span>
+            )
+<span class="nc" id="L31">        )</span>
 
     @Bean
-<span class="nc" id="L23">    open fun funcQueryRepository(): FuncQueryRepository = MemoryFuncRepository</span>
+<span class="nc" id="L34">    open fun funcCmdRepository(): FuncCmdRepository = sqliteFuncRepository()</span>
 
     @Bean
-<span class="nc" id="L26">    open fun execCmdRepository(): ExecCmdRepository = MemoryExecRepository</span>
+<span class="nc" id="L37">    open fun funcQueryRepository(): FuncQueryRepository = sqliteFuncRepository()</span>
+
 
     @Bean
-<span class="nc" id="L29">    open fun execQueryRepository(): ExecQueryRepository = MemoryExecRepository</span>
+    open fun sqliteExecRepository() =
+<span class="nc" id="L42">        SqliteExecRepository(</span>
+<span class="nc" id="L43">            SqliteExecRepository.Config(</span>
+<span class="nc" id="L44">                path = Path(&quot;/tmp/hamal&quot;),</span>
+<span class="nc" id="L45">                shard = Shard(1)</span>
+            )
+<span class="nc" id="L47">        )</span>
 
     @Bean
-<span class="nc" id="L32">    open fun triggerCmdRepository(): TriggerCmdRepository = MemoryTriggerRepository</span>
+<span class="nc" id="L50">    open fun execCmdRepository(): ExecCmdRepository = sqliteExecRepository()</span>
 
     @Bean
-<span class="nc" id="L35">    open fun triggerQueryRepository(): TriggerQueryRepository = MemoryTriggerRepository</span>
+<span class="nc" id="L53">    open fun execQueryRepository(): ExecQueryRepository = sqliteExecRepository()</span>
+
 
     @Bean
-<span class="nc" id="L38">    open fun stateCmdRepository(): StateCmdRepository = MemoryStateRepository</span>
+    open fun sqliteTriggerRepository() =
+<span class="nc" id="L58">        SqliteTriggerRepository(</span>
+<span class="nc" id="L59">            SqliteTriggerRepository.Config(</span>
+<span class="nc" id="L60">                path = Path(&quot;/tmp/hamal&quot;),</span>
+<span class="nc" id="L61">                shard = Shard(1)</span>
+            )
+<span class="nc" id="L63">        )</span>
+
 
     @Bean
-<span class="nc" id="L41">    open fun stateQueryRepository(): StateQueryRepository = MemoryStateRepository</span>
+<span class="nc" id="L67">    open fun triggerCmdRepository(): TriggerCmdRepository = sqliteTriggerRepository()</span>
 
     @Bean
-<span class="nc" id="L44">    open fun reqCmdRepository(): ReqCmdRepository = MemoryReqRepository</span>
+<span class="nc" id="L70">    open fun triggerQueryRepository(): TriggerQueryRepository = sqliteTriggerRepository()</span>
 
     @Bean
-<span class="nc" id="L47">    open fun reqQueryRepository(): ReqQueryRepository = MemoryReqRepository</span>
+<span class="nc" id="L73">    open fun stateCmdRepository(): StateCmdRepository = MemoryStateRepository</span>
+
+    @Bean
+<span class="nc" id="L76">    open fun stateQueryRepository(): StateQueryRepository = MemoryStateRepository</span>
+
+    @Bean
+<span class="nc" id="L79">    open fun reqCmdRepository(): ReqCmdRepository = MemoryReqRepository</span>
+
+    @Bean
+<span class="nc" id="L82">    open fun reqQueryRepository(): ReqQueryRepository = MemoryReqRepository</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

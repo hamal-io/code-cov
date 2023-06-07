@@ -5,7 +5,7 @@ package io.hamal.backend.repository.sqlite.log
 import io.hamal.backend.repository.api.log.Appender
 import io.hamal.backend.repository.api.log.LogBrokerRepository
 import io.hamal.backend.repository.api.log.LogTopic
-import io.hamal.lib.domain.ComputeId
+import io.hamal.lib.domain.CmdId
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.protobuf.ProtoBuf
@@ -18,9 +18,9 @@ import kotlin.reflect.KClass
 <span class="nc" id="L18">    private val logBrokerRepository: LogBrokerRepository</span>
 ) : Appender&lt;VALUE&gt; {
     @OptIn(InternalSerializationApi::class)
-    override fun append(computeId: ComputeId, topic: LogTopic, value: VALUE) {
+    override fun append(cmdId: CmdId, topic: LogTopic, value: VALUE) {
 <span class="nc" id="L22">        val encoded = ProtoBuf.encodeToByteArray(valueClass.serializer(), value)</span>
-<span class="nc" id="L23">        logBrokerRepository.append(computeId, topic, encoded)</span>
+<span class="nc" id="L23">        logBrokerRepository.append(cmdId, topic, encoded)</span>
 <span class="nc" id="L24">    }</span>
 }
 

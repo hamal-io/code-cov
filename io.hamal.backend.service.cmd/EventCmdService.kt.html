@@ -6,8 +6,8 @@ import io.hamal.backend.repository.api.log.LogBrokerRepository
 import io.hamal.backend.repository.api.log.LogTopic
 import io.hamal.backend.repository.sqlite.log.ProtobufAppender
 import io.hamal.lib.common.Shard
-import io.hamal.lib.domain.ComputeId
-import io.hamal.lib.domain.vo.TenantId
+import io.hamal.lib.domain.CmdId
+import io.hamal.lib.domain.vo.AccountId
 import io.hamal.lib.domain.vo.TopicId
 import io.hamal.lib.domain.vo.TopicName
 import org.springframework.stereotype.Service
@@ -25,11 +25,11 @@ import org.springframework.stereotype.Service
         )
     }
 
-    fun append(computeId: ComputeId, eventToAppend: EventToAppend) {
+    fun append(cmdId: CmdId, eventToAppend: EventToAppend) {
 <span class="nc" id="L29">        val topic = logBrokerRepository.get(eventToAppend.topicId)</span>
 <span class="nc" id="L30">        appender.append(</span>
-<span class="nc" id="L31">            computeId, topic, TenantEvent(</span>
-//                computeId = eventToAppend.computeId,
+<span class="nc" id="L31">            cmdId, topic, TenantEvent(</span>
+//                cmdId = eventToAppend.cmdId,
 <span class="nc" id="L33">                shard = eventToAppend.shard,</span>
 <span class="nc" id="L34">                topic = &quot;tenant-topic&quot;,</span>
 <span class="nc" id="L35">                contentType = eventToAppend.contentTpe,</span>
@@ -40,17 +40,17 @@ import org.springframework.stereotype.Service
 <span class="nc" id="L40">    }</span>
 
 <span class="nc" id="L42">    data class TopicToCreate(</span>
-<span class="nc" id="L43">        val computeId: ComputeId,</span>
+<span class="nc" id="L43">        val cmdId: CmdId,</span>
 <span class="nc" id="L44">        val shard: Shard,</span>
-<span class="nc" id="L45">        val tenantId: TenantId,</span>
+<span class="nc" id="L45">        val accountId: AccountId,</span>
 <span class="nc" id="L46">        val name: TopicName</span>
     )
 
 <span class="nc" id="L49">    data class EventToAppend(</span>
-<span class="nc" id="L50">        val computeId: ComputeId,</span>
+<span class="nc" id="L50">        val cmdId: CmdId,</span>
 <span class="nc" id="L51">        val shard: Shard,</span>
 
-<span class="nc" id="L53">        val tenantId: TenantId,</span>
+<span class="nc" id="L53">        val accountId: AccountId,</span>
 <span class="nc" id="L54">        val topicId: TopicId,</span>
 <span class="nc" id="L55">        val contentTpe: String,</span>
 <span class="nc" id="L56">        val value: ByteArray</span>

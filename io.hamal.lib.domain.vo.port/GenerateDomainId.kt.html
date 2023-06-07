@@ -7,7 +7,7 @@ interface GenerateDomainId {
     operator fun &lt;ID : DomainId&gt; invoke(shard: Shard, ctor: (SnowflakeId) -&gt; ID): ID
 }
 
-object DomainIdGeneratorAdapter : GenerateDomainId {
+object DefaultDomainIdGenerator : GenerateDomainId {
 
 <span class="nc" id="L12">    private val provideGenerator = KeyedOnce.default&lt;Shard, SnowflakeId.Generator&gt;()</span>
     override fun &lt;ID : DomainId&gt; invoke(shard: Shard, ctor: (SnowflakeId) -&gt; ID): ID {
@@ -20,16 +20,16 @@ object DomainIdGeneratorAdapter : GenerateDomainId {
     }
 }
 
-<span class="fc" id="L23">class FixedTimeIdGeneratorAdapter : GenerateDomainId {</span>
-<span class="fc" id="L24">    private val provideGenerator = KeyedOnce.default&lt;Shard, SnowflakeId.Generator&gt;()</span>
+<span class="nc" id="L23">class FixedTimeIdGenerator : GenerateDomainId {</span>
+<span class="nc" id="L24">    private val provideGenerator = KeyedOnce.default&lt;Shard, SnowflakeId.Generator&gt;()</span>
     override fun &lt;ID : DomainId&gt; invoke(shard: Shard, ctor: (SnowflakeId) -&gt; ID): ID {
-<span class="fc" id="L26">        val generator = provideGenerator(shard) {</span>
-<span class="fc" id="L27">            SnowflakeGenerator(</span>
-<span class="fc" id="L28">                elapsedSource = FixedElapsedSource(0),</span>
-<span class="fc" id="L29">                shardSource = DefaultShardSource(shard.value),</span>
+<span class="nc" id="L26">        val generator = provideGenerator(shard) {</span>
+<span class="nc" id="L27">            SnowflakeGenerator(</span>
+<span class="nc" id="L28">                elapsedSource = FixedElapsedSource(0),</span>
+<span class="nc" id="L29">                shardSource = DefaultShardSource(shard.value),</span>
             )
         }
-<span class="fc" id="L32">        return ctor(generator.next())</span>
+<span class="nc" id="L32">        return ctor(generator.next())</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

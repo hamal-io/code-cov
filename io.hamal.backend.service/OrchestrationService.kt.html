@@ -6,7 +6,7 @@ import io.hamal.backend.repository.api.domain.FailedExec
 import io.hamal.backend.repository.api.domain.PlannedExec
 import io.hamal.backend.service.cmd.ExecCmdService
 import io.hamal.lib.domain.Correlation
-import io.hamal.lib.domain.ComputeId
+import io.hamal.lib.domain.CmdId
 import io.hamal.lib.domain.vo.ExecId
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -30,18 +30,18 @@ class OrchestrationService
 <span class="nc" id="L30">    internal val inflight = mutableMapOf&lt;Correlation, ExecId&gt;()</span>
 
 
-    fun schedule(computeId: ComputeId, plannedExec: PlannedExec) {
+    fun schedule(cmdId: CmdId, plannedExec: PlannedExec) {
 <span class="nc" id="L34">        lock.withLock {</span>
 <span class="nc" id="L35">            val correlation = plannedExec.correlation</span>
 
 <span class="nc bnc" id="L37" title="All 2 branches missed.">            if (correlation == null) {</span>
-<span class="nc" id="L38">                scheduleExec(computeId, plannedExec)</span>
+<span class="nc" id="L38">                scheduleExec(cmdId, plannedExec)</span>
 <span class="nc" id="L39">                return</span>
             }
 
 <span class="nc bnc" id="L42" title="All 2 branches missed.">            if (!inflight.containsKey(correlation)) {</span>
 <span class="nc" id="L43">                inflight[correlation] = plannedExec.id</span>
-<span class="nc" id="L44">                scheduleExec(computeId, plannedExec)</span>
+<span class="nc" id="L44">                scheduleExec(cmdId, plannedExec)</span>
 <span class="nc" id="L45">                return</span>
             }
 
@@ -52,7 +52,7 @@ class OrchestrationService
         }
 <span class="nc" id="L53">    }</span>
 
-    fun completed(computeId: ComputeId, completedExec: CompletedExec) {
+    fun completed(cmdId: CmdId, completedExec: CompletedExec) {
 <span class="nc" id="L56">        lock.withLock {</span>
 <span class="nc bnc" id="L57" title="All 2 branches missed.">            if (completedExec.correlation != null) {</span>
                 // remove from inflight
@@ -64,7 +64,7 @@ class OrchestrationService
 <span class="nc bnc" id="L64" title="All 2 branches missed.">                    ?.let { plannedExec -&gt;</span>
 <span class="nc bnc" id="L65" title="All 2 branches missed.">                        if (plannedExec.correlation != null) {</span>
 <span class="nc" id="L66">                            inflight[plannedExec.correlation!!] = plannedExec.id</span>
-<span class="nc" id="L67">                            scheduleExec(computeId, plannedExec)</span>
+<span class="nc" id="L67">                            scheduleExec(cmdId, plannedExec)</span>
                         }
 <span class="nc" id="L69">                    }</span>
             }
@@ -73,7 +73,7 @@ class OrchestrationService
 <span class="nc" id="L73">        }</span>
 <span class="nc" id="L74">    }</span>
 
-    fun failed(computeId: ComputeId, failedExec: FailedExec) {
+    fun failed(cmdId: CmdId, failedExec: FailedExec) {
 <span class="nc" id="L77">        lock.withLock {</span>
             // FIXME retry or permanent fail or maybe do not fail at all...
 <span class="nc" id="L79">            TODO()</span>
@@ -82,8 +82,8 @@ class OrchestrationService
 
 }
 
-fun OrchestrationService.scheduleExec(computeId: ComputeId, plannedExec: PlannedExec) {
-<span class="nc" id="L86">    val scheduledExec = execCmdService.schedule(computeId, plannedExec)</span>
+fun OrchestrationService.scheduleExec(cmdId: CmdId, plannedExec: PlannedExec) {
+<span class="nc" id="L86">    val scheduledExec = execCmdService.schedule(cmdId, plannedExec)</span>
 <span class="nc" id="L87">    execs[scheduledExec.id] = scheduledExec</span>
 <span class="nc" id="L88">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

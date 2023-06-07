@@ -8,5 +8,16 @@ object CollectionUtils {
     fun &lt;T, U&gt; Sequence&lt;T&gt;.cross(other: Sequence&lt;U&gt;): Sequence&lt;Pair&lt;T, U&gt;&gt; {
 <span class="fc" id="L9">        return flatMap { lhs -&gt; other.map { rhs -&gt; lhs to rhs } }</span>
     }
+
+    inline fun &lt;T&gt; Collection&lt;T&gt;.takeWhileInclusive(
+        predicate: (T) -&gt; Boolean
+    ): List&lt;T&gt; {
+<span class="nc" id="L15">        var shouldContinue = true</span>
+<span class="nc" id="L16">        return takeWhile {</span>
+<span class="nc" id="L17">            val result = shouldContinue</span>
+<span class="nc" id="L18">            shouldContinue = predicate(it)</span>
+<span class="nc" id="L19">            result</span>
+        }
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

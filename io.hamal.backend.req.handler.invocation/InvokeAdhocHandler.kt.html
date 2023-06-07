@@ -3,7 +3,7 @@
 import io.hamal.backend.repository.api.domain.AdhocInvocation
 import io.hamal.backend.repository.api.domain.InvokeAdhocReq
 import io.hamal.backend.req.ReqHandler
-import io.hamal.backend.req.handler.computeId
+import io.hamal.backend.req.handler.cmdId
 import io.hamal.backend.req.handler.toExecInputs
 import io.hamal.backend.req.handler.toExecSecrets
 import io.hamal.backend.service.cmd.ExecCmdService
@@ -17,17 +17,16 @@ import org.springframework.stereotype.Component
 <span class="nc" id="L17">) : ReqHandler&lt;InvokeAdhocReq&gt;(InvokeAdhocReq::class) {</span>
     override fun invoke(req: InvokeAdhocReq) {
 <span class="nc" id="L19">        execCmdService.plan(</span>
-<span class="nc" id="L20">            req.computeId(), ToPlan(</span>
+<span class="nc" id="L20">            req.cmdId(), ToPlan(</span>
 <span class="nc" id="L21">                execId = req.execId,</span>
-<span class="nc" id="L22">                shard = req.shard,</span>
-<span class="nc" id="L23">                correlation = null,</span>
-<span class="nc" id="L24">                inputs = req.inputs.toExecInputs(),</span>
-<span class="nc" id="L25">                secrets = req.secrets.toExecSecrets(),</span>
-<span class="nc" id="L26">                code = req.code,</span>
+<span class="nc" id="L22">                correlation = null,</span>
+<span class="nc" id="L23">                inputs = req.inputs.toExecInputs(),</span>
+<span class="nc" id="L24">                secrets = req.secrets.toExecSecrets(),</span>
+<span class="nc" id="L25">                code = req.code,</span>
                 // FIXME func for audit purpose ?
-<span class="nc" id="L28">                invocation = AdhocInvocation()</span>
+<span class="nc" id="L27">                invocation = AdhocInvocation()</span>
             )
         )
-<span class="nc" id="L31">    }</span>
+<span class="nc" id="L30">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

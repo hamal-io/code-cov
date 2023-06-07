@@ -5,8 +5,8 @@ import io.hamal.backend.service.cmd.EventCmdService
 import io.hamal.backend.service.query.EventQueryService
 import io.hamal.lib.common.Shard
 import io.hamal.lib.common.util.TimeUtils
-import io.hamal.lib.domain.ComputeId
-import io.hamal.lib.domain.vo.TenantId
+import io.hamal.lib.domain.CmdId
+import io.hamal.lib.domain.vo.AccountId
 import io.hamal.lib.domain.vo.TopicId
 import io.hamal.lib.domain.vo.TopicName
 import io.hamal.lib.sdk.domain.*
@@ -45,9 +45,9 @@ import org.springframework.web.bind.annotation.*
 <span class="nc" id="L45">            with(</span>
 <span class="nc" id="L46">                cmdService.create(</span>
 <span class="nc" id="L47">                    EventCmdService.TopicToCreate(</span>
-<span class="nc" id="L48">                        computeId = ComputeId(1),</span>
+<span class="nc" id="L48">                        cmdId = CmdId(1),</span>
 <span class="nc" id="L49">                        shard = Shard(1),</span>
-<span class="nc" id="L50">                        tenantId = TenantId(1),</span>
+<span class="nc" id="L50">                        accountId = AccountId(1),</span>
 <span class="nc" id="L51">                        name = request.name</span>
                     )
                 )
@@ -69,11 +69,11 @@ import org.springframework.web.bind.annotation.*
     ): ResponseEntity&lt;ApiAppendEventResponse&gt; {
 
 <span class="nc" id="L71">        cmdService.append(</span>
-<span class="nc" id="L72">            ComputeId(TimeUtils.now().toEpochMilli()), // FIXME</span>
+<span class="nc" id="L72">            CmdId(TimeUtils.now().toEpochMilli()), // FIXME</span>
 <span class="nc" id="L73">            EventCmdService.EventToAppend(</span>
-<span class="nc" id="L74">                computeId = ComputeId(1),</span>
+<span class="nc" id="L74">                cmdId = CmdId(1),</span>
 <span class="nc" id="L75">                shard = Shard(1),</span>
-<span class="nc" id="L76">                tenantId = TenantId(1),</span>
+<span class="nc" id="L76">                accountId = AccountId(1),</span>
 <span class="nc" id="L77">                topicId = TopicId(topicId.toInt()),</span>
 <span class="nc" id="L78">                contentTpe = contentType,</span>
 <span class="nc" id="L79">                value = body</span>

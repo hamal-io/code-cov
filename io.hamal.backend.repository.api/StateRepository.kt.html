@@ -2,11 +2,11 @@
 
 import io.hamal.backend.repository.api.domain.State
 import io.hamal.lib.domain.Correlation
-import io.hamal.lib.domain.ComputeId
+import io.hamal.lib.domain.CmdId
 import io.hamal.lib.domain.StatePayload
 
 interface StateCmdRepository {
-    fun set(computeId: ComputeId, stateToSet: StateToSet): State
+    fun set(cmdId: CmdId, stateToSet: StateToSet): State
 <span class="nc" id="L10">    data class StateToSet(</span>
 <span class="nc" id="L11">        val correlation: Correlation,</span>
 <span class="nc" id="L12">        val payload: StatePayload</span>

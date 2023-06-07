@@ -65,7 +65,7 @@ import java.util.concurrent.TimeUnit
 
 <span class="nc" id="L66">    }</span>
 
-    @Scheduled(initialDelay = 100, fixedDelay = 100, timeUnit = TimeUnit.MILLISECONDS)
+    @Scheduled(initialDelay = 100, fixedDelay = 1000, timeUnit = TimeUnit.MILLISECONDS)
     fun run() {
 <span class="nc" id="L70">        CompletableFuture.runAsync {</span>
 <span class="nc" id="L71">            DefaultHamalSdk.execService()</span>

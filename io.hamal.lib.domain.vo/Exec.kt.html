@@ -23,15 +23,22 @@ import kotlinx.serialization.Serializable
 }
 
 
-enum class ExecStatus {
+<span class="nc" id="L26">enum class ExecStatus(val value: Int) {</span>
 
-<span class="nc" id="L28">    Planned,</span>
-<span class="nc" id="L29">    Scheduled,</span>
-<span class="nc" id="L30">    Queued,</span>
-<span class="nc" id="L31">    InFlight,</span>
-<span class="nc" id="L32">    Completed,</span>
-<span class="nc" id="L33">    Failed,</span>
-<span class="nc" id="L34">    TerminalFailed</span>
+<span class="nc" id="L28">    Planned(1),</span>
+<span class="nc" id="L29">    Scheduled(2),</span>
+<span class="nc" id="L30">    Queued(3),</span>
+<span class="nc" id="L31">    Started(4),</span>
+<span class="nc" id="L32">    Completed(5),</span>
+<span class="nc" id="L33">    Failed(6),</span>
+<span class="nc" id="L34">    TerminalFailed(7);</span>
+
+    companion object {
+<span class="nc bnc" id="L37" title="All 2 branches missed.">        fun valueOf(value: Int) = requireNotNull(mapped[value]) { &quot;$value is not an exec status&quot; }</span>
+
+<span class="nc" id="L39">        private val mapped = ExecStatus.values()</span>
+<span class="nc" id="L40">            .associateBy { it.value }</span>
+    }
 }
 
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

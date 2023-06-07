@@ -49,7 +49,7 @@ import java.nio.file.Path
 <span class="fc bfc" id="L49" title="All 2 branches covered.">        return connection.executeQueryOne(</span>
 <span class="fc" id="L50">            &quot;&quot;&quot;SELECT next_chunk_id FROM consumers WHERE group_id = :groupId and topic_id = :topicId&quot;&quot;&quot;</span>
         ) {
-<span class="fc" id="L52">            with {</span>
+<span class="fc" id="L52">            query {</span>
 <span class="fc" id="L53">                set(&quot;groupId&quot;, groupId.value)</span>
 <span class="fc" id="L54">                set(&quot;topicId&quot;, topicId.value)</span>
             }

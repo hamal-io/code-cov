@@ -3,7 +3,7 @@
 import io.hamal.backend.repository.api.domain.InvokeOneshotReq
 import io.hamal.backend.repository.api.domain.OneshotInvocation
 import io.hamal.backend.req.ReqHandler
-import io.hamal.backend.req.handler.computeId
+import io.hamal.backend.req.handler.cmdId
 import io.hamal.backend.req.handler.toExecInputs
 import io.hamal.backend.req.handler.toExecSecrets
 import io.hamal.backend.service.cmd.ExecCmdService
@@ -21,20 +21,19 @@ import org.springframework.stereotype.Component
     override fun invoke(req: InvokeOneshotReq) {
 <span class="nc" id="L22">        val func = funcQueryService.get(req.funcId)</span>
 <span class="nc" id="L23">        execCmdService.plan(</span>
-<span class="nc" id="L24">            req.computeId(), ToPlan(</span>
+<span class="nc" id="L24">            req.cmdId(), ToPlan(</span>
 <span class="nc" id="L25">                execId = req.execId,</span>
-<span class="nc" id="L26">                shard = func.shard,</span>
-<span class="nc" id="L27">                code = func.code,</span>
-<span class="nc" id="L28">                correlation = Correlation(</span>
-<span class="nc" id="L29">                    correlationId = req.correlationId,</span>
-<span class="nc" id="L30">                    funcId = func.id</span>
+<span class="nc" id="L26">                code = func.code,</span>
+<span class="nc" id="L27">                correlation = Correlation(</span>
+<span class="nc" id="L28">                    correlationId = req.correlationId,</span>
+<span class="nc" id="L29">                    funcId = func.id</span>
                 ),
-<span class="nc" id="L32">                inputs = req.inputs.toExecInputs(),</span>
-<span class="nc" id="L33">                secrets = req.secrets.toExecSecrets(),</span>
+<span class="nc" id="L31">                inputs = req.inputs.toExecInputs(),</span>
+<span class="nc" id="L32">                secrets = req.secrets.toExecSecrets(),</span>
                 // FIXME func for audit purpose ?
-<span class="nc" id="L35">                invocation = OneshotInvocation()</span>
+<span class="nc" id="L34">                invocation = OneshotInvocation()</span>
             )
         )
-<span class="nc" id="L38">    }</span>
+<span class="nc" id="L37">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

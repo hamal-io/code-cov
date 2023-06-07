@@ -4,11 +4,11 @@ import io.hamal.backend.component.EventEmitter
 import io.hamal.backend.event.*
 import io.hamal.backend.event_handler.exec.*
 import io.hamal.backend.event_handler.trigger.TriggerCreatedHandler
-import io.hamal.backend.service.EventServiceFactory
-import io.hamal.backend.service.OrchestrationService
-import io.hamal.backend.service.FixedRateTriggerService
-import io.hamal.backend.service.cmd.ExecCmdService
 import io.hamal.backend.req.Request
+import io.hamal.backend.service.EventServiceFactory
+import io.hamal.backend.service.FixedRateTriggerService
+import io.hamal.backend.service.OrchestrationService
+import io.hamal.backend.service.cmd.ExecCmdService
 import io.hamal.backend.service.cmd.StateCmdService
 import io.hamal.backend.service.query.ExecQueryService
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -62,7 +62,13 @@ import org.springframework.scheduling.annotation.EnableScheduling
 <span class="nc" id="L62">        .create()</span>
 
     override fun onApplicationEvent(event: ContextRefreshedEvent) {
-<span class="nc" id="L65">    }</span>
+//        val execRepository = SqliteExecRepository(
+//            SqliteExecRepository.Config(
+//                path = Path(&quot;/tmp/hamal&quot;),
+//                shard = Shard(1)
+//            )
+//        )
+<span class="nc" id="L71">    }</span>
 
 }
 

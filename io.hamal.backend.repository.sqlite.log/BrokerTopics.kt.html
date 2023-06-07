@@ -87,7 +87,7 @@ import java.nio.file.Path
 
 private fun DefaultLogBrokerTopicsRepository.findById(topicId: TopicId): LogTopic? {
 <span class="nc" id="L89">    return connection.executeQueryOne(&quot;SELECT id,name FROM topics WHERE id = :id&quot;) {</span>
-<span class="nc" id="L90">        with {</span>
+<span class="nc" id="L90">        query {</span>
 <span class="nc" id="L91">            set(&quot;id&quot;, topicId.value)</span>
         }
 <span class="nc" id="L93">        map { rs -&gt;</span>
@@ -104,7 +104,7 @@ private fun DefaultLogBrokerTopicsRepository.findById(topicId: TopicId): LogTopi
 
 private fun DefaultLogBrokerTopicsRepository.findTopicId(name: TopicName): TopicId? {
 <span class="fc" id="L106">    return connection.executeQueryOne(&quot;SELECT id FROM topics WHERE name = :name&quot;) {</span>
-<span class="fc" id="L107">        with {</span>
+<span class="fc" id="L107">        query {</span>
 <span class="fc" id="L108">            set(&quot;name&quot;, name.value)</span>
         }
 <span class="fc" id="L110">        map {</span>
@@ -115,7 +115,7 @@ private fun DefaultLogBrokerTopicsRepository.findTopicId(name: TopicName): Topic
 
 private fun DefaultLogBrokerTopicsRepository.createTopic(name: TopicName): TopicId {
 <span class="fc" id="L117">    return connection.execute&lt;TopicId&gt;(&quot;INSERT INTO topics(name, instant) VALUES (:name, :now) RETURNING id&quot;) {</span>
-<span class="fc" id="L118">        with {</span>
+<span class="fc" id="L118">        query {</span>
 <span class="fc" id="L119">            set(&quot;name&quot;, name.value)</span>
 <span class="fc" id="L120">            set(&quot;now&quot;, TimeUtils.now())</span>
         }

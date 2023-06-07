@@ -23,7 +23,7 @@ import kotlinx.serialization.encoding.Encoder
 <span class="fc" id="L23">abstract class DomainIdSerializer&lt;ID : DomainId&gt;(</span>
 <span class="pc" id="L24">    val fn: (SnowflakeId) -&gt; ID</span>
 ) : KSerializer&lt;ID&gt; {
-<span class="fc" id="L26">    override val descriptor = PrimitiveSerialDescriptor(&quot;Id&quot;, PrimitiveKind.STRING)</span>
+<span class="fc" id="L26">    override val descriptor = PrimitiveSerialDescriptor(&quot;Id&quot;, PrimitiveKind.LONG)</span>
 
     override fun deserialize(decoder: Decoder): ID {
 <span class="fc" id="L29">        return fn(SnowflakeId(decoder.decodeLong()))</span>

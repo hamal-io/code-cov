@@ -3,52 +3,63 @@
 import io.hamal.backend.component.EventEmitter
 import io.hamal.backend.event.TriggerCreatedEvent
 import io.hamal.backend.repository.api.TriggerCmdRepository
-import io.hamal.backend.repository.api.createFixedRateTrigger
 import io.hamal.backend.repository.api.domain.Trigger
 import io.hamal.lib.common.Shard
-import io.hamal.lib.domain.ComputeId
+import io.hamal.lib.domain.CmdId
 import io.hamal.lib.domain._enum.TriggerType
-import io.hamal.lib.domain.vo.FuncId
-import io.hamal.lib.domain.vo.TriggerName
+import io.hamal.lib.domain.vo.*
+import io.hamal.lib.domain.vo.port.GenerateDomainId
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import kotlin.time.Duration
 
-<span class="nc" id="L17">@Service</span>
+<span class="nc" id="L16">@Service</span>
 class TriggerCmdService
-<span class="nc" id="L19">@Autowired constructor(</span>
-<span class="nc" id="L20">    val triggerCmdRepository: TriggerCmdRepository,</span>
-<span class="nc" id="L21">    val eventEmitter: EventEmitter</span>
+<span class="nc" id="L18">@Autowired constructor(</span>
+<span class="nc" id="L19">    val triggerCmdRepository: TriggerCmdRepository,</span>
+<span class="nc" id="L20">    val eventEmitter: EventEmitter,</span>
+<span class="nc" id="L21">    val generateDomainId: GenerateDomainId</span>
 ) {
-    fun create(computeId: ComputeId, triggerToCreate: TriggerToCreate): Trigger =
-<span class="nc" id="L24">        createTrigger(computeId, triggerToCreate).also { emitEvent(computeId, it) }</span>
+    fun create(cmdId: CmdId, triggerToCreate: TriggerToCreate): Trigger =
+<span class="nc" id="L24">        createTrigger(cmdId, triggerToCreate).also { emitEvent(cmdId, it) }</span>
 
 <span class="nc" id="L26">    data class TriggerToCreate(</span>
 <span class="nc" id="L27">        val shard: Shard,</span>
 <span class="nc" id="L28">        val type: TriggerType,</span>
 <span class="nc" id="L29">        val name: TriggerName,</span>
 <span class="nc" id="L30">        val funcId: FuncId,</span>
-<span class="nc" id="L31">        val duration: Duration?</span>
+<span class="nc" id="L31">        val inputs: TriggerInputs,</span>
+<span class="nc" id="L32">        val secrets: TriggerSecrets,</span>
+<span class="nc" id="L33">        val duration: Duration?</span>
     )
 }
 
-private fun TriggerCmdService.createTrigger(computeId: ComputeId, triggerToCreate: TriggerCmdService.TriggerToCreate): Trigger {
-<span class="nc" id="L36">    return triggerCmdRepository.request(computeId) {</span>
-<span class="nc" id="L37">        createFixedRateTrigger {</span>
-<span class="nc" id="L38">            name = triggerToCreate.name</span>
-<span class="nc" id="L39">            funcId = triggerToCreate.funcId</span>
-<span class="nc" id="L40">            duration = triggerToCreate.duration!! //FIXME</span>
-<span class="nc" id="L41">        }</span>
-<span class="nc" id="L42">    }.first()</span>
+private fun TriggerCmdService.createTrigger(cmdId: CmdId, triggerToCreate: TriggerCmdService.TriggerToCreate): Trigger {
+<span class="nc" id="L38">    return when (triggerToCreate.type) {</span>
+<span class="nc bnc" id="L39" title="All 2 branches missed.">        TriggerType.FixedRate -&gt; triggerCmdRepository.create(</span>
+<span class="nc" id="L40">            TriggerCmdRepository.CreateFixedRateCmd(</span>
+<span class="nc" id="L41">                id = cmdId,</span>
+<span class="nc" id="L42">                accountId = AccountId(1),</span>
+<span class="nc" id="L43">                triggerId = generateDomainId(Shard(1), ::TriggerId),</span>
+<span class="nc" id="L44">                name = triggerToCreate.name,</span>
+<span class="nc" id="L45">                funcId = triggerToCreate.funcId,</span>
+<span class="nc" id="L46">                inputs = triggerToCreate.inputs,</span>
+<span class="nc" id="L47">                secrets = triggerToCreate.secrets,</span>
+<span class="nc" id="L48">                duration = triggerToCreate.duration!!</span>
+            )
+        )
+
+<span class="nc" id="L52">        else -&gt; TODO()</span>
+    }
 }
 
-private fun TriggerCmdService.emitEvent(computeId: ComputeId, trigger: Trigger) {
-<span class="nc" id="L46">    eventEmitter.emit(</span>
-<span class="nc" id="L47">        computeId, TriggerCreatedEvent(</span>
-//            computeId = ComputeId(123), //FIXME
-<span class="nc" id="L49">            shard = trigger.shard,</span>
-<span class="nc" id="L50">            trigger</span>
+private fun TriggerCmdService.emitEvent(cmdId: CmdId, trigger: Trigger) {
+<span class="nc" id="L57">    eventEmitter.emit(</span>
+<span class="nc" id="L58">        cmdId, TriggerCreatedEvent(</span>
+//            cmdId = CommandId(123), //FIXME
+<span class="nc" id="L60">            shard = trigger.shard,</span>
+<span class="nc" id="L61">            trigger</span>
         )
     )
-<span class="nc" id="L53">}</span>
+<span class="nc" id="L64">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

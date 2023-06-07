@@ -4,12 +4,12 @@ import io.hamal.backend.event.TriggerCreatedEvent
 import io.hamal.backend.event_handler.EventHandler
 import io.hamal.backend.repository.api.domain.FixedRateTrigger
 import io.hamal.backend.service.FixedRateTriggerService
-import io.hamal.lib.domain.ComputeId
+import io.hamal.lib.domain.CmdId
 
 <span class="nc" id="L9">class TriggerCreatedHandler(</span>
 <span class="nc" id="L10">    val fixedRateTriggerService: FixedRateTriggerService</span>
 ) : EventHandler&lt;TriggerCreatedEvent&gt; {
-    override fun handle(computeId: ComputeId, evt: TriggerCreatedEvent) {
+    override fun handle(cmdId: CmdId, evt: TriggerCreatedEvent) {
 <span class="nc" id="L13">        println(evt)</span>
 <span class="nc bnc" id="L14" title="All 2 branches missed.">        require(evt.trigger is FixedRateTrigger)</span>
 <span class="nc" id="L15">        fixedRateTriggerService.triggerAdded(evt.trigger)</span>

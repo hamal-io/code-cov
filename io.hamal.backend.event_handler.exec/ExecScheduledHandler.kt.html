@@ -3,16 +3,16 @@
 import io.hamal.backend.event.ExecScheduledEvent
 import io.hamal.backend.event_handler.EventHandler
 import io.hamal.backend.service.cmd.ExecCmdService
-import io.hamal.lib.domain.ComputeId
+import io.hamal.lib.domain.CmdId
 import logger
 
 <span class="nc" id="L9">class ExecScheduledHandler(</span>
 <span class="nc" id="L10">    val cmdService: ExecCmdService</span>
 ) : EventHandler&lt;ExecScheduledEvent&gt; {
 <span class="nc" id="L12">    private val log = logger(ExecScheduledHandler::class)</span>
-    override fun handle(computeId: ComputeId, evt: ExecScheduledEvent) {
+    override fun handle(cmdId: CmdId, evt: ExecScheduledEvent) {
 <span class="nc" id="L14">        log.debug(&quot;Handle: $evt&quot;)</span>
-<span class="nc" id="L15">        cmdService.enqueue(computeId, evt.scheduledExec)</span>
+<span class="nc" id="L15">        cmdService.queue(cmdId, evt.scheduledExec)</span>
 <span class="nc" id="L16">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

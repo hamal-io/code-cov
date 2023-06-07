@@ -4,7 +4,7 @@ import io.hamal.backend.event.Event
 import io.hamal.backend.repository.api.log.LogBrokerRepository
 import io.hamal.backend.repository.api.log.LogTopic
 import io.hamal.backend.repository.sqlite.log.ProtobufAppender
-import io.hamal.lib.domain.ComputeId
+import io.hamal.lib.domain.CmdId
 import io.hamal.lib.domain.vo.TopicName
 
 <span class="nc" id="L10">class EventEmitter(private val brokerRepository: LogBrokerRepository) {</span>
@@ -17,20 +17,20 @@ import io.hamal.lib.domain.vo.TopicName
 <span class="nc" id="L17">        local.set(listOf())</span>
 <span class="nc" id="L18">    }</span>
 
-    fun &lt;EVENT : Event&gt; emit(computeId: ComputeId, evt: EVENT) {
+    fun &lt;EVENT : Event&gt; emit(cmdId: CmdId, evt: EVENT) {
 <span class="nc" id="L21">        val topic = brokerRepository.resolveTopic(TopicName(evt.topic))</span>
 <span class="nc bnc" id="L22" title="All 2 branches missed.">        if (local.get() == null) {</span>
 <span class="nc" id="L23">            local.set(listOf(Pair(topic, evt)))</span>
         } else {
 <span class="nc" id="L25">            local.set(local.get().plus(Pair(topic, evt)))</span>
         }
-<span class="nc" id="L27">        flush(computeId)</span>
+<span class="nc" id="L27">        flush(cmdId)</span>
 <span class="nc" id="L28">    }</span>
 
 
-    fun flush(computeId: ComputeId) {
+    fun flush(cmdId: CmdId) {
 <span class="nc bnc" id="L32" title="All 2 branches missed.">        val notificationsToFlush = local.get() ?: listOf()</span>
-<span class="nc" id="L33">        notificationsToFlush.forEach { (topic, evt) -&gt; appender.append(computeId, topic, evt) }</span>
+<span class="nc" id="L33">        notificationsToFlush.forEach { (topic, evt) -&gt; appender.append(cmdId, topic, evt) }</span>
 <span class="nc" id="L34">        local.remove()</span>
 <span class="nc" id="L35">    }</span>
 }

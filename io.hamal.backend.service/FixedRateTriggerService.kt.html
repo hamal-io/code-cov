@@ -9,56 +9,63 @@ import io.hamal.backend.req.Request
 import io.hamal.backend.service.query.FuncQueryService
 import io.hamal.lib.common.Shard
 import io.hamal.lib.common.util.TimeUtils.now
-import io.hamal.lib.domain.vo.CorrelationId
-import io.hamal.lib.domain.vo.ExecId
-import io.hamal.lib.domain.vo.InvocationInputs
-import io.hamal.lib.domain.vo.InvocationSecrets
+import io.hamal.lib.domain.vo.*
 import io.hamal.lib.domain.vo.port.GenerateDomainId
+import jakarta.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.time.Instant
 import java.util.concurrent.TimeUnit
 
-<span class="nc" id="L23">@Service</span>
+<span class="nc" id="L21">@Service</span>
 class FixedRateTriggerService
-<span class="nc" id="L25">@Autowired constructor(</span>
-<span class="nc" id="L26">    internal val funcQueryService: FuncQueryService,</span>
-<span class="nc" id="L27">    internal val triggerQueryRepository: TriggerQueryRepository,</span>
-<span class="nc" id="L28">    internal val eventEmitter: EventEmitter,</span>
-<span class="nc" id="L29">    internal val request: Request,</span>
-<span class="nc" id="L30">    internal val generateDomainId: GenerateDomainId</span>
+<span class="nc" id="L23">@Autowired constructor(</span>
+<span class="nc" id="L24">    internal val funcQueryService: FuncQueryService,</span>
+<span class="nc" id="L25">    internal val triggerQueryRepository: TriggerQueryRepository,</span>
+<span class="nc" id="L26">    internal val eventEmitter: EventEmitter,</span>
+<span class="nc" id="L27">    internal val request: Request,</span>
+<span class="nc" id="L28">    internal val generateDomainId: GenerateDomainId</span>
 ) {
 
-<span class="nc" id="L33">    private val plannedInvocations = mutableMapOf&lt;Trigger, Instant&gt;()</span>
+<span class="nc" id="L31">    private val plannedInvocations = mutableMapOf&lt;Trigger, Instant&gt;()</span>
+
+    @PostConstruct
+    fun setup() {
+<span class="nc" id="L35">        triggerQueryRepository.list(TriggerId(0), 10)</span>
+<span class="nc" id="L36">            .filterIsInstance&lt;FixedRateTrigger&gt;()</span>
+<span class="nc" id="L37">            .forEach {</span>
+<span class="nc" id="L38">                plannedInvocations[it] = now().plusMillis(it.duration.inWholeSeconds)</span>
+<span class="nc" id="L39">            }</span>
+<span class="nc" id="L40">    }</span>
 
     fun triggerAdded(fixedRateTrigger: FixedRateTrigger) {
-<span class="nc" id="L36">        plannedInvocations.putIfAbsent(</span>
-<span class="nc" id="L37">            fixedRateTrigger,</span>
-<span class="nc" id="L38">            now().plusSeconds(fixedRateTrigger.duration.inWholeSeconds)</span>
+<span class="nc" id="L43">        plannedInvocations.putIfAbsent(</span>
+<span class="nc" id="L44">            fixedRateTrigger,</span>
+<span class="nc" id="L45">            now().plusSeconds(fixedRateTrigger.duration.inWholeSeconds)</span>
         )
-<span class="nc" id="L40">    }</span>
+<span class="nc" id="L47">    }</span>
 
 
     @Scheduled(fixedRate = 1, timeUnit = TimeUnit.SECONDS)
     fun run() {
-<span class="nc" id="L45">        plannedInvocations.filter { now().isAfter(it.value) }.forEach { (trigger, _) -&gt;</span>
-<span class="nc bnc" id="L46" title="All 2 branches missed.">            require(trigger is FixedRateTrigger)</span>
-<span class="nc" id="L47">            plannedInvocations[trigger] = now().plusSeconds(trigger.duration.inWholeSeconds)</span>
-<span class="nc" id="L48">            requestInvocation(trigger)</span>
-<span class="nc" id="L49">        }</span>
-<span class="nc" id="L50">    }</span>
+<span class="nc" id="L52">        plannedInvocations.filter { now().isAfter(it.value) }.forEach { (trigger, _) -&gt;</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">            require(trigger is FixedRateTrigger)</span>
+<span class="nc" id="L54">            plannedInvocations[trigger] = now().plusSeconds(trigger.duration.inWholeSeconds)</span>
+<span class="nc" id="L55">            requestInvocation(trigger)</span>
+<span class="nc" id="L56">        }</span>
+<span class="nc" id="L57">    }</span>
 }
 
 internal fun FixedRateTriggerService.requestInvocation(trigger: FixedRateTrigger) {
-<span class="nc" id="L54">    request(</span>
-<span class="nc" id="L55">        InvokeFixedRate(</span>
-<span class="nc" id="L56">            execId = generateDomainId(Shard(1), ::ExecId),</span>
-<span class="nc" id="L57">            funcId = trigger.funcId,</span>
-<span class="nc" id="L58">            correlationId = CorrelationId(&quot;__TBD__&quot;), //FIXME</span>
-<span class="nc" id="L59">            inputs = InvocationInputs(listOf()),</span>
-<span class="nc" id="L60">            secrets = InvocationSecrets(listOf()),</span>
+<span class="nc" id="L61">    request(</span>
+<span class="nc" id="L62">        InvokeFixedRate(</span>
+<span class="nc" id="L63">            execId = generateDomainId(Shard(1), ::ExecId),</span>
+<span class="nc" id="L64">            funcId = trigger.funcId,</span>
+<span class="nc" id="L65">            correlationId = CorrelationId(&quot;__TBD__&quot;), //FIXME</span>
+<span class="nc" id="L66">            inputs = InvocationInputs(listOf()),</span>
+<span class="nc" id="L67">            secrets = InvocationSecrets(listOf()),</span>
         )
     )
-<span class="nc" id="L63">}</span>
+<span class="nc" id="L70">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

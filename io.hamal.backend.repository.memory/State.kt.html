@@ -4,13 +4,13 @@ import io.hamal.backend.repository.api.StateCmdRepository
 import io.hamal.backend.repository.api.StateQueryRepository
 import io.hamal.backend.repository.api.domain.State
 import io.hamal.lib.domain.Correlation
-import io.hamal.lib.domain.ComputeId
+import io.hamal.lib.domain.CmdId
 
 object MemoryStateRepository : StateCmdRepository, StateQueryRepository {
 
 <span class="nc" id="L11">    private val states = mutableMapOf&lt;Correlation, State&gt;()</span>
 
-    override fun set(computeId: ComputeId, stateToSet: StateCmdRepository.StateToSet): State {
+    override fun set(cmdId: CmdId, stateToSet: StateCmdRepository.StateToSet): State {
 <span class="nc" id="L14">        return State(</span>
 <span class="nc" id="L15">            correlation = stateToSet.correlation,</span>
 <span class="nc" id="L16">            payload = stateToSet.payload,</span>

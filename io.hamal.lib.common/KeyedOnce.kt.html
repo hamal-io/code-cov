@@ -4,44 +4,54 @@ import io.hamal.lib.domain.Once
 import java.util.concurrent.ConcurrentHashMap
 
 interface KeyedOnce&lt;KEY : Any, VALUE : Any&gt; {
-    operator fun invoke(key: KEY, fn: () -&gt; VALUE): VALUE
+    operator fun invoke(key: KEY, fn: (key: KEY) -&gt; VALUE): VALUE
 
     fun keys(): Set&lt;KEY&gt;
 
+    fun clear()
+
     companion object {
         fun &lt;KEY : Any, VALUE : Any&gt; default(): KeyedOnce&lt;KEY, VALUE&gt; {
-<span class="fc" id="L13">            return DefaultImpl()</span>
+<span class="fc" id="L15">            return DefaultImpl()</span>
         }
 
         fun &lt;KEY : Any, VALUE : Any&gt; lru(capacity: Int): KeyedOnce&lt;KEY, VALUE&gt; {
-<span class="fc" id="L17">            return LruImpl(capacity)</span>
+<span class="fc" id="L19">            return LruImpl(capacity)</span>
         }
     }
 
-<span class="fc" id="L21">    class DefaultImpl&lt;KEY : Any, VALUE : Any&gt; : KeyedOnce&lt;KEY, VALUE&gt; {</span>
-<span class="fc" id="L22">        private val onceStore: ConcurrentHashMap&lt;KEY, Once&lt;VALUE&gt;&gt; = ConcurrentHashMap&lt;KEY, Once&lt;VALUE&gt;&gt;()</span>
+<span class="fc" id="L23">    class DefaultImpl&lt;KEY : Any, VALUE : Any&gt; : KeyedOnce&lt;KEY, VALUE&gt; {</span>
+<span class="fc" id="L24">        private val onceStore: ConcurrentHashMap&lt;KEY, Once&lt;VALUE&gt;&gt; = ConcurrentHashMap&lt;KEY, Once&lt;VALUE&gt;&gt;()</span>
 
-        override fun invoke(key: KEY, fn: () -&gt; VALUE): VALUE {
-<span class="fc" id="L25">            onceStore.putIfAbsent(key, Once.default())</span>
-<span class="fc" id="L26">            return onceStore[key]!!.invoke(fn)</span>
+        override fun invoke(key: KEY, fn: (key: KEY) -&gt; VALUE): VALUE {
+<span class="fc" id="L27">            onceStore.putIfAbsent(key, Once.default())</span>
+<span class="fc" id="L28">            return onceStore[key]!!{ fn(key) }</span>
         }
 
         override fun keys(): Set&lt;KEY&gt; {
-<span class="fc" id="L30">            return onceStore.keys</span>
+<span class="fc" id="L32">            return onceStore.keys</span>
         }
+
+        override fun clear() {
+<span class="nc" id="L36">            onceStore.clear()</span>
+<span class="nc" id="L37">        }</span>
     }
 
-<span class="fc" id="L34">    class LruImpl&lt;KEY : Any, VALUE : Any&gt;(maxCapacity: Int) : KeyedOnce&lt;KEY, VALUE&gt; {</span>
-<span class="fc" id="L35">        private val onceStore: LruCache&lt;KEY, Once&lt;VALUE&gt;&gt; = LruCache.DefaultImpl(maxCapacity)</span>
+<span class="fc" id="L40">    class LruImpl&lt;KEY : Any, VALUE : Any&gt;(maxCapacity: Int) : KeyedOnce&lt;KEY, VALUE&gt; {</span>
+<span class="fc" id="L41">        private val onceStore: LruCache&lt;KEY, Once&lt;VALUE&gt;&gt; = DefaultLruCache(maxCapacity)</span>
 
-        override fun invoke(key: KEY, fn: () -&gt; VALUE): VALUE {
-<span class="fc" id="L38">            onceStore.putIfAbsent(key, Once.default())</span>
-<span class="fc" id="L39">            return onceStore[key].invoke(fn)</span>
+        override fun invoke(key: KEY, fn: (key: KEY) -&gt; VALUE): VALUE {
+<span class="fc" id="L44">            onceStore.putIfAbsent(key, Once.default())</span>
+<span class="fc" id="L45">            return onceStore[key]{ fn(key) }</span>
         }
 
         override fun keys(): Set&lt;KEY&gt; {
-<span class="nc" id="L43">            return onceStore.keys()</span>
+<span class="nc" id="L49">            return onceStore.keys()</span>
         }
+
+        override fun clear() {
+<span class="nc" id="L53">            onceStore.clear()</span>
+<span class="nc" id="L54">        }</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

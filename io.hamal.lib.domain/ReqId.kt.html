@@ -16,7 +16,7 @@ import java.math.BigInteger
 <span class="nc" id="L16">    constructor(value: String) : this(BigInteger(value, 16))</span>
 
     object Serializer : KSerializer&lt;ReqId&gt; {
-<span class="nc" id="L19">        override val descriptor = PrimitiveSerialDescriptor(&quot;ComputeId&quot;, PrimitiveKind.STRING)</span>
+<span class="nc" id="L19">        override val descriptor = PrimitiveSerialDescriptor(&quot;CommandId&quot;, PrimitiveKind.STRING)</span>
 <span class="nc" id="L20">        override fun deserialize(decoder: Decoder) = ReqId(decoder.decodeString())</span>
         override fun serialize(encoder: Encoder, value: ReqId) {
 <span class="nc" id="L22">            encoder.encodeString(value.value.toString(16))</span>

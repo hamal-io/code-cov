@@ -2,36 +2,36 @@
 
 import io.hamal.lib.domain.Requester
 import io.hamal.lib.domain.vo.InvokedAt
-import io.hamal.lib.domain.vo.TenantId
+import io.hamal.lib.domain.vo.AccountId
 import kotlinx.serialization.Serializable
 
 <span class="nc" id="L8">@Serializable</span>
 sealed class Invocation {
     abstract val invokedAt: InvokedAt
-    abstract val invokedBy: Requester&lt;TenantId&gt;
+    abstract val invokedBy: Requester&lt;AccountId&gt;
 }
 
 <span class="nc bnc" id="L14" title="All 12 branches missed.">@Serializable</span>
 <span class="nc" id="L15">data class AdhocInvocation(</span>
 <span class="nc bnc" id="L16" title="All 4 branches missed.">    override val invokedAt: InvokedAt = InvokedAt.now(),//FIXME</span>
-<span class="nc bnc" id="L17" title="All 4 branches missed.">    override val invokedBy: Requester&lt;TenantId&gt; = Requester.tenant(TenantId(0)), //FIXME</span>
+<span class="nc bnc" id="L17" title="All 4 branches missed.">    override val invokedBy: Requester&lt;AccountId&gt; = Requester.tenant(AccountId(0)), //FIXME</span>
 <span class="nc" id="L18">) : Invocation()</span>
 
 <span class="nc bnc" id="L20" title="All 12 branches missed.">@Serializable</span>
 <span class="nc" id="L21">data class OneshotInvocation(</span>
 <span class="nc bnc" id="L22" title="All 4 branches missed.">    override val invokedAt: InvokedAt = InvokedAt.now(),//FIXME</span>
-<span class="nc bnc" id="L23" title="All 4 branches missed.">    override val invokedBy: Requester&lt;TenantId&gt; = Requester.tenant(TenantId(0)), //FIXME</span>
+<span class="nc bnc" id="L23" title="All 4 branches missed.">    override val invokedBy: Requester&lt;AccountId&gt; = Requester.tenant(AccountId(0)), //FIXME</span>
 <span class="nc" id="L24">) : Invocation()</span>
 
 <span class="nc bnc" id="L26" title="All 12 branches missed.">@Serializable</span>
 <span class="nc" id="L27">data class FixedRateInvocation(</span>
 <span class="nc bnc" id="L28" title="All 4 branches missed.">    override val invokedAt: InvokedAt = InvokedAt.now(),//FIXME</span>
-<span class="nc bnc" id="L29" title="All 4 branches missed.">    override val invokedBy: Requester&lt;TenantId&gt; = Requester.tenant(TenantId(0)), //FIXME</span>
+<span class="nc bnc" id="L29" title="All 4 branches missed.">    override val invokedBy: Requester&lt;AccountId&gt; = Requester.tenant(AccountId(0)), //FIXME</span>
 <span class="nc" id="L30">) : Invocation()</span>
 
 <span class="nc bnc" id="L32" title="All 12 branches missed.">@Serializable</span>
 <span class="nc" id="L33">data class EventInvocation(</span>
 <span class="nc bnc" id="L34" title="All 4 branches missed.">    override val invokedAt: InvokedAt = InvokedAt.now(),//FIXME</span>
-<span class="nc bnc" id="L35" title="All 4 branches missed.">    override val invokedBy: Requester&lt;TenantId&gt; = Requester.tenant(TenantId(0)), //FIXME</span>
+<span class="nc bnc" id="L35" title="All 4 branches missed.">    override val invokedBy: Requester&lt;AccountId&gt; = Requester.tenant(AccountId(0)), //FIXME</span>
 <span class="nc" id="L36">) : Invocation()</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
