@@ -16,24 +16,25 @@ internal interface ParseExpression&lt;EXPRESSION : Expression&gt; {
 <span class="fc" id="L16">    True to TrueLiteral.Parse,</span>
 <span class="fc" id="L17">    False to FalseLiteral.Parse,</span>
 <span class="fc" id="L18">    Nil to NilLiteral.Parse,</span>
-<span class="fc" id="L19">    Type.String to StringLiteral.Parse,</span>
-<span class="fc" id="L20">    Identifier to IdentifierLiteral.Parse,</span>
-<span class="fc" id="L21">    Number to NumberLiteral.Parse,</span>
-<span class="fc" id="L22">    Function to PrototypeLiteral.Parse,</span>
-<span class="fc" id="L23">    If to IfExpression.Parse,</span>
-<span class="fc" id="L24">    For to ForLoopExpression.Parse</span>
+<span class="fc" id="L19">    Code to CodeLiteral.Parse,</span>
+<span class="fc" id="L20">    Type.String to StringLiteral.Parse,</span>
+<span class="fc" id="L21">    Identifier to IdentifierLiteral.Parse,</span>
+<span class="fc" id="L22">    Number to NumberLiteral.Parse,</span>
+<span class="fc" id="L23">    Function to PrototypeLiteral.Parse,</span>
+<span class="fc" id="L24">    If to IfExpression.Parse,</span>
+<span class="fc" id="L25">    For to ForLoopExpression.Parse</span>
 )
 
-<span class="fc" id="L27">private val operatorMapping = mapOf(</span>
-<span class="fc" id="L28">    Operator.Minus to PrefixExpression.Parse,</span>
-<span class="fc" id="L29">    Operator.Call to GroupedExpression.Parse,</span>
-<span class="fc" id="L30">    Operator.TableConstructor to TableConstructorExpression.Parse</span>
+<span class="fc" id="L28">private val operatorMapping = mapOf(</span>
+<span class="fc" id="L29">    Operator.Minus to PrefixExpression.Parse,</span>
+<span class="fc" id="L30">    Operator.Call to GroupedExpression.Parse,</span>
+<span class="fc" id="L31">    Operator.TableConstructor to TableConstructorExpression.Parse</span>
 )
 
 internal fun parseFn(type: Type): ParseExpression&lt;*&gt; {
-<span class="fc" id="L34">    return when (type.category) {</span>
-<span class="fc bfc" id="L35" title="All 2 branches covered.">        Category.Operator -&gt; operatorMapping[Operator.from(type)]!!</span>
-<span class="fc" id="L36">        else -&gt; tokenMapping[type]!!</span>
+<span class="fc" id="L35">    return when (type.category) {</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">        Category.Operator -&gt; operatorMapping[Operator.from(type)]!!</span>
+<span class="fc" id="L37">        else -&gt; tokenMapping[type]!!</span>
     }
 }
 

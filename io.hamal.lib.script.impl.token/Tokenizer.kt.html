@@ -42,220 +42,240 @@ interface Tokenizer {
 <span class="fc bfc" id="L42" title="All 2 branches covered.">            isHexNumber() -&gt; nextHexNumber()</span>
 <span class="fc bfc" id="L43" title="All 2 branches covered.">            isNumber() -&gt; nextNumber()</span>
 <span class="fc bfc" id="L44" title="All 2 branches covered.">            isString() -&gt; nextString()</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">            isCode() -&gt; nextCode()</span>
             else -&gt; {
-<span class="fc" id="L46">                advance()</span>
-<span class="fc bfc" id="L47" title="All 4 branches covered.">                nextDelimiter()</span>
-<span class="fc" id="L48">                    ?: nextOperator()</span>
-<span class="fc" id="L49">                    ?: run {</span>
+<span class="fc" id="L47">                advance()</span>
+<span class="fc bfc" id="L48" title="All 4 branches covered.">                nextDelimiter()</span>
+<span class="fc" id="L49">                    ?: nextOperator()</span>
+<span class="fc" id="L50">                    ?: run {</span>
 
-<span class="pc bpc" id="L51" title="1 of 10 branches missed.">                        while (!isAtEnd() &amp;&amp; peek() != '(' &amp;&amp; (isAlpha(peek()) || isDigit(peek()) || isUnderscore(</span>
-<span class="fc" id="L52">                                peek()</span>
+<span class="pc bpc" id="L52" title="1 of 10 branches missed.">                        while (!isAtEnd() &amp;&amp; peek() != '(' &amp;&amp; (isAlpha(peek()) || isDigit(peek()) || isUnderscore(</span>
+<span class="fc" id="L53">                                peek()</span>
                             ))
                         ) {
-<span class="fc" id="L55">                            advance()</span>
+<span class="fc" id="L56">                            advance()</span>
                         }
-<span class="fc bfc" id="L57" title="All 2 branches covered.">                        nextLiteral()</span>
-<span class="fc" id="L58">                            ?: nextIdentifierOrKeyword()</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">                        nextLiteral()</span>
+<span class="fc" id="L59">                            ?: nextIdentifierOrKeyword()</span>
                     }
             }
         }
     }
-<span class="fc" id="L63">}</span>
+<span class="fc" id="L64">}</span>
 
-<span class="fc bfc" id="L65" title="All 4 branches covered.">private fun DefaultTokenizer.isHexNumber() = peek() == '0' &amp;&amp; peekNext() == 'x'</span>
+<span class="fc bfc" id="L66" title="All 4 branches covered.">private fun DefaultTokenizer.isHexNumber() = peek() == '0' &amp;&amp; peekNext() == 'x'</span>
 
-<span class="fc bfc" id="L67" title="All 2 branches covered.">private fun DefaultTokenizer.isNumber() = isDigit(peek()) ||</span>
-<span class="pc bpc" id="L68" title="1 of 6 branches missed.">        (canPeekNext() &amp;&amp; peek() == '.' &amp;&amp; isDigit(peekNext()))</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">private fun DefaultTokenizer.isNumber() = isDigit(peek()) ||</span>
+<span class="pc bpc" id="L69" title="1 of 6 branches missed.">        (canPeekNext() &amp;&amp; peek() == '.' &amp;&amp; isDigit(peekNext()))</span>
 
-<span class="fc" id="L70">private fun DefaultTokenizer.isString() = isQuote(peek())</span>
+<span class="fc" id="L71">private fun DefaultTokenizer.isString() = isQuote(peek())</span>
 
-<span class="fc" id="L72">private fun DefaultTokenizer.tokenPosition() = linePosition - buffer.length + 1</span>
+<span class="fc bfc" id="L73" title="All 6 branches covered.">private fun DefaultTokenizer.isCode() = peek() == '&lt;' &amp;&amp; (canPeekNext() &amp;&amp; peekNext() == '[')</span>
 
-<span class="fc" id="L74">private fun DefaultTokenizer.tokenLine() = line</span>
+<span class="fc" id="L75">private fun DefaultTokenizer.tokenPosition() = linePosition - buffer.length + 1</span>
 
-<span class="fc" id="L76">private fun DefaultTokenizer.tokenValue() = buffer.toString()</span>
+<span class="fc" id="L77">private fun DefaultTokenizer.tokenLine() = line</span>
 
-<span class="fc bfc" id="L78" title="All 2 branches covered.">internal fun DefaultTokenizer.isAtEnd(offset: Int = 0) = index + offset &gt;= code.length</span>
+<span class="fc" id="L79">private fun DefaultTokenizer.tokenValue() = buffer.toString()</span>
 
-<span class="fc bfc" id="L80" title="All 2 branches covered.">internal fun DefaultTokenizer.canPeekNext(offset: Int = 1) = index &lt; code.length - offset</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">internal fun DefaultTokenizer.isAtEnd(offset: Int = 0) = index + offset &gt;= code.length</span>
+
+<span class="fc bfc" id="L83" title="All 2 branches covered.">internal fun DefaultTokenizer.canPeekNext(offset: Int = 1) = index &lt; code.length - offset</span>
 
 internal fun DefaultTokenizer.peek(): Char {
-<span class="fc bfc" id="L83" title="All 4 branches covered.">    check(!isAtEnd()) { &quot;Can not read after end of code&quot; }</span>
-<span class="fc" id="L84">    return code[index]</span>
+<span class="fc bfc" id="L86" title="All 4 branches covered.">    check(!isAtEnd()) { &quot;Can not read after end of code&quot; }</span>
+<span class="fc" id="L87">    return code[index]</span>
 }
 
 internal fun DefaultTokenizer.peekPrev(): Char {
-<span class="fc bfc" id="L88" title="All 4 branches covered.">    check(index &gt; 0) { &quot;Can not read before start of code&quot; }</span>
-<span class="fc bfc" id="L89" title="All 4 branches covered.">    check(index &lt; code.length) { &quot;Can not read after end of code&quot; }</span>
-<span class="fc" id="L90">    return code[index - 1]</span>
+<span class="fc bfc" id="L91" title="All 4 branches covered.">    check(index &gt; 0) { &quot;Can not read before start of code&quot; }</span>
+<span class="fc bfc" id="L92" title="All 4 branches covered.">    check(index &lt; code.length) { &quot;Can not read after end of code&quot; }</span>
+<span class="fc" id="L93">    return code[index - 1]</span>
 }
 
-<span class="fc" id="L93">internal fun DefaultTokenizer.peekNext(offset: Int = 1): Char {</span>
-<span class="fc bfc" id="L94" title="All 4 branches covered.">    check(index + offset &lt; code.length) { &quot;Can not read after end of code&quot; }</span>
-<span class="fc" id="L95">    return code[index + offset]</span>
+<span class="fc" id="L96">internal fun DefaultTokenizer.peekNext(offset: Int = 1): Char {</span>
+<span class="fc bfc" id="L97" title="All 4 branches covered.">    check(index + offset &lt; code.length) { &quot;Can not read after end of code&quot; }</span>
+<span class="fc" id="L98">    return code[index + offset]</span>
 }
 
 internal fun DefaultTokenizer.advance(): DefaultTokenizer {
-<span class="fc bfc" id="L99" title="All 4 branches covered.">    check(index + 1 &lt;= code.length) { &quot;Can not read after end of code&quot; }</span>
-<span class="fc" id="L100">    linePosition++</span>
-<span class="fc" id="L101">    buffer.append(code[index++])</span>
-<span class="fc" id="L102">    return this</span>
+<span class="fc bfc" id="L102" title="All 4 branches covered.">    check(index + 1 &lt;= code.length) { &quot;Can not read after end of code&quot; }</span>
+<span class="fc" id="L103">    linePosition++</span>
+<span class="fc" id="L104">    buffer.append(code[index++])</span>
+<span class="fc" id="L105">    return this</span>
 }
 
 internal fun DefaultTokenizer.advanceUntilWhitespace(): DefaultTokenizer {
-<span class="pc bpc" id="L106" title="1 of 4 branches missed.">    while (!isAtEnd() &amp;&amp; !isWhitespace(peek())) {</span>
-<span class="fc" id="L107">        advance()</span>
+<span class="pc bpc" id="L109" title="1 of 4 branches missed.">    while (!isAtEnd() &amp;&amp; !isWhitespace(peek())) {</span>
+<span class="fc" id="L110">        advance()</span>
     }
-<span class="fc" id="L109">    return this</span>
+<span class="fc" id="L112">    return this</span>
 }
 
 internal fun DefaultTokenizer.skipWhitespace(): DefaultTokenizer {
-<span class="fc bfc" id="L113" title="All 2 branches covered.">    while (!isAtEnd()) {</span>
-<span class="fc" id="L114">        when (peek()) {</span>
-<span class="fc bfc" id="L115" title="All 2 branches covered.">            '-' -&gt; {</span>
-<span class="fc bfc" id="L116" title="All 4 branches covered.">                if (canPeekNext() &amp;&amp; peekNext() == '-') {</span>
-<span class="pc bpc" id="L117" title="1 of 4 branches missed.">                    while (peek() != '\n' &amp;&amp; !isAtEnd()) {</span>
-<span class="fc" id="L118">                        advance()</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">    while (!isAtEnd()) {</span>
+<span class="fc" id="L117">        when (peek()) {</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">            '-' -&gt; {</span>
+<span class="fc bfc" id="L119" title="All 4 branches covered.">                if (canPeekNext() &amp;&amp; peekNext() == '-') {</span>
+<span class="pc bpc" id="L120" title="1 of 4 branches missed.">                    while (peek() != '\n' &amp;&amp; !isAtEnd()) {</span>
+<span class="fc" id="L121">                        advance()</span>
                     }
                 } else {
-<span class="fc" id="L121">                    break</span>
+<span class="fc" id="L124">                    break</span>
                 }
             }
 
-<span class="fc bfc" id="L125" title="All 2 branches covered.">            '\n' -&gt; {</span>
-<span class="fc" id="L126">                line++</span>
-<span class="fc" id="L127">                linePosition = 0</span>
-<span class="fc" id="L128">                advance()</span>
+<span class="fc bfc" id="L128" title="All 2 branches covered.">            '\n' -&gt; {</span>
+<span class="fc" id="L129">                line++</span>
+<span class="fc" id="L130">                linePosition = 0</span>
+<span class="fc" id="L131">                advance()</span>
             }
 
-<span class="fc bfc" id="L131" title="All 10 branches covered.">            ' ', '\r', '\t' -&gt; {</span>
-<span class="fc" id="L132">                advance()</span>
+<span class="fc bfc" id="L134" title="All 10 branches covered.">            ' ', '\r', '\t' -&gt; {</span>
+<span class="fc" id="L135">                advance()</span>
             }
 
-<span class="fc" id="L135">            else -&gt; break</span>
+<span class="fc" id="L138">            else -&gt; break</span>
         }
     }
-<span class="fc" id="L138">    buffer.setLength(0)</span>
-<span class="fc" id="L139">    return this</span>
+<span class="fc" id="L141">    buffer.setLength(0)</span>
+<span class="fc" id="L142">    return this</span>
 }
 
 
 internal fun DefaultTokenizer.nextNumber(): Token {
-<span class="pc bpc" id="L144" title="2 of 4 branches missed.">    assert(</span>
-<span class="fc bfc" id="L145" title="All 2 branches covered.">        isDigit(peek()) ||</span>
-<span class="pc bpc" id="L146" title="3 of 6 branches missed.">                (canPeekNext() &amp;&amp; peek() == '.' &amp;&amp; isDigit(peekNext()))</span>
+<span class="pc bpc" id="L147" title="2 of 4 branches missed.">    assert(</span>
+<span class="fc bfc" id="L148" title="All 2 branches covered.">        isDigit(peek()) ||</span>
+<span class="pc bpc" id="L149" title="3 of 6 branches missed.">                (canPeekNext() &amp;&amp; peek() == '.' &amp;&amp; isDigit(peekNext()))</span>
     )
-<span class="fc bfc" id="L148" title="All 4 branches covered.">    while (!isAtEnd() &amp;&amp; isDigit(peek())) {</span>
-<span class="fc" id="L149">        advance()</span>
-    }
-<span class="fc bfc" id="L151" title="All 4 branches covered.">    if (!isAtEnd() &amp;&amp; peek() == '.') {</span>
+<span class="fc bfc" id="L151" title="All 4 branches covered.">    while (!isAtEnd() &amp;&amp; isDigit(peek())) {</span>
 <span class="fc" id="L152">        advance()</span>
-<span class="fc bfc" id="L153" title="All 4 branches covered.">        while (!isAtEnd() &amp;&amp; isDigit(peek())) {</span>
-<span class="fc" id="L154">            advance()</span>
+    }
+<span class="fc bfc" id="L154" title="All 4 branches covered.">    if (!isAtEnd() &amp;&amp; peek() == '.') {</span>
+<span class="fc" id="L155">        advance()</span>
+<span class="fc bfc" id="L156" title="All 4 branches covered.">        while (!isAtEnd() &amp;&amp; isDigit(peek())) {</span>
+<span class="fc" id="L157">            advance()</span>
         }
     }
-<span class="fc" id="L157">    return Token(Number, tokenLine(), tokenPosition(), tokenValue())</span>
+<span class="fc" id="L160">    return Token(Number, tokenLine(), tokenPosition(), tokenValue())</span>
 }
 
 internal fun DefaultTokenizer.nextHexNumber(): Token {
-<span class="pc bpc" id="L161" title="4 of 8 branches missed.">    assert(peek() == '0' &amp;&amp; peekNext() == 'x')</span>
-<span class="fc" id="L162">    advance(); // 0</span>
-<span class="fc" id="L163">    advance(); // x</span>
-<span class="pc bpc" id="L164" title="1 of 4 branches missed.">    while (!isAtEnd() &amp;&amp; TokenizerUtils.isHexChar(peek())) {</span>
-<span class="fc" id="L165">        advance();</span>
+<span class="pc bpc" id="L164" title="4 of 8 branches missed.">    assert(peek() == '0' &amp;&amp; peekNext() == 'x')</span>
+<span class="fc" id="L165">    advance() // 0</span>
+<span class="fc" id="L166">    advance() // x</span>
+<span class="pc bpc" id="L167" title="1 of 4 branches missed.">    while (!isAtEnd() &amp;&amp; TokenizerUtils.isHexChar(peek())) {</span>
+<span class="fc" id="L168">        advance()</span>
     }
-<span class="fc" id="L167">    return Token(HexNumber, tokenLine(), tokenPosition(), tokenValue())</span>
+<span class="fc" id="L170">    return Token(HexNumber, tokenLine(), tokenPosition(), tokenValue())</span>
 }
 
 internal fun DefaultTokenizer.nextString(): Token {
-<span class="pc bpc" id="L171" title="2 of 4 branches missed.">    assert(isQuote(peek()))</span>
-<span class="fc" id="L172">    advance() // remove first quote</span>
-<span class="fc" id="L173">    var newLineCounter = 0</span>
-<span class="fc" id="L174">    while (true) {</span>
-<span class="fc bfc" id="L175" title="All 2 branches covered.">        if (isAtEnd()) {</span>
-<span class="fc" id="L176">            return Token(Error, tokenLine(), tokenPosition(), &quot;Unterminated string&quot;)</span>
+<span class="pc bpc" id="L174" title="2 of 4 branches missed.">    assert(isQuote(peek()))</span>
+<span class="fc" id="L175">    advance() // remove first quote</span>
+<span class="fc" id="L176">    var newLineCounter = 0</span>
+<span class="fc" id="L177">    while (true) {</span>
+<span class="fc bfc" id="L178" title="All 2 branches covered.">        if (isAtEnd()) {</span>
+<span class="fc" id="L179">            return Token(Error, tokenLine(), tokenPosition(), &quot;Unterminated string&quot;)</span>
         }
 
-<span class="fc bfc" id="L179" title="All 4 branches covered.">        if (isQuote(peek()) &amp;&amp; peekPrev() != '\\') {</span>
-<span class="fc" id="L180">            break</span>
+<span class="fc bfc" id="L182" title="All 4 branches covered.">        if (isQuote(peek()) &amp;&amp; peekPrev() != '\\') {</span>
+<span class="fc" id="L183">            break</span>
         }
 
-<span class="fc bfc" id="L183" title="All 2 branches covered.">        if (peek() == '\n') {</span>
-<span class="fc" id="L184">            newLineCounter++</span>
+<span class="fc bfc" id="L186" title="All 2 branches covered.">        if (peek() == '\n') {</span>
+<span class="fc" id="L187">            newLineCounter++</span>
         }
 
-<span class="fc" id="L187">        advance()</span>
+<span class="fc" id="L190">        advance()</span>
     }
-<span class="fc" id="L189">    advance() // remove last quote</span>
-<span class="fc" id="L190">    return Token(Type.String, tokenLine(), tokenPosition(), buffer.substring(1, buffer.length - 1))</span>
+<span class="fc" id="L192">    advance() // remove last quote</span>
+<span class="fc" id="L193">    return Token(Type.String, tokenLine(), tokenPosition(), buffer.substring(1, buffer.length - 1))</span>
 }
+
+internal fun DefaultTokenizer.nextCode(): Token {
+<span class="fc" id="L197">    advance()</span>
+<span class="fc" id="L198">    advance()</span>
+<span class="fc" id="L199">    var newLineCounter = 0</span>
+<span class="fc" id="L200">    while (true) {</span>
+<span class="pc bpc" id="L201" title="1 of 2 branches missed.">        if (isAtEnd()) {</span>
+<span class="nc" id="L202">            return Token(Error, tokenLine(), tokenPosition(), &quot;Unterminated code&quot;)</span>
+        }
+
+<span class="pc bpc" id="L205" title="1 of 4 branches missed.">        if (peek() == '&gt;' &amp;&amp; peekPrev() == ']') {</span>
+<span class="fc" id="L206">            break</span>
+        }
+
+<span class="fc bfc" id="L209" title="All 2 branches covered.">        if (peek() == '\n') {</span>
+<span class="fc" id="L210">            newLineCounter++</span>
+        }
+
+<span class="fc" id="L213">        advance()</span>
+    }
+<span class="fc" id="L215">    advance()</span>
+<span class="fc" id="L216">    return Token(Code, tokenLine(), tokenPosition(), buffer.substring(2, buffer.length - 2))</span>
+}
+
 
 internal fun DefaultTokenizer.nextIdentifierOrKeyword(): Token {
-<span class="fc bfc" id="L194" title="All 2 branches covered.">    return asKeyword() ?: Token(Identifier, tokenLine(), tokenPosition(), tokenValue())</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">    return asKeyword() ?: Token(Identifier, tokenLine(), tokenPosition(), tokenValue())</span>
 }
 
-<span class="pc bfc" id="L197" title="All 2 branches covered.">val keywordMapping = Type.values().filter { it.category == Category.Keyword }.associateBy { it.value }</span>
+<span class="pc bfc" id="L224" title="All 2 branches covered.">val keywordMapping = Type.values().filter { it.category == Category.Keyword }.associateBy { it.value }</span>
 
 private fun DefaultTokenizer.asKeyword(): Token? {
-<span class="fc" id="L200">    val value = buffer.toString()</span>
-<span class="fc" id="L201">    return keywordMapping[value]</span>
-<span class="fc bfc" id="L202" title="All 2 branches covered.">        ?.let { Token(it, tokenLine(), tokenPosition(), value) }</span>
+<span class="fc" id="L227">    val value = buffer.toString()</span>
+<span class="fc" id="L228">    return keywordMapping[value]</span>
+<span class="fc bfc" id="L229" title="All 2 branches covered.">        ?.let { Token(it, tokenLine(), tokenPosition(), value) }</span>
 }
 
-<span class="pc bfc" id="L205" title="All 2 branches covered.">val operatorMapping = Type.values().filter { it.category == Category.Operator }.associateBy { it.value }</span>
+<span class="pc bfc" id="L232" title="All 2 branches covered.">val operatorMapping = Type.values().filter { it.category == Category.Operator }.associateBy { it.value }</span>
 
 private fun DefaultTokenizer.nextOperator(): Token? {
-<span class="fc bfc" id="L208" title="All 2 branches covered.">    return nextLookAheadOperator() ?: run {</span>
-<span class="fc" id="L209">        val value = buffer.toString()</span>
-<span class="fc bfc" id="L210" title="All 2 branches covered.">        return operatorMapping[value]?.let { Token(it, tokenLine(), tokenPosition(), value) }</span>
-    }
-}
-
-private fun DefaultTokenizer.nextLookAheadOperator(): Token? {
-<span class="fc" id="L215">    val buffer = StringBuffer(buffer)</span>
-
-<span class="fc bfc" id="L217" title="All 2 branches covered.">    for (lookAheadIndex in 0 until 3) {</span>
-<span class="fc bfc" id="L218" title="All 2 branches covered.">        if (!canPeekNext(lookAheadIndex)) {</span>
-<span class="fc" id="L219">            break</span>
+<span class="fc" id="L235">    val lookAheadBuffer = StringBuffer(buffer)</span>
+<span class="fc bfc" id="L236" title="All 2 branches covered.">    repeat(9) { idx -&gt;</span>
+<span class="fc bfc" id="L237" title="All 2 branches covered.">        if (!isAtEnd(idx)) {</span>
+<span class="fc" id="L238">            lookAheadBuffer.append(peekNext(idx))</span>
+        } else {
+<span class="fc" id="L240">            lookAheadBuffer.append(' ')</span>
         }
-<span class="fc" id="L221">        buffer.append(peekNext(lookAheadIndex))</span>
-<span class="fc" id="L222">        val candidate = operatorMapping[buffer.toString()]</span>
-<span class="fc bfc" id="L223" title="All 2 branches covered.">        if (candidate != null) {</span>
-<span class="fc" id="L224">            val noMoreCharacters = (</span>
-<span class="fc bfc" id="L225" title="All 2 branches covered.">                    canPeekNext(lookAheadIndex + 1) &amp;&amp;</span>
-<span class="fc bfc" id="L226" title="All 2 branches covered.">                            (isWhitespace(peekNext(lookAheadIndex + 1)) ||</span>
-<span class="fc bfc" id="L227" title="All 2 branches covered.">                            isAlpha(peekNext(lookAheadIndex + 1)) ||</span>
-<span class="fc bfc" id="L228" title="All 2 branches covered.">                            isDigit(peekNext(lookAheadIndex + 1))</span>
-                            )
-            )
+<span class="fc" id="L242">    }</span>
 
-<span class="fc" id="L232">            val atEnd = isAtEnd(lookAheadIndex + 1)</span>
-<span class="fc bfc" id="L233" title="All 4 branches covered.">            if (noMoreCharacters || atEnd) {</span>
-<span class="fc bfc" id="L234" title="All 2 branches covered.">                for (i in 0 until lookAheadIndex + 1) {</span>
-<span class="fc" id="L235">                    advance()</span>
-                }
-<span class="fc" id="L237">                return Token(candidate, tokenLine(), tokenPosition(), buffer.toString())</span>
+    fun matchesBuffer(chars: CharArray): Boolean {
+<span class="fc bfc" id="L245" title="All 2 branches covered.">        return chars.filterIndexed { index, c -&gt; lookAheadBuffer[index] != c }.isEmpty()</span>
+    }
+
+<span class="fc" id="L248">    Token.Type.values()</span>
+<span class="fc bfc" id="L249" title="All 2 branches covered.">        .filter { it.value.length &gt; 1 }</span>
+<span class="fc bfc" id="L250" title="All 2 branches covered.">        .filter { it.category == Category.Operator }</span>
+<span class="fc" id="L251">        .sortedByDescending { it.value.length }</span>
+<span class="fc" id="L252">        .forEach { type -&gt;</span>
+<span class="fc bfc" id="L253" title="All 2 branches covered.">            if (matchesBuffer(type.value.toCharArray())) {</span>
+<span class="fc bfc" id="L254" title="All 2 branches covered.">                repeat(type.value.length - 1) {</span>
+<span class="fc" id="L255">                    advance()</span>
+<span class="fc" id="L256">                }</span>
+<span class="fc" id="L257">                return Token(type, tokenLine(), tokenPosition(), type.value)</span>
             }
-        }
-    }
+<span class="fc" id="L259">        }</span>
 
-<span class="fc" id="L242">    return null</span>
+<span class="fc" id="L261">    val value = buffer.toString()</span>
+<span class="fc bfc" id="L262" title="All 2 branches covered.">    return operatorMapping[value]?.let { Token(it, tokenLine(), tokenPosition(), value) }</span>
 }
 
 private fun DefaultTokenizer.nextLiteral(): Token? {
-<span class="fc bfc" id="L246" title="All 4 branches covered.">    return when (val value = buffer.toString()) {</span>
-<span class="fc" id="L247">        &quot;true&quot; -&gt; Token(True, tokenLine(), tokenPosition(), value)</span>
-<span class="fc" id="L248">        &quot;false&quot; -&gt; Token(False, tokenLine(), tokenPosition(), value)</span>
-<span class="fc" id="L249">        &quot;nil&quot; -&gt; Token(Nil, tokenLine(), tokenPosition(), value)</span>
-<span class="fc" id="L250">        else -&gt; null</span>
+<span class="fc bfc" id="L266" title="All 4 branches covered.">    return when (val value = buffer.toString()) {</span>
+<span class="fc" id="L267">        &quot;true&quot; -&gt; Token(True, tokenLine(), tokenPosition(), value)</span>
+<span class="fc" id="L268">        &quot;false&quot; -&gt; Token(False, tokenLine(), tokenPosition(), value)</span>
+<span class="fc" id="L269">        &quot;nil&quot; -&gt; Token(Nil, tokenLine(), tokenPosition(), value)</span>
+<span class="fc" id="L270">        else -&gt; null</span>
     }
 }
 
 private fun DefaultTokenizer.nextDelimiter(): Token? {
-<span class="pc bpc" id="L255" title="2 of 7 branches missed.">    return when (buffer.toString()) {</span>
-<span class="fc" id="L256">        &quot;,&quot; -&gt; Token(Comma, tokenLine(), tokenPosition(), tokenValue())</span>
-<span class="fc" id="L257">        &quot;;&quot; -&gt; Token(Semicolon, tokenLine(), tokenPosition(), tokenValue())</span>
-<span class="fc" id="L258">        else -&gt; null</span>
+<span class="pc bpc" id="L275" title="2 of 7 branches missed.">    return when (buffer.toString()) {</span>
+<span class="fc" id="L276">        &quot;,&quot; -&gt; Token(Comma, tokenLine(), tokenPosition(), tokenValue())</span>
+<span class="fc" id="L277">        &quot;;&quot; -&gt; Token(Semicolon, tokenLine(), tokenPosition(), tokenValue())</span>
+<span class="fc" id="L278">        else -&gt; null</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -2,15 +2,18 @@
 
 import io.hamal.lib.script.api.ast.Expression
 import io.hamal.lib.script.api.ast.Statement
-import io.hamal.lib.script.impl.ast.expr.*
+import io.hamal.lib.script.impl.ast.expr.Precedence
+import io.hamal.lib.script.impl.ast.expr.currentPrecedence
+import io.hamal.lib.script.impl.ast.expr.infixFn
+import io.hamal.lib.script.impl.ast.expr.parseFn
 import io.hamal.lib.script.impl.ast.stmt.*
 import io.hamal.lib.script.impl.token.Token
 import io.hamal.lib.script.impl.token.Token.Type
 
 fun parse(tokens: List&lt;Token&gt;): Block {
-<span class="fc" id="L11">    return Parser.DefaultImpl.parse(</span>
-<span class="fc" id="L12">        Parser.Context(</span>
-<span class="fc" id="L13">            ArrayDeque(tokens)</span>
+<span class="fc" id="L14">    return Parser.DefaultImpl.parse(</span>
+<span class="fc" id="L15">        Parser.Context(</span>
+<span class="fc" id="L16">            ArrayDeque(tokens)</span>
         )
     )
 }
@@ -20,85 +23,83 @@ interface Parser {
     fun parse(ctx: Context): Block
 
     object DefaultImpl : Parser {
-<span class="fc" id="L23">        override fun parse(ctx: Context): Block = ctx.parseBlockStatement()</span>
+<span class="fc" id="L26">        override fun parse(ctx: Context): Block = ctx.parseBlockStatement()</span>
     }
 
-<span class="pc" id="L26">    data class Context(val tokens: ArrayDeque&lt;Token&gt;) {</span>
-<span class="fc" id="L27">        fun advance() = tokens.removeFirst()</span>
+<span class="pc" id="L29">    data class Context(val tokens: ArrayDeque&lt;Token&gt;) {</span>
+<span class="fc" id="L30">        fun advance() = tokens.removeFirst()</span>
 
-<span class="fc" id="L29">        fun currentToken() = this.tokens[0]</span>
-<span class="fc" id="L30">        fun nextToken() = this.tokens[1]</span>
+<span class="fc" id="L32">        fun currentToken() = this.tokens[0]</span>
+<span class="fc" id="L33">        fun nextToken() = this.tokens[1]</span>
 
-<span class="fc" id="L32">        fun currentTokenType() = currentToken().type</span>
-<span class="fc" id="L33">        fun nextTokenType() = nextToken().type</span>
-
-<span class="nc" id="L35">        fun currentOperator() = Operator.from(currentTokenType())</span>
+<span class="fc" id="L35">        fun currentTokenType() = currentToken().type</span>
+<span class="fc" id="L36">        fun nextTokenType() = nextToken().type</span>
 
         fun expectCurrentTokenTypToBe(type: Type) {
-<span class="pc bpc" id="L38" title="2 of 4 branches missed.">            require(currentTokenType() == type) {</span>
-<span class="nc" id="L39">                &quot;Expected token to be $type but got ${currentTokenType()}&quot;</span>
+<span class="pc bpc" id="L39" title="2 of 4 branches missed.">            require(currentTokenType() == type) {</span>
+<span class="nc" id="L40">                &quot;Expected token to be $type but got ${currentTokenType()}&quot;</span>
             }
-<span class="fc" id="L41">        }</span>
+<span class="fc" id="L42">        }</span>
 
-<span class="pc bpc" id="L43" title="1 of 2 branches missed.">        fun isNotEmpty() = tokens.isNotEmpty()</span>
+<span class="pc bpc" id="L44" title="1 of 2 branches missed.">        fun isNotEmpty() = tokens.isNotEmpty()</span>
     }
 }
 
 internal fun Parser.Context.parseBlockStatement(): Block {
-<span class="fc" id="L48">    val statements = mutableListOf&lt;Statement&gt;()</span>
+<span class="fc" id="L49">    val statements = mutableListOf&lt;Statement&gt;()</span>
     while (
-<span class="fc bfc" id="L50" title="All 2 branches covered.">        currentTokenType() != Type.Eof &amp;&amp;</span>
-<span class="fc bfc" id="L51" title="All 2 branches covered.">        currentTokenType() != Type.End &amp;&amp;</span>
-<span class="fc bfc" id="L52" title="All 2 branches covered.">        currentTokenType() != Type.Else &amp;&amp;</span>
-<span class="fc bfc" id="L53" title="All 2 branches covered.">        currentTokenType() != Type.ElseIf</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        currentTokenType() != Type.Eof &amp;&amp;</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        currentTokenType() != Type.End &amp;&amp;</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        currentTokenType() != Type.Else &amp;&amp;</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">        currentTokenType() != Type.ElseIf</span>
     ) {
-<span class="fc" id="L55">        parseStatement().let(statements::add)</span>
-<span class="fc bfc" id="L56" title="All 2 branches covered.">        if (currentTokenType() == Type.Semicolon) {</span>
-<span class="fc" id="L57">            advance()</span>
+<span class="fc" id="L56">        parseStatement().let(statements::add)</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">        if (currentTokenType() == Type.Semicolon) {</span>
+<span class="fc" id="L58">            advance()</span>
         }
     }
-<span class="fc" id="L60">    return Block(statements)</span>
+<span class="fc" id="L61">    return Block(statements)</span>
 }
 
 internal fun Parser.Context.parseStatement(): Statement {
-<span class="fc" id="L64">    return when {</span>
-<span class="fc bfc" id="L65" title="All 2 branches covered.">        isGlobalAssignment() -&gt; Assignment.Global.Parse(this)</span>
-<span class="fc bfc" id="L66" title="All 2 branches covered.">        isCallExpression() -&gt; Call.Parse(this)</span>
-<span class="fc bfc" id="L67" title="All 2 branches covered.">        isLocalAssignment() -&gt; Assignment.Local.Parse(this)</span>
-<span class="fc bfc" id="L68" title="All 2 branches covered.">        isFunction() -&gt; Prototype.Parse(this)</span>
-<span class="fc bfc" id="L69" title="All 2 branches covered.">        isReturn() -&gt; Return.Parse(this)</span>
-<span class="fc bfc" id="L70" title="All 2 branches covered.">        isBlock() -&gt; DoStmt.Parse(this)</span>
+<span class="fc" id="L65">    return when {</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">        isGlobalAssignment() -&gt; Assignment.Global.Parse(this)</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">        isCallExpression() -&gt; Call.Parse(this)</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">        isLocalAssignment() -&gt; Assignment.Local.Parse(this)</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">        isFunction() -&gt; Prototype.Parse(this)</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        isReturn() -&gt; Return.Parse(this)</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        isBlock() -&gt; DoStmt.Parse(this)</span>
         else -&gt; {
-<span class="fc" id="L72">            ExpressionStatement(parseExpression())</span>
+<span class="fc" id="L73">            ExpressionStatement(parseExpression())</span>
         }
     }
 }
 
 private fun Parser.Context.isCallExpression() =
-<span class="fc bfc" id="L78" title="All 4 branches covered.">    currentTokenType() == Type.Identifier &amp;&amp; nextTokenType() == Type.LeftParenthesis</span>
+<span class="fc bfc" id="L79" title="All 4 branches covered.">    currentTokenType() == Type.Identifier &amp;&amp; nextTokenType() == Type.LeftParenthesis</span>
 
 private fun Parser.Context.isGlobalAssignment(): Boolean {
-<span class="fc bfc" id="L81" title="All 6 branches covered.">    return currentTokenType() == Type.Identifier &amp;&amp; nextTokenType() == Type.Equal || nextTokenType() == Type.Comma</span>
+<span class="fc bfc" id="L82" title="All 6 branches covered.">    return currentTokenType() == Type.Identifier &amp;&amp; nextTokenType() == Type.Equal || nextTokenType() == Type.Comma</span>
 }
 
-<span class="fc bfc" id="L84" title="All 2 branches covered.">private fun Parser.Context.isLocalAssignment() = currentTokenType() == Type.Local</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">private fun Parser.Context.isLocalAssignment() = currentTokenType() == Type.Local</span>
 
-<span class="fc bfc" id="L86" title="All 2 branches covered.">private fun Parser.Context.isFunction() = currentTokenType() == Type.Function</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">private fun Parser.Context.isFunction() = currentTokenType() == Type.Function</span>
 
-<span class="fc bfc" id="L88" title="All 2 branches covered.">private fun Parser.Context.isReturn() = currentTokenType() == Type.Return</span>
-<span class="fc bfc" id="L89" title="All 2 branches covered.">private fun Parser.Context.isBlock() = currentTokenType() == Type.Do</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">private fun Parser.Context.isReturn() = currentTokenType() == Type.Return</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">private fun Parser.Context.isBlock() = currentTokenType() == Type.Do</span>
 
-<span class="fc" id="L91">internal fun Parser.Context.parseExpression(precedence: Precedence = Precedence.Lowest): Expression {</span>
-<span class="fc" id="L92">    var lhsExpression: Expression = parseFn(currentTokenType())(this)</span>
-<span class="fc bfc" id="L93" title="All 4 branches covered.">    while (!endOfExpression() &amp;&amp; precedence &lt; currentPrecedence()) {</span>
-<span class="pc bpc" id="L94" title="1 of 2 branches missed.">        val infix = infixFn(currentTokenType()) ?: return lhsExpression</span>
-<span class="fc" id="L95">        lhsExpression = infix(this, lhsExpression)</span>
+<span class="fc" id="L92">internal fun Parser.Context.parseExpression(precedence: Precedence = Precedence.Lowest): Expression {</span>
+<span class="fc" id="L93">    var lhsExpression: Expression = parseFn(currentTokenType())(this)</span>
+<span class="fc bfc" id="L94" title="All 4 branches covered.">    while (!endOfExpression() &amp;&amp; precedence &lt; currentPrecedence()) {</span>
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">        val infix = infixFn(currentTokenType()) ?: return lhsExpression</span>
+<span class="fc" id="L96">        lhsExpression = infix(this, lhsExpression)</span>
     }
-<span class="fc" id="L97">    return lhsExpression</span>
+<span class="fc" id="L98">    return lhsExpression</span>
 }
 
-<span class="fc bfc" id="L100" title="All 2 branches covered.">private fun Parser.Context.endOfExpression() = when (currentTokenType()) {</span>
-<span class="fc" id="L101">    Type.Semicolon, Type.Eof -&gt; true</span>
-<span class="fc" id="L102">    else -&gt; false</span>
-<span class="fc" id="L103">}</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">private fun Parser.Context.endOfExpression() = when (currentTokenType()) {</span>
+<span class="fc" id="L102">    Type.Semicolon, Type.Eof -&gt; true</span>
+<span class="fc" id="L103">    else -&gt; false</span>
+<span class="fc" id="L104">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,34 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Inputs.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.domain.vo.base</a> &gt; <span class="el_source">Inputs.kt</span></div><h1>Inputs.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.domain.vo.base
 
 import io.hamal.lib.common.ddd.ValueObject
-import io.hamal.lib.domain.value.TableEntry
+import io.hamal.lib.common.value.StringValue
+import io.hamal.lib.common.value.TableEntry
+import io.hamal.lib.common.value.TableValue
+import io.hamal.lib.domain.vo.ExecInputs
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.json.Json
 
-<span class="nc" id="L11">@Serializable</span>
-<span class="nc" id="L12">abstract class Inputs : ValueObject.BaseImpl&lt;List&lt;TableEntry&gt;&gt;() {</span>
+<span class="nc" id="L14">@Serializable</span>
+<span class="nc" id="L15">abstract class Inputs : ValueObject.BaseImpl&lt;TableValue&gt;() {</span>
     override fun toString(): String {
-<span class="nc" id="L14">        return &quot;${this::class.simpleName}(${value})&quot;</span>
+<span class="nc" id="L17">        return &quot;${this::class.simpleName}(${value})&quot;</span>
     }
 }
 
-<span class="nc" id="L18">abstract class InputsSerializer&lt;INPUT : Inputs&gt;(</span>
-<span class="nc" id="L19">    val fn: (List&lt;TableEntry&gt;) -&gt; INPUT</span>
+<span class="nc" id="L21">abstract class InputsSerializer&lt;INPUT : Inputs&gt;(</span>
+<span class="nc" id="L22">    val fn: (TableValue) -&gt; INPUT</span>
 ) : KSerializer&lt;INPUT&gt; {
-<span class="nc" id="L21">    private val delegate = ListSerializer(TableEntry.serializer())</span>
-<span class="nc" id="L22">    override val descriptor = delegate.descriptor</span>
+<span class="nc" id="L24">    private val delegate = TableValue.serializer()</span>
+<span class="nc" id="L25">    override val descriptor = delegate.descriptor</span>
 
     override fun deserialize(decoder: Decoder): INPUT {
-<span class="nc" id="L25">        return fn(delegate.deserialize(decoder))</span>
+<span class="nc" id="L28">        return fn(delegate.deserialize(decoder))</span>
     }
 
     override fun serialize(encoder: Encoder, value: INPUT) {
-<span class="nc" id="L29">        delegate.serialize(encoder, value.value)</span>
-<span class="nc" id="L30">    }</span>
+<span class="nc" id="L32">        delegate.serialize(encoder, value.value)</span>
+<span class="nc" id="L33">    }</span>
 }
 
 
+fun main() {
+<span class="nc" id="L38">    println(</span>
+<span class="nc" id="L39">        Json {}.encodeToString(</span>
+<span class="nc" id="L40">            ExecInputs.serializer(), ExecInputs(</span>
+<span class="nc" id="L41">                TableValue(</span>
+<span class="nc" id="L42">                    listOf(</span>
+<span class="nc" id="L43">                        TableEntry(StringValue(&quot;A&quot;), StringValue(&quot;B&quot;)),</span>
+<span class="nc" id="L44">                        TableEntry(StringValue(&quot;A&quot;), StringValue(&quot;B&quot;)),</span>
+                    )
+                )
+            )
+        )
+    )
+
+<span class="nc" id="L51">    println(</span>
+<span class="nc" id="L52">        Json {}.decodeFromString(</span>
+<span class="nc" id="L53">            ExecInputs.serializer(),</span>
+<span class="nc" id="L54">            &quot;{\&quot;entries\&quot;:[{\&quot;key\&quot;:{\&quot;type\&quot;:\&quot;String\&quot;,\&quot;value\&quot;:\&quot;A\&quot;},\&quot;value\&quot;:{\&quot;type\&quot;:\&quot;String\&quot;,\&quot;value\&quot;:\&quot;B\&quot;}}]}\n&quot;</span>
+        )
+    )
+<span class="nc" id="L57">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

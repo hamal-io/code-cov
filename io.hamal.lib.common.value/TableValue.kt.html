@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TableValue.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.common.value</a> &gt; <span class="el_source">TableValue.kt</span></div><h1>TableValue.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.common.value
+
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+
+
+<span class="nc" id="L8">@Serializable</span>
+<span class="nc" id="L9">sealed interface KeyValue : Value</span>
+
+<span class="pc bpc" id="L11" title="2 of 8 branches missed.">@Serializable</span>
+@SerialName(&quot;TableEntry&quot;)
+<span class="pc" id="L13">data class TableEntry(val key: Value, val value: Value)</span>
+
+<span class="pc bpc" id="L15" title="2 of 7 branches missed.">@Serializable</span>
+@SerialName(&quot;TableValue&quot;)
+<span class="fc" id="L17">data class TableValue(</span>
+<span class="pc" id="L18">    val entries: List&lt;TableEntry&gt;,</span>
+<span class="fc" id="L19">    @Transient</span>
+<span class="fc" id="L20">    override val metaTable: MetaTable = DefaultTableMetaTable</span>
+) : Value {
+<span class="nc" id="L22">    companion object {</span>
+<span class="fc" id="L23">        fun empty() = TableValue(listOf())</span>
+    }
+<span class="fc" id="L25">}</span>
+
+object DefaultTableMetaTable : MetaTable {
+<span class="fc" id="L28">    override val type = &quot;table&quot;</span>
+<span class="fc" id="L29">    override val operators: List&lt;ValueOperator&gt; = listOf()</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

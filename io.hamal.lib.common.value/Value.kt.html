@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Value.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.common.value</a> &gt; <span class="el_source">Value.kt</span></div><h1>Value.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.common.value
+
+import kotlinx.serialization.Serializable
+
+<span class="fc" id="L5">@Serializable</span>
+sealed interface Value {
+    val metaTable: MetaTable
+<span class="fc" id="L8">    fun type(): String = metaTable.type</span>
+
+    fun findInfixOperation(type: ValueOperator.Type, otherType: String): InfixValueOperator? {
+<span class="fc" id="L11">        return metaTable.operators</span>
+<span class="fc" id="L12">            .filterIsInstance&lt;InfixValueOperator&gt;()</span>
+<span class="fc bfc" id="L13" title="All 8 branches covered.">            .find { it.operationType == type &amp;&amp; it.otherType == otherType }</span>
+    }
+
+    fun findPrefixOperation(type: ValueOperator.Type): PrefixValueOperator? {
+<span class="fc" id="L17">        return metaTable.operators</span>
+<span class="fc" id="L18">            .filterIsInstance&lt;PrefixValueOperator&gt;()</span>
+<span class="fc bfc" id="L19" title="All 6 branches covered.">            .find { it.operationType == type }</span>
+    }
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

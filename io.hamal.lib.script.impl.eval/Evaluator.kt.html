@@ -29,41 +29,42 @@ internal interface Evaluator {
 <span class="fc" id="L29">        register(IdentifierLiteral::class, EvaluateIdentifier)</span>
 <span class="fc" id="L30">        register(NumberLiteral::class, EvaluateNumberLiteral)</span>
 <span class="fc" id="L31">        register(StringLiteral::class, EvaluateStringLiteral)</span>
-<span class="fc" id="L32">        register(FalseLiteral::class, EvaluateFalseLiteral)</span>
-<span class="fc" id="L33">        register(TrueLiteral::class, EvaluateTrueLiteral)</span>
-<span class="fc" id="L34">        register(NilLiteral::class, EvaluateNilLiteral)</span>
-<span class="fc" id="L35">        register(PrototypeLiteral::class, EvaluatePrototypeLiteral)</span>
+<span class="fc" id="L32">        register(CodeLiteral::class, EvaluateCodeLiteral)</span>
+<span class="fc" id="L33">        register(FalseLiteral::class, EvaluateFalseLiteral)</span>
+<span class="fc" id="L34">        register(TrueLiteral::class, EvaluateTrueLiteral)</span>
+<span class="fc" id="L35">        register(NilLiteral::class, EvaluateNilLiteral)</span>
+<span class="fc" id="L36">        register(PrototypeLiteral::class, EvaluatePrototypeLiteral)</span>
 
         /*EXPRESSION*/
-<span class="fc" id="L38">        register(CallExpression::class, EvaluateCallExpression)</span>
-<span class="fc" id="L39">        register(GroupedExpression::class, EvaluateGroupedExpression)</span>
-<span class="fc" id="L40">        register(InfixExpression::class, EvaluateInfixExpression)</span>
-<span class="fc" id="L41">        register(PrefixExpression::class, EvaluatePrefixExpression)</span>
-<span class="fc" id="L42">        register(TableAccessExpression::class, EvaluateTableAccess)</span>
-<span class="fc" id="L43">        register(TableConstructorExpression::class, EvaluateTableConstructor)</span>
-<span class="fc" id="L44">        register(IfExpression::class, EvaluateIfExpression)</span>
-<span class="fc" id="L45">        register(ForLoopExpression::class, EvaluateForLoopExpression)</span>
+<span class="fc" id="L39">        register(CallExpression::class, EvaluateCallExpression)</span>
+<span class="fc" id="L40">        register(GroupedExpression::class, EvaluateGroupedExpression)</span>
+<span class="fc" id="L41">        register(InfixExpression::class, EvaluateInfixExpression)</span>
+<span class="fc" id="L42">        register(PrefixExpression::class, EvaluatePrefixExpression)</span>
+<span class="fc" id="L43">        register(TableAccessExpression::class, EvaluateTableAccess)</span>
+<span class="fc" id="L44">        register(TableConstructorExpression::class, EvaluateTableConstructor)</span>
+<span class="fc" id="L45">        register(IfExpression::class, EvaluateIfExpression)</span>
+<span class="fc" id="L46">        register(ForLoopExpression::class, EvaluateForLoopExpression)</span>
 
 
         /*STATEMENT*/
-<span class="fc" id="L49">        register(Statement::class, EvaluateStatement)</span>
-<span class="fc" id="L50">        register(Assignment.Global::class, EvaluateGlobalAssignment)</span>
-<span class="fc" id="L51">        register(Assignment.Local::class, EvaluateLocalAssignment)</span>
-<span class="fc" id="L52">        register(Block::class, EvaluateBlock)</span>
-<span class="fc" id="L53">        register(Call::class, EvaluateCall)</span>
-<span class="fc" id="L54">        register(DoStmt::class, EvaluateDo)</span>
-<span class="fc" id="L55">        register(ExpressionStatement::class, EvaluateExpressionStatement)</span>
-<span class="fc" id="L56">        register(Prototype::class, EvaluatePrototype)</span>
-<span class="fc" id="L57">        register(Return::class, EvaluateReturn)</span>
-<span class="fc" id="L58">    }</span>
+<span class="fc" id="L50">        register(Statement::class, EvaluateStatement)</span>
+<span class="fc" id="L51">        register(Assignment.Global::class, EvaluateGlobalAssignment)</span>
+<span class="fc" id="L52">        register(Assignment.Local::class, EvaluateLocalAssignment)</span>
+<span class="fc" id="L53">        register(Block::class, EvaluateBlock)</span>
+<span class="fc" id="L54">        register(Call::class, EvaluateCall)</span>
+<span class="fc" id="L55">        register(DoStmt::class, EvaluateDo)</span>
+<span class="fc" id="L56">        register(ExpressionStatement::class, EvaluateExpressionStatement)</span>
+<span class="fc" id="L57">        register(Prototype::class, EvaluatePrototype)</span>
+<span class="fc" id="L58">        register(Return::class, EvaluateReturn)</span>
+<span class="fc" id="L59">    }</span>
 
     private fun &lt;TYPE : Node&gt; resolve(targetClass: KClass&lt;out TYPE&gt;): Evaluate&lt;TYPE&gt; {
         @Suppress(&quot;UNCHECKED_CAST&quot;)
-<span class="fc" id="L62">        return store[targetClass]!! as Evaluate&lt;TYPE&gt;</span>
+<span class="fc" id="L63">        return store[targetClass]!! as Evaluate&lt;TYPE&gt;</span>
     }
 
     private fun &lt;TYPE : Node&gt; register(targetClazz: KClass&lt;TYPE&gt;, evaluate: Evaluate&lt;TYPE&gt;) {
-<span class="fc" id="L66">        store[targetClazz] = evaluate</span>
-<span class="fc" id="L67">    }</span>
+<span class="fc" id="L67">        store[targetClazz] = evaluate</span>
+<span class="fc" id="L68">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

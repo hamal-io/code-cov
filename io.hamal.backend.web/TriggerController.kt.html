@@ -6,6 +6,7 @@ import io.hamal.backend.service.cmd.TriggerCmdService.TriggerToCreate
 import io.hamal.backend.service.query.TriggerQueryService
 import io.hamal.lib.common.Shard
 import io.hamal.lib.common.SnowflakeId
+import io.hamal.lib.common.value.TableValue
 import io.hamal.lib.domain.CmdId
 import io.hamal.lib.domain.vo.TriggerId
 import io.hamal.lib.domain.vo.TriggerInputs
@@ -22,10 +23,10 @@ import org.springframework.web.bind.annotation.*
 import kotlin.time.*
 
 
-<span class="nc" id="L25">@RestController</span>
-<span class="nc" id="L26">open class TriggerController(</span>
-<span class="nc" id="L27">    @Autowired val queryService: TriggerQueryService,</span>
-<span class="nc" id="L28">    @Autowired val cmdService: TriggerCmdService</span>
+<span class="nc" id="L26">@RestController</span>
+<span class="nc" id="L27">open class TriggerController(</span>
+<span class="nc" id="L28">    @Autowired val queryService: TriggerQueryService,</span>
+<span class="nc" id="L29">    @Autowired val cmdService: TriggerCmdService</span>
 ) {
     @PostMapping(&quot;/v1/triggers&quot;)
     fun createTrigger(
@@ -36,24 +37,24 @@ import kotlin.time.*
 
 
         //FIXME replace with request
-<span class="nc" id="L39">        val result = cmdService.create(</span>
-<span class="nc" id="L40">            CmdId(0), TriggerToCreate(</span>
-<span class="nc" id="L41">                shard = shard,</span>
-<span class="nc" id="L42">                name = req.name,</span>
-<span class="nc" id="L43">                funcId = req.funcId,</span>
-<span class="nc" id="L44">                type = req.type,</span>
-<span class="nc" id="L45">                inputs = TriggerInputs(listOf()),</span>
-<span class="nc" id="L46">                secrets = TriggerSecrets(listOf()),</span>
-<span class="nc" id="L47">                duration = req.duration</span>
+<span class="nc" id="L40">        val result = cmdService.create(</span>
+<span class="nc" id="L41">            CmdId(0), TriggerToCreate(</span>
+<span class="nc" id="L42">                shard = shard,</span>
+<span class="nc" id="L43">                name = req.name,</span>
+<span class="nc" id="L44">                funcId = req.funcId,</span>
+<span class="nc" id="L45">                type = req.type,</span>
+<span class="nc" id="L46">                inputs = TriggerInputs(TableValue.empty()),</span>
+<span class="nc" id="L47">                secrets = TriggerSecrets(listOf()),</span>
+<span class="nc" id="L48">                duration = req.duration</span>
             )
         )
 
-<span class="nc" id="L51">        return ResponseEntity(</span>
-<span class="nc" id="L52">            ApiCreateTriggerResponse(</span>
-<span class="nc" id="L53">                id = result.id,</span>
-<span class="nc" id="L54">                name = result.name,</span>
+<span class="nc" id="L52">        return ResponseEntity(</span>
+<span class="nc" id="L53">            ApiCreateTriggerResponse(</span>
+<span class="nc" id="L54">                id = result.id,</span>
+<span class="nc" id="L55">                name = result.name,</span>
             ),
-<span class="nc" id="L56">            HttpStatus.CREATED</span>
+<span class="nc" id="L57">            HttpStatus.CREATED</span>
         )
     }
 
@@ -63,19 +64,19 @@ import kotlin.time.*
         @RequestParam(required = false, name = &quot;after_id&quot;, defaultValue = &quot;0&quot;) stringTriggerId: String,
         @RequestParam(required = false, name = &quot;limit&quot;, defaultValue = &quot;100&quot;) limit: Int
     ): ResponseEntity&lt;ApiListTriggerResponse&gt; {
-<span class="nc" id="L66">        val result =</span>
-<span class="nc" id="L67">            queryService.list(</span>
-<span class="nc" id="L68">                afterId = TriggerId(SnowflakeId(stringTriggerId.toLong())),</span>
-<span class="nc" id="L69">                limit = limit</span>
+<span class="nc" id="L67">        val result =</span>
+<span class="nc" id="L68">            queryService.list(</span>
+<span class="nc" id="L69">                afterId = TriggerId(SnowflakeId(stringTriggerId.toLong())),</span>
+<span class="nc" id="L70">                limit = limit</span>
             )
 
 
-<span class="nc" id="L73">        return ResponseEntity.ok(</span>
-<span class="nc" id="L74">            ApiListTriggerResponse(</span>
-<span class="nc" id="L75">                result.map {</span>
-<span class="nc" id="L76">                    ApiListTriggerResponse.Trigger(</span>
-<span class="nc" id="L77">                        id = it.id,</span>
-<span class="nc" id="L78">                        name = it.name</span>
+<span class="nc" id="L74">        return ResponseEntity.ok(</span>
+<span class="nc" id="L75">            ApiListTriggerResponse(</span>
+<span class="nc" id="L76">                result.map {</span>
+<span class="nc" id="L77">                    ApiListTriggerResponse.Trigger(</span>
+<span class="nc" id="L78">                        id = it.id,</span>
+<span class="nc" id="L79">                        name = it.name</span>
                     )
                 }
             )

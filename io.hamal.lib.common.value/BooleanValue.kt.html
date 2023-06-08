@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BooleanValue.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.common.value</a> &gt; <span class="el_source">BooleanValue.kt</span></div><h1>BooleanValue.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.common.value
+
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+<span class="fc bfc" id="L6" title="All 2 branches covered.">fun booleanOf(value: Boolean) = if (value) TrueValue else FalseValue</span>
+
+<span class="pc" id="L8">@Serializable</span>
+@SerialName(&quot;TrueValue&quot;)
+object TrueValue : Value {
+    @Transient
+<span class="pc" id="L12">    override val metaTable = DefaultBooleanMetaTable</span>
+<span class="fc" id="L13">    override fun toString() = &quot;true&quot;</span>
+}
+
+<span class="pc" id="L16">@Serializable</span>
+@SerialName(&quot;FalseValue&quot;)
+object FalseValue : Value {
+    @Transient
+<span class="pc" id="L20">    override val metaTable = DefaultBooleanMetaTable</span>
+<span class="fc" id="L21">    override fun toString() = &quot;false&quot;</span>
+}
+
+object DefaultBooleanMetaTable : MetaTable {
+<span class="fc" id="L25">    override val type = &quot;boolean&quot;</span>
+<span class="fc" id="L26">    override val operators = listOf&lt;ValueOperator&gt;()</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

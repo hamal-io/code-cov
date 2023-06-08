@@ -10,6 +10,7 @@ import io.hamal.backend.service.cmd.FuncCmdService
 import io.hamal.backend.service.query.FuncQueryService
 import io.hamal.lib.common.Shard
 import io.hamal.lib.common.SnowflakeId
+import io.hamal.lib.common.value.TableValue
 import io.hamal.lib.domain.CmdId
 import io.hamal.lib.domain.vo.*
 import io.hamal.lib.domain.vo.port.GenerateDomainId
@@ -21,14 +22,14 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
-<span class="nc" id="L24">@RestController</span>
-<span class="nc" id="L25">open class FuncController(</span>
-<span class="nc" id="L26">    @Autowired val queryService: FuncQueryService,</span>
-<span class="nc" id="L27">    @Autowired val funcCmdService: FuncCmdService,</span>
-<span class="nc" id="L28">    @Autowired val execCmdService: ExecCmdService,</span>
-<span class="nc" id="L29">    @Autowired val eventEmitter: EventEmitter,</span>
-<span class="nc" id="L30">    @Autowired val request: Request,</span>
-<span class="nc" id="L31">    @Autowired val generateDomainId: GenerateDomainId</span>
+<span class="nc" id="L25">@RestController</span>
+<span class="nc" id="L26">open class FuncController(</span>
+<span class="nc" id="L27">    @Autowired val queryService: FuncQueryService,</span>
+<span class="nc" id="L28">    @Autowired val funcCmdService: FuncCmdService,</span>
+<span class="nc" id="L29">    @Autowired val execCmdService: ExecCmdService,</span>
+<span class="nc" id="L30">    @Autowired val eventEmitter: EventEmitter,</span>
+<span class="nc" id="L31">    @Autowired val request: Request,</span>
+<span class="nc" id="L32">    @Autowired val generateDomainId: GenerateDomainId</span>
 ) {
     @PostMapping(&quot;/v1/funcs&quot;)
     fun createFunc(
@@ -38,13 +39,13 @@ import org.springframework.web.bind.annotation.*
     ): Func {
         // FIXME to ApiCreateFuncResponse
         //FIXME as request
-<span class="nc" id="L41">        return funcCmdService.create(</span>
-<span class="nc" id="L42">            CmdId(0), FuncCmdService.ToCreate(</span>
-<span class="nc" id="L43">                funcId = generateDomainId(Shard(1), ::FuncId),</span>
-<span class="nc" id="L44">                name = req.name,</span>
-<span class="nc" id="L45">                inputs = FuncInputs(listOf()),</span>
-<span class="nc" id="L46">                secrets = FuncSecrets(listOf()),</span>
-<span class="nc" id="L47">                code = req.code</span>
+<span class="nc" id="L42">        return funcCmdService.create(</span>
+<span class="nc" id="L43">            CmdId(0), FuncCmdService.ToCreate(</span>
+<span class="nc" id="L44">                funcId = generateDomainId(Shard(1), ::FuncId),</span>
+<span class="nc" id="L45">                name = req.name,</span>
+<span class="nc" id="L46">                inputs = req.inputs,</span>
+<span class="nc" id="L47">                secrets = req.secrets,</span>
+<span class="nc" id="L48">                code = req.code</span>
             )
         )
     }
@@ -54,47 +55,48 @@ import org.springframework.web.bind.annotation.*
         @RequestParam(required = false, name = &quot;after_id&quot;, defaultValue = &quot;0&quot;) stringFuncId: String,
         @RequestParam(required = false, name = &quot;limit&quot;, defaultValue = &quot;100&quot;) limit: Int
     ): ResponseEntity&lt;ApiListFuncResponse&gt; {
-<span class="nc" id="L57">        val result = queryService.list(</span>
-<span class="nc" id="L58">            afterId = FuncId(SnowflakeId(stringFuncId.toLong())),</span>
-<span class="nc" id="L59">            limit = limit</span>
+<span class="nc" id="L58">        val result = queryService.list(</span>
+<span class="nc" id="L59">            afterId = FuncId(SnowflakeId(stringFuncId.toLong())),</span>
+<span class="nc" id="L60">            limit = limit</span>
         )
 
 
-<span class="nc" id="L63">        val b =     ApiListFuncResponse(</span>
-<span class="nc" id="L64">            result.map {</span>
-<span class="nc" id="L65">                ApiListFuncResponse.Func(</span>
-<span class="nc" id="L66">                    id = it.id,</span>
-<span class="nc" id="L67">                    name = it.name</span>
+<span class="nc" id="L64">        val b = ApiListFuncResponse(</span>
+<span class="nc" id="L65">            result.map {</span>
+<span class="nc" id="L66">                ApiListFuncResponse.Func(</span>
+<span class="nc" id="L67">                    id = it.id,</span>
+<span class="nc" id="L68">                    name = it.name</span>
                 )
             }
         )
 
-<span class="nc" id="L72">        return ResponseEntity.ok(b)</span>
+<span class="nc" id="L73">        return ResponseEntity.ok(b)</span>
     }
 
     @PostMapping(&quot;/v1/funcs/{funcId}/exec&quot;)
-<span class="nc" id="L76">    fun execFunc(</span>
+<span class="nc" id="L77">    fun execFunc(</span>
         @PathVariable(&quot;funcId&quot;) stringFuncId: String,
-<span class="nc" id="L78">        @RequestHeader(&quot;X-Correlation-ID&quot;, required = false) correlationIdStr: String? = null,</span>
+<span class="nc" id="L79">        @RequestHeader(&quot;X-Correlation-ID&quot;, required = false) correlationIdStr: String? = null,</span>
         @RequestBody body: ApiExecFuncRequest
     ): ResponseEntity&lt;ApiExecFuncResponse&gt; { // prob 202
 
         //FIXME should be  a service
-<span class="nc" id="L83">        val funcId = FuncId(SnowflakeId(stringFuncId.replace(&quot;'&quot;, &quot;&quot;).toLong()))</span>
+<span class="nc" id="L84">        val funcId = FuncId(SnowflakeId(stringFuncId.replace(&quot;'&quot;, &quot;&quot;).toLong()))</span>
 
-<span class="nc" id="L85">        val result = request(</span>
-<span class="nc" id="L86">            InvokeOneshot(</span>
-<span class="nc" id="L87">                execId = generateDomainId(Shard(1), ::ExecId),</span>
-<span class="nc bnc" id="L88" title="All 2 branches missed.">                correlationId = CorrelationId(correlationIdStr ?: &quot;__default__&quot;), //FIXME</span>
-<span class="nc" id="L89">                inputs = InvocationInputs(listOf()),</span>
-<span class="nc" id="L90">                secrets = InvocationSecrets(listOf()),</span>
-<span class="nc" id="L91">                funcId = funcId</span>
+
+<span class="nc" id="L87">        val result = request(</span>
+<span class="nc" id="L88">            InvokeOneshot(</span>
+<span class="nc" id="L89">                execId = generateDomainId(Shard(1), ::ExecId),</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">                correlationId = CorrelationId(correlationIdStr ?: &quot;__default__&quot;), //FIXME</span>
+<span class="nc" id="L91">                inputs = InvocationInputs(TableValue.empty()),</span>
+<span class="nc" id="L92">                secrets = InvocationSecrets(listOf()),</span>
+<span class="nc" id="L93">                funcId = funcId</span>
             )
         )
 
-<span class="nc" id="L95">        return ResponseEntity.ok(</span>
-<span class="nc" id="L96">            ApiExecFuncResponse(</span>
-<span class="nc" id="L97">                cmdId = CmdId(0)</span>
+<span class="nc" id="L97">        return ResponseEntity.ok(</span>
+<span class="nc" id="L98">            ApiExecFuncResponse(</span>
+<span class="nc" id="L99">                cmdId = CmdId(0)</span>
             )
         )
     }

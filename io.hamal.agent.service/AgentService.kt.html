@@ -49,9 +49,9 @@ import java.util.concurrent.TimeUnit
 <span class="nc" id="L49">            entryPointLoader.load(File(&quot;/home/ddymke/Repo/hamal/agent/extension/std/log/build/libs/extension-std-log.jar&quot;))</span>
 <span class="nc" id="L50">        extensionEnvironments.add(log.create()) // FIXME store the factory not the environment - a new environment must be created when calling require each times</span>
 
-<span class="nc" id="L52">        val hamal =</span>
-<span class="nc" id="L53">            entryPointLoader.load(File(&quot;/home/ddymke/Repo/hamal/agent/extension/std/hamal/build/libs/extension-std-hamal.jar&quot;))</span>
-<span class="nc" id="L54">        extensionEnvironments.add(hamal.create()) // FIXME store the factory not the environment - a new environment must be created when calling require each times</span>
+<span class="nc" id="L52">        val sys =</span>
+<span class="nc" id="L53">            entryPointLoader.load(File(&quot;/home/ddymke/Repo/hamal/agent/extension/std/sys/build/libs/extension-std-sys.jar&quot;))</span>
+<span class="nc" id="L54">        extensionEnvironments.add(sys.create()) // FIXME store the factory not the environment - a new environment must be created when calling require each times</span>
 
 <span class="nc" id="L56">        val debug =</span>
 <span class="nc" id="L57">            entryPointLoader.load(File(&quot;/home/ddymke/Repo/hamal/agent/extension/std/debug/build/libs/extension-std-debug.jar&quot;))</span>
@@ -72,7 +72,7 @@ import java.util.concurrent.TimeUnit
 <span class="nc" id="L72">                .poll()</span>
 <span class="nc" id="L73">                .requests.forEach { request -&gt;</span>
 
-<span class="nc" id="L75">                    println(&quot;${request.inputs} - ${request.inputs.value.size}&quot;)</span>
+<span class="nc" id="L75">                    println(&quot;${request.inputs} - ${request.inputs.value}&quot;)</span>
 <span class="nc" id="L76">                    println(&quot;${request.secrets} - ${request.secrets.value.size}&quot;)</span>
 
 //                println(&quot;$request&quot;)

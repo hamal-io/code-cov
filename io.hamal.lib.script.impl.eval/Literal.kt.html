@@ -24,12 +24,16 @@ internal object EvaluateStringLiteral : Evaluate&lt;StringLiteral&gt; {
 <span class="fc" id="L24">    override fun invoke(ctx: EvaluationContext&lt;StringLiteral&gt;) = DepStringValue(ctx.toEvaluate.value)</span>
 }
 
+internal object EvaluateCodeLiteral : Evaluate&lt;CodeLiteral&gt; {
+<span class="nc" id="L28">    override fun invoke(ctx: EvaluationContext&lt;CodeLiteral&gt;) = DepCodeValue(ctx.toEvaluate.value)</span>
+}
+
 internal object EvaluatePrototypeLiteral : Evaluate&lt;PrototypeLiteral&gt; {
     override fun invoke(ctx: EvaluationContext&lt;PrototypeLiteral&gt;): DepPrototypeValue {
-<span class="fc" id="L29">        return DepPrototypeValue(</span>
-<span class="fc" id="L30">            ctx.evaluateAsIdentifier { identifier },</span>
-<span class="pc" id="L31">            ctx.toEvaluate.parameters.map { ctx.evaluateAsString(it) },</span>
-<span class="fc" id="L32">            ctx.toEvaluate.block</span>
+<span class="fc" id="L33">        return DepPrototypeValue(</span>
+<span class="fc" id="L34">            ctx.evaluateAsIdentifier { identifier },</span>
+<span class="pc" id="L35">            ctx.toEvaluate.parameters.map { ctx.evaluateAsString(it) },</span>
+<span class="fc" id="L36">            ctx.toEvaluate.block</span>
         )
     }
 }

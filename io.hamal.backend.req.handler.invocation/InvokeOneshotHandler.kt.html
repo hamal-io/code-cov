@@ -4,12 +4,12 @@ import io.hamal.backend.repository.api.domain.InvokeOneshotReq
 import io.hamal.backend.repository.api.domain.OneshotInvocation
 import io.hamal.backend.req.ReqHandler
 import io.hamal.backend.req.handler.cmdId
-import io.hamal.backend.req.handler.toExecInputs
 import io.hamal.backend.req.handler.toExecSecrets
 import io.hamal.backend.service.cmd.ExecCmdService
 import io.hamal.backend.service.cmd.ExecCmdService.ToPlan
 import io.hamal.backend.service.query.FuncQueryService
 import io.hamal.lib.domain.Correlation
+import io.hamal.lib.domain.vo.ExecInputs
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component
 <span class="nc" id="L28">                    correlationId = req.correlationId,</span>
 <span class="nc" id="L29">                    funcId = func.id</span>
                 ),
-<span class="nc" id="L31">                inputs = req.inputs.toExecInputs(),</span>
+<span class="nc" id="L31">                inputs = ExecInputs(func.inputs.value),</span>
 <span class="nc" id="L32">                secrets = req.secrets.toExecSecrets(),</span>
                 // FIXME func for audit purpose ?
 <span class="nc" id="L34">                invocation = OneshotInvocation()</span>

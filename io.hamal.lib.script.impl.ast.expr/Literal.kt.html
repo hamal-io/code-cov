@@ -95,4 +95,18 @@ object NilLiteral : LiteralExpression {
 <span class="nc" id="L95">    override fun toString() = &quot;nil&quot;</span>
 }
 
+
+<span class="pc" id="L99">data class CodeLiteral(val value: String) : LiteralExpression {</span>
+    internal object Parse : ParseLiteralExpression&lt;CodeLiteral&gt; {
+        override fun invoke(ctx: Context): CodeLiteral {
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">            require(ctx.isNotEmpty())</span>
+<span class="fc" id="L103">            val token = ctx.currentToken()</span>
+<span class="pc bpc" id="L104" title="3 of 6 branches missed.">            assert(token.type == Type.Code)</span>
+<span class="fc" id="L105">            ctx.advance()</span>
+<span class="fc" id="L106">            return CodeLiteral(token.value)</span>
+        }
+    }
+
+<span class="nc" id="L110">    override fun toString() = &quot;'$value'&quot;</span>
+}
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
