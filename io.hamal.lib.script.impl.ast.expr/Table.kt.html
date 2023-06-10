@@ -47,14 +47,14 @@ sealed interface FieldExpression {
 
 <span class="fc" id="L48">data class TableKeyLiteral(val value: String) : LiteralExpression {</span>
 <span class="fc" id="L49">    init {</span>
-<span class="pc bpc" id="L50" title="2 of 4 branches missed.">        require(value.trim().isNotEmpty()) { &quot;Identifier can not be empty&quot; }</span>
+<span class="pc bpc" id="L50" title="2 of 4 branches missed.">        require(value.trim().isNotEmpty()) { &quot;ident can not be empty&quot; }</span>
 <span class="fc" id="L51">    }</span>
 
     internal object Parse : ParseLiteralExpression&lt;TableKeyLiteral&gt; {
         override fun invoke(ctx: Parser.Context): TableKeyLiteral {
 <span class="pc bpc" id="L55" title="1 of 2 branches missed.">            require(ctx.isNotEmpty())</span>
 <span class="fc" id="L56">            val token = ctx.currentToken()</span>
-<span class="pc bpc" id="L57" title="3 of 8 branches missed.">            assert(token.type == Token.Type.Identifier || token.type == Token.Type.String)</span>
+<span class="pc bpc" id="L57" title="3 of 8 branches missed.">            assert(token.type == Token.Type.Ident || token.type == Token.Type.String)</span>
 <span class="fc" id="L58">            ctx.advance()</span>
 <span class="fc" id="L59">            return TableKeyLiteral(token.value)</span>
         }
@@ -127,7 +127,7 @@ sealed interface FieldExpression {
 }
 
 <span class="fc" id="L129">class TableAccessExpression(</span>
-<span class="fc" id="L130">    val identifier: IdentifierLiteral,</span>
+<span class="fc" id="L130">    val ident: IdentifierLiteral,</span>
 <span class="fc" id="L131">    val parameter: Expression</span>
 ) : Expression {
 
@@ -135,7 +135,7 @@ sealed interface FieldExpression {
         override fun invoke(ctx: Parser.Context, lhs: Expression): Expression {
 <span class="pc bpc" id="L136" title="1 of 2 branches missed.">            require(lhs is IdentifierLiteral)</span>
 <span class="fc" id="L137">            return TableAccessExpression(</span>
-<span class="fc" id="L138">                identifier = lhs,</span>
+<span class="fc" id="L138">                ident = lhs,</span>
 <span class="fc" id="L139">                parameter = ctx.parseParameter()</span>
             )
         }
@@ -160,7 +160,7 @@ sealed interface FieldExpression {
         private fun Parser.Context.parseKey(): Expression {
 <span class="fc bfc" id="L161" title="All 2 branches covered.">            if (currentTokenType() == Token.Type.Dot) {</span>
 <span class="fc" id="L162">                advance()</span>
-<span class="fc" id="L163">                expectCurrentTokenTypToBe(Identifier)</span>
+<span class="fc" id="L163">                expectCurrentTokenTypToBe(Ident)</span>
 <span class="fc" id="L164">                return TableKeyLiteral.Parse(this)</span>
             }
 <span class="fc" id="L166">            expectCurrentTokenTypToBe(LeftBracket)</span>

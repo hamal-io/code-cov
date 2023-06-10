@@ -6,7 +6,7 @@ import io.hamal.lib.script.impl.ast.parseExpression
 import io.hamal.lib.script.impl.token.Token
 
 <span class="fc" id="L8">data class CallExpression(</span>
-<span class="fc" id="L9">    val identifier: Expression,</span>
+<span class="fc" id="L9">    val ident: Expression,</span>
 <span class="fc" id="L10">    val parameters: List&lt;Expression&gt;</span>
 ) : Expression {
     internal object Parse : ParseInfixExpression {
@@ -38,6 +38,6 @@ import io.hamal.lib.script.impl.token.Token
         }
     }
 
-<span class="nc" id="L41">    override fun toString() = &quot;$identifier(${parameters.joinToString(&quot;,&quot;) { it.toString() }})&quot;</span>
+<span class="nc" id="L41">    override fun toString() = &quot;$ident(${parameters.joinToString(&quot;,&quot;) { it.toString() }})&quot;</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

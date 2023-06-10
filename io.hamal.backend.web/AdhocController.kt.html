@@ -2,10 +2,6 @@
 
 import io.hamal.backend.req.InvokeAdhoc
 import io.hamal.backend.req.Request
-import io.hamal.lib.common.value.NumberValue
-import io.hamal.lib.common.value.StringValue
-import io.hamal.lib.common.value.TableEntry
-import io.hamal.lib.common.value.TableValue
 import io.hamal.lib.domain.vo.Code
 import io.hamal.lib.domain.vo.ExecId
 import io.hamal.lib.domain.vo.InvocationInputs
@@ -14,6 +10,9 @@ import io.hamal.lib.domain.vo.base.Secret
 import io.hamal.lib.domain.vo.base.SecretKey
 import io.hamal.lib.domain.vo.base.SecretStore
 import io.hamal.lib.domain.vo.base.SecretStoreIdentifier
+import io.hamal.lib.script.api.value.NumberValue
+import io.hamal.lib.script.api.value.StringValue
+import io.hamal.lib.script.api.value.TableValue
 import io.hamal.lib.sdk.domain.ApiAdhocReq
 import io.hamal.lib.sdk.domain.ApiReq
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,10 +22,10 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
-<span class="nc" id="L26">@RestController</span>
+<span class="nc" id="L25">@RestController</span>
 open class AdhocController
-<span class="nc" id="L28">@Autowired constructor(</span>
-<span class="nc" id="L29">    val request: Request</span>
+<span class="nc" id="L27">@Autowired constructor(</span>
+<span class="nc" id="L28">    val request: Request</span>
 ) {
 
     @PostMapping(&quot;/v1/adhoc&quot;)
@@ -34,36 +33,34 @@ open class AdhocController
         @RequestBody script: String
     ): ResponseEntity&lt;ApiReq&gt; {
 
-<span class="nc" id="L37">        val result = request(</span>
-<span class="nc" id="L38">            InvokeAdhoc(</span>
-<span class="nc" id="L39">                inputs = InvocationInputs(</span>
-<span class="nc" id="L40">                    TableValue(</span>
-<span class="nc" id="L41">                        listOf(</span>
-<span class="nc" id="L42">                            TableEntry(StringValue(&quot;Hello&quot;), StringValue(&quot;World&quot;)),</span>
-<span class="nc" id="L43">                            TableEntry(StringValue(&quot;Number&quot;), NumberValue(42)),</span>
+<span class="nc" id="L36">        val result = request(</span>
+<span class="nc" id="L37">            InvokeAdhoc(</span>
+<span class="nc" id="L38">                inputs = InvocationInputs(</span>
+<span class="nc" id="L39">                    TableValue(</span>
+<span class="nc" id="L40">                        StringValue(&quot;Hello&quot;) to StringValue(&quot;World&quot;),</span>
+<span class="nc" id="L41">                        StringValue(&quot;Number&quot;) to NumberValue(42),</span>
+                    )
+                ),
+<span class="nc" id="L44">                secrets = InvocationSecrets(</span>
+<span class="nc" id="L45">                    listOf(</span>
+<span class="nc" id="L46">                        Secret(</span>
+<span class="nc" id="L47">                            SecretKey(&quot;Key&quot;),</span>
+<span class="nc" id="L48">                            SecretStore(&quot;store&quot;),</span>
+<span class="nc" id="L49">                            SecretStoreIdentifier(&quot;ident&quot;)</span>
                         )
                     )
                 ),
-<span class="nc" id="L47">                secrets = InvocationSecrets(</span>
-<span class="nc" id="L48">                    listOf(</span>
-<span class="nc" id="L49">                        Secret(</span>
-<span class="nc" id="L50">                            SecretKey(&quot;Key&quot;),</span>
-<span class="nc" id="L51">                            SecretStore(&quot;store&quot;),</span>
-<span class="nc" id="L52">                            SecretStoreIdentifier(&quot;identifier&quot;)</span>
-                        )
-                    )
-                ),
-<span class="nc" id="L56">                code = Code(script)</span>
+<span class="nc" id="L53">                code = Code(script)</span>
             )
         )
 
-<span class="nc" id="L60">        return ResponseEntity(</span>
-<span class="nc" id="L61">            ApiAdhocReq(</span>
-<span class="nc" id="L62">                id = result.id,</span>
-<span class="nc" id="L63">                status = result.status,</span>
-<span class="nc" id="L64">                execId = ExecId(0)</span>
+<span class="nc" id="L57">        return ResponseEntity(</span>
+<span class="nc" id="L58">            ApiAdhocReq(</span>
+<span class="nc" id="L59">                id = result.id,</span>
+<span class="nc" id="L60">                status = result.status,</span>
+<span class="nc" id="L61">                execId = ExecId(0)</span>
             ),
-<span class="nc" id="L66">            HttpStatus.ACCEPTED</span>
+<span class="nc" id="L63">            HttpStatus.ACCEPTED</span>
         )
     }
 }

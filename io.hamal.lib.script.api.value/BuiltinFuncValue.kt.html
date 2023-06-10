@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BuiltinFuncValue.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.script.api.value</a> &gt; <span class="el_source">BuiltinFuncValue.kt</span></div><h1>BuiltinFuncValue.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.script.api.value
+
+import io.hamal.lib.script.api.ast.Expression
+
+<span class="pc" id="L5">abstract class BuiltinFuncValue : Value {</span>
+<span class="pc" id="L6">    override val metaTable: MetaTable = DefaultBuiltinFuncMetaTable</span>
+    abstract operator fun invoke(ctx: Context): Value
+
+<span class="fc" id="L9">    data class Context(</span>
+<span class="fc" id="L10">        val parameters: List&lt;Parameter&gt;,</span>
+<span class="fc" id="L11">        val env: EnvValue</span>
+    )
+
+<span class="fc" id="L14">    data class Parameter(</span>
+<span class="fc" id="L15">        val value: Value,</span>
+<span class="fc" id="L16">        val expression: Expression</span>
+    ) {
+        fun asIdentifier(): IdentValue {
+<span class="fc" id="L19">            return when (value) {</span>
+<span class="pc bpc" id="L20" title="1 of 2 branches missed.">                is StringValue -&gt; IdentValue(value = value.value)</span>
+<span class="nc bnc" id="L21" title="All 2 branches missed.">                is IdentValue -&gt; value</span>
+<span class="nc" id="L22">                else -&gt; throw IllegalStateException(&quot;$value can not interpreted as ident&quot;)</span>
+            }
+        }
+    }
+
+}
+
+object DefaultBuiltinFuncMetaTable : MetaTable {
+<span class="pc" id="L30">    override val type: String = &quot;builtin_func&quot;</span>
+<span class="pc" id="L31">    override val operators: List&lt;ValueOperator&gt; = listOf()</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

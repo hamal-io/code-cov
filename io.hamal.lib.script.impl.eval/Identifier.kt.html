@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Identifier.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.script.impl.eval</a> &gt; <span class="el_source">Identifier.kt</span></div><h1>Identifier.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.script.impl.eval
 
-import io.hamal.lib.script.api.value.DepIdentifier
-import io.hamal.lib.script.api.value.DepValue
+import io.hamal.lib.script.api.value.IdentValue
+import io.hamal.lib.script.api.value.Value
 import io.hamal.lib.script.impl.ast.expr.IdentifierLiteral
 
 internal object EvaluateIdentifier : Evaluate&lt;IdentifierLiteral&gt; {
-    override fun invoke(ctx: EvaluationContext&lt;IdentifierLiteral&gt;): DepValue {
-<span class="fc" id="L9">        return DepIdentifier(ctx.toEvaluate.value)</span>
+    override fun invoke(ctx: EvaluationContext&lt;IdentifierLiteral&gt;): Value {
+<span class="fc" id="L9">        return IdentValue(ctx.toEvaluate.value)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

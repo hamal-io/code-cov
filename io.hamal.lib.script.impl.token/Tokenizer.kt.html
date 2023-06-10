@@ -218,7 +218,7 @@ internal fun DefaultTokenizer.nextCode(): Token {
 
 
 internal fun DefaultTokenizer.nextIdentifierOrKeyword(): Token {
-<span class="fc bfc" id="L221" title="All 2 branches covered.">    return asKeyword() ?: Token(Identifier, tokenLine(), tokenPosition(), tokenValue())</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">    return asKeyword() ?: Token(Ident, tokenLine(), tokenPosition(), tokenValue())</span>
 }
 
 <span class="pc bfc" id="L224" title="All 2 branches covered.">val keywordMapping = Type.values().filter { it.category == Category.Keyword }.associateBy { it.value }</span>

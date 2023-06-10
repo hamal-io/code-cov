@@ -1,30 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Assert.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.script.impl.builtin</a> &gt; <span class="el_source">Assert.kt</span></div><h1>Assert.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.script.impl.builtin
 
-import io.hamal.lib.script.api.Context
 import io.hamal.lib.script.api.value.*
 import io.hamal.lib.script.impl.ScriptEvaluationException
 
-<span class="nc" id="L7">object AssertFunction : DepFunctionValue {</span>
-<span class="fc" id="L8">    override val identifier: DepIdentifier = DepIdentifier(&quot;assert&quot;)</span>
-<span class="pc" id="L9">    override val metaTable = DepMetaTableNotImplementedYet</span>
+object AssertFunction : BuiltinFuncValue() {
 
+    override fun invoke(ctx: Context): Value {
+<span class="fc" id="L9">        val parameters = ctx.parameters</span>
 
-    override fun invoke(ctx: Context): DepValue {
-<span class="fc" id="L13">        val parameters = ctx.parameters</span>
+<span class="pc bpc" id="L11" title="1 of 2 branches missed.">        val assertionMessage = parameters.getOrNull(1)</span>
+<span class="fc bfc" id="L12" title="All 2 branches covered.">            ?.value</span>
+<span class="pc bpc" id="L13" title="1 of 2 branches missed.">            ?.let { (it as StringValue).value }</span>
+<span class="fc" id="L14">            ?: &quot;${parameters.first().expression}&quot;</span>
 
-<span class="fc" id="L15">        val assertionMessage = parameters.getOrNull(1)</span>
-<span class="fc bfc" id="L16" title="All 2 branches covered.">            ?.value</span>
-<span class="pc bpc" id="L17" title="1 of 2 branches missed.">            ?.let { it as DepStringValue }</span>
-<span class="fc" id="L18">            ?: DepStringValue(&quot;${parameters.first().expression}&quot;)</span>
-
-<span class="pc bpc" id="L20" title="1 of 2 branches missed.">        val result = parameters.firstOrNull()?.value</span>
-<span class="fc bfc" id="L21" title="All 2 branches covered.">        if (result != DepTrueValue) {</span>
-<span class="fc bfc" id="L22" title="All 2 branches covered.">            if (result != DepFalseValue) {</span>
-<span class="fc" id="L23">                throw ScriptEvaluationException(DepErrorValue(&quot;Assertion of non boolean value is always false&quot;))</span>
+<span class="pc bpc" id="L16" title="1 of 2 branches missed.">        val result = parameters.firstOrNull()?.value</span>
+<span class="fc bfc" id="L17" title="All 2 branches covered.">        if (result != TrueValue) {</span>
+<span class="fc bfc" id="L18" title="All 2 branches covered.">            if (result != FalseValue) {</span>
+<span class="fc" id="L19">                throw ScriptEvaluationException(ErrorValue(&quot;Assertion of non boolean value is always false&quot;))</span>
             }
-<span class="fc" id="L25">            throw ScriptEvaluationException(DepErrorValue(&quot;Assertion violated: $assertionMessage&quot;))</span>
+<span class="fc" id="L21">            throw ScriptEvaluationException(ErrorValue(&quot;Assertion violated: '$assertionMessage'&quot;))</span>
         }
-<span class="fc" id="L27">        return DepNilValue</span>
+<span class="fc" id="L23">        return NilValue</span>
     }
+
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

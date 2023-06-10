@@ -10,8 +10,8 @@ import io.hamal.lib.script.impl.ast.expr.IdentifierLiteral
 ) : Statement {
     internal object Parse : ParseStatement&lt;Call&gt; {
         override fun invoke(ctx: Context): Call {
-<span class="fc" id="L13">            val identifier = IdentifierLiteral.Parse(ctx)</span>
-<span class="fc" id="L14">            return Call(CallExpression.Parse(ctx, identifier))</span>
+<span class="fc" id="L13">            val ident = IdentifierLiteral.Parse(ctx)</span>
+<span class="fc" id="L14">            return Call(CallExpression.Parse(ctx, ident))</span>
         }
     }
 }

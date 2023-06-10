@@ -2,22 +2,22 @@
 
 import io.hamal.lib.script.api.ast.Node
 import io.hamal.lib.script.api.ast.Statement
-import io.hamal.lib.script.api.value.DepValue
+import io.hamal.lib.script.api.value.Value
 import io.hamal.lib.script.impl.ast.expr.*
 import io.hamal.lib.script.impl.ast.stmt.*
 import kotlin.reflect.KClass
 
 internal interface Evaluate&lt;TYPE : Node&gt; {
-    operator fun invoke(ctx: EvaluationContext&lt;TYPE&gt;): DepValue
+    operator fun invoke(ctx: EvaluationContext&lt;TYPE&gt;): Value
 }
 
 
 internal interface Evaluator {
-    fun &lt;TYPE : Node&gt; evaluate(ctx: EvaluationContext&lt;TYPE&gt;): DepValue
+    fun &lt;TYPE : Node&gt; evaluate(ctx: EvaluationContext&lt;TYPE&gt;): Value
 }
 
 <span class="fc" id="L19">internal class DefaultEvaluator : Evaluator {</span>
-    override fun &lt;TYPE : Node&gt; evaluate(ctx: EvaluationContext&lt;TYPE&gt;): DepValue {
+    override fun &lt;TYPE : Node&gt; evaluate(ctx: EvaluationContext&lt;TYPE&gt;): Value {
 <span class="fc" id="L21">        val evaluate = resolve(ctx.toEvaluate::class)</span>
 <span class="fc" id="L22">        return evaluate.invoke(ctx)</span>
     }

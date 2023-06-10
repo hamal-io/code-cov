@@ -9,9 +9,9 @@ import io.hamal.backend.req.Request
 import io.hamal.backend.service.query.FuncQueryService
 import io.hamal.lib.common.Shard
 import io.hamal.lib.common.util.TimeUtils.now
-import io.hamal.lib.common.value.TableValue
 import io.hamal.lib.domain.vo.*
 import io.hamal.lib.domain.vo.port.GenerateDomainId
+import io.hamal.lib.script.api.value.TableValue
 import jakarta.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.Scheduled
@@ -64,7 +64,7 @@ internal fun FixedRateTriggerService.requestInvocation(trigger: FixedRateTrigger
 <span class="nc" id="L64">            execId = generateDomainId(Shard(1), ::ExecId),</span>
 <span class="nc" id="L65">            funcId = trigger.funcId,</span>
 <span class="nc" id="L66">            correlationId = CorrelationId(&quot;__TBD__&quot;), //FIXME</span>
-<span class="nc" id="L67">            inputs = InvocationInputs(TableValue.empty()),</span>
+<span class="nc" id="L67">            inputs = InvocationInputs(TableValue()),</span>
 <span class="nc" id="L68">            secrets = InvocationSecrets(listOf()),</span>
         )
     )

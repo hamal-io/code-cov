@@ -16,8 +16,8 @@ interface Assignment : Statement {
 <span class="fc" id="L16">        override val identifiers: List&lt;IdentifierLiteral&gt;,</span>
 <span class="fc" id="L17">        override val expressions: List&lt;Expression&gt;</span>
     ) : Assignment {
-<span class="fc" id="L19">        constructor(identifier: IdentifierLiteral, expression: Expression) : this(</span>
-<span class="fc" id="L20">            listOf(identifier),</span>
+<span class="fc" id="L19">        constructor(ident: IdentifierLiteral, expression: Expression) : this(</span>
+<span class="fc" id="L20">            listOf(ident),</span>
 <span class="fc" id="L21">            listOf(expression)</span>
 <span class="fc" id="L22">        )</span>
 
@@ -28,7 +28,7 @@ interface Assignment : Statement {
 
         internal object Parse : ParseStatement&lt;Global&gt; {
             override fun invoke(ctx: Context): Global {
-<span class="fc" id="L31">                ctx.expectCurrentTokenTypToBe(Identifier)</span>
+<span class="fc" id="L31">                ctx.expectCurrentTokenTypToBe(Ident)</span>
 <span class="fc" id="L32">                val identifiers = ctx.parseIdentifiers()</span>
 <span class="fc" id="L33">                ctx.expectCurrentTokenTypToBe(Equal)</span>
 <span class="fc" id="L34">                ctx.advance()</span>
@@ -42,8 +42,8 @@ interface Assignment : Statement {
 <span class="fc" id="L42">        override val identifiers: List&lt;IdentifierLiteral&gt;,</span>
 <span class="fc" id="L43">        override val expressions: List&lt;Expression&gt;</span>
     ) : Assignment {
-<span class="fc" id="L45">        constructor(identifier: IdentifierLiteral, expression: Expression) : this(</span>
-<span class="fc" id="L46">            listOf(identifier),</span>
+<span class="fc" id="L45">        constructor(ident: IdentifierLiteral, expression: Expression) : this(</span>
+<span class="fc" id="L46">            listOf(ident),</span>
 <span class="fc" id="L47">            listOf(expression)</span>
 <span class="fc" id="L48">        )</span>
 
@@ -56,7 +56,7 @@ interface Assignment : Statement {
             override fun invoke(ctx: Context): Local {
 <span class="fc" id="L57">                ctx.expectCurrentTokenTypToBe(Local)</span>
 <span class="fc" id="L58">                ctx.advance()</span>
-<span class="fc" id="L59">                ctx.expectCurrentTokenTypToBe(Identifier)</span>
+<span class="fc" id="L59">                ctx.expectCurrentTokenTypToBe(Ident)</span>
 <span class="fc" id="L60">                val identifiers = ctx.parseIdentifiers()</span>
 <span class="fc" id="L61">                ctx.expectCurrentTokenTypToBe(Equal)</span>
 <span class="fc" id="L62">                ctx.advance()</span>

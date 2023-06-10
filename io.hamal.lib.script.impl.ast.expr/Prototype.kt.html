@@ -8,7 +8,7 @@ import io.hamal.lib.script.impl.token.Token.Type.*
 import io.hamal.lib.script.impl.token.Token.Type.Function
 
 <span class="fc" id="L10">class PrototypeLiteral(</span>
-<span class="fc" id="L11">    val identifier: IdentifierLiteral,</span>
+<span class="fc" id="L11">    val ident: IdentifierLiteral,</span>
 <span class="fc" id="L12">    val parameters: List&lt;IdentifierLiteral&gt;,</span>
 <span class="fc" id="L13">    val block: Block</span>
 ) : LiteralExpression {
@@ -19,7 +19,7 @@ import io.hamal.lib.script.impl.token.Token.Type.Function
 <span class="fc" id="L19">            ctx.expectCurrentTokenTypToBe(Function)</span>
 <span class="fc" id="L20">            ctx.advance()</span>
 
-<span class="fc bfc" id="L22" title="All 2 branches covered.">            val identifier = if (ctx.currentTokenType() != LeftParenthesis) {</span>
+<span class="fc bfc" id="L22" title="All 2 branches covered.">            val ident = if (ctx.currentTokenType() != LeftParenthesis) {</span>
 <span class="fc" id="L23">                val ident = ctx.parseIdentifier()</span>
 <span class="fc" id="L24">                ctx.expectCurrentTokenTypToBe(LeftParenthesis)</span>
 <span class="fc" id="L25">                ctx.advance()</span>
@@ -34,7 +34,7 @@ import io.hamal.lib.script.impl.token.Token.Type.Function
 <span class="fc" id="L34">            ctx.advance()</span>
 
 <span class="fc" id="L36">            return PrototypeLiteral(</span>
-<span class="fc" id="L37">                identifier,</span>
+<span class="fc" id="L37">                ident,</span>
 <span class="fc" id="L38">                parameterIdentifiers,</span>
 <span class="fc" id="L39">                ctx.parseBody()</span>
             )
@@ -44,7 +44,7 @@ import io.hamal.lib.script.impl.token.Token.Type.Function
         private fun Context.parseParameters(): List&lt;IdentifierLiteral&gt; {
 <span class="fc" id="L45">            val result = mutableListOf&lt;IdentifierLiteral&gt;()</span>
 <span class="fc bfc" id="L46" title="All 2 branches covered.">            while (currentTokenType() != RightParenthesis) {</span>
-<span class="fc" id="L47">                expectCurrentTokenTypToBe(Identifier)</span>
+<span class="fc" id="L47">                expectCurrentTokenTypToBe(Ident)</span>
 <span class="fc" id="L48">                result.add(parseIdentifier())</span>
 <span class="fc bfc" id="L49" title="All 2 branches covered.">                if (currentTokenType() == Comma) {</span>
 <span class="fc" id="L50">                    advance()</span>
@@ -73,18 +73,18 @@ import io.hamal.lib.script.impl.token.Token.Type.Function
 
 <span class="fc" id="L74">        other as PrototypeLiteral</span>
 
-<span class="fc bfc" id="L76" title="All 2 branches covered.">        if (identifier != other.identifier) return false</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">        if (ident != other.ident) return false</span>
 <span class="fc" id="L77">        return parameters == other.parameters</span>
     }
 
     override fun hashCode(): Int {
-<span class="fc" id="L81">        var result = identifier.hashCode()</span>
+<span class="fc" id="L81">        var result = ident.hashCode()</span>
 <span class="fc" id="L82">        result = 31 * result + parameters.hashCode()</span>
 <span class="fc" id="L83">        return result</span>
     }
 
     override fun toString(): String {
-<span class="nc" id="L87">        return &quot;$identifier($parameters)&quot;</span>
+<span class="nc" id="L87">        return &quot;$ident($parameters)&quot;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
