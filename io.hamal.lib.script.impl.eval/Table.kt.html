@@ -3,34 +3,35 @@
 import io.hamal.lib.script.api.value.*
 import io.hamal.lib.script.impl.ast.expr.*
 
-internal object EvaluateTableConstructor : Evaluate&lt;TableConstructorExpression&gt; {
-    override fun invoke(ctx: EvaluationContext&lt;TableConstructorExpression&gt;): Value {
-<span class="fc" id="L8">        val result: List&lt;Pair&lt;Value, Value&gt;&gt; = ctx.toEvaluate.fieldExpressions.map { fieldExpression -&gt;</span>
-<span class="fc bfc" id="L9" title="All 2 branches covered.">            if (fieldExpression is IndexFieldExpression) {</span>
-<span class="fc" id="L10">                NumberValue(fieldExpression.index.value) to ctx.evaluate(fieldExpression.value)</span>
+<span class="fc" id="L6">internal class EvaluateTableConstructor&lt;INVOKE_CTX : FuncInvocationContext&gt; :</span>
+    Evaluate&lt;TableConstructorExpression, INVOKE_CTX&gt; {
+    override fun invoke(ctx: EvaluationContext&lt;TableConstructorExpression, INVOKE_CTX&gt;): Value {
+<span class="fc" id="L9">        val result: List&lt;Pair&lt;Value, Value&gt;&gt; = ctx.toEvaluate.fieldExpressions.map { fieldExpression -&gt;</span>
+<span class="fc bfc" id="L10" title="All 2 branches covered.">            if (fieldExpression is IndexFieldExpression) {</span>
+<span class="fc" id="L11">                NumberValue(fieldExpression.index.value) to ctx.evaluate(fieldExpression.value)</span>
             } else {
-<span class="pc bpc" id="L12" title="1 of 2 branches missed.">                require(fieldExpression is KeyFieldExpression)</span>
-<span class="fc" id="L13">                IdentValue(fieldExpression.key) to ctx.evaluate(fieldExpression.value)</span>
+<span class="pc bpc" id="L13" title="1 of 2 branches missed.">                require(fieldExpression is KeyFieldExpression)</span>
+<span class="fc" id="L14">                IdentValue(fieldExpression.key) to ctx.evaluate(fieldExpression.value)</span>
             }
         }
-<span class="fc" id="L16">        return TableValue(result.toMap())</span>
+<span class="fc" id="L17">        return TableValue(result.toMap())</span>
     }
 }
 
-internal object EvaluateTableAccess : Evaluate&lt;TableAccessExpression&gt; {
-    override fun invoke(ctx: EvaluationContext&lt;TableAccessExpression&gt;): Value {
-<span class="fc" id="L22">        val tableIdentifier = ctx.toEvaluate.ident</span>
+<span class="fc" id="L21">internal class EvaluateTableAccess&lt;INVOKE_CTX : FuncInvocationContext&gt; : Evaluate&lt;TableAccessExpression, INVOKE_CTX&gt; {</span>
+    override fun invoke(ctx: EvaluationContext&lt;TableAccessExpression, INVOKE_CTX&gt;): Value {
+<span class="fc" id="L23">        val tableIdentifier = ctx.toEvaluate.ident</span>
 
-<span class="fc" id="L24">        val target = ctx.env[tableIdentifier.value]</span>
-<span class="pc bpc" id="L25" title="1 of 2 branches missed.">        if (target is EnvValue) {</span>
-<span class="nc bnc" id="L26" title="All 2 branches missed.">            require(ctx.toEvaluate.parameter is TableKeyLiteral)</span>
-<span class="nc" id="L27">            return target[IdentValue(ctx.toEvaluate.parameter.value)]</span>
+<span class="fc" id="L25">        val target = ctx.env[tableIdentifier.value]</span>
+<span class="pc bpc" id="L26" title="1 of 2 branches missed.">        if (target is EnvValue) {</span>
+<span class="nc bnc" id="L27" title="All 2 branches missed.">            require(ctx.toEvaluate.parameter is TableKeyLiteral)</span>
+<span class="nc" id="L28">            return target[IdentValue(ctx.toEvaluate.parameter.value)]</span>
         }
 
-<span class="fc" id="L30">        val table = ctx.env[tableIdentifier.value] as TableValue</span>
+<span class="fc" id="L31">        val table = ctx.env[tableIdentifier.value] as TableValue</span>
         //FIXME evaluate
-<span class="pc bpc" id="L32" title="1 of 2 branches missed.">        require(ctx.toEvaluate.parameter is TableKeyLiteral)</span>
-<span class="fc" id="L33">        return table.get(IdentValue(ctx.toEvaluate.parameter.value))</span>
+<span class="pc bpc" id="L33" title="1 of 2 branches missed.">        require(ctx.toEvaluate.parameter is TableKeyLiteral)</span>
+<span class="fc" id="L34">        return table.get(IdentValue(ctx.toEvaluate.parameter.value))</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

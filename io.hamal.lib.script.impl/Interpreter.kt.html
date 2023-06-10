@@ -1,23 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Interpreter.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.script.impl</a> &gt; <span class="el_source">Interpreter.kt</span></div><h1>Interpreter.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.script.impl
 
-import io.hamal.lib.script.api.value.EnvValue
 import io.hamal.lib.script.api.ast.Statement
+import io.hamal.lib.script.api.value.EnvValue
+import io.hamal.lib.script.api.value.FuncInvocationContext
+import io.hamal.lib.script.api.value.FuncInvocationContextFactory
 import io.hamal.lib.script.api.value.Value
 import io.hamal.lib.script.impl.eval.DefaultEvaluator
 import io.hamal.lib.script.impl.eval.EvaluationContext
 
-interface Interpreter {
+interface Interpreter&lt;INVOKE_CTX : FuncInvocationContext&gt; {
     fun run(toEvaluate: Statement, env: EnvValue): Value
 }
 
-object DefaultInterpreter : Interpreter {
+<span class="fc" id="L15">class DefaultInterpreter&lt;INVOKE_CTX : FuncInvocationContext&gt;(</span>
+<span class="fc" id="L16">    private val funcInvocationContextFactory: FuncInvocationContextFactory&lt;INVOKE_CTX&gt;</span>
+) : Interpreter&lt;INVOKE_CTX&gt; {
     override fun run(toEvaluate: Statement, env: EnvValue): Value {
-<span class="fc" id="L15">        val evaluator = DefaultEvaluator()</span>
-<span class="fc" id="L16">        return evaluator.evaluate(</span>
-<span class="fc" id="L17">            EvaluationContext(</span>
-<span class="fc" id="L18">                toEvaluate = toEvaluate,</span>
-<span class="fc" id="L19">                env = env,</span>
-<span class="fc" id="L20">                evaluator = evaluator</span>
+<span class="fc" id="L19">        val evaluator = DefaultEvaluator&lt;INVOKE_CTX&gt;()</span>
+<span class="fc" id="L20">        return evaluator.evaluate(</span>
+<span class="fc" id="L21">            EvaluationContext(</span>
+<span class="fc" id="L22">                toEvaluate = toEvaluate,</span>
+<span class="fc" id="L23">                env = env,</span>
+<span class="fc" id="L24">                evaluator = evaluator,</span>
+<span class="fc" id="L25">                funcInvocationContextFactory = funcInvocationContextFactory</span>
             )
         )
     }

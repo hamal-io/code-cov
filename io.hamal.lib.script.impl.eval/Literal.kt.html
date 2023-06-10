@@ -4,36 +4,37 @@ import io.hamal.lib.script.api.value.*
 import io.hamal.lib.script.impl.ast.expr.*
 
 
-internal object EvaluateNilLiteral : Evaluate&lt;NilLiteral&gt; {
-<span class="fc" id="L8">    override fun invoke(ctx: EvaluationContext&lt;NilLiteral&gt;) = NilValue</span>
+<span class="fc" id="L7">internal class EvaluateNilLiteral&lt;INVOKE_CTX : FuncInvocationContext&gt; : Evaluate&lt;NilLiteral, INVOKE_CTX&gt; {</span>
+<span class="fc" id="L8">    override fun invoke(ctx: EvaluationContext&lt;NilLiteral, INVOKE_CTX&gt;) = NilValue</span>
 }
 
-internal object EvaluateFalseLiteral : Evaluate&lt;FalseLiteral&gt; {
-<span class="fc" id="L12">    override fun invoke(ctx: EvaluationContext&lt;FalseLiteral&gt;) = FalseValue</span>
+<span class="fc" id="L11">internal class EvaluateFalseLiteral&lt;INVOKE_CTX : FuncInvocationContext&gt; : Evaluate&lt;FalseLiteral, INVOKE_CTX&gt; {</span>
+<span class="fc" id="L12">    override fun invoke(ctx: EvaluationContext&lt;FalseLiteral, INVOKE_CTX&gt;) = FalseValue</span>
 }
 
-internal object EvaluateTrueLiteral : Evaluate&lt;TrueLiteral&gt; {
-<span class="fc" id="L16">    override fun invoke(ctx: EvaluationContext&lt;TrueLiteral&gt;) = TrueValue</span>
+<span class="fc" id="L15">internal class EvaluateTrueLiteral&lt;INVOKE_CTX : FuncInvocationContext&gt; : Evaluate&lt;TrueLiteral, INVOKE_CTX&gt; {</span>
+<span class="fc" id="L16">    override fun invoke(ctx: EvaluationContext&lt;TrueLiteral, INVOKE_CTX&gt;) = TrueValue</span>
 }
 
-internal object EvaluateNumberLiteral : Evaluate&lt;NumberLiteral&gt; {
-<span class="fc" id="L20">    override fun invoke(ctx: EvaluationContext&lt;NumberLiteral&gt;) = ctx.toEvaluate.value</span>
+<span class="fc" id="L19">internal class EvaluateNumberLiteral&lt;INVOKE_CTX : FuncInvocationContext&gt; : Evaluate&lt;NumberLiteral, INVOKE_CTX&gt; {</span>
+<span class="fc" id="L20">    override fun invoke(ctx: EvaluationContext&lt;NumberLiteral, INVOKE_CTX&gt;) = ctx.toEvaluate.value</span>
 }
 
-internal object EvaluateStringLiteral : Evaluate&lt;StringLiteral&gt; {
-<span class="fc" id="L24">    override fun invoke(ctx: EvaluationContext&lt;StringLiteral&gt;) = StringValue(ctx.toEvaluate.value)</span>
+<span class="fc" id="L23">internal class EvaluateStringLiteral&lt;INVOKE_CTX : FuncInvocationContext&gt; : Evaluate&lt;StringLiteral, INVOKE_CTX&gt; {</span>
+<span class="fc" id="L24">    override fun invoke(ctx: EvaluationContext&lt;StringLiteral, INVOKE_CTX&gt;) = StringValue(ctx.toEvaluate.value)</span>
 }
 
-internal object EvaluateCodeLiteral : Evaluate&lt;CodeLiteral&gt; {
-<span class="nc" id="L28">    override fun invoke(ctx: EvaluationContext&lt;CodeLiteral&gt;) = CodeValue(ctx.toEvaluate.value)</span>
+<span class="fc" id="L27">internal class EvaluateCodeLiteral&lt;INVOKE_CTX : FuncInvocationContext&gt; : Evaluate&lt;CodeLiteral, INVOKE_CTX&gt; {</span>
+<span class="nc" id="L28">    override fun invoke(ctx: EvaluationContext&lt;CodeLiteral, INVOKE_CTX&gt;) = CodeValue(ctx.toEvaluate.value)</span>
 }
 
-internal object EvaluatePrototypeLiteral : Evaluate&lt;PrototypeLiteral&gt; {
-    override fun invoke(ctx: EvaluationContext&lt;PrototypeLiteral&gt;): PrototypeValue {
-<span class="fc" id="L33">        return PrototypeValue(</span>
-<span class="fc" id="L34">            ctx.evaluateAsIdentifier { ident },</span>
-<span class="pc" id="L35">            ctx.toEvaluate.parameters.map { ctx.evaluateAsString(it) },</span>
-<span class="fc" id="L36">            ctx.toEvaluate.block</span>
+<span class="fc" id="L31">internal class EvaluatePrototypeLiteral&lt;INVOKE_CTX : FuncInvocationContext&gt; :</span>
+    Evaluate&lt;PrototypeLiteral, INVOKE_CTX&gt; {
+    override fun invoke(ctx: EvaluationContext&lt;PrototypeLiteral, INVOKE_CTX&gt;): PrototypeValue {
+<span class="fc" id="L34">        return PrototypeValue(</span>
+<span class="fc" id="L35">            ctx.evaluateAsIdentifier { ident },</span>
+<span class="pc" id="L36">            ctx.toEvaluate.parameters.map { ctx.evaluateAsString(it) },</span>
+<span class="fc" id="L37">            ctx.toEvaluate.block</span>
         )
     }
 }

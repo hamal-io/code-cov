@@ -3,111 +3,125 @@
 import io.hamal.lib.script.api.value.*
 import io.hamal.lib.script.impl.ast.expr.*
 
-internal object EvaluateCallExpression : Evaluate&lt;CallExpression&gt; {
-    override fun invoke(ctx: EvaluationContext&lt;CallExpression&gt;): Value {
-<span class="fc" id="L8">        val toEvaluate = ctx.toEvaluate</span>
-<span class="fc" id="L9">        val env = ctx.env</span>
 
-<span class="fc" id="L11">        val ident = ctx.evaluateAsIdentifier { ident }</span>
-<span class="fc" id="L12">        val parameters = toEvaluate.parameters.map { ctx.evaluate(it) }</span>
+<span class="fc" id="L7">internal class EvaluateCallExpression&lt;INVOKE_CTX : FuncInvocationContext&gt; :</span>
+    Evaluate&lt;CallExpression, INVOKE_CTX&gt; {
+    override fun invoke(ctx: EvaluationContext&lt;CallExpression, INVOKE_CTX&gt;): Value {
+<span class="fc" id="L10">        val toEvaluate = ctx.toEvaluate</span>
+<span class="fc" id="L11">        val env = ctx.env</span>
 
-<span class="fc" id="L14">        when (val func = env.find(ident)) {</span>
-<span class="fc bfc" id="L15" title="All 2 branches covered.">            is BuiltinFuncValue -&gt; {</span>
-<span class="fc" id="L16">                return func(</span>
-<span class="fc" id="L17">                    BuiltinFuncValue.Context(</span>
-<span class="fc" id="L18">                        parameters = parameters.zip(toEvaluate.parameters)</span>
-<span class="fc" id="L19">                            .map { BuiltinFuncValue.Parameter(it.first, it.second) },</span>
-<span class="fc" id="L20">                        env = env</span>
+<span class="fc" id="L13">        val parameters = toEvaluate.parameters.map { ctx.evaluate(it) }</span>
+
+<span class="fc" id="L15">        val target = ctx.evaluate { ident }</span>
+<span class="pc bpc" id="L16" title="1 of 2 branches missed.">        if (target is IdentValue) {</span>
+<span class="fc" id="L17">            val ident = ctx.evaluateAsIdentifier { ident }</span>
+
+<span class="fc" id="L19">            when (val func = env.find(ident)) {</span>
+<span class="fc bfc" id="L20" title="All 2 branches covered.">                is BuiltinFuncValue -&gt; {</span>
+<span class="fc" id="L21">                    return func(</span>
+<span class="fc" id="L22">                        BuiltinFuncValue.Context(</span>
+<span class="fc" id="L23">                            parameters = parameters.zip(toEvaluate.parameters)</span>
+<span class="fc" id="L24">                                .map { BuiltinFuncValue.Parameter(it.first, it.second) },</span>
+<span class="fc" id="L25">                            env = env</span>
+                        )
                     )
-                )
-            }
-
-<span class="pc bpc" id="L25" title="1 of 2 branches missed.">            is PrototypeValue -&gt; {</span>
-<span class="fc" id="L26">                return ctx.evaluate(func.block)</span>
-            }
-
-<span class="nc" id="L29">            else -&gt; TODO()</span>
-        }
-    }
-}
-
-internal object EvaluateGroupedExpression : Evaluate&lt;GroupedExpression&gt; {
-<span class="fc" id="L35">    override fun invoke(ctx: EvaluationContext&lt;GroupedExpression&gt;) = ctx.evaluate { expression }</span>
-}
-
-internal object EvaluateInfixExpression : Evaluate&lt;InfixExpression&gt; {
-    override fun invoke(ctx: EvaluationContext&lt;InfixExpression&gt;): Value {
-<span class="fc" id="L40">        val self = ctx.evaluate { lhs }</span>
-<span class="fc" id="L41">        val other = ctx.evaluate { rhs }</span>
-<span class="fc" id="L42">        return ctx.evaluateInfix(ctx.toEvaluate.operator, self, other)</span>
-    }
-}
-
-internal object EvaluatePrefixExpression : Evaluate&lt;PrefixExpression&gt; {
-    override fun invoke(ctx: EvaluationContext&lt;PrefixExpression&gt;): Value {
-<span class="fc" id="L48">        val value = ctx.evaluate { expression }</span>
-<span class="fc" id="L49">        return ctx.evaluatePrefix(ctx.toEvaluate.operator, value)</span>
-    }
-
-}
-
-internal object EvaluateIfExpression : Evaluate&lt;IfExpression&gt; {
-    override fun invoke(ctx: EvaluationContext&lt;IfExpression&gt;): Value {
-<span class="fc bfc" id="L56" title="All 2 branches covered.">        for (conditionalStatement in ctx.toEvaluate.conditionalExpression) {</span>
-<span class="fc" id="L57">            val conditionValue = ctx.evaluate(conditionalStatement.condition)</span>
-<span class="fc" id="L58">            return when (conditionValue) {</span>
-<span class="fc bfc" id="L59" title="All 2 branches covered.">                FalseValue -&gt; continue</span>
-<span class="pc bpc" id="L60" title="1 of 2 branches missed.">                TrueValue -&gt; {</span>
-<span class="fc" id="L61">                    ctx.enterScope()</span>
-<span class="fc" id="L62">                    val result = ctx.evaluate(conditionalStatement.block)</span>
-<span class="fc" id="L63">                    ctx.leaveScope()</span>
-<span class="fc" id="L64">                    result</span>
                 }
 
-<span class="nc" id="L67">                else -&gt; ErrorValue(&quot;Expression expected to yield a boolean value&quot;)</span>
+<span class="pc bpc" id="L30" title="1 of 2 branches missed.">                is PrototypeValue -&gt; {</span>
+<span class="fc" id="L31">                    return ctx.evaluate(func.block)</span>
+                }
+
+<span class="nc" id="L34">                else -&gt; TODO()</span>
             }
+        } else {
+            @Suppress(&quot;UNCHECKED_CAST&quot;)
+<span class="nc" id="L38">            val func: FuncValue&lt;INVOKE_CTX&gt; = target as FuncValue&lt;INVOKE_CTX&gt;</span>
+<span class="nc" id="L39">            val invokeCtx: INVOKE_CTX = ctx.funcInvocationContextFactory.create(parameters, env)</span>
+<span class="nc" id="L40">            return func(invokeCtx)</span>
         }
-<span class="fc" id="L70">        return NilValue</span>
+    }
+}
+
+<span class="fc" id="L45">internal class EvaluateGroupedExpression&lt;INVOKE_CTX : FuncInvocationContext&gt; :</span>
+    Evaluate&lt;GroupedExpression, INVOKE_CTX&gt; {
+<span class="fc" id="L47">    override fun invoke(ctx: EvaluationContext&lt;GroupedExpression, INVOKE_CTX&gt;) = ctx.evaluate { expression }</span>
+}
+
+<span class="fc" id="L50">internal class EvaluateInfixExpression&lt;INVOKE_CTX : FuncInvocationContext&gt; :</span>
+    Evaluate&lt;InfixExpression, INVOKE_CTX&gt; {
+    override fun invoke(ctx: EvaluationContext&lt;InfixExpression, INVOKE_CTX&gt;): Value {
+<span class="fc" id="L53">        val self = ctx.evaluate { lhs }</span>
+<span class="fc" id="L54">        val other = ctx.evaluate { rhs }</span>
+<span class="fc" id="L55">        return ctx.evaluateInfix(ctx.toEvaluate.operator, self, other)</span>
+    }
+}
+
+<span class="fc" id="L59">internal class EvaluatePrefixExpression&lt;INVOKE_CTX : FuncInvocationContext&gt; :</span>
+    Evaluate&lt;PrefixExpression, INVOKE_CTX&gt; {
+    override fun invoke(ctx: EvaluationContext&lt;PrefixExpression, INVOKE_CTX&gt;): Value {
+<span class="fc" id="L62">        val value = ctx.evaluate { expression }</span>
+<span class="fc" id="L63">        return ctx.evaluatePrefix(ctx.toEvaluate.operator, value)</span>
     }
 
 }
 
-internal object EvaluateForLoopExpression : Evaluate&lt;ForLoopExpression&gt; {
-    override fun invoke(ctx: EvaluationContext&lt;ForLoopExpression&gt;): Value {
-<span class="fc" id="L77">        val ident = ctx.evaluateAsIdentifier { ident }</span>
-<span class="fc" id="L78">        var currentValue: NumberValue = ctx.evaluate { startExpression } as NumberValue</span>
+<span class="fc" id="L68">internal class EvaluateIfExpression&lt;INVOKE_CTX : FuncInvocationContext&gt; : Evaluate&lt;IfExpression, INVOKE_CTX&gt; {</span>
+    override fun invoke(ctx: EvaluationContext&lt;IfExpression, INVOKE_CTX&gt;): Value {
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        for (conditionalStatement in ctx.toEvaluate.conditionalExpression) {</span>
+<span class="fc" id="L71">            return when (ctx.evaluate(conditionalStatement.condition)) {</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">                FalseValue -&gt; continue</span>
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">                TrueValue -&gt; {</span>
+<span class="fc" id="L74">                    ctx.enterScope()</span>
+<span class="fc" id="L75">                    val result = ctx.evaluate(conditionalStatement.block)</span>
+<span class="fc" id="L76">                    ctx.leaveScope()</span>
+<span class="fc" id="L77">                    result</span>
+                }
 
-<span class="fc" id="L80">        val endValue = ctx.evaluate { endExpression } as NumberValue</span>
-<span class="fc" id="L81">        val stepValue = ctx.evaluate { stepExpression } as NumberValue</span>
-
-<span class="fc bfc" id="L83" title="All 2 branches covered.">        val hasNext = if (stepValue.isGreaterThanEqual(NumberValue.Zero)) {</span>
-<span class="fc" id="L84">            HasNext.Forward</span>
-        } else {
-<span class="fc" id="L86">            HasNext.Backwards</span>
-        }
-
-<span class="fc" id="L89">        while (true) {</span>
-<span class="fc" id="L90">            ctx.env.addLocal(ident, currentValue)</span>
-<span class="fc" id="L91">            ctx.evaluate { block }</span>
-<span class="fc" id="L92">            val nextValue = currentValue.plus(stepValue)</span>
-<span class="fc bfc" id="L93" title="All 2 branches covered.">            if (hasNext(nextValue, endValue)) {</span>
-<span class="fc" id="L94">                currentValue = nextValue</span>
-            } else {
-<span class="fc" id="L96">                break</span>
+<span class="nc" id="L80">                else -&gt; ErrorValue(&quot;Expression expected to yield a boolean value&quot;)</span>
             }
         }
-<span class="fc" id="L99">        return currentValue</span>
+<span class="fc" id="L83">        return NilValue</span>
+    }
+
+}
+
+<span class="fc" id="L88">internal class EvaluateForLoopExpression&lt;INVOKE_CTX : FuncInvocationContext&gt; :</span>
+    Evaluate&lt;ForLoopExpression, INVOKE_CTX&gt; {
+    override fun invoke(ctx: EvaluationContext&lt;ForLoopExpression, INVOKE_CTX&gt;): Value {
+<span class="fc" id="L91">        val ident = ctx.evaluateAsIdentifier { ident }</span>
+<span class="fc" id="L92">        var currentValue: NumberValue = ctx.evaluate { startExpression } as NumberValue</span>
+
+<span class="fc" id="L94">        val endValue = ctx.evaluate { endExpression } as NumberValue</span>
+<span class="fc" id="L95">        val stepValue = ctx.evaluate { stepExpression } as NumberValue</span>
+
+<span class="fc bfc" id="L97" title="All 2 branches covered.">        val hasNext = if (stepValue.isGreaterThanEqual(NumberValue.Zero)) {</span>
+<span class="fc" id="L98">            HasNext.Forward</span>
+        } else {
+<span class="fc" id="L100">            HasNext.Backwards</span>
+        }
+
+<span class="fc" id="L103">        while (true) {</span>
+<span class="fc" id="L104">            ctx.env.addLocal(ident, currentValue)</span>
+<span class="fc" id="L105">            ctx.evaluate { block }</span>
+<span class="fc" id="L106">            val nextValue = currentValue.plus(stepValue)</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">            if (hasNext(nextValue, endValue)) {</span>
+<span class="fc" id="L108">                currentValue = nextValue</span>
+            } else {
+<span class="fc" id="L110">                break</span>
+            }
+        }
+<span class="fc" id="L113">        return currentValue</span>
     }
 
     private enum class HasNext {
-<span class="fc" id="L103">        Forward {</span>
+<span class="fc" id="L117">        Forward {</span>
             override fun invoke(nextValue: NumberValue, endValue: NumberValue): Boolean {
-<span class="fc" id="L105">                return nextValue.isLessThanEqual(endValue)</span>
+<span class="fc" id="L119">                return nextValue.isLessThanEqual(endValue)</span>
             }
         },
-<span class="fc" id="L108">        Backwards {</span>
+<span class="fc" id="L122">        Backwards {</span>
             override fun invoke(nextValue: NumberValue, endValue: NumberValue): Boolean {
-<span class="fc" id="L110">                return nextValue.isGreaterThanEqual(endValue)</span>
+<span class="fc" id="L124">                return nextValue.isGreaterThanEqual(endValue)</span>
             }
         };
 
