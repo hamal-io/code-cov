@@ -5,38 +5,42 @@ import io.hamal.lib.domain.vo.*
 import kotlinx.serialization.Serializable
 
 <span class="nc bnc" id="L7" title="All 10 branches missed.">@Serializable</span>
-<span class="nc" id="L8">data class ApiCreateFuncRequest(</span>
-<span class="nc" id="L9">    val name: FuncName,</span>
-<span class="nc" id="L10">    val inputs: FuncInputs,</span>
-<span class="nc" id="L11">    val secrets: FuncSecrets,</span>
-<span class="nc" id="L12">    val code: Code</span>
-<span class="nc" id="L13">)</span>
+@Deprecated(&quot;do not have separate dto&quot;)
+<span class="nc" id="L9">data class ApiCreateFuncRequest(</span>
+<span class="nc" id="L10">    val name: FuncName,</span>
+<span class="nc" id="L11">    val inputs: FuncInputs,</span>
+<span class="nc" id="L12">    val secrets: FuncSecrets,</span>
+<span class="nc" id="L13">    val code: Code</span>
+<span class="nc" id="L14">)</span>
 
 
-<span class="nc bnc" id="L16" title="All 27 branches missed.">@Serializable</span>
-<span class="nc" id="L17">data class ApiExecFuncRequest(</span>
-<span class="nc" id="L18">    val correlationId: String? = null, //FIXME vo</span>
-<span class="nc" id="L19">    val inputs: InvocationInputs? = null,</span>
-<span class="nc" id="L20">    val secrets: InvocationSecrets? = null</span>
-<span class="nc" id="L21">)</span>
+<span class="nc bnc" id="L17" title="All 27 branches missed.">@Serializable</span>
+@Deprecated(&quot;do not have separate dto&quot;)
+<span class="nc" id="L19">data class ApiExecFuncRequest(</span>
+<span class="nc" id="L20">    val correlationId: String? = null, //FIXME vo</span>
+<span class="nc" id="L21">    val inputs: InvocationInputs? = null,</span>
+<span class="nc" id="L22">    val secrets: InvocationSecrets? = null</span>
+<span class="nc" id="L23">)</span>
 
-<span class="nc bnc" id="L23" title="All 7 branches missed.">@Serializable</span>
-<span class="nc" id="L24">data class ApiExecFuncResponse(</span>
-<span class="nc" id="L25">    val cmdId: CmdId</span>
-<span class="nc" id="L26">)</span>
+<span class="nc bnc" id="L25" title="All 7 branches missed.">@Serializable</span>
+@Deprecated(&quot;do not have separate dto&quot;)
+<span class="nc" id="L27">data class ApiExecFuncResponse(</span>
+<span class="nc" id="L28">    val cmdId: CmdId</span>
+<span class="nc" id="L29">)</span>
 
 
-<span class="nc bnc" id="L29" title="All 7 branches missed.">@Serializable</span>
-<span class="nc" id="L30">data class ApiListFuncResponse(</span>
-<span class="nc" id="L31">    val funcs: List&lt;Func&gt;</span>
+<span class="nc bnc" id="L32" title="All 7 branches missed.">@Serializable</span>
+@Deprecated(&quot;do not have separate dto&quot;)
+<span class="nc" id="L34">data class ApiListFuncResponse(</span>
+<span class="nc" id="L35">    val funcs: List&lt;Func&gt;</span>
 ) {
 
-<span class="nc bnc" id="L34" title="All 8 branches missed.">    @Serializable</span>
-<span class="nc" id="L35">    data class Func(</span>
-<span class="nc" id="L36">        val id: FuncId,</span>
-<span class="nc" id="L37">        val name: FuncName</span>
-<span class="nc" id="L38">    )</span>
-<span class="nc" id="L39">}</span>
+<span class="nc bnc" id="L38" title="All 8 branches missed.">    @Serializable</span>
+<span class="nc" id="L39">    data class Func(</span>
+<span class="nc" id="L40">        val id: FuncId,</span>
+<span class="nc" id="L41">        val name: FuncName</span>
+<span class="nc" id="L42">    )</span>
+<span class="nc" id="L43">}</span>
 
 
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

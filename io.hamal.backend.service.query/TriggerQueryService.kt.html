@@ -2,24 +2,29 @@
 
 import io.hamal.backend.repository.api.TriggerQueryRepository
 import io.hamal.backend.repository.api.domain.Trigger
+import io.hamal.lib.domain._enum.TriggerType
 import io.hamal.lib.domain.vo.TriggerId
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
-<span class="nc" id="L9">@Service</span>
-<span class="nc" id="L10">class TriggerQueryService(</span>
-<span class="nc" id="L11">    @Autowired val triggerQueryRepository: TriggerQueryRepository</span>
+<span class="nc" id="L10">@Service</span>
+<span class="nc" id="L11">class TriggerQueryService(</span>
+<span class="nc" id="L12">    @Autowired val triggerQueryRepository: TriggerQueryRepository</span>
 ) {
     fun get(triggerId: TriggerId): Trigger {
-<span class="nc" id="L14">        return triggerQueryRepository.find(triggerId)!! //FIXME require and proper error message</span>
+<span class="nc" id="L15">        return triggerQueryRepository.find(triggerId)!! //FIXME require and proper error message</span>
     }
 
     fun find(triggerId: TriggerId): Trigger? {
-<span class="nc" id="L18">        return triggerQueryRepository.find(triggerId)</span>
+<span class="nc" id="L19">        return triggerQueryRepository.find(triggerId)</span>
     }
 
-    fun list(afterId: TriggerId, limit: Int): List&lt;Trigger&gt; {
-<span class="nc" id="L22">        return triggerQueryRepository.list(afterId, limit)</span>
+    fun list(afterId: TriggerId, types: Set&lt;TriggerType&gt;, limit: Int): List&lt;Trigger&gt; {
+<span class="nc" id="L23">        return triggerQueryRepository.query {</span>
+<span class="nc" id="L24">            this.afterId = afterId</span>
+<span class="nc" id="L25">            this.types = types</span>
+<span class="nc" id="L26">            this.limit = limit</span>
+<span class="nc" id="L27">        }</span>
     }
 
 }

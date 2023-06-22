@@ -6,21 +6,24 @@ import io.hamal.lib.domain.vo.ExecStatus
 import kotlinx.serialization.Serializable
 
 <span class="nc bnc" id="L8" title="All 8 branches missed.">@Serializable</span>
-<span class="nc" id="L9">data class ApiSimpleExecutionModel(</span>
-<span class="nc" id="L10">    val id: ExecId,</span>
-<span class="nc" id="L11">    val state: ExecStatus</span>
-<span class="nc" id="L12">)</span>
+@Deprecated(&quot;do not have separate dto&quot;)
+<span class="nc" id="L10">data class ApiSimpleExecutionModel(</span>
+<span class="nc" id="L11">    val id: ExecId,</span>
+<span class="nc" id="L12">    val state: ExecStatus</span>
+<span class="nc" id="L13">)</span>
 
-<span class="nc bnc" id="L14" title="All 7 branches missed.">@Serializable</span>
-<span class="nc" id="L15">data class ApiSimpleExecutionModels(</span>
-<span class="nc" id="L16">    val execs: List&lt;ApiSimpleExecutionModel&gt;</span>
-<span class="nc" id="L17">)</span>
+<span class="nc bnc" id="L15" title="All 7 branches missed.">@Serializable</span>
+@Deprecated(&quot;do not have separate dto&quot;)
+<span class="nc" id="L17">data class ApiSimpleExecutionModels(</span>
+<span class="nc" id="L18">    val execs: List&lt;ApiSimpleExecutionModel&gt;</span>
+<span class="nc" id="L19">)</span>
 
 
-<span class="nc bnc" id="L20" title="All 9 branches missed.">@Serializable</span>
-<span class="nc" id="L21">data class ApiDetailExecutionModel(</span>
-<span class="nc" id="L22">    val id: ExecId,</span>
-<span class="nc" id="L23">    val state: ExecStatus,</span>
-<span class="nc" id="L24">    val code: Code</span>
-<span class="nc" id="L25">)</span>
+<span class="nc bnc" id="L22" title="All 9 branches missed.">@Serializable</span>
+
+<span class="nc" id="L24">data class ApiDetailExecutionModel(</span>
+<span class="nc" id="L25">    val id: ExecId,</span>
+<span class="nc" id="L26">    val state: ExecStatus,</span>
+<span class="nc" id="L27">    val code: Code</span>
+<span class="nc" id="L28">)</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

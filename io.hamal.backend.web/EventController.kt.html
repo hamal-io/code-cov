@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.*
 
 <span class="nc" id="L17">@RestController</span>
 <span class="nc" id="L18">open class EventController @Autowired constructor(</span>
-<span class="nc" id="L19">    val cmdService: EventCmdService,</span>
-<span class="nc" id="L20">    val queryService: EventQueryService</span>
+<span class="nc" id="L19">    val cmdService: EventCmdService&lt;*&gt;,</span>
+<span class="nc" id="L20">    val queryService: EventQueryService&lt;*&gt;</span>
 ) {
 
     @GetMapping(&quot;/v1/topics&quot;)

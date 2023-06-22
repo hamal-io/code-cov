@@ -17,7 +17,7 @@ import kotlin.time.Duration
 class TriggerCmdService
 <span class="nc" id="L18">@Autowired constructor(</span>
 <span class="nc" id="L19">    val triggerCmdRepository: TriggerCmdRepository,</span>
-<span class="nc" id="L20">    val eventEmitter: EventEmitter,</span>
+<span class="nc" id="L20">    val eventEmitter: EventEmitter&lt;*&gt;,</span>
 <span class="nc" id="L21">    val generateDomainId: GenerateDomainId</span>
 ) {
     fun create(cmdId: CmdId, triggerToCreate: TriggerToCreate): Trigger =
@@ -30,36 +30,48 @@ class TriggerCmdService
 <span class="nc" id="L30">        val funcId: FuncId,</span>
 <span class="nc" id="L31">        val inputs: TriggerInputs,</span>
 <span class="nc" id="L32">        val secrets: TriggerSecrets,</span>
-<span class="nc" id="L33">        val duration: Duration?</span>
+<span class="nc" id="L33">        val duration: Duration?,</span>
+<span class="nc" id="L34">        val topicId: TopicId?</span>
     )
 }
 
 private fun TriggerCmdService.createTrigger(cmdId: CmdId, triggerToCreate: TriggerCmdService.TriggerToCreate): Trigger {
-<span class="nc" id="L38">    return when (triggerToCreate.type) {</span>
-<span class="nc bnc" id="L39" title="All 2 branches missed.">        TriggerType.FixedRate -&gt; triggerCmdRepository.create(</span>
-<span class="nc" id="L40">            TriggerCmdRepository.CreateFixedRateCmd(</span>
-<span class="nc" id="L41">                id = cmdId,</span>
-<span class="nc" id="L42">                accountId = AccountId(1),</span>
-<span class="nc" id="L43">                triggerId = generateDomainId(Shard(1), ::TriggerId),</span>
-<span class="nc" id="L44">                name = triggerToCreate.name,</span>
-<span class="nc" id="L45">                funcId = triggerToCreate.funcId,</span>
-<span class="nc" id="L46">                inputs = triggerToCreate.inputs,</span>
-<span class="nc" id="L47">                secrets = triggerToCreate.secrets,</span>
-<span class="nc" id="L48">                duration = triggerToCreate.duration!!</span>
+<span class="nc bnc" id="L39" title="All 2 branches missed.">    return when (triggerToCreate.type) {</span>
+<span class="nc" id="L40">        TriggerType.FixedRate -&gt; triggerCmdRepository.create(</span>
+<span class="nc" id="L41">            TriggerCmdRepository.CreateFixedRateCmd(</span>
+<span class="nc" id="L42">                id = cmdId,</span>
+<span class="nc" id="L43">                accountId = AccountId(1),</span>
+<span class="nc" id="L44">                triggerId = generateDomainId(Shard(1), ::TriggerId),</span>
+<span class="nc" id="L45">                name = triggerToCreate.name,</span>
+<span class="nc" id="L46">                funcId = triggerToCreate.funcId,</span>
+<span class="nc" id="L47">                inputs = triggerToCreate.inputs,</span>
+<span class="nc" id="L48">                secrets = triggerToCreate.secrets,</span>
+<span class="nc" id="L49">                duration = triggerToCreate.duration!!</span>
             )
         )
 
-<span class="nc" id="L52">        else -&gt; TODO()</span>
+<span class="nc" id="L53">        TriggerType.Event -&gt; triggerCmdRepository.create(</span>
+<span class="nc" id="L54">            TriggerCmdRepository.CreateEventCmd(</span>
+<span class="nc" id="L55">                id = cmdId,</span>
+<span class="nc" id="L56">                accountId = AccountId(1),</span>
+<span class="nc" id="L57">                triggerId = generateDomainId(Shard(1), ::TriggerId),</span>
+<span class="nc" id="L58">                name = triggerToCreate.name,</span>
+<span class="nc" id="L59">                funcId = triggerToCreate.funcId,</span>
+<span class="nc" id="L60">                inputs = triggerToCreate.inputs,</span>
+<span class="nc" id="L61">                secrets = triggerToCreate.secrets,</span>
+<span class="nc" id="L62">                topicId = triggerToCreate.topicId!!</span>
+            )
+        )
     }
 }
 
 private fun TriggerCmdService.emitEvent(cmdId: CmdId, trigger: Trigger) {
-<span class="nc" id="L57">    eventEmitter.emit(</span>
-<span class="nc" id="L58">        cmdId, TriggerCreatedEvent(</span>
+<span class="nc" id="L69">    eventEmitter.emit(</span>
+<span class="nc" id="L70">        cmdId, TriggerCreatedEvent(</span>
 //            cmdId = CommandId(123), //FIXME
-<span class="nc" id="L60">            shard = trigger.shard,</span>
-<span class="nc" id="L61">            trigger</span>
+<span class="nc" id="L72">            shard = trigger.shard,</span>
+<span class="nc" id="L73">            trigger</span>
         )
     )
-<span class="nc" id="L64">}</span>
+<span class="nc" id="L76">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

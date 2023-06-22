@@ -5,56 +5,64 @@ import io.hamal.backend.repository.sqlite.BaseRepository
 import io.hamal.backend.repository.sqlite.internal.Connection
 import io.hamal.lib.common.Shard
 import io.hamal.lib.domain.CmdId
+import io.hamal.lib.domain.vo.TopicId
 import java.nio.file.Path
 
 
 // FIXME just a pass through for now - replace with proper implementation,
 // like supporting multiple segments, roll over etc
 
-<span class="fc" id="L14">class DefaultLogShardRepository(</span>
-<span class="pc" id="L15">    internal val logShard: LogShard</span>
-<span class="fc" id="L16">) : BaseRepository(object : Config {</span>
-<span class="nc" id="L17">    override val path: Path get() = logShard.path</span>
-<span class="fc" id="L18">    override val filename: String get() = String.format(&quot;shard-%04d&quot;, logShard.id.value.toLong())</span>
-<span class="nc" id="L19">    override val shard: Shard get() = logShard.id</span>
+<span class="fc" id="L15">data class SqliteLogShard(</span>
+<span class="fc" id="L16">    override val id: Shard,</span>
+<span class="fc" id="L17">    override val topicId: TopicId,</span>
+<span class="fc" id="L18">    val path: Path</span>
+) : LogShard
+
+
+<span class="fc" id="L22">class SqliteLogShardRepository(</span>
+<span class="pc" id="L23">    internal val logShard: SqliteLogShard</span>
+<span class="fc" id="L24">) : BaseRepository(object : Config {</span>
+<span class="nc" id="L25">    override val path: Path get() = logShard.path</span>
+<span class="fc" id="L26">    override val filename: String get() = String.format(&quot;shard-%04d&quot;, logShard.id.value.toLong())</span>
+<span class="nc" id="L27">    override val shard: Shard get() = logShard.id</span>
 
 }), LogShardRepository {
 
-<span class="nc" id="L23">    internal var activeSegment: LogSegment</span>
-<span class="nc" id="L24">    internal var activeLogSegmentRepository: LogSegmentRepository</span>
+    private var activeSegment: SqliteLogSegment
+    private var activeLogSegmentRepository: SqliteLogSegmentRepository
 
-<span class="fc" id="L26">    init {</span>
-<span class="fc" id="L27">        activeSegment = LogSegment(</span>
-<span class="fc" id="L28">            LogSegment.Id(0),</span>
-<span class="fc" id="L29">            shard = logShard.id,</span>
-<span class="fc" id="L30">            path = logShard.path.resolve(config.filename),</span>
-<span class="fc" id="L31">            topicId = logShard.topicId</span>
+<span class="fc" id="L34">    init {</span>
+<span class="fc" id="L35">        activeSegment = SqliteLogSegment(</span>
+<span class="fc" id="L36">            LogSegment.Id(0),</span>
+<span class="fc" id="L37">            shard = logShard.id,</span>
+<span class="fc" id="L38">            path = logShard.path.resolve(config.filename),</span>
+<span class="fc" id="L39">            topicId = logShard.topicId</span>
         )
-<span class="fc" id="L33">        activeLogSegmentRepository = DefaultLogSegmentRepository(activeSegment)</span>
-<span class="fc" id="L34">    }</span>
+<span class="fc" id="L41">        activeLogSegmentRepository = SqliteLogSegmentRepository(activeSegment)</span>
+<span class="fc" id="L42">    }</span>
 
     override fun append(cmdId: CmdId, bytes: ByteArray) {
-<span class="fc" id="L37">        activeLogSegmentRepository.append(cmdId, bytes)</span>
-<span class="fc" id="L38">    }</span>
+<span class="fc" id="L45">        activeLogSegmentRepository.append(cmdId, bytes)</span>
+<span class="fc" id="L46">    }</span>
 
     override fun read(firstId: LogChunkId, limit: Int): List&lt;LogChunk&gt; {
-<span class="fc" id="L41">        return activeLogSegmentRepository.read(firstId, limit)</span>
+<span class="fc" id="L49">        return activeLogSegmentRepository.read(firstId, limit)</span>
     }
 
     override fun count(): ULong {
-<span class="fc" id="L45">        return activeLogSegmentRepository.count()</span>
+<span class="fc" id="L53">        return activeLogSegmentRepository.count()</span>
     }
 
-<span class="nc" id="L48">    override fun setupConnection(connection: Connection) {}</span>
+<span class="nc" id="L56">    override fun setupConnection(connection: Connection) {}</span>
 
-<span class="nc" id="L50">    override fun setupSchema(connection: Connection) {}</span>
+<span class="nc" id="L58">    override fun setupSchema(connection: Connection) {}</span>
 
     override fun clear() {
-<span class="fc" id="L53">        activeLogSegmentRepository.clear()</span>
-<span class="fc" id="L54">    }</span>
+<span class="fc" id="L61">        activeLogSegmentRepository.clear()</span>
+<span class="fc" id="L62">    }</span>
 
     override fun close() {
-<span class="fc" id="L57">        activeLogSegmentRepository.close()</span>
-<span class="fc" id="L58">    }</span>
+<span class="fc" id="L65">        activeLogSegmentRepository.close()</span>
+<span class="fc" id="L66">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

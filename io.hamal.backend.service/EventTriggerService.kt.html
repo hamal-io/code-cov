@@ -1,43 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EventTriggerService.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.service</a> &gt; <span class="el_source">EventTriggerService.kt</span></div><h1>EventTriggerService.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.service
 
+import io.hamal.backend.component.Async
 import io.hamal.backend.component.EventEmitter
 import io.hamal.backend.event.Event
-import io.hamal.backend.repository.api.log.BatchConsumer
+import io.hamal.backend.repository.api.domain.EventTrigger
 import io.hamal.backend.repository.api.log.GroupId
 import io.hamal.backend.repository.api.log.LogBrokerRepository
-import io.hamal.backend.repository.sqlite.log.ProtobufBatchConsumer
-import io.hamal.backend.req.Request
+import io.hamal.backend.repository.api.log.LogTopic
+import io.hamal.backend.repository.api.log.ProtobufBatchConsumer
+import io.hamal.backend.req.InvokeEvent
+import io.hamal.backend.req.SubmitRequest
 import io.hamal.backend.service.query.FuncQueryService
-import io.hamal.lib.domain.vo.TopicName
+import io.hamal.backend.service.query.TriggerQueryService
+import io.hamal.lib.common.Shard
+import io.hamal.lib.domain._enum.TriggerType
+import io.hamal.lib.domain.vo.*
 import io.hamal.lib.domain.vo.port.GenerateDomainId
+import io.hamal.lib.script.api.value.TableValue
+import jakarta.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.util.concurrent.ScheduledFuture
+import kotlin.time.Duration.Companion.milliseconds
 
-<span class="nc" id="L16">@Service</span>
-class EventTriggerService
-<span class="nc" id="L18">@Autowired constructor(</span>
-<span class="nc" id="L19">    internal val eventEmitter: EventEmitter,</span>
-<span class="nc" id="L20">    internal val funcQueryService: FuncQueryService,</span>
-<span class="nc" id="L21">    internal val logBrokerRepository: LogBrokerRepository,</span>
-<span class="nc" id="L22">    internal val request: Request,</span>
-<span class="nc" id="L23">    internal val generateDomainId: GenerateDomainId</span>
+<span class="nc" id="L26">@Service</span>
+class EventTriggerService&lt;TOPIC : LogTopic&gt;
+<span class="nc" id="L28">@Autowired constructor(</span>
+<span class="nc" id="L29">    internal val eventEmitter: EventEmitter&lt;TOPIC&gt;,</span>
+<span class="nc" id="L30">    internal val funcQueryService: FuncQueryService,</span>
+<span class="nc" id="L31">    internal val logBrokerRepository: LogBrokerRepository&lt;TOPIC&gt;,</span>
+<span class="nc" id="L32">    internal val triggerQueryService: TriggerQueryService,</span>
+<span class="nc" id="L33">    internal val submitRequest: SubmitRequest,</span>
+<span class="nc" id="L34">    internal val generateDomainId: GenerateDomainId,</span>
+<span class="nc" id="L35">    internal val async: Async</span>
 ) {
 
-<span class="nc" id="L26">    val consumer: BatchConsumer&lt;Event&gt;</span>
 
-<span class="nc" id="L28">    init {</span>
-<span class="nc" id="L29">        val topic = logBrokerRepository.resolveTopic(TopicName(&quot;event-test&quot;))</span>
-<span class="nc" id="L30">        println(topic)</span>
+<span class="nc" id="L39">    private val scheduledTasks = mutableListOf&lt;ScheduledFuture&lt;*&gt;&gt;()</span>
 
-<span class="nc" id="L32">        consumer = ProtobufBatchConsumer(</span>
-<span class="nc" id="L33">            groupId = GroupId(&quot;c2&quot;),</span>
-<span class="nc" id="L34">            topic = topic,</span>
-<span class="nc" id="L35">            logBrokerRepository = logBrokerRepository,</span>
-            valueClass = Event::class
-        )
-<span class="nc" id="L38">    }</span>
-
-
+//    val consumer: BatchConsumer&lt;Event&gt;
+//
+//    init {
+//        val topic = logBrokerRepository.resolveTopic(TopicName(&quot;event-test&quot;))
+//        println(topic)
+//
+//        consumer = ProtobufBatchConsumer(
+//            groupId = GroupId(&quot;c2&quot;),
+//            topic = topic,
+//            logBrokerRepository = logBrokerRepository,
+//            valueClass = Event::class
+//        )
+//    }
 //    @Scheduled(fixedRate = 3, timeUnit = TimeUnit.SECONDS)
 //    fun run() {
 //        val funcs = funcQueryService.list(FuncId(0), 1)
@@ -66,6 +79,64 @@ class EventTriggerService
 //            }
 //        }
 //    }
+
+<span class="nc" id="L83">    val triggerConsumers = mutableMapOf&lt;TriggerId, ProtobufBatchConsumer&lt;TOPIC, Event&gt;&gt;()</span>
+
+
+    @PostConstruct
+    fun setup() {
+<span class="nc" id="L88">        triggerQueryService.list(</span>
+<span class="nc" id="L89">            afterId = TriggerId(0),</span>
+<span class="nc" id="L90">            types = setOf(TriggerType.Event),</span>
+<span class="nc" id="L91">            limit = 10</span>
+<span class="nc" id="L92">        ).forEach { trigger -&gt;</span>
+<span class="nc" id="L93">            println(&quot;start $trigger&quot;)</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">            require(trigger is EventTrigger)</span>
+
+<span class="nc" id="L96">            val topic = logBrokerRepository.find(trigger.topicId)!!</span>
+<span class="nc" id="L97">            val consumer = ProtobufBatchConsumer(</span>
+<span class="nc" id="L98">                groupId = GroupId(trigger.id.value.value.toString(16)),</span>
+<span class="nc" id="L99">                topic = topic,</span>
+<span class="nc" id="L100">                logBrokerRepository = logBrokerRepository,</span>
+                valueClass = Event::class
+            )
+
+<span class="nc" id="L104">            triggerConsumers[trigger.id] = consumer</span>
+
+<span class="nc" id="L106">            scheduledTasks.add(</span>
+<span class="nc" id="L107">                async.atFixedRate(1000.milliseconds) {</span>
+<span class="nc" id="L108">                    println(trigger.name)</span>
+
+<span class="nc" id="L110">                    try {</span>
+<span class="nc" id="L111">                        consumer.consumeBatch(1) { evts -&gt;</span>
+<span class="nc" id="L112">                            submitRequest(</span>
+<span class="nc" id="L113">                                InvokeEvent(</span>
+<span class="nc" id="L114">                                    execId = generateDomainId(Shard(1), ::ExecId),</span>
+<span class="nc" id="L115">                                    funcId = trigger.funcId,</span>
+<span class="nc" id="L116">                                    correlationId = CorrelationId(&quot;__TBD__&quot;),</span>
+<span class="nc" id="L117">                                    inputs = InvocationInputs(TableValue()),</span>
+<span class="nc" id="L118">                                    secrets = InvocationSecrets(listOf()),</span>
+                                )
+                            )
+<span class="nc" id="L121">                        }</span>
+<span class="nc" id="L122">                    } catch (t: Throwable) {</span>
+<span class="nc" id="L123">                        t.printStackTrace()</span>
+                    }
+
+//                    consumer.consume(100) { chunkId, evt -&gt;
+//                        handlerContainer[evt::class].forEach { handler -&gt;
+//                            try {
+//                                val cmdId = CmdId(HashUtils.md5(&quot;${evt.topic}-${chunkId.value.value}&quot;))
+//                                handler.handle(cmdId, evt)
+//                            } catch (t: Throwable) {
+//                                throw Error(t)
+//                            }
+//                        }
+//                    }
+<span class="nc" id="L136">                },</span>
+            )
+<span class="nc" id="L138">        }</span>
+<span class="nc" id="L139">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

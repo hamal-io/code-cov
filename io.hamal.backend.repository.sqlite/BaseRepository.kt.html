@@ -47,10 +47,17 @@ import kotlin.io.path.Path
 <span class="nc" id="L47">            connection.close()</span>
         }
 <span class="nc" id="L49">    }</span>
+
+
 }
 
 private fun ensureFilePath(config: BaseRepository.Config): Path {
-<span class="fc" id="L53">    return FileUtils.createDirectories(config.path)</span>
-<span class="fc" id="L54">        .resolve(config.path.resolve(Path(config.filename)))</span>
+<span class="fc" id="L55">    return FileUtils.createDirectories(config.path)</span>
+<span class="fc" id="L56">        .resolve(config.path.resolve(Path(config.filename)))</span>
+}
+
+//FIXME properly integrate this
+internal fun &lt;T : Any&gt; unsafeInCriteria(parameter: String, values: Iterable&lt;T&gt;): String {
+<span class="nc" id="L61">    return &quot;$parameter in (${values.joinToString(&quot;,&quot;) { it.toString() }})&quot;</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

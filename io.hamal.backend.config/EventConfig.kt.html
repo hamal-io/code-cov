@@ -10,21 +10,20 @@ import org.springframework.context.annotation.Configuration
 
 <span class="nc" id="L11">@Configuration</span>
 <span class="nc" id="L12">open class EventConfig {</span>
-
     @Bean
     open fun eventEmitter(
-        logBrokerRepository: LogBrokerRepository
-<span class="nc" id="L17">    ) = EventEmitter(</span>
-<span class="nc" id="L18">        logBrokerRepository</span>
-<span class="nc" id="L19">    )</span>
+        logBrokerRepository: LogBrokerRepository&lt;*&gt;
+<span class="nc" id="L16">    ): EventEmitter&lt;*&gt; = EventEmitter(</span>
+<span class="nc" id="L17">        logBrokerRepository</span>
+<span class="nc" id="L18">    )</span>
 
     @Bean
     open fun eventProcessorFactory(
         async: Async,
-        logBrokerRepository: LogBrokerRepository
-<span class="nc" id="L25">    ): EventServiceFactory = DefaultEventService(</span>
-<span class="nc" id="L26">        async,</span>
-<span class="nc" id="L27">        logBrokerRepository</span>
-<span class="nc" id="L28">    )</span>
+        logBrokerRepository: LogBrokerRepository&lt;*&gt;
+<span class="nc" id="L24">    ): EventServiceFactory = DefaultEventService(</span>
+<span class="nc" id="L25">        async,</span>
+<span class="nc" id="L26">        logBrokerRepository</span>
+<span class="nc" id="L27">    )</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

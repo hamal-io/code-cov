@@ -7,13 +7,13 @@ import io.hamal.lib.common.Shard
 import io.hamal.lib.domain.vo.TopicId
 import java.nio.file.Path
 
-<span class="fc" id="L10">data class BrokerConsumers(</span>
-<span class="pc" id="L11">    val logBrokerId: LogBroker.Id,</span>
+<span class="fc" id="L10">data class SqliteBrokerConsumers(</span>
+<span class="pc" id="L11">    override val logBrokerId: LogBroker.Id,</span>
 <span class="fc" id="L12">    val path: Path</span>
-)
+) : BrokerConsumers
 
-<span class="fc" id="L15">class DefaultLogBrokerConsumersRepository(</span>
-<span class="pc" id="L16">    internal val brokerConsumers: BrokerConsumers,</span>
+<span class="fc" id="L15">class SqliteLogBrokerConsumersRepository(</span>
+<span class="pc" id="L16">    internal val brokerConsumers: SqliteBrokerConsumers,</span>
 <span class="fc" id="L17">) : BaseRepository(</span>
 <span class="fc" id="L18">    object : Config {</span>
 <span class="fc" id="L19">        override val path: Path get() = brokerConsumers.path</span>
@@ -85,11 +85,11 @@ import java.nio.file.Path
     override fun close() {
 <span class="fc" id="L86">        connection.close()</span>
 <span class="fc" id="L87">    }</span>
-}
 
-<span class="pc bpc" id="L90" title="1 of 2 branches missed.">fun DefaultLogBrokerConsumersRepository.count() = connection.executeQueryOne(&quot;SELECT COUNT(*) as count from consumers&quot;) {</span>
-<span class="fc" id="L91">    map {</span>
-<span class="fc" id="L92">        it.getLong(&quot;count&quot;).toULong()</span>
-    }
-<span class="pc" id="L94">} ?: 0UL</span>
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">    override fun count() = connection.executeQueryOne(&quot;SELECT COUNT(*) as count from consumers&quot;) {</span>
+<span class="fc" id="L90">        map {</span>
+<span class="fc" id="L91">            it.getLong(&quot;count&quot;).toULong()</span>
+        }
+<span class="pc" id="L93">    } ?: 0UL</span>
+}
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

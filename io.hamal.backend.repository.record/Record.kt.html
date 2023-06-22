@@ -46,8 +46,7 @@ interface RecordType {
     abstract val cmdId: CmdId
     abstract val accountId: AccountId
 
-    fun sequence() =
-<span class="nc bnc" id="L50" title="All 2 branches missed.">        sequence ?: throw IllegalStateException(&quot;Records needs to be stored to db before it can be accessed&quot;)</span>
+<span class="nc bnc" id="L49" title="All 2 branches missed.">    fun sequence() = sequence ?: throw IllegalStateException(&quot;Records needs to be stored to db before it can be accessed&quot;)</span>
 
 }
 

@@ -18,7 +18,7 @@ interface ExecService {
     )
 }
 
-<span class="nc" id="L21">class DefaultExecService : ExecService {</span>
+<span class="nc" id="L21">data class DefaultExecService(val template: HttpTemplate) : ExecService {</span>
     override fun poll(): ApiAgentExecRequests {
 <span class="nc" id="L23">        return HttpTemplate(&quot;http://localhost:8084&quot;)</span>
 <span class="nc" id="L24">            .post(&quot;/v1/dequeue&quot;)</span>

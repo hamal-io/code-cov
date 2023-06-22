@@ -4,7 +4,7 @@ import io.hamal.backend.component.EventEmitter
 import io.hamal.backend.repository.api.domain.Func
 import io.hamal.backend.repository.api.domain.Tenant
 import io.hamal.backend.req.InvokeOneshot
-import io.hamal.backend.req.Request
+import io.hamal.backend.req.SubmitRequest
 import io.hamal.backend.service.cmd.ExecCmdService
 import io.hamal.backend.service.cmd.FuncCmdService
 import io.hamal.backend.service.query.FuncQueryService
@@ -27,8 +27,8 @@ import org.springframework.web.bind.annotation.*
 <span class="nc" id="L27">    @Autowired val queryService: FuncQueryService,</span>
 <span class="nc" id="L28">    @Autowired val funcCmdService: FuncCmdService,</span>
 <span class="nc" id="L29">    @Autowired val execCmdService: ExecCmdService,</span>
-<span class="nc" id="L30">    @Autowired val eventEmitter: EventEmitter,</span>
-<span class="nc" id="L31">    @Autowired val request: Request,</span>
+<span class="nc" id="L30">    @Autowired val eventEmitter: EventEmitter&lt;*&gt;,</span>
+<span class="nc" id="L31">    @Autowired val request: SubmitRequest,</span>
 <span class="nc" id="L32">    @Autowired val generateDomainId: GenerateDomainId</span>
 ) {
     @PostMapping(&quot;/v1/funcs&quot;)

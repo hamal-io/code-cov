@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service
 <span class="nc" id="L18">@Service</span>
 <span class="nc" id="L19">class ExecCmdService(</span>
 <span class="nc" id="L20">    @Autowired val execCmdRepository: ExecCmdRepository,</span>
-<span class="nc" id="L21">    @Autowired val eventEmitter: EventEmitter</span>
+<span class="nc" id="L21">    @Autowired val eventEmitter: EventEmitter&lt;*&gt;</span>
 ) {
 
     fun plan(cmdId: CmdId, toPlan: ToPlan): PlannedExec =

@@ -13,13 +13,13 @@ import java.math.BigInteger
 <span class="nc" id="L13">    constructor(value: ByteArray) : this(BigInteger(value))</span>
 <span class="nc" id="L14">    constructor(value: Int) : this(value.toBigInteger())</span>
 <span class="nc" id="L15">    constructor(value: Long) : this(value.toBigInteger())</span>
-<span class="nc" id="L16">    constructor(value: String) : this(BigInteger(value, 16))</span>
+<span class="nc" id="L16">    constructor(value: String) : this(BigInteger(value))</span>
 
     object Serializer : KSerializer&lt;ReqId&gt; {
 <span class="nc" id="L19">        override val descriptor = PrimitiveSerialDescriptor(&quot;CommandId&quot;, PrimitiveKind.STRING)</span>
 <span class="nc" id="L20">        override fun deserialize(decoder: Decoder) = ReqId(decoder.decodeString())</span>
         override fun serialize(encoder: Encoder, value: ReqId) {
-<span class="nc" id="L22">            encoder.encodeString(value.value.toString(16))</span>
+<span class="nc" id="L22">            encoder.encodeString(value.value.toString())</span>
 <span class="nc" id="L23">        }</span>
     }
 

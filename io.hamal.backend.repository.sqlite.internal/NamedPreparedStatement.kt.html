@@ -82,9 +82,9 @@ interface NamedPreparedStatement&lt;STATEMENT&gt; : AutoCloseable {
     }
 
     override fun set(parameter: String, value: SnowflakeId): DefaultNamedPreparedStatement {
-<span class="nc" id="L85">        parametersSet.add(parameter)</span>
-<span class="nc" id="L86">        parseResult.parameterIndexesOf(parameter).forEach { delegate.setLong(it, value.value) }</span>
-<span class="nc" id="L87">        return this</span>
+<span class="fc" id="L85">        parametersSet.add(parameter)</span>
+<span class="fc" id="L86">        parseResult.parameterIndexesOf(parameter).forEach { delegate.setLong(it, value.value) }</span>
+<span class="fc" id="L87">        return this</span>
     }
 
     override fun set(parameter: String, value: CmdId): DefaultNamedPreparedStatement {

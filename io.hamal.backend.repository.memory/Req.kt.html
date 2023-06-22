@@ -2,61 +2,68 @@
 
 import io.hamal.backend.repository.api.ReqCmdRepository
 import io.hamal.backend.repository.api.ReqQueryRepository
-import io.hamal.backend.repository.api.domain.Req
 import io.hamal.lib.domain.ReqId
-import io.hamal.lib.domain._enum.ReqStatus
+import io.hamal.lib.domain.req.Req
+import io.hamal.lib.domain.req.ReqStatus
+import kotlinx.serialization.protobuf.ProtoBuf
+import java.math.BigInteger
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.withLock
 
 object MemoryReqRepository : ReqCmdRepository, ReqQueryRepository {
 
-<span class="nc" id="L13">    val queue = mutableListOf&lt;ReqId&gt;()</span>
-<span class="nc" id="L14">    val store = mutableMapOf&lt;ReqId, Req&gt;()</span>
-<span class="nc" id="L15">    val lock = ReentrantReadWriteLock()</span>
+<span class="nc" id="L15">    val queue = mutableListOf&lt;ReqId&gt;()</span>
+<span class="nc" id="L16">    val store = mutableMapOf&lt;ReqId, ByteArray&gt;()</span>
+<span class="nc" id="L17">    val lock = ReentrantReadWriteLock()</span>
 
     override fun queue(req: Req) {
-<span class="nc" id="L18">        return lock.writeLock().withLock {</span>
-<span class="nc" id="L19">            store[req.id] = req</span>
-<span class="nc" id="L20">            queue.add(req.id)</span>
-<span class="nc" id="L21">        }</span>
+<span class="nc" id="L20">        return lock.writeLock().withLock {</span>
+<span class="nc" id="L21">            store[req.id] = ProtoBuf { }.encodeToByteArray(Req.serializer(), req)</span>
+<span class="nc" id="L22">            queue.add(req.id)</span>
+<span class="nc" id="L23">        }</span>
     }
 
     override fun next(limit: Int): List&lt;Req&gt; {
-<span class="nc" id="L25">        return lock.writeLock().withLock {</span>
-<span class="nc" id="L26">            val result = mutableListOf&lt;Req&gt;()</span>
+<span class="nc" id="L27">        return lock.writeLock().withLock {</span>
+<span class="nc" id="L28">            val result = mutableListOf&lt;Req&gt;()</span>
 
-<span class="nc bnc" id="L28" title="All 2 branches missed.">            repeat(limit) {</span>
-<span class="nc bnc" id="L29" title="All 2 branches missed.">                val reqId = queue.removeFirstOrNull() ?: return result</span>
-<span class="nc" id="L30">                result.add(find(reqId)!!)</span>
-<span class="nc" id="L31">            }</span>
+<span class="nc bnc" id="L30" title="All 2 branches missed.">            repeat(limit) {</span>
+<span class="nc bnc" id="L31" title="All 2 branches missed.">                val reqId = queue.removeFirstOrNull() ?: return result</span>
+<span class="nc" id="L32">                result.add(find(reqId)!!)</span>
+<span class="nc" id="L33">            }</span>
 
-<span class="nc" id="L33">            result</span>
+<span class="nc" id="L35">            result</span>
         }
     }
 
     override fun complete(reqId: ReqId) {
-<span class="nc bnc" id="L38" title="All 2 branches missed.">        val req = find(reqId) ?: return</span>
-<span class="nc" id="L39">        lock.writeLock().withLock {</span>
-<span class="nc" id="L40">            store[reqId]!!.status = ReqStatus.Completed</span>
-<span class="nc" id="L41">        }</span>
-<span class="nc" id="L42">    }</span>
+<span class="nc bnc" id="L40" title="All 2 branches missed.">        val req = find(reqId) ?: return</span>
+<span class="nc" id="L41">        lock.writeLock().withLock {</span>
+<span class="nc" id="L42">            store[req.id] = ProtoBuf { }.encodeToByteArray(Req.serializer(), req.apply { status = ReqStatus.Completed })</span>
+<span class="nc" id="L43">        }</span>
+<span class="nc" id="L44">    }</span>
 
     override fun fail(reqId: ReqId) {
-<span class="nc bnc" id="L45" title="All 2 branches missed.">        val req = find(reqId) ?: return</span>
-<span class="nc" id="L46">        lock.writeLock().withLock {</span>
-<span class="nc" id="L47">            store[reqId]!!.status = ReqStatus.Failed</span>
-<span class="nc" id="L48">        }</span>
-<span class="nc" id="L49">    }</span>
+<span class="nc bnc" id="L47" title="All 2 branches missed.">        val req = find(reqId) ?: return</span>
+<span class="nc" id="L48">        lock.writeLock().withLock {</span>
+<span class="nc" id="L49">            store[req.id] = ProtoBuf { }.encodeToByteArray(Req.serializer(), req.apply { status = ReqStatus.Completed })</span>
+<span class="nc" id="L50">        }</span>
+<span class="nc" id="L51">    }</span>
 
-<span class="nc" id="L51">    override fun find(reqId: ReqId) = lock.readLock().withLock { store[reqId] }</span>
+    override fun find(reqId: ReqId): Req? {
+<span class="nc bnc" id="L54" title="All 2 branches missed.">        val result = lock.readLock().withLock { store[reqId] } ?: return null</span>
+<span class="nc" id="L55">        return ProtoBuf { }.decodeFromByteArray(Req.serializer(), result)</span>
+    }
 
-    override fun list(afterId: ReqId, limit: Int): List&lt;Req&gt; {
-<span class="nc" id="L54">        return lock.readLock().withLock {</span>
-<span class="nc" id="L55">            store.keys.sorted()</span>
-<span class="nc bnc" id="L56" title="All 2 branches missed.">                .dropWhile { it &lt;= afterId }</span>
-<span class="nc" id="L57">                .take(limit)</span>
-<span class="nc" id="L58">                .mapNotNull { find(it) }</span>
-<span class="nc" id="L59">                .reversed()</span>
+    override fun query(block: ReqQueryRepository.Query.() -&gt; Unit): List&lt;Req&gt; {
+<span class="nc" id="L59">        val query = ReqQueryRepository.Query(ReqId(BigInteger.ZERO), limit = 25)</span>
+<span class="nc" id="L60">        block(query)</span>
+<span class="nc" id="L61">        return lock.readLock().withLock {</span>
+<span class="nc" id="L62">            store.keys.sorted()</span>
+<span class="nc bnc" id="L63" title="All 2 branches missed.">                .dropWhile { it &lt;= query.afterId }</span>
+<span class="nc" id="L64">                .take(query.limit)</span>
+<span class="nc" id="L65">                .mapNotNull { find(it) }</span>
+<span class="nc" id="L66">                .reversed()</span>
         }
     }
 }

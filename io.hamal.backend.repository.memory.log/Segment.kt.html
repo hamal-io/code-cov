@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Segment.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.repository.memory.log</a> &gt; <span class="el_source">Segment.kt</span></div><h1>Segment.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.repository.memory.log
+
+import io.hamal.backend.repository.api.log.LogChunk
+import io.hamal.backend.repository.api.log.LogChunkId
+import io.hamal.backend.repository.api.log.LogSegment
+import io.hamal.backend.repository.api.log.LogSegmentRepository
+import io.hamal.lib.common.Shard
+import io.hamal.lib.common.util.TimeUtils
+import io.hamal.lib.domain.CmdId
+import io.hamal.lib.domain.vo.TopicId
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
+
+<span class="fc" id="L14">data class MemoryLogSegment(</span>
+<span class="fc" id="L15">    override val id: LogSegment.Id,</span>
+<span class="fc" id="L16">    override val shard: Shard,</span>
+<span class="fc" id="L17">    override val topicId: TopicId,</span>
+) : LogSegment
+
+
+<span class="fc" id="L21">class MemoryLogSegmentRepository(</span>
+<span class="fc" id="L22">    private val segment: MemoryLogSegment</span>
+) : LogSegmentRepository {
+
+<span class="fc" id="L25">    private val store = mutableListOf&lt;LogChunk&gt;()</span>
+<span class="fc" id="L26">    private val lock = ReentrantLock()</span>
+
+    override fun append(cmdId: CmdId, bytes: ByteArray) {
+<span class="fc" id="L29">        lock.withLock {</span>
+<span class="fc" id="L30">            store.add(</span>
+<span class="fc" id="L31">                LogChunk(</span>
+<span class="fc" id="L32">                    id = LogChunkId(store.size + 1),</span>
+<span class="fc" id="L33">                    segmentId = segment.id,</span>
+<span class="fc" id="L34">                    shard = segment.shard,</span>
+<span class="fc" id="L35">                    topicId = segment.topicId,</span>
+<span class="fc" id="L36">                    bytes = bytes,</span>
+<span class="fc" id="L37">                    instant = TimeUtils.now()</span>
+                )
+            )
+        }
+<span class="fc" id="L41">    }</span>
+
+    override fun read(firstId: LogChunkId, limit: Int): List&lt;LogChunk&gt; {
+<span class="fc bfc" id="L44" title="All 2 branches covered.">        if (limit &lt; 1) {</span>
+<span class="fc" id="L45">            return listOf()</span>
+        }
+<span class="fc" id="L47">        return lock.withLock {</span>
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">            if (firstId.value.value == 0L) {</span>
+<span class="nc" id="L49">                store.take(limit)</span>
+            } else {
+<span class="fc" id="L51">                store.drop(firstId.value.value.toInt() - 1)</span>
+<span class="fc" id="L52">                    .take(limit)</span>
+            }
+        }
+    }
+
+    override fun count(): ULong {
+<span class="fc" id="L58">        return lock.withLock { store.size.toULong() }</span>
+    }
+
+<span class="fc" id="L61">    override fun close() {}</span>
+
+    override fun clear() {
+<span class="fc" id="L64">        lock.withLock { store.clear() }</span>
+<span class="fc" id="L65">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

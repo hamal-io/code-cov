@@ -2,7 +2,7 @@
 
 import io.hamal.backend.component.EventEmitter
 import io.hamal.backend.req.CompleteExec
-import io.hamal.backend.req.Request
+import io.hamal.backend.req.SubmitRequest
 import io.hamal.backend.service.cmd.ExecCmdService
 import io.hamal.backend.service.query.ExecQueryService
 import io.hamal.lib.common.SnowflakeId
@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.*
 <span class="nc" id="L19">open class ExecController(</span>
 <span class="nc" id="L20">    @Autowired val queryService: ExecQueryService,</span>
 <span class="nc" id="L21">    @Autowired val cmdService: ExecCmdService,</span>
-<span class="nc" id="L22">    @Autowired val eventEmitter: EventEmitter,</span>
-<span class="nc" id="L23">    @Autowired val request: Request</span>
+<span class="nc" id="L22">    @Autowired val eventEmitter: EventEmitter&lt;*&gt;,</span>
+<span class="nc" id="L23">    @Autowired val request: SubmitRequest</span>
 ) {
 
     @GetMapping(&quot;/v1/execs/{execId}&quot;)

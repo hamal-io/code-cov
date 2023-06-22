@@ -1,34 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TriggerRepository.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.repository.api</a> &gt; <span class="el_source">TriggerRepository.kt</span></div><h1>TriggerRepository.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.repository.api
 
+import io.hamal.backend.repository.api.domain.EventTrigger
+import io.hamal.backend.repository.api.domain.FixedRateTrigger
 import io.hamal.backend.repository.api.domain.Trigger
 import io.hamal.lib.domain.CmdId
+import io.hamal.lib.domain._enum.TriggerType
 import io.hamal.lib.domain.vo.*
 import kotlin.time.Duration
 
 
 interface TriggerCmdRepository {
-    fun create(cmd: CreateFixedRateCmd): Trigger
-<span class="nc" id="L11">    data class CreateFixedRateCmd(</span>
-<span class="nc" id="L12">        val id: CmdId,</span>
-<span class="nc" id="L13">        val accountId: AccountId,</span>
-<span class="nc" id="L14">        val triggerId: TriggerId,</span>
-<span class="nc" id="L15">        val name: TriggerName,</span>
-<span class="nc" id="L16">        val funcId: FuncId,</span>
-<span class="nc" id="L17">        val inputs: TriggerInputs,</span>
-<span class="nc" id="L18">        val secrets: TriggerSecrets,</span>
-<span class="nc" id="L19">        val duration: Duration</span>
+    fun create(cmd: CreateFixedRateCmd): FixedRateTrigger
+
+    fun create(cmd: CreateEventCmd): EventTrigger
+
+<span class="nc" id="L17">    data class CreateFixedRateCmd(</span>
+<span class="nc" id="L18">        val id: CmdId,</span>
+<span class="nc" id="L19">        val accountId: AccountId,</span>
+<span class="nc" id="L20">        val triggerId: TriggerId,</span>
+<span class="nc" id="L21">        val name: TriggerName,</span>
+<span class="nc" id="L22">        val funcId: FuncId,</span>
+<span class="nc" id="L23">        val inputs: TriggerInputs,</span>
+<span class="nc" id="L24">        val secrets: TriggerSecrets,</span>
+<span class="nc" id="L25">        val duration: Duration</span>
+    )
+
+<span class="nc" id="L28">    data class CreateEventCmd(</span>
+<span class="nc" id="L29">        val id: CmdId,</span>
+<span class="nc" id="L30">        val accountId: AccountId,</span>
+<span class="nc" id="L31">        val triggerId: TriggerId,</span>
+<span class="nc" id="L32">        val name: TriggerName,</span>
+<span class="nc" id="L33">        val funcId: FuncId,</span>
+<span class="nc" id="L34">        val inputs: TriggerInputs,</span>
+<span class="nc" id="L35">        val secrets: TriggerSecrets,</span>
+<span class="nc" id="L36">        val topicId: TopicId</span>
     )
 }
 
 interface TriggerQueryRepository {
     fun find(triggerId: TriggerId): Trigger?
-    fun list(afterId: TriggerId, limit: Int): List&lt;Trigger&gt;
 
     fun query(block: Query.() -&gt; Unit): List&lt;Trigger&gt;
 
-<span class="nc" id="L29">    data class Query(</span>
-<span class="nc" id="L30">        var afterId: TriggerId,</span>
-<span class="nc" id="L31">        var limit: Int</span>
+<span class="nc" id="L45">    data class Query(</span>
+<span class="nc" id="L46">        var afterId: TriggerId,</span>
+<span class="nc" id="L47">        var types: Set&lt;TriggerType&gt;,</span>
+<span class="nc" id="L48">        var limit: Int</span>
     )
 
 }

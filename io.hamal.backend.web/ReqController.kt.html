@@ -2,7 +2,7 @@
 
 import io.hamal.backend.service.query.ReqQueryService
 import io.hamal.lib.domain.ReqId
-import io.hamal.lib.domain.vo.ExecId
+import io.hamal.lib.domain.req.SubmittedInvokeAdhocReq
 import io.hamal.lib.sdk.domain.ApiAdhocReq
 import io.hamal.lib.sdk.domain.ApiListReqResponse
 import io.hamal.lib.sdk.domain.ApiReq
@@ -46,14 +46,18 @@ import org.springframework.web.bind.annotation.RestController
         @PathVariable(&quot;reqId&quot;) stringReqId: String,
     ): ResponseEntity&lt;ApiReq&gt; {
 <span class="nc" id="L48">        val result = queryService.get(ReqId(stringReqId))</span>
-<span class="nc" id="L49">        return ResponseEntity(</span>
-<span class="nc" id="L50">            ApiAdhocReq(</span>
-<span class="nc" id="L51">                id = result.id,</span>
-<span class="nc" id="L52">                status = result.status,</span>
-<span class="nc" id="L53">                execId = ExecId(0)</span>
-            ),
-<span class="nc" id="L55">            HttpStatus.OK</span>
-        )
+<span class="nc" id="L49">        return when (result) {</span>
+<span class="nc bnc" id="L50" title="All 2 branches missed.">            is SubmittedInvokeAdhocReq -&gt; ResponseEntity(</span>
+<span class="nc" id="L51">                ApiAdhocReq(</span>
+<span class="nc" id="L52">                    id = result.id,</span>
+<span class="nc" id="L53">                    status = result.status,</span>
+<span class="nc" id="L54">                    execId = result.execId</span>
+                ),
+<span class="nc" id="L56">                HttpStatus.OK</span>
+            )
+
+<span class="nc" id="L59">            else -&gt; TODO()</span>
+        }
     }
 
 }

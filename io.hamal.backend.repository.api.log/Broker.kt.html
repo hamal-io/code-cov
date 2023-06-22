@@ -4,46 +4,50 @@ import io.hamal.lib.domain.CmdId
 import io.hamal.lib.domain.vo.TopicId
 import io.hamal.lib.domain.vo.TopicName
 import java.io.Closeable
-import java.nio.file.Path
 
-<span class="fc" id="L9">data class LogBroker(</span>
-<span class="fc" id="L10">    val id: Id,</span>
-<span class="fc" id="L11">    val path: Path</span>
-) {
+interface LogBroker {
+    val id: Id
+
     @JvmInline
-<span class="nc" id="L14">    value class Id(val value: ULong) {</span>
-<span class="fc" id="L15">        constructor(value: Int) : this(value.toULong())</span>
+<span class="nc" id="L12">    value class Id(val value: ULong) {</span>
+<span class="fc" id="L13">        constructor(value: Int) : this(value.toULong())</span>
     }
 }
 
-interface AppendToTopic {
-    fun append(cmdId: CmdId, topic: LogTopic, bytes: ByteArray)
+interface AppendToTopic&lt;TOPIC : LogTopic&gt; {
+    fun append(cmdId: CmdId, topic: TOPIC, bytes: ByteArray)
 }
 
-interface ConsumeFromTopic {
-    fun consume(groupId: GroupId, topic: LogTopic, limit: Int): List&lt;LogChunk&gt;
+interface ConsumeFromTopic&lt;TOPIC : LogTopic&gt; {
+    fun consume(groupId: GroupId, topic: TOPIC, limit: Int): List&lt;LogChunk&gt;
 
-    fun commit(groupId: GroupId, topic: LogTopic, chunkId: LogChunkId)
+    fun commit(groupId: GroupId, topic: TOPIC, chunkId: LogChunkId)
 }
 
-interface ReadFromTopic {
-    fun read(lastId: LogChunkId, topic: LogTopic, limit: Int): List&lt;LogChunk&gt;
+interface ReadFromTopic&lt;TOPIC : LogTopic&gt; {
+    fun read(lastId: LogChunkId, topic: TOPIC, limit: Int): List&lt;LogChunk&gt;
 }
 
-interface ResolveTopic {
-    fun resolveTopic(topicName: TopicName): LogTopic
+interface ResolveTopic&lt;TOPIC : LogTopic&gt; {
+    fun resolveTopic(topicName: TopicName): TOPIC
 }
 
-interface GetTopics {
-    fun topics(): Set&lt;LogTopic&gt;
+interface GetTopics&lt;TOPIC : LogTopic&gt; {
+    fun topics(): Set&lt;TOPIC&gt;
 }
 
-interface GetTopic {
-<span class="nc bnc" id="L42" title="All 2 branches missed.">    fun get(topicId: TopicId): LogTopic = requireNotNull(find(topicId)) { &quot;Topic with id $topicId not found&quot; }</span>
+interface GetTopic&lt;TOPIC : LogTopic&gt; {
+<span class="nc bnc" id="L40" title="All 2 branches missed.">    fun get(topicId: TopicId): TOPIC = requireNotNull(find(topicId)) { &quot;Topic with id $topicId not found&quot; }</span>
 
-    fun find(topicId: TopicId): LogTopic?
+    fun find(topicId: TopicId): TOPIC?
 }
 
-<span class="nc" id="L47">interface LogBrokerRepository : AppendToTopic, ConsumeFromTopic, GetTopic, GetTopics, ReadFromTopic, ResolveTopic,</span>
-<span class="nc" id="L48">    Closeable</span>
+<span class="nc" id="L45">interface LogBrokerRepository&lt;TOPIC : LogTopic&gt; :</span>
+    AppendToTopic&lt;TOPIC&gt;,
+    ConsumeFromTopic&lt;TOPIC&gt;,
+    GetTopic&lt;TOPIC&gt;,
+    GetTopics&lt;TOPIC&gt;,
+    ReadFromTopic&lt;TOPIC&gt;,
+    ResolveTopic&lt;TOPIC&gt;,
+<span class="nc" id="L52">    Closeable</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

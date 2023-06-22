@@ -2,37 +2,42 @@
 
 import io.hamal.lib.domain._enum.TriggerType
 import io.hamal.lib.domain.vo.FuncId
+import io.hamal.lib.domain.vo.TopicId
 import io.hamal.lib.domain.vo.TriggerId
 import io.hamal.lib.domain.vo.TriggerName
 import kotlinx.serialization.Serializable
 import kotlin.time.Duration
 
-<span class="nc bnc" id="L10" title="All 20 branches missed.">@Serializable</span>
-<span class="nc" id="L11">data class ApiCreateTriggerRequest(</span>
-<span class="nc" id="L12">    val name: TriggerName,</span>
-<span class="nc" id="L13">    val funcId: FuncId,</span>
-<span class="nc" id="L14">    val type: TriggerType,</span>
-<span class="nc" id="L15">    val duration: Duration? = null</span>
-<span class="nc" id="L16">)</span>
+<span class="nc bnc" id="L11" title="All 29 branches missed.">@Serializable</span>
+@Deprecated(&quot;do not have separate dto&quot;)
+<span class="nc" id="L13">data class ApiCreateTriggerRequest(</span>
+<span class="nc" id="L14">    val name: TriggerName,</span>
+<span class="nc" id="L15">    val funcId: FuncId,</span>
+<span class="nc" id="L16">    val type: TriggerType,</span>
+<span class="nc" id="L17">    val duration: Duration? = null,</span>
+<span class="nc" id="L18">    val topicId: TopicId? = null</span>
+<span class="nc" id="L19">)</span>
 
-<span class="nc bnc" id="L18" title="All 8 branches missed.">@Serializable</span>
-<span class="nc" id="L19">data class ApiCreateTriggerResponse(</span>
-<span class="nc" id="L20">    val id: TriggerId,</span>
-<span class="nc" id="L21">    val name: TriggerName,</span>
-<span class="nc" id="L22">)</span>
+<span class="nc bnc" id="L21" title="All 8 branches missed.">@Serializable</span>
+@Deprecated(&quot;do not have separate dto&quot;)
+<span class="nc" id="L23">data class ApiCreateTriggerResponse(</span>
+<span class="nc" id="L24">    val id: TriggerId,</span>
+<span class="nc" id="L25">    val name: TriggerName,</span>
+<span class="nc" id="L26">)</span>
 
 
-<span class="nc bnc" id="L25" title="All 7 branches missed.">@Serializable</span>
-<span class="nc" id="L26">data class ApiListTriggerResponse(</span>
-<span class="nc" id="L27">    val triggers: List&lt;Trigger&gt;</span>
+<span class="nc bnc" id="L29" title="All 7 branches missed.">@Serializable</span>
+@Deprecated(&quot;do not have separate dto&quot;)
+<span class="nc" id="L31">data class ApiListTriggerResponse(</span>
+<span class="nc" id="L32">    val triggers: List&lt;Trigger&gt;</span>
 ) {
 
-<span class="nc bnc" id="L30" title="All 8 branches missed.">    @Serializable</span>
-<span class="nc" id="L31">    data class Trigger(</span>
-<span class="nc" id="L32">        val id: TriggerId,</span>
-<span class="nc" id="L33">        val name: TriggerName</span>
-<span class="nc" id="L34">    )</span>
-<span class="nc" id="L35">}</span>
+<span class="nc bnc" id="L35" title="All 8 branches missed.">    @Serializable</span>
+<span class="nc" id="L36">    data class Trigger(</span>
+<span class="nc" id="L37">        val id: TriggerId,</span>
+<span class="nc" id="L38">        val name: TriggerName</span>
+<span class="nc" id="L39">    )</span>
+<span class="nc" id="L40">}</span>
 
 
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

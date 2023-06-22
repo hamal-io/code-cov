@@ -28,4 +28,17 @@ import kotlin.time.Duration
 <span class="nc" id="L28">    val secrets: TriggerSecrets,</span>
 <span class="nc" id="L29">    val duration: Duration</span>
 <span class="nc" id="L30">) : TriggerRecord()</span>
+
+<span class="nc bnc" id="L32" title="All 14 branches missed.">@Serializable</span>
+@SerialName(&quot;ECR&quot;)
+<span class="nc" id="L34">data class EventTriggerCreationRecord(</span>
+<span class="nc" id="L35">    override val entityId: TriggerId,</span>
+<span class="nc" id="L36">    override val cmdId: CmdId,</span>
+<span class="nc" id="L37">    override val accountId: AccountId,</span>
+<span class="nc" id="L38">    val funcId: FuncId,</span>
+<span class="nc" id="L39">    val name: TriggerName,</span>
+<span class="nc" id="L40">    val inputs: TriggerInputs,</span>
+<span class="nc" id="L41">    val secrets: TriggerSecrets,</span>
+<span class="nc" id="L42">    val topicId: TopicId</span>
+<span class="nc" id="L43">) : TriggerRecord()</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

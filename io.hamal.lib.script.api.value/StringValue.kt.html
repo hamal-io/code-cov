@@ -9,7 +9,7 @@ import kotlinx.serialization.Transient
 <span class="fc" id="L9">data class StringValue(val value: String) : KeyValue {</span>
     @Transient
 <span class="pc" id="L11">    override val metaTable = DefaultStringValueMetaTable</span>
-
+<span class="nc" id="L12">    override fun toString(): String = &quot;'$value'&quot;</span>
 <span class="fc" id="L13">}</span>
 
 object DefaultStringValueMetaTable : MetaTable {

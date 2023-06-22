@@ -3,13 +3,13 @@
 import io.hamal.backend.event.Event
 import io.hamal.backend.repository.api.log.LogBrokerRepository
 import io.hamal.backend.repository.api.log.LogTopic
-import io.hamal.backend.repository.sqlite.log.ProtobufAppender
+import io.hamal.backend.repository.api.log.ProtobufAppender
 import io.hamal.lib.domain.CmdId
 import io.hamal.lib.domain.vo.TopicName
 
-<span class="nc" id="L10">class EventEmitter(private val brokerRepository: LogBrokerRepository) {</span>
+<span class="nc" id="L10">class EventEmitter&lt;TOPIC : LogTopic&gt;(private val brokerRepository: LogBrokerRepository&lt;TOPIC&gt;) {</span>
 
-<span class="nc" id="L12">    private val local: ThreadLocal&lt;List&lt;Pair&lt;LogTopic, Event&gt;&gt;&gt; = ThreadLocal&lt;List&lt;Pair&lt;LogTopic, Event&gt;&gt;&gt;()</span>
+<span class="nc" id="L12">    private val local: ThreadLocal&lt;List&lt;Pair&lt;TOPIC, Event&gt;&gt;&gt; = ThreadLocal&lt;List&lt;Pair&lt;TOPIC, Event&gt;&gt;&gt;()</span>
 
 <span class="nc" id="L14">    private val appender = ProtobufAppender(Event::class, brokerRepository)</span>
 

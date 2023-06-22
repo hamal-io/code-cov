@@ -4,7 +4,7 @@ import io.hamal.backend.event.Event
 import io.hamal.backend.event.TenantEvent
 import io.hamal.backend.repository.api.log.LogBrokerRepository
 import io.hamal.backend.repository.api.log.LogTopic
-import io.hamal.backend.repository.sqlite.log.ProtobufAppender
+import io.hamal.backend.repository.api.log.ProtobufAppender
 import io.hamal.lib.common.Shard
 import io.hamal.lib.domain.CmdId
 import io.hamal.lib.domain.vo.AccountId
@@ -13,8 +13,8 @@ import io.hamal.lib.domain.vo.TopicName
 import org.springframework.stereotype.Service
 
 <span class="nc" id="L15">@Service</span>
-<span class="nc" id="L16">class EventCmdService(</span>
-<span class="nc" id="L17">    val logBrokerRepository: LogBrokerRepository</span>
+<span class="nc" id="L16">class EventCmdService&lt;TOPIC : LogTopic&gt;(</span>
+<span class="nc" id="L17">    private val logBrokerRepository: LogBrokerRepository&lt;TOPIC&gt;</span>
 ) {
 
 <span class="nc" id="L20">    private val appender = ProtobufAppender(Event::class, logBrokerRepository)</span>
@@ -29,31 +29,29 @@ import org.springframework.stereotype.Service
 <span class="nc" id="L29">        val topic = logBrokerRepository.get(eventToAppend.topicId)</span>
 <span class="nc" id="L30">        appender.append(</span>
 <span class="nc" id="L31">            cmdId, topic, TenantEvent(</span>
-//                cmdId = eventToAppend.cmdId,
-<span class="nc" id="L33">                shard = eventToAppend.shard,</span>
-<span class="nc" id="L34">                topic = &quot;tenant-topic&quot;,</span>
-<span class="nc" id="L35">                contentType = eventToAppend.contentTpe,</span>
-<span class="nc" id="L36">                value = eventToAppend.value</span>
+<span class="nc" id="L32">                shard = eventToAppend.shard,</span>
+<span class="nc" id="L33">                topic = &quot;tenant-topic&quot;,</span>
+<span class="nc" id="L34">                contentType = eventToAppend.contentTpe,</span>
+<span class="nc" id="L35">                value = eventToAppend.value</span>
             )
         )
+<span class="nc" id="L38">    }</span>
 
-<span class="nc" id="L40">    }</span>
-
-<span class="nc" id="L42">    data class TopicToCreate(</span>
-<span class="nc" id="L43">        val cmdId: CmdId,</span>
-<span class="nc" id="L44">        val shard: Shard,</span>
-<span class="nc" id="L45">        val accountId: AccountId,</span>
-<span class="nc" id="L46">        val name: TopicName</span>
+<span class="nc" id="L40">    data class TopicToCreate(</span>
+<span class="nc" id="L41">        val cmdId: CmdId,</span>
+<span class="nc" id="L42">        val shard: Shard,</span>
+<span class="nc" id="L43">        val accountId: AccountId,</span>
+<span class="nc" id="L44">        val name: TopicName</span>
     )
 
-<span class="nc" id="L49">    data class EventToAppend(</span>
-<span class="nc" id="L50">        val cmdId: CmdId,</span>
-<span class="nc" id="L51">        val shard: Shard,</span>
+<span class="nc" id="L47">    data class EventToAppend(</span>
+<span class="nc" id="L48">        val cmdId: CmdId,</span>
+<span class="nc" id="L49">        val shard: Shard,</span>
 
-<span class="nc" id="L53">        val accountId: AccountId,</span>
-<span class="nc" id="L54">        val topicId: TopicId,</span>
-<span class="nc" id="L55">        val contentTpe: String,</span>
-<span class="nc" id="L56">        val value: ByteArray</span>
+<span class="nc" id="L51">        val accountId: AccountId,</span>
+<span class="nc" id="L52">        val topicId: TopicId,</span>
+<span class="nc" id="L53">        val contentTpe: String,</span>
+<span class="nc" id="L54">        val value: ByteArray</span>
 
     )
 }
