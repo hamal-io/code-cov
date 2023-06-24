@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FuncCmdService.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.service.cmd</a> &gt; <span class="el_source">FuncCmdService.kt</span></div><h1>FuncCmdService.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.service.cmd
 
-import io.hamal.backend.component.EventEmitter
+import io.hamal.backend.component.SystemEventEmitter
 import io.hamal.backend.event.FuncCreatedEvent
 import io.hamal.backend.repository.api.FuncCmdRepository
 import io.hamal.backend.repository.api.domain.Func
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service
 class FuncCmdService
 <span class="nc" id="L14">@Autowired constructor(</span>
 <span class="nc" id="L15">    val funcCmdRepository: FuncCmdRepository,</span>
-<span class="nc" id="L16">    val eventEmitter: EventEmitter&lt;*&gt;</span>
+<span class="nc" id="L16">    val eventEmitter: SystemEventEmitter&lt;*&gt;</span>
 ) {
     fun create(cmdId: CmdId, toCreate: ToCreate): Func =
 <span class="nc" id="L19">        createFunc(cmdId, toCreate).also { emitEvent(cmdId, it) }</span>
@@ -31,22 +31,20 @@ private fun FuncCmdService.createFunc(cmdId: CmdId, toCreate: FuncCmdService.ToC
 <span class="nc" id="L31">    return funcCmdRepository.create(</span>
 <span class="nc" id="L32">        FuncCmdRepository.CreateCmd(</span>
 <span class="nc" id="L33">            id = cmdId,</span>
-<span class="nc" id="L34">            accountId = AccountId(1),</span>
-<span class="nc" id="L35">            funcId = toCreate.funcId,</span>
-<span class="nc" id="L36">            name = toCreate.name,</span>
-<span class="nc" id="L37">            inputs = toCreate.inputs,</span>
-<span class="nc" id="L38">            secrets = toCreate.secrets,</span>
-<span class="nc" id="L39">            code = toCreate.code</span>
+<span class="nc" id="L34">            funcId = toCreate.funcId,</span>
+<span class="nc" id="L35">            name = toCreate.name,</span>
+<span class="nc" id="L36">            inputs = toCreate.inputs,</span>
+<span class="nc" id="L37">            secrets = toCreate.secrets,</span>
+<span class="nc" id="L38">            code = toCreate.code</span>
         )
     )
 }
 
 private fun FuncCmdService.emitEvent(cmdId: CmdId, func: Func) {
-<span class="nc" id="L45">    eventEmitter.emit(</span>
-<span class="nc" id="L46">        cmdId, FuncCreatedEvent(</span>
-<span class="nc" id="L47">            shard = func.shard,</span>
-<span class="nc" id="L48">            funcId = func.id</span>
+<span class="nc" id="L44">    eventEmitter.emit(</span>
+<span class="nc" id="L45">        cmdId, FuncCreatedEvent(</span>
+<span class="nc" id="L46">            funcId = func.id</span>
         )
     )
-<span class="nc" id="L51">}</span>
+<span class="nc" id="L49">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

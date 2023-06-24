@@ -15,15 +15,14 @@ import kotlinx.serialization.Transient
 <span class="nc" id="L15">    override var sequence: RecordSequence? = null</span>
 <span class="nc" id="L16">) : Record&lt;FuncId&gt;()</span>
 
-<span class="nc bnc" id="L18" title="All 13 branches missed.">@Serializable</span>
+<span class="nc bnc" id="L18" title="All 12 branches missed.">@Serializable</span>
 @SerialName(&quot;FCR&quot;)
 <span class="nc" id="L20">data class FuncCreationRecord(</span>
 <span class="nc" id="L21">    override val entityId: FuncId,</span>
 <span class="nc" id="L22">    override val cmdId: CmdId,</span>
-<span class="nc" id="L23">    override val accountId: AccountId,</span>
-<span class="nc" id="L24">    val name: FuncName,</span>
-<span class="nc" id="L25">    val inputs: FuncInputs,</span>
-<span class="nc" id="L26">    val secrets: FuncSecrets,</span>
-<span class="nc" id="L27">    val code: Code</span>
-<span class="nc" id="L28">) : FuncRecord()</span>
+<span class="nc" id="L23">    val name: FuncName,</span>
+<span class="nc" id="L24">    val inputs: FuncInputs,</span>
+<span class="nc" id="L25">    val secrets: FuncSecrets,</span>
+<span class="nc" id="L26">    val code: Code</span>
+<span class="nc" id="L27">) : FuncRecord()</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

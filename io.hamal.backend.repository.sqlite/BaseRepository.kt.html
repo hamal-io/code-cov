@@ -2,7 +2,6 @@
 
 import io.hamal.backend.repository.sqlite.internal.Connection
 import io.hamal.backend.repository.sqlite.internal.DefaultConnection
-import io.hamal.lib.common.Shard
 import io.hamal.lib.common.util.FileUtils
 import io.hamal.lib.domain.Once
 import logger
@@ -10,32 +9,31 @@ import java.io.Closeable
 import java.nio.file.Path
 import kotlin.io.path.Path
 
-<span class="fc" id="L13">abstract class BaseRepository(</span>
-<span class="fc" id="L14">    val config: Config</span>
+<span class="fc" id="L12">abstract class BaseRepository(</span>
+<span class="fc" id="L13">    val config: Config</span>
 ) : Closeable {
 
-<span class="fc" id="L17">    protected val log = logger(this::class)</span>
+<span class="fc" id="L16">    protected val log = logger(this::class)</span>
 
-<span class="fc" id="L19">    private val connectionOnce = Once.default&lt;Connection&gt;()</span>
+<span class="fc" id="L18">    private val connectionOnce = Once.default&lt;Connection&gt;()</span>
 
-<span class="fc" id="L21">    internal val connection by lazy {</span>
-<span class="fc" id="L22">        connectionOnce {</span>
-<span class="fc" id="L23">            val result = DefaultConnection(</span>
-<span class="fc" id="L24">                this::class,</span>
-<span class="fc" id="L25">                &quot;jdbc:sqlite:${ensureFilePath(config)}&quot;</span>
+<span class="fc" id="L20">    internal val connection by lazy {</span>
+<span class="fc" id="L21">        connectionOnce {</span>
+<span class="fc" id="L22">            val result = DefaultConnection(</span>
+<span class="fc" id="L23">                this::class,</span>
+<span class="fc" id="L24">                &quot;jdbc:sqlite:${ensureFilePath(config)}&quot;</span>
             )
-<span class="fc" id="L27">            log.debug(&quot;Setup connection&quot;)</span>
-<span class="fc" id="L28">            setupConnection(result)</span>
-<span class="fc" id="L29">            log.debug(&quot;Setup schema&quot;)</span>
-<span class="fc" id="L30">            setupSchema(result)</span>
-<span class="fc" id="L31">            result</span>
+<span class="fc" id="L26">            log.debug(&quot;Setup connection&quot;)</span>
+<span class="fc" id="L27">            setupConnection(result)</span>
+<span class="fc" id="L28">            log.debug(&quot;Setup schema&quot;)</span>
+<span class="fc" id="L29">            setupSchema(result)</span>
+<span class="fc" id="L30">            result</span>
         }
     }
 
     interface Config {
         val path: Path
         val filename: String
-        val shard: Shard
     }
 
     abstract fun setupConnection(connection: Connection)
@@ -43,21 +41,21 @@ import kotlin.io.path.Path
     abstract fun clear()
 
     override fun close() {
-<span class="nc bnc" id="L46" title="All 2 branches missed.">        if (connection.isOpen) {</span>
-<span class="nc" id="L47">            connection.close()</span>
+<span class="nc bnc" id="L44" title="All 2 branches missed.">        if (connection.isOpen) {</span>
+<span class="nc" id="L45">            connection.close()</span>
         }
-<span class="nc" id="L49">    }</span>
+<span class="nc" id="L47">    }</span>
 
 
 }
 
 private fun ensureFilePath(config: BaseRepository.Config): Path {
-<span class="fc" id="L55">    return FileUtils.createDirectories(config.path)</span>
-<span class="fc" id="L56">        .resolve(config.path.resolve(Path(config.filename)))</span>
+<span class="fc" id="L53">    return FileUtils.createDirectories(config.path)</span>
+<span class="fc" id="L54">        .resolve(config.path.resolve(Path(config.filename)))</span>
 }
 
 //FIXME properly integrate this
 internal fun &lt;T : Any&gt; unsafeInCriteria(parameter: String, values: Iterable&lt;T&gt;): String {
-<span class="nc" id="L61">    return &quot;$parameter in (${values.joinToString(&quot;,&quot;) { it.toString() }})&quot;</span>
+<span class="nc" id="L59">    return &quot;$parameter in (${values.joinToString(&quot;,&quot;) { it.toString() }})&quot;</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

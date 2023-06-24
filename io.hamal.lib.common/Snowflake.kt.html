@@ -30,8 +30,8 @@ import kotlin.concurrent.withLock
         }
     }
 
-    interface ShardSource {
-        fun get(): Shard
+    interface PartitionSource {
+        fun get(): Partition
     }
 
     interface SequenceSource {
@@ -57,7 +57,7 @@ import kotlin.concurrent.withLock
 
 <span class="fc" id="L58">    override fun compareTo(other: SnowflakeId) = value.compareTo(other.value)</span>
 
-<span class="fc" id="L60">    fun shard(): Shard = Shard(</span>
+<span class="fc" id="L60">    fun partition(): Partition = Partition(</span>
 <span class="fc" id="L61">        BitUtils.extractRange(</span>
 <span class="fc" id="L62">            value = value,</span>
 <span class="fc" id="L63">            startIndex = 53,</span>
@@ -107,12 +107,12 @@ import kotlin.concurrent.withLock
 <span class="fc" id="L107">    private fun millis() = System.currentTimeMillis() - epoch</span>
 <span class="fc" id="L108">}</span>
 
-<span class="fc" id="L110">class DefaultShardSource(</span>
-<span class="fc" id="L111">    private val shard: Shard</span>
-) : SnowflakeId.ShardSource {
-<span class="fc" id="L113">    constructor(value: Int) : this(Shard(value))</span>
+<span class="fc" id="L110">class DefaultPartitionSource(</span>
+<span class="fc" id="L111">    private val partition: Partition</span>
+) : SnowflakeId.PartitionSource {
+<span class="fc" id="L113">    constructor(value: Int) : this(Partition(value))</span>
 
-<span class="fc" id="L115">    override fun get() = shard</span>
+<span class="fc" id="L115">    override fun get() = partition</span>
 }
 
 <span class="fc" id="L118">class DefaultSequenceSource : SequenceSource {</span>
@@ -154,7 +154,7 @@ import kotlin.concurrent.withLock
 }
 
 <span class="fc" id="L156">class SnowflakeGenerator(</span>
-<span class="fc" id="L157">    private val shardSource: SnowflakeId.ShardSource,</span>
+<span class="fc" id="L157">    private val partitionSource: SnowflakeId.PartitionSource,</span>
 <span class="fc" id="L158">    private val elapsedSource: SnowflakeId.ElapsedSource = DefaultElapsedSource(),</span>
 <span class="fc" id="L159">    private val sequenceSource: SequenceSource = DefaultSequenceSource(),</span>
 <span class="fc" id="L160">    private val lock: Lock = ReentrantLock()</span>
@@ -162,21 +162,21 @@ import kotlin.concurrent.withLock
 
     override fun next(): SnowflakeId {
 <span class="fc" id="L164">        return lock.withLock {</span>
-<span class="fc" id="L165">            val shard = shardSource.get()</span>
+<span class="fc" id="L165">            val partition = partitionSource.get()</span>
 <span class="fc" id="L166">            val (elapsed, sequence) = sequenceSource.next(elapsedSource::elapsed)</span>
-<span class="fc" id="L167">            generate(elapsed, shard, sequence)</span>
+<span class="fc" id="L167">            generate(elapsed, partition, sequence)</span>
         }
     }
 
     private fun generate(
         elapsed: Elapsed,
-        shard: Shard,
+        partition: Partition,
         sequence: Sequence
     ): SnowflakeId {
-<span class="fc" id="L176">        val shardValue = shard.value.toLong().shl(53)</span>
+<span class="fc" id="L176">        val partitionValue = partition.value.toLong().shl(53)</span>
 <span class="fc" id="L177">        val sequenceValue = sequence.value.toLong().shl(41)</span>
 <span class="fc" id="L178">        val elapsedValue = elapsed.value</span>
-<span class="fc" id="L179">        val result = shardValue + sequenceValue + elapsedValue</span>
+<span class="fc" id="L179">        val result = partitionValue + sequenceValue + elapsedValue</span>
 <span class="fc" id="L180">        return SnowflakeId(result)</span>
     }
 <span class="fc" id="L182">}</span>

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 
 <span class="nc" id="L13">@RestController</span>
 <span class="nc" id="L14">open class AdhocController(</span>
-<span class="nc" id="L15">    @Autowired val submitRequest: SubmitRequest</span>
+<span class="nc" id="L15">    @Autowired private val submitRequest: SubmitRequest</span>
 ) {
     @PostMapping(&quot;/v1/adhoc&quot;)
     fun adhoc(

@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RepositoryConfig.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.config</a> &gt; <span class="el_source">RepositoryConfig.kt</span></div><h1>RepositoryConfig.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.config
 
 import io.hamal.backend.repository.api.*
-import io.hamal.backend.repository.api.log.LogBroker
 import io.hamal.backend.repository.memory.*
-import io.hamal.backend.repository.memory.log.MemoryLogBroker
 import io.hamal.backend.repository.memory.log.MemoryLogBrokerRepository
 import io.hamal.backend.repository.memory.record.MemoryExecRepository
 import io.hamal.backend.repository.memory.record.MemoryFuncRepository
@@ -13,118 +11,114 @@ import io.hamal.backend.repository.sqlite.log.SqliteLogBrokerRepository
 import io.hamal.backend.repository.sqlite.record.exec.SqliteExecRepository
 import io.hamal.backend.repository.sqlite.record.func.SqliteFuncRepository
 import io.hamal.backend.repository.sqlite.record.trigger.SqliteTriggerRepository
-import io.hamal.lib.common.Shard
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import kotlin.io.path.Path
 
 
-<span class="nc" id="L23">@Profile(&quot;sqlite&quot;)</span>
+<span class="nc" id="L20">@Profile(&quot;sqlite&quot;)</span>
 @Configuration
-<span class="nc" id="L25">open class SqliteRepositoryConfig {</span>
+<span class="nc" id="L22">open class SqliteRepositoryConfig {</span>
     @Bean
     open fun brokerRepository(): SqliteLogBrokerRepository {
-<span class="nc" id="L28">        return SqliteLogBrokerRepository(SqliteLogBroker(LogBroker.Id(1), Path(&quot;/tmp/hamal&quot;)))</span>
+<span class="nc" id="L25">        return SqliteLogBrokerRepository(SqliteLogBroker(Path(&quot;/tmp/hamal&quot;)))</span>
     }
 
     @Bean
     open fun sqliteFuncRepository() =
-<span class="nc" id="L33">        SqliteFuncRepository(</span>
-<span class="nc" id="L34">            SqliteFuncRepository.Config(</span>
-<span class="nc" id="L35">                path = Path(&quot;/tmp/hamal&quot;),</span>
-<span class="nc" id="L36">                shard = Shard(1)</span>
+<span class="nc" id="L30">        SqliteFuncRepository(</span>
+<span class="nc" id="L31">            SqliteFuncRepository.Config(</span>
+<span class="nc" id="L32">                path = Path(&quot;/tmp/hamal&quot;)</span>
             )
-<span class="nc" id="L38">        )</span>
+<span class="nc" id="L34">        )</span>
 
     @Bean
-<span class="nc" id="L41">    open fun funcCmdRepository(): FuncCmdRepository = sqliteFuncRepository()</span>
+<span class="nc" id="L37">    open fun funcCmdRepository(): FuncCmdRepository = sqliteFuncRepository()</span>
 
     @Bean
-<span class="nc" id="L44">    open fun funcQueryRepository(): FuncQueryRepository = sqliteFuncRepository()</span>
+<span class="nc" id="L40">    open fun funcQueryRepository(): FuncQueryRepository = sqliteFuncRepository()</span>
 
 
     @Bean
     open fun sqliteExecRepository() =
-<span class="nc" id="L49">        SqliteExecRepository(</span>
-<span class="nc" id="L50">            SqliteExecRepository.Config(</span>
-<span class="nc" id="L51">                path = Path(&quot;/tmp/hamal&quot;),</span>
-<span class="nc" id="L52">                shard = Shard(1)</span>
+<span class="nc" id="L45">        SqliteExecRepository(</span>
+<span class="nc" id="L46">            SqliteExecRepository.Config(</span>
+<span class="nc" id="L47">                path = Path(&quot;/tmp/hamal&quot;)</span>
             )
-<span class="nc" id="L54">        )</span>
+<span class="nc" id="L49">        )</span>
 
     @Bean
-<span class="nc" id="L57">    open fun execCmdRepository(): ExecCmdRepository = sqliteExecRepository()</span>
+<span class="nc" id="L52">    open fun execCmdRepository(): ExecCmdRepository = sqliteExecRepository()</span>
 
     @Bean
-<span class="nc" id="L60">    open fun execQueryRepository(): ExecQueryRepository = sqliteExecRepository()</span>
+<span class="nc" id="L55">    open fun execQueryRepository(): ExecQueryRepository = sqliteExecRepository()</span>
 
 
     @Bean
     open fun sqliteTriggerRepository() =
-<span class="nc" id="L65">        SqliteTriggerRepository(</span>
-<span class="nc" id="L66">            SqliteTriggerRepository.Config(</span>
-<span class="nc" id="L67">                path = Path(&quot;/tmp/hamal&quot;),</span>
-<span class="nc" id="L68">                shard = Shard(1)</span>
+<span class="nc" id="L60">        SqliteTriggerRepository(</span>
+<span class="nc" id="L61">            SqliteTriggerRepository.Config(</span>
+<span class="nc" id="L62">                path = Path(&quot;/tmp/hamal&quot;)</span>
             )
-<span class="nc" id="L70">        )</span>
+<span class="nc" id="L64">        )</span>
 
 
     @Bean
-<span class="nc" id="L74">    open fun triggerCmdRepository(): TriggerCmdRepository = sqliteTriggerRepository()</span>
+<span class="nc" id="L68">    open fun triggerCmdRepository(): TriggerCmdRepository = sqliteTriggerRepository()</span>
 
     @Bean
-<span class="nc" id="L77">    open fun triggerQueryRepository(): TriggerQueryRepository = sqliteTriggerRepository()</span>
+<span class="nc" id="L71">    open fun triggerQueryRepository(): TriggerQueryRepository = sqliteTriggerRepository()</span>
 
     @Bean
-<span class="nc" id="L80">    open fun stateCmdRepository(): StateCmdRepository = MemoryStateRepository</span>
+<span class="nc" id="L74">    open fun stateCmdRepository(): StateCmdRepository = MemoryStateRepository</span>
 
     @Bean
-<span class="nc" id="L83">    open fun stateQueryRepository(): StateQueryRepository = MemoryStateRepository</span>
+<span class="nc" id="L77">    open fun stateQueryRepository(): StateQueryRepository = MemoryStateRepository</span>
 
     @Bean
-<span class="nc" id="L86">    open fun reqCmdRepository(): ReqCmdRepository = MemoryReqRepository</span>
+<span class="nc" id="L80">    open fun reqCmdRepository(): ReqCmdRepository = MemoryReqRepository</span>
 
     @Bean
-<span class="nc" id="L89">    open fun reqQueryRepository(): ReqQueryRepository = MemoryReqRepository</span>
+<span class="nc" id="L83">    open fun reqQueryRepository(): ReqQueryRepository = MemoryReqRepository</span>
 }
 
-<span class="nc" id="L92">@Profile(&quot;memory&quot;)</span>
+<span class="nc" id="L86">@Profile(&quot;memory&quot;)</span>
 @Configuration
-<span class="nc" id="L94">open class MemoryRepositoryConfig {</span>
+<span class="nc" id="L88">open class MemoryRepositoryConfig {</span>
     @Bean
     open fun brokerRepository(): MemoryLogBrokerRepository {
-<span class="nc" id="L97">        return MemoryLogBrokerRepository(MemoryLogBroker(LogBroker.Id(1)))</span>
+<span class="nc" id="L91">        return MemoryLogBrokerRepository()</span>
     }
 
     @Bean
-<span class="nc" id="L101">    open fun funcCmdRepository(): FuncCmdRepository = MemoryFuncRepository</span>
+<span class="nc" id="L95">    open fun funcCmdRepository(): FuncCmdRepository = MemoryFuncRepository</span>
 
     @Bean
-<span class="nc" id="L104">    open fun funcQueryRepository(): FuncQueryRepository = MemoryFuncRepository</span>
+<span class="nc" id="L98">    open fun funcQueryRepository(): FuncQueryRepository = MemoryFuncRepository</span>
 
     @Bean
-<span class="nc" id="L107">    open fun execCmdRepository(): ExecCmdRepository = MemoryExecRepository</span>
+<span class="nc" id="L101">    open fun execCmdRepository(): ExecCmdRepository = MemoryExecRepository</span>
 
     @Bean
-<span class="nc" id="L110">    open fun execQueryRepository(): ExecQueryRepository = MemoryExecRepository</span>
+<span class="nc" id="L104">    open fun execQueryRepository(): ExecQueryRepository = MemoryExecRepository</span>
 
     @Bean
-<span class="nc" id="L113">    open fun reqCmdRepository(): ReqCmdRepository = MemoryReqRepository</span>
+<span class="nc" id="L107">    open fun reqCmdRepository(): ReqCmdRepository = MemoryReqRepository</span>
 
     @Bean
-<span class="nc" id="L116">    open fun reqQueryRepository(): ReqQueryRepository = MemoryReqRepository</span>
+<span class="nc" id="L110">    open fun reqQueryRepository(): ReqQueryRepository = MemoryReqRepository</span>
 
     @Bean
-<span class="nc" id="L119">    open fun stateCmdRepository(): StateCmdRepository = MemoryStateRepository</span>
+<span class="nc" id="L113">    open fun stateCmdRepository(): StateCmdRepository = MemoryStateRepository</span>
 
     @Bean
-<span class="nc" id="L122">    open fun stateQueryRepository(): StateQueryRepository = MemoryStateRepository</span>
+<span class="nc" id="L116">    open fun stateQueryRepository(): StateQueryRepository = MemoryStateRepository</span>
 
     @Bean
-<span class="nc" id="L125">    open fun triggerCmdRepository(): TriggerCmdRepository = MemoryTriggerRepository</span>
+<span class="nc" id="L119">    open fun triggerCmdRepository(): TriggerCmdRepository = MemoryTriggerRepository</span>
 
     @Bean
-<span class="nc" id="L128">    open fun triggerQueryRepository(): TriggerQueryRepository = MemoryTriggerRepository</span>
+<span class="nc" id="L122">    open fun triggerQueryRepository(): TriggerQueryRepository = MemoryTriggerRepository</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -9,9 +9,8 @@ import kotlinx.serialization.Serializable
 <span class="nc" id="L9">    internal object Serializer : InputsSerializer&lt;InvocationInputs&gt;(::InvocationInputs)</span>
 <span class="nc" id="L10">}</span>
 
-
-<span class="nc" id="L13">@Serializable(with = InvocationSecrets.Serializer::class)</span>
-<span class="nc" id="L14">class InvocationSecrets(override val value: List&lt;Secret&gt; = listOf()) : Secrets() {</span>
-<span class="nc" id="L15">    internal object Serializer : SecretsSerializer&lt;InvocationSecrets&gt;(::InvocationSecrets)</span>
-<span class="nc" id="L16">}</span>
+<span class="nc" id="L12">@Serializable(with = InvocationSecrets.Serializer::class)</span>
+<span class="nc" id="L13">class InvocationSecrets(override val value: List&lt;Secret&gt; = listOf()) : Secrets() {</span>
+<span class="nc" id="L14">    internal object Serializer : SecretsSerializer&lt;InvocationSecrets&gt;(::InvocationSecrets)</span>
+<span class="nc" id="L15">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

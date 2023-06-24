@@ -16,24 +16,22 @@ interface TriggerCmdRepository {
 
 <span class="nc" id="L17">    data class CreateFixedRateCmd(</span>
 <span class="nc" id="L18">        val id: CmdId,</span>
-<span class="nc" id="L19">        val accountId: AccountId,</span>
-<span class="nc" id="L20">        val triggerId: TriggerId,</span>
-<span class="nc" id="L21">        val name: TriggerName,</span>
-<span class="nc" id="L22">        val funcId: FuncId,</span>
-<span class="nc" id="L23">        val inputs: TriggerInputs,</span>
-<span class="nc" id="L24">        val secrets: TriggerSecrets,</span>
-<span class="nc" id="L25">        val duration: Duration</span>
+<span class="nc" id="L19">        val triggerId: TriggerId,</span>
+<span class="nc" id="L20">        val name: TriggerName,</span>
+<span class="nc" id="L21">        val funcId: FuncId,</span>
+<span class="nc" id="L22">        val inputs: TriggerInputs,</span>
+<span class="nc" id="L23">        val secrets: TriggerSecrets,</span>
+<span class="nc" id="L24">        val duration: Duration</span>
     )
 
-<span class="nc" id="L28">    data class CreateEventCmd(</span>
-<span class="nc" id="L29">        val id: CmdId,</span>
-<span class="nc" id="L30">        val accountId: AccountId,</span>
-<span class="nc" id="L31">        val triggerId: TriggerId,</span>
-<span class="nc" id="L32">        val name: TriggerName,</span>
-<span class="nc" id="L33">        val funcId: FuncId,</span>
-<span class="nc" id="L34">        val inputs: TriggerInputs,</span>
-<span class="nc" id="L35">        val secrets: TriggerSecrets,</span>
-<span class="nc" id="L36">        val topicId: TopicId</span>
+<span class="nc" id="L27">    data class CreateEventCmd(</span>
+<span class="nc" id="L28">        val id: CmdId,</span>
+<span class="nc" id="L29">        val triggerId: TriggerId,</span>
+<span class="nc" id="L30">        val name: TriggerName,</span>
+<span class="nc" id="L31">        val funcId: FuncId,</span>
+<span class="nc" id="L32">        val inputs: TriggerInputs,</span>
+<span class="nc" id="L33">        val secrets: TriggerSecrets,</span>
+<span class="nc" id="L34">        val topicId: TopicId</span>
     )
 }
 
@@ -42,10 +40,10 @@ interface TriggerQueryRepository {
 
     fun query(block: Query.() -&gt; Unit): List&lt;Trigger&gt;
 
-<span class="nc" id="L45">    data class Query(</span>
-<span class="nc" id="L46">        var afterId: TriggerId,</span>
-<span class="nc" id="L47">        var types: Set&lt;TriggerType&gt;,</span>
-<span class="nc" id="L48">        var limit: Int</span>
+<span class="nc" id="L43">    data class Query(</span>
+<span class="nc" id="L44">        var afterId: TriggerId,</span>
+<span class="nc" id="L45">        var types: Set&lt;TriggerType&gt;,</span>
+<span class="nc" id="L46">        var limit: Int</span>
     )
 
 }

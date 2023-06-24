@@ -5,6 +5,6 @@ import io.hamal.lib.domain.vo.base.DomainId
 
 interface DomainObject&lt;ID : DomainId&gt; {
     val id: ID
-<span class="nc" id="L8">    val shard get() = id.shard()</span>
+<span class="nc" id="L8">    val partition get() = id.partition()</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

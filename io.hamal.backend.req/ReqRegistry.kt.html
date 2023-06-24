@@ -28,7 +28,7 @@ import kotlin.reflect.KClass
 <span class="nc" id="L28">        } as ReqHandler&lt;REQ&gt;</span>
 
     @Suppress(&quot;UNCHECKED_CAST&quot;)
-    internal fun register(
+    private fun register(
         reqClass: KClass&lt;out Req&gt;, operation: ReqHandler&lt;*&gt;
     ) {
 <span class="nc bnc" id="L34" title="All 2 branches missed.">        check(operation.reqClass == reqClass)</span>

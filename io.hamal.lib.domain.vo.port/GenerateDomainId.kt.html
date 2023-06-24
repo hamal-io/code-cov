@@ -4,32 +4,35 @@ import io.hamal.lib.common.*
 import io.hamal.lib.domain.vo.base.DomainId
 
 interface GenerateDomainId {
-    operator fun &lt;ID : DomainId&gt; invoke(shard: Shard, ctor: (SnowflakeId) -&gt; ID): ID
+    operator fun &lt;ID : DomainId&gt; invoke(ctor: (SnowflakeId) -&gt; ID): ID
 }
 
-object DefaultDomainIdGenerator : GenerateDomainId {
-
-<span class="nc" id="L12">    private val provideGenerator = KeyedOnce.default&lt;Shard, SnowflakeId.Generator&gt;()</span>
-    override fun &lt;ID : DomainId&gt; invoke(shard: Shard, ctor: (SnowflakeId) -&gt; ID): ID {
-<span class="nc" id="L14">        val generator = provideGenerator(shard) {</span>
-<span class="nc" id="L15">            SnowflakeGenerator(</span>
-<span class="nc" id="L16">                DefaultShardSource(shard.value)</span>
+<span class="nc" id="L10">class DefaultDomainIdGenerator(</span>
+<span class="nc" id="L11">    private val partition: Partition</span>
+) : GenerateDomainId {
+<span class="nc" id="L13">    private val provideGenerator = KeyedOnce.default&lt;Partition, SnowflakeId.Generator&gt;()</span>
+    override fun &lt;ID : DomainId&gt; invoke(ctor: (SnowflakeId) -&gt; ID): ID {
+<span class="nc" id="L15">        val generator = provideGenerator(partition) {</span>
+<span class="nc" id="L16">            SnowflakeGenerator(</span>
+<span class="nc" id="L17">                DefaultPartitionSource(partition.value)</span>
             )
         }
-<span class="nc" id="L19">        return ctor(generator.next())</span>
+<span class="nc" id="L20">        return ctor(generator.next())</span>
     }
 }
 
-<span class="nc" id="L23">class FixedTimeIdGenerator : GenerateDomainId {</span>
-<span class="nc" id="L24">    private val provideGenerator = KeyedOnce.default&lt;Shard, SnowflakeId.Generator&gt;()</span>
-    override fun &lt;ID : DomainId&gt; invoke(shard: Shard, ctor: (SnowflakeId) -&gt; ID): ID {
-<span class="nc" id="L26">        val generator = provideGenerator(shard) {</span>
-<span class="nc" id="L27">            SnowflakeGenerator(</span>
-<span class="nc" id="L28">                elapsedSource = FixedElapsedSource(0),</span>
-<span class="nc" id="L29">                shardSource = DefaultShardSource(shard.value),</span>
+<span class="nc" id="L24">class FixedTimeIdGenerator(</span>
+<span class="nc" id="L25">    private val partition: Partition</span>
+) : GenerateDomainId {
+<span class="nc" id="L27">    private val provideGenerator = KeyedOnce.default&lt;Partition, SnowflakeId.Generator&gt;()</span>
+    override fun &lt;ID : DomainId&gt; invoke(ctor: (SnowflakeId) -&gt; ID): ID {
+<span class="nc" id="L29">        val generator = provideGenerator(partition) {</span>
+<span class="nc" id="L30">            SnowflakeGenerator(</span>
+<span class="nc" id="L31">                elapsedSource = FixedElapsedSource(0),</span>
+<span class="nc" id="L32">                partitionSource = DefaultPartitionSource(partition.value),</span>
             )
         }
-<span class="nc" id="L32">        return ctor(generator.next())</span>
+<span class="nc" id="L35">        return ctor(generator.next())</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

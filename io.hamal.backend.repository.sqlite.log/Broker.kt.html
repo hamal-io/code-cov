@@ -8,70 +8,75 @@ import io.hamal.lib.domain.vo.TopicName
 import java.nio.file.Path
 
 <span class="fc" id="L10">data class SqliteLogBroker(</span>
-<span class="fc" id="L11">    override val id: LogBroker.Id,</span>
-<span class="fc" id="L12">    val path: Path</span>
-) : LogBroker
+<span class="fc" id="L11">    val path: Path</span>
+)
 
-
-<span class="pc" id="L16">class SqliteLogBrokerRepository(</span>
+<span class="pc" id="L14">class SqliteLogBrokerRepository(</span>
     logBroker: SqliteLogBroker
 ) : LogBrokerRepository&lt;SqliteLogTopic&gt; {
 
     private val consumersRepository: SqliteLogBrokerConsumersRepository
     private val topicsRepository: SqliteLogBrokerTopicsRepository
 
-<span class="fc" id="L23">    init {</span>
-<span class="fc" id="L24">        topicsRepository = SqliteLogBrokerTopicsRepository(</span>
-<span class="fc" id="L25">            SqliteBrokerTopics(</span>
-<span class="fc" id="L26">                logBrokerId = logBroker.id,</span>
-<span class="fc" id="L27">                path = logBroker.path</span>
+<span class="fc" id="L21">    init {</span>
+<span class="fc" id="L22">        topicsRepository = SqliteLogBrokerTopicsRepository(</span>
+<span class="fc" id="L23">            SqliteBrokerTopics(</span>
+<span class="fc" id="L24">                path = logBroker.path</span>
             )
         )
-<span class="fc" id="L30">        consumersRepository = SqliteLogBrokerConsumersRepository(</span>
-<span class="fc" id="L31">            SqliteBrokerConsumers(</span>
-<span class="fc" id="L32">                logBrokerId = logBroker.id,</span>
-<span class="fc" id="L33">                path = logBroker.path</span>
+<span class="fc" id="L27">        consumersRepository = SqliteLogBrokerConsumersRepository(</span>
+<span class="fc" id="L28">            SqliteBrokerConsumers(</span>
+<span class="fc" id="L29">                path = logBroker.path</span>
             )
         )
-<span class="fc" id="L36">    }</span>
+<span class="fc" id="L32">    }</span>
 
-<span class="fc" id="L38">    private val logTopicRepositoryMapping = KeyedOnce.default&lt;SqliteLogTopic, LogTopicRepository&gt;()</span>
+<span class="fc" id="L34">    private val logTopicRepositoryMapping = KeyedOnce.default&lt;SqliteLogTopic, LogTopicRepository&gt;()</span>
 
-<span class="fc" id="L40">    override fun resolveTopic(topicName: TopicName) = topicsRepository.resolveTopic(topicName)</span>
+    override fun create(cmdId: CmdId, topicToCreate: CreateTopic.TopicToCreate): SqliteLogTopic =
+<span class="fc" id="L37">        topicsRepository.create(</span>
+<span class="fc" id="L38">            cmdId,</span>
+<span class="fc" id="L39">            LogBrokerTopicsRepository.TopicToCreate(</span>
+<span class="fc" id="L40">                topicToCreate.id,</span>
+<span class="fc" id="L41">                topicToCreate.name</span>
+            )
+<span class="fc" id="L43">        )</span>
 
     override fun append(cmdId: CmdId, topic: SqliteLogTopic, bytes: ByteArray) {
-<span class="nc" id="L43">        resolveRepository(topic).append(cmdId, bytes)</span>
-<span class="nc" id="L44">    }</span>
+<span class="nc" id="L46">        resolveRepository(topic).append(cmdId, bytes)</span>
+<span class="nc" id="L47">    }</span>
 
     override fun close() {
-<span class="fc" id="L47">        topicsRepository.close()</span>
-<span class="fc" id="L48">        consumersRepository.close()</span>
-<span class="fc" id="L49">        logTopicRepositoryMapping.keys().forEach { topic -&gt;</span>
-<span class="nc" id="L50">            resolveRepository(topic).close()</span>
-<span class="nc" id="L51">        }</span>
-<span class="fc" id="L52">    }</span>
+<span class="fc" id="L50">        topicsRepository.close()</span>
+<span class="fc" id="L51">        consumersRepository.close()</span>
+<span class="fc" id="L52">        logTopicRepositoryMapping.keys().forEach { topic -&gt;</span>
+<span class="nc" id="L53">            resolveRepository(topic).close()</span>
+<span class="nc" id="L54">        }</span>
+<span class="fc" id="L55">    }</span>
 
     override fun consume(groupId: GroupId, topic: SqliteLogTopic, limit: Int): List&lt;LogChunk&gt; {
-<span class="nc" id="L55">        val nextChunkId = consumersRepository.nextChunkId(groupId, topic.id)</span>
-<span class="nc" id="L56">        return resolveRepository(topic).read(nextChunkId, limit)</span>
+<span class="nc" id="L58">        val nextChunkId = consumersRepository.nextChunkId(groupId, topic.id)</span>
+<span class="nc" id="L59">        return resolveRepository(topic).read(nextChunkId, limit)</span>
     }
 
     override fun commit(groupId: GroupId, topic: SqliteLogTopic, chunkId: LogChunkId) {
-<span class="nc" id="L60">        consumersRepository.commit(groupId, topic.id, chunkId)</span>
-<span class="nc" id="L61">    }</span>
+<span class="nc" id="L63">        consumersRepository.commit(groupId, topic.id, chunkId)</span>
+<span class="nc" id="L64">    }</span>
 
-<span class="nc" id="L63">    override fun find(topicId: TopicId) = topicsRepository.find(topicId)</span>
+
+<span class="nc" id="L67">    override fun find(topicId: TopicId) = topicsRepository.find(topicId)</span>
+<span class="nc" id="L68">    override fun find(topicName: TopicName) = topicsRepository.find(topicName)</span>
 
     override fun topics(): Set&lt;SqliteLogTopic&gt; {
-<span class="nc" id="L66">        return logTopicRepositoryMapping.keys()</span>
+<span class="nc" id="L71">        return logTopicRepositoryMapping.keys()</span>
     }
 
     override fun read(lastId: LogChunkId, topic: SqliteLogTopic, limit: Int): List&lt;LogChunk&gt; {
-<span class="nc" id="L70">        return resolveRepository(topic).read(lastId, limit)</span>
+<span class="nc" id="L75">        return resolveRepository(topic).read(lastId, limit)</span>
     }
 
-<span class="nc" id="L73">    private fun resolveRepository(topic: SqliteLogTopic) = logTopicRepositoryMapping(topic) {</span>
-<span class="nc" id="L74">        SqliteLogTopicRepository(topic)</span>
-<span class="nc" id="L75">    }</span>
+<span class="nc" id="L78">    private fun resolveRepository(topic: SqliteLogTopic) = logTopicRepositoryMapping(topic) {</span>
+<span class="nc" id="L79">        SqliteLogTopicRepository(topic)</span>
+<span class="nc" id="L80">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

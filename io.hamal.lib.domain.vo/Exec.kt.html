@@ -13,14 +13,14 @@ import kotlinx.serialization.Serializable
 }
 
 <span class="nc" id="L15">@Serializable(with = ExecInputs.Serializer::class)</span>
-<span class="nc" id="L16">class ExecInputs(override val value: TableValue) : Inputs() {</span>
+<span class="nc" id="L16">class ExecInputs(override val value: TableValue = TableValue()) : Inputs() {</span>
 <span class="nc" id="L17">    internal object Serializer : InputsSerializer&lt;ExecInputs&gt;(::ExecInputs)</span>
-}
+<span class="nc" id="L18">}</span>
 
 <span class="nc" id="L20">@Serializable(with = ExecSecrets.Serializer::class)</span>
-<span class="nc" id="L21">class ExecSecrets(override val value: List&lt;Secret&gt;) : Secrets() {</span>
+<span class="nc" id="L21">class ExecSecrets(override val value: List&lt;Secret&gt; = listOf()) : Secrets() {</span>
 <span class="nc" id="L22">    internal object Serializer : SecretsSerializer&lt;ExecSecrets&gt;(::ExecSecrets)</span>
-}
+<span class="nc" id="L23">}</span>
 
 
 <span class="nc" id="L26">enum class ExecStatus(val value: Int) {</span>

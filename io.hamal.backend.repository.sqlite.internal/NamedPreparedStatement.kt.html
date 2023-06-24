@@ -100,9 +100,9 @@ interface NamedPreparedStatement&lt;STATEMENT&gt; : AutoCloseable {
     }
 
     override fun set(parameter: String, value: DomainName): DefaultNamedPreparedStatement {
-<span class="nc" id="L103">        parametersSet.add(parameter)</span>
-<span class="nc" id="L104">        parseResult.parameterIndexesOf(parameter).forEach { delegate.setString(it, value.value) }</span>
-<span class="nc" id="L105">        return this</span>
+<span class="fc" id="L103">        parametersSet.add(parameter)</span>
+<span class="fc" id="L104">        parseResult.parameterIndexesOf(parameter).forEach { delegate.setString(it, value.value) }</span>
+<span class="fc" id="L105">        return this</span>
     }
 
     override fun set(parameter: String, value: ByteArray): DefaultNamedPreparedStatement {

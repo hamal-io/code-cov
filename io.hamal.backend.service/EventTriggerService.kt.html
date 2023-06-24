@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EventTriggerService.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.service</a> &gt; <span class="el_source">EventTriggerService.kt</span></div><h1>EventTriggerService.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.service
 
 import io.hamal.backend.component.Async
-import io.hamal.backend.component.EventEmitter
-import io.hamal.backend.event.Event
+import io.hamal.backend.component.SystemEventEmitter
+import io.hamal.backend.event.TenantEvent
 import io.hamal.backend.repository.api.domain.EventTrigger
 import io.hamal.backend.repository.api.log.GroupId
 import io.hamal.backend.repository.api.log.LogBrokerRepository
@@ -12,7 +12,7 @@ import io.hamal.backend.req.InvokeEvent
 import io.hamal.backend.req.SubmitRequest
 import io.hamal.backend.service.query.FuncQueryService
 import io.hamal.backend.service.query.TriggerQueryService
-import io.hamal.lib.common.Shard
+import io.hamal.lib.common.Partition
 import io.hamal.lib.domain._enum.TriggerType
 import io.hamal.lib.domain.vo.*
 import io.hamal.lib.domain.vo.port.GenerateDomainId
@@ -26,7 +26,7 @@ import kotlin.time.Duration.Companion.milliseconds
 <span class="nc" id="L26">@Service</span>
 class EventTriggerService&lt;TOPIC : LogTopic&gt;
 <span class="nc" id="L28">@Autowired constructor(</span>
-<span class="nc" id="L29">    internal val eventEmitter: EventEmitter&lt;TOPIC&gt;,</span>
+<span class="nc" id="L29">    internal val eventEmitter: SystemEventEmitter&lt;TOPIC&gt;,</span>
 <span class="nc" id="L30">    internal val funcQueryService: FuncQueryService,</span>
 <span class="nc" id="L31">    internal val logBrokerRepository: LogBrokerRepository&lt;TOPIC&gt;,</span>
 <span class="nc" id="L32">    internal val triggerQueryService: TriggerQueryService,</span>
@@ -69,7 +69,7 @@ class EventTriggerService&lt;TOPIC : LogTopic&gt;
 //
 //                request(
 //                    InvokeEvent(
-//                        execId = generateDomainId(Shard(1), ::ExecId),
+//                        execId = generateDomainId(Partition(1), ::ExecId),
 //                        funcId = funcs.first().id,
 //                        correlationId = CorrelationId(&quot;__TBD__&quot;),
 //                        inputs = InvocationInputs(listOf()),
@@ -80,7 +80,7 @@ class EventTriggerService&lt;TOPIC : LogTopic&gt;
 //        }
 //    }
 
-<span class="nc" id="L83">    val triggerConsumers = mutableMapOf&lt;TriggerId, ProtobufBatchConsumer&lt;TOPIC, Event&gt;&gt;()</span>
+<span class="nc" id="L83">    val triggerConsumers = mutableMapOf&lt;TriggerId, ProtobufBatchConsumer&lt;TOPIC, TenantEvent&gt;&gt;()</span>
 
 
     @PostConstruct
@@ -98,7 +98,7 @@ class EventTriggerService&lt;TOPIC : LogTopic&gt;
 <span class="nc" id="L98">                groupId = GroupId(trigger.id.value.value.toString(16)),</span>
 <span class="nc" id="L99">                topic = topic,</span>
 <span class="nc" id="L100">                logBrokerRepository = logBrokerRepository,</span>
-                valueClass = Event::class
+                valueClass = TenantEvent::class
             )
 
 <span class="nc" id="L104">            triggerConsumers[trigger.id] = consumer</span>
@@ -111,7 +111,7 @@ class EventTriggerService&lt;TOPIC : LogTopic&gt;
 <span class="nc" id="L111">                        consumer.consumeBatch(1) { evts -&gt;</span>
 <span class="nc" id="L112">                            submitRequest(</span>
 <span class="nc" id="L113">                                InvokeEvent(</span>
-<span class="nc" id="L114">                                    execId = generateDomainId(Shard(1), ::ExecId),</span>
+<span class="nc" id="L114">                                    execId = generateDomainId(::ExecId),</span>
 <span class="nc" id="L115">                                    funcId = trigger.funcId,</span>
 <span class="nc" id="L116">                                    correlationId = CorrelationId(&quot;__TBD__&quot;),</span>
 <span class="nc" id="L117">                                    inputs = InvocationInputs(TableValue()),</span>

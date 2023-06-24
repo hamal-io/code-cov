@@ -9,12 +9,11 @@ interface FuncCmdRepository {
     fun create(cmd: CreateCmd): Func
 <span class="nc" id="L10">    data class CreateCmd(</span>
 <span class="nc" id="L11">        val id: CmdId,</span>
-<span class="nc" id="L12">        val accountId: AccountId,</span>
-<span class="nc" id="L13">        val funcId: FuncId,</span>
-<span class="nc" id="L14">        val name: FuncName,</span>
-<span class="nc" id="L15">        val inputs: FuncInputs,</span>
-<span class="nc" id="L16">        val secrets: FuncSecrets,</span>
-<span class="nc" id="L17">        val code: Code,</span>
+<span class="nc" id="L12">        val funcId: FuncId,</span>
+<span class="nc" id="L13">        val name: FuncName,</span>
+<span class="nc" id="L14">        val inputs: FuncInputs,</span>
+<span class="nc" id="L15">        val secrets: FuncSecrets,</span>
+<span class="nc" id="L16">        val code: Code,</span>
     )
 }
 

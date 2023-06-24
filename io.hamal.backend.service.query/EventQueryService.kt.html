@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EventQueryService.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.service.query</a> &gt; <span class="el_source">EventQueryService.kt</span></div><h1>EventQueryService.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.service.query
 
-import io.hamal.backend.event.Event
+import io.hamal.backend.event.TenantEvent
 import io.hamal.backend.repository.api.log.LogBrokerRepository
 import io.hamal.backend.repository.api.log.LogChunkId
 import io.hamal.backend.repository.api.log.LogTopic
@@ -14,33 +14,35 @@ import org.springframework.stereotype.Service
 <span class="nc" id="L14">    val logBrokerRepository: LogBrokerRepository&lt;TOPIC&gt;</span>
 ) {
 
+<span class="nc" id="L17">    fun findTopic(topicId: TopicId) = logBrokerRepository.find(topicId)</span>
+
     fun queryTopics(block: TopicQuery.() -&gt; Unit): List&lt;TOPIC&gt; {
-<span class="nc" id="L18">        val query = TopicQuery()</span>
-<span class="nc" id="L19">        block(query)</span>
+<span class="nc" id="L20">        val query = TopicQuery()</span>
+<span class="nc" id="L21">        block(query)</span>
         //FIXME apply query filter
 
-<span class="nc" id="L22">        return logBrokerRepository.topics().toList()</span>
+<span class="nc" id="L24">        return logBrokerRepository.topics().toList()</span>
     }
 
     @OptIn(ExperimentalSerializationApi::class)
-    fun queryEvents(query: EventQuery): List&lt;Event&gt; {
-<span class="nc" id="L27">        val topic = logBrokerRepository.get(query.topicId)</span>
-<span class="nc" id="L28">        return logBrokerRepository.read(LogChunkId(0), topic, query.limit)</span>
-<span class="nc" id="L29">            .map { chunk -&gt;</span>
-<span class="nc" id="L30">                ProtoBuf.decodeFromByteArray(Event.serializer(), chunk.bytes)</span>
+    fun queryEvents(query: EventQuery): List&lt;TenantEvent&gt; {
+<span class="nc" id="L29">        val topic = logBrokerRepository.get(query.topicId)</span>
+<span class="nc" id="L30">        return logBrokerRepository.read(LogChunkId(0), topic, query.limit)</span>
+<span class="nc" id="L31">            .map { chunk -&gt;</span>
+<span class="nc" id="L32">                ProtoBuf.decodeFromByteArray(TenantEvent.serializer(), chunk.bytes)</span>
             }
     }
 
 
-<span class="nc" id="L35">    data class TopicQuery(</span>
-<span class="nc" id="L36">        val afterId: TopicId = TopicId(0),</span>
-<span class="nc" id="L37">        val limit: Int = 100 //FIXME VO</span>
-<span class="nc" id="L38">    )</span>
+<span class="nc" id="L37">    data class TopicQuery(</span>
+<span class="nc" id="L38">        val afterId: TopicId = TopicId(0),</span>
+<span class="nc" id="L39">        val limit: Int = 100 //FIXME VO</span>
+<span class="nc" id="L40">    )</span>
 
-<span class="nc" id="L40">    data class EventQuery(</span>
-<span class="nc" id="L41">        val topicId: TopicId,</span>
+<span class="nc" id="L42">    data class EventQuery(</span>
+<span class="nc" id="L43">        val topicId: TopicId,</span>
 //        val afterId: EventId = TopicId(0),
-<span class="nc" id="L43">        val limit: Int = 100 //FIXME VO</span>
-<span class="nc" id="L44">    )</span>
+<span class="nc" id="L45">        val limit: Int = 100 //FIXME VO</span>
+<span class="nc" id="L46">    )</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

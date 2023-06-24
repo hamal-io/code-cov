@@ -18,23 +18,22 @@ import org.springframework.web.bind.annotation.RestController
 <span class="nc" id="L18">class ReqController(</span>
 <span class="nc" id="L19">    @Autowired val queryService: ReqQueryService</span>
 ) {
-
     @GetMapping(&quot;/v1/reqs&quot;)
     fun listReqs(
         @RequestParam(required = false, name = &quot;stringReqId&quot;, defaultValue = &quot;0&quot;) stringReqId: String,
         @RequestParam(required = false, name = &quot;limit&quot;, defaultValue = &quot;100&quot;) limit: Int
     ): ResponseEntity&lt;ApiListReqResponse&gt; {
-<span class="nc" id="L27">        val result = queryService.list(</span>
-<span class="nc" id="L28">            afterId = ReqId(stringReqId),</span>
-<span class="nc" id="L29">            limit = limit</span>
+<span class="nc" id="L26">        val result = queryService.list(</span>
+<span class="nc" id="L27">            afterId = ReqId(stringReqId),</span>
+<span class="nc" id="L28">            limit = limit</span>
         )
 
-<span class="nc" id="L32">        return ResponseEntity.ok(</span>
-<span class="nc" id="L33">            ApiListReqResponse(</span>
-<span class="nc" id="L34">                result.map {</span>
-<span class="nc" id="L35">                    ApiListReqResponse.Req(</span>
-<span class="nc" id="L36">                        id = it.id,</span>
-<span class="nc" id="L37">                        status = it.status</span>
+<span class="nc" id="L31">        return ResponseEntity.ok(</span>
+<span class="nc" id="L32">            ApiListReqResponse(</span>
+<span class="nc" id="L33">                result.map {</span>
+<span class="nc" id="L34">                    ApiListReqResponse.Req(</span>
+<span class="nc" id="L35">                        id = it.id,</span>
+<span class="nc" id="L36">                        status = it.status</span>
                     )
                 }
             )
@@ -45,18 +44,18 @@ import org.springframework.web.bind.annotation.RestController
     fun getReq(
         @PathVariable(&quot;reqId&quot;) stringReqId: String,
     ): ResponseEntity&lt;ApiReq&gt; {
-<span class="nc" id="L48">        val result = queryService.get(ReqId(stringReqId))</span>
-<span class="nc" id="L49">        return when (result) {</span>
-<span class="nc bnc" id="L50" title="All 2 branches missed.">            is SubmittedInvokeAdhocReq -&gt; ResponseEntity(</span>
-<span class="nc" id="L51">                ApiAdhocReq(</span>
-<span class="nc" id="L52">                    id = result.id,</span>
-<span class="nc" id="L53">                    status = result.status,</span>
-<span class="nc" id="L54">                    execId = result.execId</span>
+<span class="nc" id="L47">        val result = queryService.get(ReqId(stringReqId))</span>
+<span class="nc" id="L48">        return when (result) {</span>
+<span class="nc bnc" id="L49" title="All 2 branches missed.">            is SubmittedInvokeAdhocReq -&gt; ResponseEntity(</span>
+<span class="nc" id="L50">                ApiAdhocReq(</span>
+<span class="nc" id="L51">                    id = result.id,</span>
+<span class="nc" id="L52">                    status = result.status,</span>
+<span class="nc" id="L53">                    execId = result.execId</span>
                 ),
-<span class="nc" id="L56">                HttpStatus.OK</span>
+<span class="nc" id="L55">                HttpStatus.OK</span>
             )
 
-<span class="nc" id="L59">            else -&gt; TODO()</span>
+<span class="nc" id="L58">            else -&gt; TODO()</span>
         }
     }
 

@@ -4,64 +4,61 @@ import io.hamal.backend.repository.api.log.LogChunk
 import io.hamal.backend.repository.api.log.LogChunkId
 import io.hamal.backend.repository.api.log.LogSegment
 import io.hamal.backend.repository.api.log.LogSegmentRepository
-import io.hamal.lib.common.Shard
 import io.hamal.lib.common.util.TimeUtils
 import io.hamal.lib.domain.CmdId
 import io.hamal.lib.domain.vo.TopicId
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-<span class="fc" id="L14">data class MemoryLogSegment(</span>
-<span class="fc" id="L15">    override val id: LogSegment.Id,</span>
-<span class="fc" id="L16">    override val shard: Shard,</span>
-<span class="fc" id="L17">    override val topicId: TopicId,</span>
+<span class="fc" id="L13">data class MemoryLogSegment(</span>
+<span class="fc" id="L14">    override val id: LogSegment.Id,</span>
+<span class="fc" id="L15">    override val topicId: TopicId,</span>
 ) : LogSegment
 
 
-<span class="fc" id="L21">class MemoryLogSegmentRepository(</span>
-<span class="fc" id="L22">    private val segment: MemoryLogSegment</span>
+<span class="fc" id="L19">class MemoryLogSegmentRepository(</span>
+<span class="fc" id="L20">    private val segment: MemoryLogSegment</span>
 ) : LogSegmentRepository {
 
-<span class="fc" id="L25">    private val store = mutableListOf&lt;LogChunk&gt;()</span>
-<span class="fc" id="L26">    private val lock = ReentrantLock()</span>
+<span class="fc" id="L23">    private val store = mutableListOf&lt;LogChunk&gt;()</span>
+<span class="fc" id="L24">    private val lock = ReentrantLock()</span>
 
     override fun append(cmdId: CmdId, bytes: ByteArray) {
-<span class="fc" id="L29">        lock.withLock {</span>
-<span class="fc" id="L30">            store.add(</span>
-<span class="fc" id="L31">                LogChunk(</span>
-<span class="fc" id="L32">                    id = LogChunkId(store.size + 1),</span>
-<span class="fc" id="L33">                    segmentId = segment.id,</span>
-<span class="fc" id="L34">                    shard = segment.shard,</span>
-<span class="fc" id="L35">                    topicId = segment.topicId,</span>
-<span class="fc" id="L36">                    bytes = bytes,</span>
-<span class="fc" id="L37">                    instant = TimeUtils.now()</span>
+<span class="fc" id="L27">        lock.withLock {</span>
+<span class="fc" id="L28">            store.add(</span>
+<span class="fc" id="L29">                LogChunk(</span>
+<span class="fc" id="L30">                    id = LogChunkId(store.size + 1),</span>
+<span class="fc" id="L31">                    segmentId = segment.id,</span>
+<span class="fc" id="L32">                    topicId = segment.topicId,</span>
+<span class="fc" id="L33">                    bytes = bytes,</span>
+<span class="fc" id="L34">                    instant = TimeUtils.now()</span>
                 )
             )
         }
-<span class="fc" id="L41">    }</span>
+<span class="fc" id="L38">    }</span>
 
     override fun read(firstId: LogChunkId, limit: Int): List&lt;LogChunk&gt; {
-<span class="fc bfc" id="L44" title="All 2 branches covered.">        if (limit &lt; 1) {</span>
-<span class="fc" id="L45">            return listOf()</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        if (limit &lt; 1) {</span>
+<span class="fc" id="L42">            return listOf()</span>
         }
-<span class="fc" id="L47">        return lock.withLock {</span>
-<span class="pc bpc" id="L48" title="1 of 2 branches missed.">            if (firstId.value.value == 0L) {</span>
-<span class="nc" id="L49">                store.take(limit)</span>
+<span class="fc" id="L44">        return lock.withLock {</span>
+<span class="pc bpc" id="L45" title="1 of 2 branches missed.">            if (firstId.value.value == 0L) {</span>
+<span class="nc" id="L46">                store.take(limit)</span>
             } else {
-<span class="fc" id="L51">                store.drop(firstId.value.value.toInt() - 1)</span>
-<span class="fc" id="L52">                    .take(limit)</span>
+<span class="fc" id="L48">                store.drop(firstId.value.value.toInt() - 1)</span>
+<span class="fc" id="L49">                    .take(limit)</span>
             }
         }
     }
 
     override fun count(): ULong {
-<span class="fc" id="L58">        return lock.withLock { store.size.toULong() }</span>
+<span class="fc" id="L55">        return lock.withLock { store.size.toULong() }</span>
     }
 
-<span class="fc" id="L61">    override fun close() {}</span>
+<span class="fc" id="L58">    override fun close() {}</span>
 
     override fun clear() {
-<span class="fc" id="L64">        lock.withLock { store.clear() }</span>
-<span class="fc" id="L65">    }</span>
+<span class="fc" id="L61">        lock.withLock { store.clear() }</span>
+<span class="fc" id="L62">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

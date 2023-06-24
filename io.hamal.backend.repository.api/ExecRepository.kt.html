@@ -3,7 +3,10 @@
 import io.hamal.backend.repository.api.domain.*
 import io.hamal.lib.domain.CmdId
 import io.hamal.lib.domain.Correlation
-import io.hamal.lib.domain.vo.*
+import io.hamal.lib.domain.vo.Code
+import io.hamal.lib.domain.vo.ExecId
+import io.hamal.lib.domain.vo.ExecInputs
+import io.hamal.lib.domain.vo.ExecSecrets
 
 interface ExecCmdRepository {
     fun plan(cmd: PlanCmd): PlannedExec
@@ -12,39 +15,37 @@ interface ExecCmdRepository {
     fun complete(cmd: CompleteCmd): CompletedExec
     fun start(cmd: StartCmd): List&lt;StartedExec&gt;
 
-<span class="nc" id="L15">    data class PlanCmd(</span>
-<span class="nc" id="L16">        val id: CmdId,</span>
-<span class="nc" id="L17">        val accountId: AccountId,</span>
-<span class="nc" id="L18">        val execId: ExecId,</span>
-<span class="nc" id="L19">        val correlation: Correlation?,</span>
-<span class="nc" id="L20">        val inputs: ExecInputs,</span>
-<span class="nc" id="L21">        val secrets: ExecSecrets,</span>
-<span class="nc" id="L22">        val code: Code,</span>
-<span class="nc" id="L23">        val invocation: Invocation</span>
+<span class="nc" id="L18">    data class PlanCmd(</span>
+<span class="nc" id="L19">        val id: CmdId,</span>
+<span class="nc" id="L20">        val execId: ExecId,</span>
+<span class="nc" id="L21">        val correlation: Correlation?,</span>
+<span class="nc" id="L22">        val inputs: ExecInputs,</span>
+<span class="nc" id="L23">        val secrets: ExecSecrets,</span>
+<span class="nc" id="L24">        val code: Code</span>
     )
 
-<span class="nc" id="L26">    data class ScheduleCmd(</span>
-<span class="nc" id="L27">        val id: CmdId,</span>
-<span class="nc" id="L28">        val execId: ExecId</span>
+<span class="nc" id="L27">    data class ScheduleCmd(</span>
+<span class="nc" id="L28">        val id: CmdId,</span>
+<span class="nc" id="L29">        val execId: ExecId</span>
     )
 
-<span class="nc" id="L31">    data class QueueCmd(</span>
-<span class="nc" id="L32">        val id: CmdId,</span>
-<span class="nc" id="L33">        val execId: ExecId</span>
+<span class="nc" id="L32">    data class QueueCmd(</span>
+<span class="nc" id="L33">        val id: CmdId,</span>
+<span class="nc" id="L34">        val execId: ExecId</span>
     )
 
-<span class="nc" id="L36">    data class StartCmd(</span>
-<span class="nc" id="L37">        val id: CmdId,</span>
+<span class="nc" id="L37">    data class StartCmd(</span>
+<span class="nc" id="L38">        val id: CmdId,</span>
     )
 
-<span class="nc" id="L40">    data class CompleteCmd(</span>
-<span class="nc" id="L41">        val id: CmdId,</span>
-<span class="nc" id="L42">        val execId: ExecId</span>
+<span class="nc" id="L41">    data class CompleteCmd(</span>
+<span class="nc" id="L42">        val id: CmdId,</span>
+<span class="nc" id="L43">        val execId: ExecId</span>
     )
 
-<span class="nc" id="L45">    data class FailCmd(</span>
-<span class="nc" id="L46">        val id: CmdId,</span>
-<span class="nc" id="L47">        val execId: ExecId</span>
+<span class="nc" id="L46">    data class FailCmd(</span>
+<span class="nc" id="L47">        val id: CmdId,</span>
+<span class="nc" id="L48">        val execId: ExecId</span>
     )
 }
 

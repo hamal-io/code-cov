@@ -10,80 +10,76 @@ import io.hamal.backend.repository.record.func.FuncCreationRecord
 import io.hamal.backend.repository.record.func.FuncRecord
 import io.hamal.backend.repository.sqlite.BaseRepository
 import io.hamal.backend.repository.sqlite.record.SqliteRecordRepository
-import io.hamal.lib.common.Shard
-import io.hamal.lib.domain.vo.AccountId
 import io.hamal.lib.domain.vo.FuncId
 import java.nio.file.Path
 
 internal object CreateFunc : CreateDomainObject&lt;FuncId, FuncRecord, Func&gt; {
     override fun invoke(recs: List&lt;FuncRecord&gt;): Func {
-<span class="nc bnc" id="L20" title="All 4 branches missed.">        check(recs.isNotEmpty()) { &quot;At least one record is required&quot; }</span>
-<span class="nc" id="L21">        val firstRecord = recs.first()</span>
-<span class="nc bnc" id="L22" title="All 2 branches missed.">        check(firstRecord is FuncCreationRecord)</span>
+<span class="nc bnc" id="L18" title="All 4 branches missed.">        check(recs.isNotEmpty()) { &quot;At least one record is required&quot; }</span>
+<span class="nc" id="L19">        val firstRecord = recs.first()</span>
+<span class="nc bnc" id="L20" title="All 2 branches missed.">        check(firstRecord is FuncCreationRecord)</span>
 
-<span class="nc" id="L24">        var result = Entity(</span>
-<span class="nc" id="L25">            id = firstRecord.entityId,</span>
-<span class="nc" id="L26">            cmdId = firstRecord.cmdId,</span>
-<span class="nc" id="L27">            sequence = firstRecord.sequence()</span>
+<span class="nc" id="L22">        var result = Entity(</span>
+<span class="nc" id="L23">            id = firstRecord.entityId,</span>
+<span class="nc" id="L24">            cmdId = firstRecord.cmdId,</span>
+<span class="nc" id="L25">            sequence = firstRecord.sequence()</span>
         )
 
-<span class="nc" id="L30">        recs.forEach { record -&gt;</span>
-<span class="nc" id="L31">            result = result.apply(record)</span>
-<span class="nc" id="L32">        }</span>
+<span class="nc" id="L28">        recs.forEach { record -&gt;</span>
+<span class="nc" id="L29">            result = result.apply(record)</span>
+<span class="nc" id="L30">        }</span>
 
-<span class="nc" id="L34">        return result.toDomainObject()</span>
+<span class="nc" id="L32">        return result.toDomainObject()</span>
     }
 }
 
-<span class="nc" id="L38">class SqliteFuncRepository(</span>
+<span class="nc" id="L36">class SqliteFuncRepository(</span>
     config: Config
-<span class="nc" id="L40">) : SqliteRecordRepository&lt;FuncId, FuncRecord, Func&gt;(</span>
-<span class="nc" id="L41">    config = config,</span>
-<span class="nc" id="L42">    createDomainObject = CreateFunc,</span>
+<span class="nc" id="L38">) : SqliteRecordRepository&lt;FuncId, FuncRecord, Func&gt;(</span>
+<span class="nc" id="L39">    config = config,</span>
+<span class="nc" id="L40">    createDomainObject = CreateFunc,</span>
     recordClass = FuncRecord::class,
-<span class="nc" id="L44">    projections = listOf(</span>
-<span class="nc" id="L45">        ProjectionCurrent</span>
+<span class="nc" id="L42">    projections = listOf(</span>
+<span class="nc" id="L43">        ProjectionCurrent</span>
     )
 ), FuncCmdRepository, FuncQueryRepository {
 
-<span class="nc" id="L49">    data class Config(</span>
-<span class="nc" id="L50">        override val path: Path,</span>
-<span class="nc" id="L51">        override val shard: Shard</span>
+<span class="nc" id="L47">    data class Config(</span>
+<span class="nc" id="L48">        override val path: Path</span>
     ) : BaseRepository.Config {
-<span class="nc" id="L53">        override val filename = &quot;func&quot;</span>
+<span class="nc" id="L50">        override val filename = &quot;func&quot;</span>
     }
 
     override fun create(cmd: CreateCmd): Func {
-<span class="nc" id="L57">        val funcId = cmd.funcId</span>
-<span class="nc" id="L58">        val cmdId = cmd.id</span>
-<span class="nc" id="L59">        return tx {</span>
-<span class="nc bnc" id="L60" title="All 2 branches missed.">            if (commandAlreadyApplied(funcId, cmdId)) {</span>
-<span class="nc" id="L61">                versionOf(funcId, cmdId)</span>
+<span class="nc" id="L54">        val funcId = cmd.funcId</span>
+<span class="nc" id="L55">        val cmdId = cmd.id</span>
+<span class="nc" id="L56">        return tx {</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">            if (commandAlreadyApplied(funcId, cmdId)) {</span>
+<span class="nc" id="L58">                versionOf(funcId, cmdId)</span>
             } else {
-<span class="nc" id="L63">                storeRecord(</span>
-<span class="nc" id="L64">                    FuncCreationRecord(</span>
-<span class="nc" id="L65">                        entityId = funcId,</span>
-<span class="nc" id="L66">                        cmdId = cmdId,</span>
-<span class="nc" id="L67">                        accountId = AccountId(1),</span>
-<span class="nc" id="L68">                        name = cmd.name,</span>
-<span class="nc" id="L69">                        inputs = cmd.inputs,</span>
-<span class="nc" id="L70">                        secrets = cmd.secrets,</span>
-<span class="nc" id="L71">                        code = cmd.code,</span>
+<span class="nc" id="L60">                storeRecord(</span>
+<span class="nc" id="L61">                    FuncCreationRecord(</span>
+<span class="nc" id="L62">                        entityId = funcId,</span>
+<span class="nc" id="L63">                        cmdId = cmdId,</span>
+<span class="nc" id="L64">                        name = cmd.name,</span>
+<span class="nc" id="L65">                        inputs = cmd.inputs,</span>
+<span class="nc" id="L66">                        secrets = cmd.secrets,</span>
+<span class="nc" id="L67">                        code = cmd.code,</span>
                     )
                 )
 
-<span class="nc" id="L75">                currentVersion(funcId)</span>
-<span class="nc" id="L76">                    .also { ProjectionCurrent.update(this, it) }</span>
+<span class="nc" id="L71">                currentVersion(funcId)</span>
+<span class="nc" id="L72">                    .also { ProjectionCurrent.update(this, it) }</span>
             }
         }
     }
 
     override fun find(funcId: FuncId): Func? {
-<span class="nc" id="L82">        return ProjectionCurrent.find(connection, funcId)</span>
+<span class="nc" id="L78">        return ProjectionCurrent.find(connection, funcId)</span>
     }
 
     override fun list(afterId: FuncId, limit: Int): List&lt;Func&gt; {
-<span class="nc" id="L86">        return ProjectionCurrent.list(connection, afterId, limit)</span>
+<span class="nc" id="L82">        return ProjectionCurrent.list(connection, afterId, limit)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

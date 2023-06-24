@@ -2,7 +2,6 @@
 
 import io.hamal.lib.domain.CmdId
 import io.hamal.lib.domain.DomainObject
-import io.hamal.lib.domain.vo.AccountId
 import io.hamal.lib.domain.vo.base.DomainId
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -15,39 +14,38 @@ interface RecordType {
     val value: Int
 }
 
-<span class="nc" id="L18">@Serializable(with = RecordSequence.Serializer::class)</span>
-<span class="nc" id="L19">data class RecordSequence(val value: Int) : Comparable&lt;RecordSequence&gt;//FIXME becomes VO</span>
+<span class="nc" id="L17">@Serializable(with = RecordSequence.Serializer::class)</span>
+<span class="nc" id="L18">data class RecordSequence(val value: Int) : Comparable&lt;RecordSequence&gt;//FIXME becomes VO</span>
 {
-<span class="nc" id="L21">    companion object {</span>
-<span class="nc" id="L22">        fun first() = RecordSequence(1)</span>
+<span class="nc" id="L20">    companion object {</span>
+<span class="nc" id="L21">        fun first() = RecordSequence(1)</span>
     }
 
-<span class="nc" id="L25">    override fun compareTo(other: RecordSequence) = other.value.compareTo(value)</span>
+<span class="nc" id="L24">    override fun compareTo(other: RecordSequence) = other.value.compareTo(value)</span>
 
-<span class="nc" id="L27">    fun next() = RecordSequence(value + 1)</span>
+<span class="nc" id="L26">    fun next() = RecordSequence(value + 1)</span>
 
     object Serializer : KSerializer&lt;RecordSequence&gt; {
-<span class="nc" id="L30">        override val descriptor = PrimitiveSerialDescriptor(&quot;RecSeq&quot;, PrimitiveKind.INT)</span>
+<span class="nc" id="L29">        override val descriptor = PrimitiveSerialDescriptor(&quot;RecSeq&quot;, PrimitiveKind.INT)</span>
 
         override fun deserialize(decoder: Decoder): RecordSequence {
-<span class="nc" id="L33">            return RecordSequence(decoder.decodeInt())</span>
+<span class="nc" id="L32">            return RecordSequence(decoder.decodeInt())</span>
         }
 
         override fun serialize(encoder: Encoder, value: RecordSequence) {
-<span class="nc" id="L37">            encoder.encodeInt(value.value)</span>
-<span class="nc" id="L38">        }</span>
+<span class="nc" id="L36">            encoder.encodeInt(value.value)</span>
+<span class="nc" id="L37">        }</span>
     }
 
 }
 
-<span class="nc" id="L43">abstract class Record&lt;ID : DomainId&gt; {</span>
+<span class="nc" id="L42">abstract class Record&lt;ID : DomainId&gt; {</span>
     abstract var sequence: RecordSequence?
     abstract val entityId: ID
     abstract val cmdId: CmdId
-    abstract val accountId: AccountId
 
-<span class="nc bnc" id="L49" title="All 2 branches missed.">    fun sequence() = sequence ?: throw IllegalStateException(&quot;Records needs to be stored to db before it can be accessed&quot;)</span>
-
+    fun sequence() =
+<span class="nc bnc" id="L48" title="All 2 branches missed.">        sequence ?: throw IllegalStateException(&quot;Records needs to be stored to db before it can be accessed&quot;)</span>
 }
 
 interface RecordEntity&lt;ID : DomainId, RECORD : Record&lt;ID&gt;, OBJ : DomainObject&lt;ID&gt;&gt; {

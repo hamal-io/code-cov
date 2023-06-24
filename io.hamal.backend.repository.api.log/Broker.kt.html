@@ -5,13 +5,13 @@ import io.hamal.lib.domain.vo.TopicId
 import io.hamal.lib.domain.vo.TopicName
 import java.io.Closeable
 
-interface LogBroker {
-    val id: Id
+interface CreateTopic&lt;TOPIC : LogTopic&gt; {
+    fun create(cmdId: CmdId, topicToCreate: TopicToCreate): TOPIC
 
-    @JvmInline
-<span class="nc" id="L12">    value class Id(val value: ULong) {</span>
-<span class="fc" id="L13">        constructor(value: Int) : this(value.toULong())</span>
-    }
+<span class="fc" id="L11">    data class TopicToCreate(</span>
+<span class="fc" id="L12">        val id: TopicId,</span>
+<span class="fc" id="L13">        val name: TopicName</span>
+    )
 }
 
 interface AppendToTopic&lt;TOPIC : LogTopic&gt; {
@@ -28,26 +28,24 @@ interface ReadFromTopic&lt;TOPIC : LogTopic&gt; {
     fun read(lastId: LogChunkId, topic: TOPIC, limit: Int): List&lt;LogChunk&gt;
 }
 
-interface ResolveTopic&lt;TOPIC : LogTopic&gt; {
-    fun resolveTopic(topicName: TopicName): TOPIC
-}
-
 interface GetTopics&lt;TOPIC : LogTopic&gt; {
     fun topics(): Set&lt;TOPIC&gt;
 }
 
-interface GetTopic&lt;TOPIC : LogTopic&gt; {
-<span class="nc bnc" id="L40" title="All 2 branches missed.">    fun get(topicId: TopicId): TOPIC = requireNotNull(find(topicId)) { &quot;Topic with id $topicId not found&quot; }</span>
+interface FindTopic&lt;TOPIC : LogTopic&gt; {
+<span class="nc bnc" id="L36" title="All 2 branches missed.">    fun get(topicId: TopicId): TOPIC = requireNotNull(find(topicId)) { &quot;Topic with id $topicId not found&quot; }</span>
 
     fun find(topicId: TopicId): TOPIC?
+
+    fun find(topicName: TopicName): TOPIC?
 }
 
-<span class="nc" id="L45">interface LogBrokerRepository&lt;TOPIC : LogTopic&gt; :</span>
+<span class="nc" id="L43">interface LogBrokerRepository&lt;TOPIC : LogTopic&gt; :</span>
+    CreateTopic&lt;TOPIC&gt;,
     AppendToTopic&lt;TOPIC&gt;,
     ConsumeFromTopic&lt;TOPIC&gt;,
-    GetTopic&lt;TOPIC&gt;,
+    FindTopic&lt;TOPIC&gt;,
     GetTopics&lt;TOPIC&gt;,
     ReadFromTopic&lt;TOPIC&gt;,
-    ResolveTopic&lt;TOPIC&gt;,
-<span class="nc" id="L52">    Closeable</span>
+<span class="nc" id="L50">    Closeable</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

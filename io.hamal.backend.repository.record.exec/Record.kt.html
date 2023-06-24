@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Record.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.repository.record.exec</a> &gt; <span class="el_source">Record.kt</span></div><h1>Record.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.repository.record.exec
+
+import io.hamal.backend.repository.record.Record
+import io.hamal.backend.repository.record.RecordSequence
+import io.hamal.lib.domain.CmdId
+import io.hamal.lib.domain.Correlation
+import io.hamal.lib.domain.vo.Code
+import io.hamal.lib.domain.vo.ExecId
+import io.hamal.lib.domain.vo.ExecInputs
+import io.hamal.lib.domain.vo.ExecSecrets
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+
+<span class="nc" id="L15">@Serializable</span>
+<span class="nc" id="L16">sealed class ExecRecord(</span>
+<span class="nc" id="L17">    @Transient</span>
+<span class="nc" id="L18">    override var sequence: RecordSequence? = null</span>
+<span class="nc" id="L19">) : Record&lt;ExecId&gt;()</span>
+
+<span class="nc bnc" id="L21" title="All 12 branches missed.">@Serializable</span>
+@SerialName(&quot;EPR&quot;)
+<span class="nc" id="L23">data class ExecPlannedRecord(</span>
+<span class="nc" id="L24">    override val entityId: ExecId,</span>
+<span class="nc" id="L25">    override val cmdId: CmdId,</span>
+<span class="nc" id="L26">    val correlation: Correlation?,</span>
+<span class="nc" id="L27">    val inputs: ExecInputs,</span>
+<span class="nc" id="L28">    val secrets: ExecSecrets,</span>
+<span class="nc" id="L29">    val code: Code</span>
+<span class="nc" id="L30">) : ExecRecord()</span>
+
+<span class="nc bnc" id="L32" title="All 8 branches missed.">@Serializable</span>
+@SerialName(&quot;ESCR&quot;)
+<span class="nc" id="L34">data class ExecScheduledRecord(</span>
+<span class="nc" id="L35">    override val entityId: ExecId,</span>
+<span class="nc" id="L36">    override val cmdId: CmdId,</span>
+<span class="nc" id="L37">) : ExecRecord()</span>
+
+<span class="nc bnc" id="L39" title="All 8 branches missed.">@Serializable</span>
+@SerialName(&quot;EQR&quot;)
+<span class="nc" id="L41">data class ExecQueuedRecord(</span>
+<span class="nc" id="L42">    override val entityId: ExecId,</span>
+<span class="nc" id="L43">    override val cmdId: CmdId,</span>
+<span class="nc" id="L44">) : ExecRecord()</span>
+
+
+<span class="nc bnc" id="L47" title="All 8 branches missed.">@Serializable</span>
+@SerialName(&quot;ESTR&quot;)
+<span class="nc" id="L49">data class ExecStartedRecord(</span>
+<span class="nc" id="L50">    override val entityId: ExecId,</span>
+<span class="nc" id="L51">    override val cmdId: CmdId,</span>
+<span class="nc" id="L52">) : ExecRecord()</span>
+
+<span class="nc bnc" id="L54" title="All 8 branches missed.">@Serializable</span>
+@SerialName(&quot;ECR&quot;)
+<span class="nc" id="L56">data class ExecCompletedRecord(</span>
+<span class="nc" id="L57">    override val entityId: ExecId,</span>
+<span class="nc" id="L58">    override val cmdId: CmdId,</span>
+<span class="nc" id="L59">) : ExecRecord()</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

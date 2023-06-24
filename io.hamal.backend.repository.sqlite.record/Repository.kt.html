@@ -19,19 +19,18 @@ import kotlin.reflect.KClass
 <span class="nc" id="L19">    private val projections: List&lt;Projection&lt;ID, RECORD, OBJ&gt;&gt;</span>
 <span class="nc" id="L20">) : BaseRepository(object : Config {</span>
 <span class="nc" id="L21">    override val path = config.path</span>
-<span class="nc" id="L22">    override val filename = String.format(&quot;${config.filename}-%04d.db&quot;, config.shard.value)</span>
-<span class="nc" id="L23">    override val shard = config.shard</span>
+<span class="nc" id="L22">    override val filename = config.filename</span>
 }) {
 
     override fun setupConnection(connection: Connection) {
-<span class="nc" id="L27">        connection.execute(&quot;&quot;&quot;PRAGMA journal_mode = wal;&quot;&quot;&quot;)</span>
-<span class="nc" id="L28">        connection.execute(&quot;&quot;&quot;PRAGMA locking_mode = exclusive;&quot;&quot;&quot;)</span>
-<span class="nc" id="L29">        connection.execute(&quot;&quot;&quot;PRAGMA temp_store = memory;&quot;&quot;&quot;)</span>
-<span class="nc" id="L30">        connection.execute(&quot;&quot;&quot;PRAGMA synchronous = off;&quot;&quot;&quot;)</span>
-<span class="nc" id="L31">    }</span>
+<span class="nc" id="L26">        connection.execute(&quot;&quot;&quot;PRAGMA journal_mode = wal;&quot;&quot;&quot;)</span>
+<span class="nc" id="L27">        connection.execute(&quot;&quot;&quot;PRAGMA locking_mode = exclusive;&quot;&quot;&quot;)</span>
+<span class="nc" id="L28">        connection.execute(&quot;&quot;&quot;PRAGMA temp_store = memory;&quot;&quot;&quot;)</span>
+<span class="nc" id="L29">        connection.execute(&quot;&quot;&quot;PRAGMA synchronous = off;&quot;&quot;&quot;)</span>
+<span class="nc" id="L30">    }</span>
 
     override fun setupSchema(connection: Connection) {
-<span class="nc" id="L34">        connection.execute(</span>
+<span class="nc" id="L33">        connection.execute(</span>
             &quot;&quot;&quot;
             CREATE TABLE IF NOT EXISTS records (
                  cmd_id         NUMERIC NOT NULL,
@@ -41,9 +40,9 @@ import kotlin.reflect.KClass
                  PRIMARY KEY    (entity_id, sequence),
                  UNIQUE         (entity_id, cmd_id)
             );
-<span class="nc" id="L44">        &quot;&quot;&quot;.trimIndent()</span>
+<span class="nc" id="L43">        &quot;&quot;&quot;.trimIndent()</span>
         )
-<span class="nc" id="L46">        connection.execute(</span>
+<span class="nc" id="L45">        connection.execute(</span>
             &quot;&quot;&quot;
              CREATE TRIGGER IF NOT EXISTS auto_sequence
                 AFTER INSERT ON records
@@ -53,41 +52,41 @@ import kotlin.reflect.KClass
                     SET sequence = (SELECT IFNULL(MAX(sequence), 1) + 1 FROM records WHERE entity_id = new.entity_id)
                     WHERE entity_id = new.entity_id AND sequence = new.sequence;
                 END;
-<span class="nc" id="L56">        &quot;&quot;&quot;.trimIndent()</span>
+<span class="nc" id="L55">        &quot;&quot;&quot;.trimIndent()</span>
         )
 
-<span class="nc" id="L59">        projections.forEach { projection -&gt; projection.setupSchema(connection) }</span>
+<span class="nc" id="L58">        projections.forEach { projection -&gt; projection.setupSchema(connection) }</span>
 
-<span class="nc" id="L61">    }</span>
+<span class="nc" id="L60">    }</span>
 
     override fun clear() {
-<span class="nc" id="L64">        connection.execute(&quot;DELETE FROM records&quot;)</span>
-<span class="nc" id="L65">        projections.forEach { projection -&gt; projection.clear(connection) }</span>
-<span class="nc" id="L66">    }</span>
+<span class="nc" id="L63">        connection.execute(&quot;DELETE FROM records&quot;)</span>
+<span class="nc" id="L64">        projections.forEach { projection -&gt; projection.clear(connection) }</span>
+<span class="nc" id="L65">    }</span>
 
     fun &lt;T&gt; tx(block: RecordTransaction&lt;ID, RECORD, OBJ&gt;.() -&gt; T): T {
-<span class="nc" id="L69">        return try {</span>
-<span class="nc" id="L70">            connection.tx {</span>
-<span class="nc" id="L71">                block(</span>
-<span class="nc" id="L72">                    SqliteRecordTransaction(</span>
-<span class="nc" id="L73">                        createDomainObject,</span>
-<span class="nc" id="L74">                        recordClass,</span>
-<span class="nc" id="L75">                        this,</span>
-<span class="nc" id="L76">                        recordCache</span>
+<span class="nc" id="L68">        return try {</span>
+<span class="nc" id="L69">            connection.tx {</span>
+<span class="nc" id="L70">                block(</span>
+<span class="nc" id="L71">                    SqliteRecordTransaction(</span>
+<span class="nc" id="L72">                        createDomainObject,</span>
+<span class="nc" id="L73">                        recordClass,</span>
+<span class="nc" id="L74">                        this,</span>
+<span class="nc" id="L75">                        recordCache</span>
                     )
                 )
             }
-<span class="nc" id="L80">        } catch (t: Throwable) {</span>
+<span class="nc" id="L79">        } catch (t: Throwable) {</span>
             /**
              * Exception / errors during block execution lead to inconsistent data.
              * 2 Options -  Make the Cache transactional or wipe all cache data
              * As this should rarely happen --&gt; simpler and cheaper execution for happy path
              */
-<span class="nc" id="L86">            recordCache.invalidate()</span>
-<span class="nc" id="L87">            projections.forEach(Projection&lt;ID, RECORD, OBJ&gt;::invalidate)</span>
-<span class="nc" id="L88">            throw t</span>
+<span class="nc" id="L85">            recordCache.invalidate()</span>
+<span class="nc" id="L86">            projections.forEach(Projection&lt;ID, RECORD, OBJ&gt;::invalidate)</span>
+<span class="nc" id="L87">            throw t</span>
         }
     }
 
-<span class="nc" id="L92">}</span>
+<span class="nc" id="L91">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

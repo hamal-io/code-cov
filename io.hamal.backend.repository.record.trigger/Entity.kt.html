@@ -60,26 +60,24 @@ import kotlin.time.Duration
 <span class="nc bnc" id="L60" title="All 2 branches missed.">        return when (type!!) {</span>
 <span class="nc" id="L61">            FixedRate -&gt; FixedRateTrigger(</span>
 <span class="nc" id="L62">                cmdId = cmdId,</span>
-<span class="nc" id="L63">                accountId = AccountId(1),</span>
-<span class="nc" id="L64">                id = id,</span>
-<span class="nc" id="L65">                funcId = funcId!!,</span>
-<span class="nc" id="L66">                name = name!!,</span>
-<span class="nc" id="L67">                inputs = inputs!!,</span>
-<span class="nc" id="L68">                secrets = secrets!!,</span>
-<span class="nc" id="L69">                duration = duration!!</span>
+<span class="nc" id="L63">                id = id,</span>
+<span class="nc" id="L64">                funcId = funcId!!,</span>
+<span class="nc" id="L65">                name = name!!,</span>
+<span class="nc" id="L66">                inputs = inputs!!,</span>
+<span class="nc" id="L67">                secrets = secrets!!,</span>
+<span class="nc" id="L68">                duration = duration!!</span>
             )
 
-<span class="nc" id="L72">            Event -&gt; EventTrigger(</span>
-<span class="nc" id="L73">                cmdId = cmdId,</span>
-<span class="nc" id="L74">                accountId = AccountId(1),</span>
-<span class="nc" id="L75">                id = id,</span>
-<span class="nc" id="L76">                funcId = funcId!!,</span>
-<span class="nc" id="L77">                name = name!!,</span>
-<span class="nc" id="L78">                inputs = inputs!!,</span>
-<span class="nc" id="L79">                secrets = secrets!!,</span>
-<span class="nc" id="L80">                topicId = topicId!!</span>
+<span class="nc" id="L71">            Event -&gt; EventTrigger(</span>
+<span class="nc" id="L72">                cmdId = cmdId,</span>
+<span class="nc" id="L73">                id = id,</span>
+<span class="nc" id="L74">                funcId = funcId!!,</span>
+<span class="nc" id="L75">                name = name!!,</span>
+<span class="nc" id="L76">                inputs = inputs!!,</span>
+<span class="nc" id="L77">                secrets = secrets!!,</span>
+<span class="nc" id="L78">                topicId = topicId!!</span>
             )
         }
     }
-<span class="nc" id="L84">}</span>
+<span class="nc" id="L82">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

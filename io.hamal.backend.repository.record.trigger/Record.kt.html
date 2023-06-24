@@ -16,29 +16,27 @@ import kotlin.time.Duration
 <span class="nc" id="L16">    override var sequence: RecordSequence? = null</span>
 <span class="nc" id="L17">) : Record&lt;TriggerId&gt;()</span>
 
-<span class="nc bnc" id="L19" title="All 16 branches missed.">@Serializable</span>
+<span class="nc bnc" id="L19" title="All 15 branches missed.">@Serializable</span>
 @SerialName(&quot;FRCR&quot;)
 <span class="nc" id="L21">data class FixedRateTriggerCreationRecord(</span>
 <span class="nc" id="L22">    override val entityId: TriggerId,</span>
 <span class="nc" id="L23">    override val cmdId: CmdId,</span>
-<span class="nc" id="L24">    override val accountId: AccountId,</span>
-<span class="nc" id="L25">    val funcId: FuncId,</span>
-<span class="nc" id="L26">    val name: TriggerName,</span>
-<span class="nc" id="L27">    val inputs: TriggerInputs,</span>
-<span class="nc" id="L28">    val secrets: TriggerSecrets,</span>
-<span class="nc" id="L29">    val duration: Duration</span>
-<span class="nc" id="L30">) : TriggerRecord()</span>
+<span class="nc" id="L24">    val funcId: FuncId,</span>
+<span class="nc" id="L25">    val name: TriggerName,</span>
+<span class="nc" id="L26">    val inputs: TriggerInputs,</span>
+<span class="nc" id="L27">    val secrets: TriggerSecrets,</span>
+<span class="nc" id="L28">    val duration: Duration</span>
+<span class="nc" id="L29">) : TriggerRecord()</span>
 
-<span class="nc bnc" id="L32" title="All 14 branches missed.">@Serializable</span>
+<span class="nc bnc" id="L31" title="All 13 branches missed.">@Serializable</span>
 @SerialName(&quot;ECR&quot;)
-<span class="nc" id="L34">data class EventTriggerCreationRecord(</span>
-<span class="nc" id="L35">    override val entityId: TriggerId,</span>
-<span class="nc" id="L36">    override val cmdId: CmdId,</span>
-<span class="nc" id="L37">    override val accountId: AccountId,</span>
-<span class="nc" id="L38">    val funcId: FuncId,</span>
-<span class="nc" id="L39">    val name: TriggerName,</span>
-<span class="nc" id="L40">    val inputs: TriggerInputs,</span>
-<span class="nc" id="L41">    val secrets: TriggerSecrets,</span>
-<span class="nc" id="L42">    val topicId: TopicId</span>
-<span class="nc" id="L43">) : TriggerRecord()</span>
+<span class="nc" id="L33">data class EventTriggerCreationRecord(</span>
+<span class="nc" id="L34">    override val entityId: TriggerId,</span>
+<span class="nc" id="L35">    override val cmdId: CmdId,</span>
+<span class="nc" id="L36">    val funcId: FuncId,</span>
+<span class="nc" id="L37">    val name: TriggerName,</span>
+<span class="nc" id="L38">    val inputs: TriggerInputs,</span>
+<span class="nc" id="L39">    val secrets: TriggerSecrets,</span>
+<span class="nc" id="L40">    val topicId: TopicId</span>
+<span class="nc" id="L41">) : TriggerRecord()</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

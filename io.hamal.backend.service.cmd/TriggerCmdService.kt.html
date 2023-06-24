@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TriggerCmdService.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.service.cmd</a> &gt; <span class="el_source">TriggerCmdService.kt</span></div><h1>TriggerCmdService.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.service.cmd
 
-import io.hamal.backend.component.EventEmitter
+import io.hamal.backend.component.SystemEventEmitter
 import io.hamal.backend.event.TriggerCreatedEvent
 import io.hamal.backend.repository.api.TriggerCmdRepository
 import io.hamal.backend.repository.api.domain.Trigger
-import io.hamal.lib.common.Shard
 import io.hamal.lib.domain.CmdId
 import io.hamal.lib.domain._enum.TriggerType
 import io.hamal.lib.domain.vo.*
@@ -13,65 +12,61 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import kotlin.time.Duration
 
-<span class="nc" id="L16">@Service</span>
+<span class="nc" id="L15">@Service</span>
 class TriggerCmdService
-<span class="nc" id="L18">@Autowired constructor(</span>
-<span class="nc" id="L19">    val triggerCmdRepository: TriggerCmdRepository,</span>
-<span class="nc" id="L20">    val eventEmitter: EventEmitter&lt;*&gt;,</span>
-<span class="nc" id="L21">    val generateDomainId: GenerateDomainId</span>
+<span class="nc" id="L17">@Autowired constructor(</span>
+<span class="nc" id="L18">    val triggerCmdRepository: TriggerCmdRepository,</span>
+<span class="nc" id="L19">    val eventEmitter: SystemEventEmitter&lt;*&gt;,</span>
+<span class="nc" id="L20">    val generateDomainId: GenerateDomainId</span>
 ) {
     fun create(cmdId: CmdId, triggerToCreate: TriggerToCreate): Trigger =
-<span class="nc" id="L24">        createTrigger(cmdId, triggerToCreate).also { emitEvent(cmdId, it) }</span>
+<span class="nc" id="L23">        createTrigger(cmdId, triggerToCreate).also { emitEvent(cmdId, it) }</span>
 
-<span class="nc" id="L26">    data class TriggerToCreate(</span>
-<span class="nc" id="L27">        val shard: Shard,</span>
-<span class="nc" id="L28">        val type: TriggerType,</span>
-<span class="nc" id="L29">        val name: TriggerName,</span>
-<span class="nc" id="L30">        val funcId: FuncId,</span>
-<span class="nc" id="L31">        val inputs: TriggerInputs,</span>
-<span class="nc" id="L32">        val secrets: TriggerSecrets,</span>
-<span class="nc" id="L33">        val duration: Duration?,</span>
-<span class="nc" id="L34">        val topicId: TopicId?</span>
+<span class="nc" id="L25">    data class TriggerToCreate(</span>
+<span class="nc" id="L26">        val type: TriggerType,</span>
+<span class="nc" id="L27">        val name: TriggerName,</span>
+<span class="nc" id="L28">        val funcId: FuncId,</span>
+<span class="nc" id="L29">        val inputs: TriggerInputs,</span>
+<span class="nc" id="L30">        val secrets: TriggerSecrets,</span>
+<span class="nc" id="L31">        val duration: Duration?,</span>
+<span class="nc" id="L32">        val topicId: TopicId?</span>
     )
 }
 
 private fun TriggerCmdService.createTrigger(cmdId: CmdId, triggerToCreate: TriggerCmdService.TriggerToCreate): Trigger {
-<span class="nc bnc" id="L39" title="All 2 branches missed.">    return when (triggerToCreate.type) {</span>
-<span class="nc" id="L40">        TriggerType.FixedRate -&gt; triggerCmdRepository.create(</span>
-<span class="nc" id="L41">            TriggerCmdRepository.CreateFixedRateCmd(</span>
-<span class="nc" id="L42">                id = cmdId,</span>
-<span class="nc" id="L43">                accountId = AccountId(1),</span>
-<span class="nc" id="L44">                triggerId = generateDomainId(Shard(1), ::TriggerId),</span>
-<span class="nc" id="L45">                name = triggerToCreate.name,</span>
-<span class="nc" id="L46">                funcId = triggerToCreate.funcId,</span>
-<span class="nc" id="L47">                inputs = triggerToCreate.inputs,</span>
-<span class="nc" id="L48">                secrets = triggerToCreate.secrets,</span>
-<span class="nc" id="L49">                duration = triggerToCreate.duration!!</span>
+<span class="nc bnc" id="L37" title="All 2 branches missed.">    return when (triggerToCreate.type) {</span>
+<span class="nc" id="L38">        TriggerType.FixedRate -&gt; triggerCmdRepository.create(</span>
+<span class="nc" id="L39">            TriggerCmdRepository.CreateFixedRateCmd(</span>
+<span class="nc" id="L40">                id = cmdId,</span>
+<span class="nc" id="L41">                triggerId = generateDomainId(::TriggerId),</span>
+<span class="nc" id="L42">                name = triggerToCreate.name,</span>
+<span class="nc" id="L43">                funcId = triggerToCreate.funcId,</span>
+<span class="nc" id="L44">                inputs = triggerToCreate.inputs,</span>
+<span class="nc" id="L45">                secrets = triggerToCreate.secrets,</span>
+<span class="nc" id="L46">                duration = triggerToCreate.duration!!</span>
             )
         )
 
-<span class="nc" id="L53">        TriggerType.Event -&gt; triggerCmdRepository.create(</span>
-<span class="nc" id="L54">            TriggerCmdRepository.CreateEventCmd(</span>
-<span class="nc" id="L55">                id = cmdId,</span>
-<span class="nc" id="L56">                accountId = AccountId(1),</span>
-<span class="nc" id="L57">                triggerId = generateDomainId(Shard(1), ::TriggerId),</span>
-<span class="nc" id="L58">                name = triggerToCreate.name,</span>
-<span class="nc" id="L59">                funcId = triggerToCreate.funcId,</span>
-<span class="nc" id="L60">                inputs = triggerToCreate.inputs,</span>
-<span class="nc" id="L61">                secrets = triggerToCreate.secrets,</span>
-<span class="nc" id="L62">                topicId = triggerToCreate.topicId!!</span>
+<span class="nc" id="L50">        TriggerType.Event -&gt; triggerCmdRepository.create(</span>
+<span class="nc" id="L51">            TriggerCmdRepository.CreateEventCmd(</span>
+<span class="nc" id="L52">                id = cmdId,</span>
+<span class="nc" id="L53">                triggerId = generateDomainId(::TriggerId),</span>
+<span class="nc" id="L54">                name = triggerToCreate.name,</span>
+<span class="nc" id="L55">                funcId = triggerToCreate.funcId,</span>
+<span class="nc" id="L56">                inputs = triggerToCreate.inputs,</span>
+<span class="nc" id="L57">                secrets = triggerToCreate.secrets,</span>
+<span class="nc" id="L58">                topicId = triggerToCreate.topicId!!</span>
             )
         )
     }
 }
 
 private fun TriggerCmdService.emitEvent(cmdId: CmdId, trigger: Trigger) {
-<span class="nc" id="L69">    eventEmitter.emit(</span>
-<span class="nc" id="L70">        cmdId, TriggerCreatedEvent(</span>
+<span class="nc" id="L65">    eventEmitter.emit(</span>
+<span class="nc" id="L66">        cmdId, TriggerCreatedEvent(</span>
 //            cmdId = CommandId(123), //FIXME
-<span class="nc" id="L72">            shard = trigger.shard,</span>
-<span class="nc" id="L73">            trigger</span>
+<span class="nc" id="L68">            trigger</span>
         )
     )
-<span class="nc" id="L76">}</span>
+<span class="nc" id="L71">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
