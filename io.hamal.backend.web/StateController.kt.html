@@ -14,11 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
-<span class="nc" id="L17">@RestController</span>
+<span class="fc" id="L17">@RestController</span>
 class StateController
-<span class="nc" id="L19">@Autowired constructor(</span>
-<span class="nc" id="L20">    val queryService: StateQueryService,</span>
-<span class="nc" id="L21">    val cmdService: StateCmdService</span>
+<span class="fc" id="L19">@Autowired constructor(</span>
+<span class="pc" id="L20">    val queryService: StateQueryService,</span>
+<span class="pc" id="L21">    val cmdService: StateCmdService</span>
 ) {
 
     @GetMapping(&quot;/v1/funcs/{funcId}/state/{correlationId}&quot;)

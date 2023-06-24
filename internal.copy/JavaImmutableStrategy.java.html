@@ -15,7 +15,7 @@ import java.util.Set;
  */
 public class JavaImmutableStrategy extends JavaCopy.Strategy {
 
-<span class="fc" id="L18">    static final Set&lt;Class&lt;?&gt;&gt; defaultImmutableClasses = Set.of(</span>
+<span class="nc" id="L18">    static final Set&lt;Class&lt;?&gt;&gt; defaultImmutableClasses = Set.of(</span>
             Boolean.class,
             Byte.class,
             Short.class,
@@ -36,42 +36,42 @@ public class JavaImmutableStrategy extends JavaCopy.Strategy {
     );
 
     public JavaImmutableStrategy() {
-<span class="fc" id="L39">        this(new HashSet&lt;&gt;());</span>
-<span class="fc" id="L40">    }</span>
+<span class="nc" id="L39">        this(new HashSet&lt;&gt;());</span>
+<span class="nc" id="L40">    }</span>
 
 
     public JavaImmutableStrategy(Set&lt;Class&lt;?&gt;&gt; immutableClasses) {
-<span class="fc" id="L44">        super(new CopyStrategy(mergeWithDefaultImmutableClasses(immutableClasses)));</span>
-<span class="fc" id="L45">    }</span>
+<span class="nc" id="L44">        super(new CopyStrategy(mergeWithDefaultImmutableClasses(immutableClasses)));</span>
+<span class="nc" id="L45">    }</span>
 
     private static Set&lt;Class&lt;?&gt;&gt; mergeWithDefaultImmutableClasses(Set&lt;Class&lt;?&gt;&gt; classes) {
-<span class="fc" id="L48">        var result = new HashSet&lt;Class&lt;?&gt;&gt;();</span>
-<span class="fc" id="L49">        result.addAll(classes);</span>
-<span class="fc" id="L50">        result.addAll(defaultImmutableClasses);</span>
-<span class="fc" id="L51">        return result;</span>
+<span class="nc" id="L48">        var result = new HashSet&lt;Class&lt;?&gt;&gt;();</span>
+<span class="nc" id="L49">        result.addAll(classes);</span>
+<span class="nc" id="L50">        result.addAll(defaultImmutableClasses);</span>
+<span class="nc" id="L51">        return result;</span>
     }
 
     @Override
     public boolean supports(Class&lt;?&gt; sourceClass, Class&lt;?&gt; targetClass) {
-<span class="fc bfc" id="L56" title="All 4 branches covered.">        return sourceClass.equals(targetClass) &amp;&amp; copyStrategy.supports(sourceClass);</span>
+<span class="nc bnc" id="L56" title="All 4 branches missed.">        return sourceClass.equals(targetClass) &amp;&amp; copyStrategy.supports(sourceClass);</span>
     }
 
     public static class CopyStrategy implements JavaCopy.CopyStrategy {
 
         final Set&lt;Class&lt;?&gt;&gt; safeClasses;
 
-<span class="fc" id="L63">        public CopyStrategy(Set&lt;Class&lt;?&gt;&gt; safeClasses) {</span>
-<span class="fc" id="L64">            this.safeClasses = safeClasses;</span>
-<span class="fc" id="L65">        }</span>
+<span class="nc" id="L63">        public CopyStrategy(Set&lt;Class&lt;?&gt;&gt; safeClasses) {</span>
+<span class="nc" id="L64">            this.safeClasses = safeClasses;</span>
+<span class="nc" id="L65">        }</span>
 
         @Override
         public boolean supports(Class&lt;?&gt; valueClass) {
-<span class="fc" id="L69">            return safeClasses.contains(valueClass);</span>
+<span class="nc" id="L69">            return safeClasses.contains(valueClass);</span>
         }
 
         @Override
         public Object apply(Class&lt;?&gt; valueClass, Object value) {
-<span class="fc" id="L74">            return value;</span>
+<span class="nc" id="L74">            return value;</span>
         }
     }
 

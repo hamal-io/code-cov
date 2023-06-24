@@ -66,8 +66,8 @@ internal fun Parser.Context.parseStatement(): Statement {
 <span class="fc bfc" id="L66" title="All 2 branches covered.">        isGlobalAssignment() -&gt; Assignment.Global.Parse(this)</span>
 <span class="fc bfc" id="L67" title="All 2 branches covered.">        isCallExpression() -&gt; Call.Parse(this)</span>
 <span class="fc bfc" id="L68" title="All 2 branches covered.">        isLocalAssignment() -&gt; Assignment.Local.Parse(this)</span>
-<span class="fc bfc" id="L69" title="All 2 branches covered.">        isFunction() -&gt; Prototype.Parse(this)</span>
-<span class="fc bfc" id="L70" title="All 2 branches covered.">        isReturn() -&gt; Return.Parse(this)</span>
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">        isFunction() -&gt; Prototype.Parse(this)</span>
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">        isReturn() -&gt; Return.Parse(this)</span>
 <span class="fc bfc" id="L71" title="All 2 branches covered.">        isBlock() -&gt; DoStmt.Parse(this)</span>
         else -&gt; {
 <span class="fc" id="L73">            ExpressionStatement(parseExpression())</span>
@@ -76,30 +76,30 @@ internal fun Parser.Context.parseStatement(): Statement {
 }
 
 private fun Parser.Context.isCallExpression() =
-<span class="fc bfc" id="L79" title="All 4 branches covered.">    currentTokenType() == Type.Ident &amp;&amp; nextTokenType() == Type.LeftParenthesis</span>
+<span class="pc bpc" id="L79" title="1 of 4 branches missed.">    currentTokenType() == Type.Ident &amp;&amp; nextTokenType() == Type.LeftParenthesis</span>
 
 private fun Parser.Context.isGlobalAssignment(): Boolean {
-<span class="fc bfc" id="L82" title="All 6 branches covered.">    return currentTokenType() == Type.Ident &amp;&amp; nextTokenType() == Type.Equal || nextTokenType() == Type.Comma</span>
+<span class="pc bpc" id="L82" title="1 of 6 branches missed.">    return currentTokenType() == Type.Ident &amp;&amp; nextTokenType() == Type.Equal || nextTokenType() == Type.Comma</span>
 }
 
 <span class="fc bfc" id="L85" title="All 2 branches covered.">private fun Parser.Context.isLocalAssignment() = currentTokenType() == Type.Local</span>
 
-<span class="fc bfc" id="L87" title="All 2 branches covered.">private fun Parser.Context.isFunction() = currentTokenType() == Type.Function</span>
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">private fun Parser.Context.isFunction() = currentTokenType() == Type.Function</span>
 
-<span class="fc bfc" id="L89" title="All 2 branches covered.">private fun Parser.Context.isReturn() = currentTokenType() == Type.Return</span>
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">private fun Parser.Context.isReturn() = currentTokenType() == Type.Return</span>
 <span class="fc bfc" id="L90" title="All 2 branches covered.">private fun Parser.Context.isBlock() = currentTokenType() == Type.Do</span>
 
 <span class="fc" id="L92">internal fun Parser.Context.parseExpression(precedence: Precedence = Precedence.Lowest): Expression {</span>
 <span class="fc" id="L93">    var lhsExpression: Expression = parseFn(currentTokenType())(this)</span>
-<span class="fc bfc" id="L94" title="All 4 branches covered.">    while (!endOfExpression() &amp;&amp; precedence &lt; currentPrecedence()) {</span>
+<span class="pc bpc" id="L94" title="1 of 4 branches missed.">    while (!endOfExpression() &amp;&amp; precedence &lt; currentPrecedence()) {</span>
 <span class="pc bpc" id="L95" title="1 of 2 branches missed.">        val infix = infixFn(currentTokenType()) ?: return lhsExpression</span>
 <span class="fc" id="L96">        lhsExpression = infix(this, lhsExpression)</span>
     }
 <span class="fc" id="L98">    return lhsExpression</span>
 }
 
-<span class="fc bfc" id="L101" title="All 2 branches covered.">private fun Parser.Context.endOfExpression() = when (currentTokenType()) {</span>
-<span class="fc" id="L102">    Type.Semicolon, Type.Eof -&gt; true</span>
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">private fun Parser.Context.endOfExpression() = when (currentTokenType()) {</span>
+<span class="nc" id="L102">    Type.Semicolon, Type.Eof -&gt; true</span>
 <span class="fc" id="L103">    else -&gt; false</span>
 <span class="fc" id="L104">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

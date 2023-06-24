@@ -4,14 +4,14 @@ object TokenizerUtils {
 
 <span class="fc" id="L5">    fun isDigit(c: Char) = c.isDigit()</span>
 
-<span class="fc bfc" id="L7" title="All 12 branches covered.">    fun isAlpha(c: Char) = (c in 'a'..'z') || (c in 'A'..'Z')</span>
+<span class="pc bpc" id="L7" title="5 of 12 branches missed.">    fun isAlpha(c: Char) = (c in 'a'..'z') || (c in 'A'..'Z')</span>
 
-<span class="fc bfc" id="L9" title="All 2 branches covered.">    fun isUnderscore(c: Char) = c == '_'</span>
+<span class="pc bpc" id="L9" title="1 of 2 branches missed.">    fun isUnderscore(c: Char) = c == '_'</span>
 
 <span class="fc bfc" id="L11" title="All 2 branches covered.">    fun isQuote(c: Char) = c == '\''</span>
 
-<span class="fc bfc" id="L13" title="All 8 branches covered.">    fun isWhitespace(c: Char) = c == ' ' || c == '\t' || c == '\n' || c == '\r';</span>
+<span class="pc bpc" id="L13" title="3 of 8 branches missed.">    fun isWhitespace(c: Char) = c == ' ' || c == '\t' || c == '\n' || c == '\r';</span>
 
-<span class="fc bfc" id="L15" title="All 14 branches covered.">    fun isHexChar(c: Char) = isDigit(c) || (c in 'a'..'f') || (c in 'A'..'F');</span>
+<span class="nc bnc" id="L15" title="All 14 branches missed.">    fun isHexChar(c: Char) = isDigit(c) || (c in 'a'..'f') || (c in 'A'..'F');</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -14,11 +14,11 @@ object AssertFunction : BuiltinFuncValue() {
 <span class="fc" id="L14">            ?: &quot;${parameters.first().expression}&quot;</span>
 
 <span class="pc bpc" id="L16" title="1 of 2 branches missed.">        val result = parameters.firstOrNull()?.value</span>
-<span class="fc bfc" id="L17" title="All 2 branches covered.">        if (result != TrueValue) {</span>
-<span class="fc bfc" id="L18" title="All 2 branches covered.">            if (result != FalseValue) {</span>
-<span class="fc" id="L19">                throw ScriptEvaluationException(ErrorValue(&quot;Assertion of non boolean value is always false&quot;))</span>
+<span class="pc bpc" id="L17" title="1 of 2 branches missed.">        if (result != TrueValue) {</span>
+<span class="nc bnc" id="L18" title="All 2 branches missed.">            if (result != FalseValue) {</span>
+<span class="nc" id="L19">                throw ScriptEvaluationException(ErrorValue(&quot;Assertion of non boolean value is always false&quot;))</span>
             }
-<span class="fc" id="L21">            throw ScriptEvaluationException(ErrorValue(&quot;Assertion violated: '$assertionMessage'&quot;))</span>
+<span class="nc" id="L21">            throw ScriptEvaluationException(ErrorValue(&quot;Assertion violated: '$assertionMessage'&quot;))</span>
         }
 <span class="fc" id="L23">        return NilValue</span>
     }

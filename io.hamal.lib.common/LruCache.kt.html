@@ -13,7 +13,7 @@ interface LruCache&lt;KEY : Any, VALUE : Any&gt; {
     fun find(key: KEY): VALUE?
 
     operator fun get(key: KEY): VALUE {
-<span class="pc bpc" id="L16" title="1 of 2 branches missed.">        return find(key) ?: throw IllegalArgumentException(&quot;$key&quot;)</span>
+<span class="nc bnc" id="L16" title="All 2 branches missed.">        return find(key) ?: throw IllegalArgumentException(&quot;$key&quot;)</span>
     }
 
     fun computeIfAbsent(key: KEY, mapper: (KEY) -&gt; VALUE?): VALUE?
@@ -25,51 +25,51 @@ interface LruCache&lt;KEY : Any, VALUE : Any&gt; {
     fun clear()
 }
 
-<span class="fc" id="L28">class DefaultLruCache&lt;KEY : Any, VALUE : Any&gt;(capacity: Int) : LruCache&lt;KEY, VALUE&gt; {</span>
+<span class="nc" id="L28">class DefaultLruCache&lt;KEY : Any, VALUE : Any&gt;(capacity: Int) : LruCache&lt;KEY, VALUE&gt; {</span>
     private var store: LinkedHashMap&lt;KEY, VALUE&gt;
-<span class="fc" id="L30">    private val lock: ReadWriteLock = ReentrantReadWriteLock()</span>
+<span class="nc" id="L30">    private val lock: ReadWriteLock = ReentrantReadWriteLock()</span>
 
-<span class="fc" id="L32">    init {</span>
-<span class="fc" id="L33">        store = object : LinkedHashMap&lt;KEY, VALUE&gt;(capacity, 0.75f, true) {</span>
+<span class="nc" id="L32">    init {</span>
+<span class="nc" id="L33">        store = object : LinkedHashMap&lt;KEY, VALUE&gt;(capacity, 0.75f, true) {</span>
             override fun removeEldestEntry(eldest: Map.Entry&lt;KEY, VALUE&gt;): Boolean {
-<span class="fc bfc" id="L35" title="All 2 branches covered.">                return size &gt; capacity</span>
+<span class="nc bnc" id="L35" title="All 2 branches missed.">                return size &gt; capacity</span>
             }
         }
-<span class="fc" id="L38">    }</span>
+<span class="nc" id="L38">    }</span>
 
     override fun put(key: KEY, value: VALUE) {
-<span class="fc" id="L41">        lock.writeLock().withLock {</span>
-<span class="fc" id="L42">            store[key] = value</span>
-<span class="fc" id="L43">        }</span>
-<span class="fc" id="L44">    }</span>
+<span class="nc" id="L41">        lock.writeLock().withLock {</span>
+<span class="nc" id="L42">            store[key] = value</span>
+<span class="nc" id="L43">        }</span>
+<span class="nc" id="L44">    }</span>
 
     override fun putIfAbsent(key: KEY, value: VALUE) {
-<span class="fc" id="L47">        lock.writeLock().withLock {</span>
-<span class="fc" id="L48">            store.putIfAbsent(key, value)</span>
+<span class="nc" id="L47">        lock.writeLock().withLock {</span>
+<span class="nc" id="L48">            store.putIfAbsent(key, value)</span>
         }
-<span class="fc" id="L50">    }</span>
+<span class="nc" id="L50">    }</span>
 
     override fun find(key: KEY): VALUE? {
-<span class="fc" id="L53">        return lock.readLock().withLock {</span>
-<span class="fc" id="L54">            store[key]</span>
+<span class="nc" id="L53">        return lock.readLock().withLock {</span>
+<span class="nc" id="L54">            store[key]</span>
         }
     }
 
     override fun computeIfAbsent(key: KEY, mapper: (KEY) -&gt; VALUE?): VALUE? {
-<span class="fc" id="L59">        return lock.writeLock().withLock {</span>
-<span class="fc bfc" id="L60" title="All 2 branches covered.">            if (!store.containsKey(key)) {</span>
-<span class="pc bpc" id="L61" title="1 of 2 branches missed.">                mapper(key)?.also { store[key] = it }</span>
+<span class="nc" id="L59">        return lock.writeLock().withLock {</span>
+<span class="nc bnc" id="L60" title="All 2 branches missed.">            if (!store.containsKey(key)) {</span>
+<span class="nc bnc" id="L61" title="All 2 branches missed.">                mapper(key)?.also { store[key] = it }</span>
             } else {
-<span class="fc" id="L63">                store[key]</span>
+<span class="nc" id="L63">                store[key]</span>
             }
         }
     }
 
 
     override fun size(): Int {
-<span class="fc" id="L70">        return lock.readLock()</span>
-<span class="fc" id="L71">            .withLock {</span>
-<span class="fc" id="L72">                store.size</span>
+<span class="nc" id="L70">        return lock.readLock()</span>
+<span class="nc" id="L71">            .withLock {</span>
+<span class="nc" id="L72">                store.size</span>
             }
     }
 

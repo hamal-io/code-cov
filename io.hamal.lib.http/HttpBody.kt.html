@@ -19,9 +19,9 @@ sealed interface HttpBody {
 <span class="nc" id="L19">    val content: ByteArray</span>
 ) : HttpBody
 
-<span class="nc" id="L22">data class HttpStringBody(</span>
-<span class="nc" id="L23">    override val name: String,</span>
-<span class="nc" id="L24">    override val contentType: String,</span>
-<span class="nc" id="L25">    val content: String</span>
+<span class="fc" id="L22">data class HttpStringBody(</span>
+<span class="pc" id="L23">    override val name: String,</span>
+<span class="fc" id="L24">    override val contentType: String,</span>
+<span class="fc" id="L25">    val content: String</span>
 ) : HttpBody
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

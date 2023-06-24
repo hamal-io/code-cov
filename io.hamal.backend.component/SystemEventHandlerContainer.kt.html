@@ -6,49 +6,49 @@ import io.hamal.backend.event.handler.SystemEventHandler
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.reflect.KClass
 
-<span class="nc" id="L9">class SystemEventHandlerContainer : SystemEventHandler.Container {</span>
-<span class="nc" id="L10">    private val receiverMapping = mutableMapOf&lt;</span>
+<span class="fc" id="L9">class SystemEventHandlerContainer : SystemEventHandler.Container {</span>
+<span class="fc" id="L10">    private val receiverMapping = mutableMapOf&lt;</span>
             KClass&lt;out SystemEvent&gt;,
             List&lt;SystemEventHandler&lt;SystemEvent&gt;&gt;
             &gt;()
 
-<span class="nc" id="L15">    private val lock = ReentrantReadWriteLock()</span>
+<span class="fc" id="L15">    private val lock = ReentrantReadWriteLock()</span>
 
     override fun &lt;EVENT : SystemEvent&gt; register(
         clazz: KClass&lt;EVENT&gt;,
         receiver: SystemEventHandler&lt;EVENT&gt;
     ): Boolean {
-<span class="nc" id="L21">        try {</span>
-<span class="nc" id="L22">            lock.writeLock().lock()</span>
-<span class="nc bnc" id="L23" title="All 2 branches missed.">            val result = !receiverMapping.containsKey(clazz)</span>
-<span class="nc" id="L24">            receiverMapping.putIfAbsent(clazz, mutableListOf())</span>
-<span class="nc" id="L25">            receiverMapping[clazz] = receiverMapping[clazz]!!.plus(receiver)</span>
-<span class="nc" id="L26">            return result</span>
+<span class="fc" id="L21">        try {</span>
+<span class="fc" id="L22">            lock.writeLock().lock()</span>
+<span class="pc bpc" id="L23" title="1 of 2 branches missed.">            val result = !receiverMapping.containsKey(clazz)</span>
+<span class="fc" id="L24">            receiverMapping.putIfAbsent(clazz, mutableListOf())</span>
+<span class="fc" id="L25">            receiverMapping[clazz] = receiverMapping[clazz]!!.plus(receiver)</span>
+<span class="fc" id="L26">            return result</span>
         } finally {
-<span class="nc" id="L28">            lock.writeLock().unlock()</span>
+<span class="fc" id="L28">            lock.writeLock().unlock()</span>
         }
     }
 
     @Suppress(&quot;UNCHECKED_CAST&quot;)
     override fun &lt;EVENT : SystemEvent&gt; get(clazz: KClass&lt;EVENT&gt;): List&lt;SystemEventHandler&lt;EVENT&gt;&gt; {
-<span class="nc" id="L34">        try {</span>
-<span class="nc" id="L35">            lock.readLock().lock()</span>
-<span class="nc" id="L36">            return receiverMapping[clazz]</span>
-<span class="nc bnc" id="L37" title="All 2 branches missed.">                ?.map { it as SystemEventHandler&lt;EVENT&gt; }</span>
-<span class="nc" id="L38">                ?: listOf()</span>
+<span class="fc" id="L34">        try {</span>
+<span class="fc" id="L35">            lock.readLock().lock()</span>
+<span class="fc" id="L36">            return receiverMapping[clazz]</span>
+<span class="pc bpc" id="L37" title="1 of 2 branches missed.">                ?.map { it as SystemEventHandler&lt;EVENT&gt; }</span>
+<span class="pc" id="L38">                ?: listOf()</span>
         } finally {
-<span class="nc" id="L40">            lock.readLock().unlock()</span>
+<span class="fc" id="L40">            lock.readLock().unlock()</span>
         }
     }
 
     override fun topics(): Set&lt;String&gt; {
-<span class="nc" id="L45">        try {</span>
-<span class="nc" id="L46">            lock.readLock().lock()</span>
-<span class="nc" id="L47">            return receiverMapping.keys</span>
-<span class="nc" id="L48">                .map { it.topic() }</span>
-<span class="nc" id="L49">                .toSet()</span>
+<span class="fc" id="L45">        try {</span>
+<span class="fc" id="L46">            lock.readLock().lock()</span>
+<span class="fc" id="L47">            return receiverMapping.keys</span>
+<span class="fc" id="L48">                .map { it.topic() }</span>
+<span class="fc" id="L49">                .toSet()</span>
         } finally {
-<span class="nc" id="L51">            lock.readLock().unlock()</span>
+<span class="fc" id="L51">            lock.readLock().unlock()</span>
         }
     }
 }

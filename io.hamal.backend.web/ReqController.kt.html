@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
-<span class="nc" id="L17">@RestController</span>
-<span class="nc" id="L18">class ReqController(</span>
-<span class="nc" id="L19">    @Autowired val queryService: ReqQueryService</span>
+<span class="fc" id="L17">@RestController</span>
+<span class="fc" id="L18">class ReqController(</span>
+<span class="pc" id="L19">    @Autowired val queryService: ReqQueryService</span>
 ) {
     @GetMapping(&quot;/v1/reqs&quot;)
     fun listReqs(

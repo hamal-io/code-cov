@@ -18,27 +18,27 @@ import org.springframework.stereotype.Service
 import java.time.Instant
 import java.util.concurrent.TimeUnit
 
-<span class="nc" id="L21">@Service</span>
+<span class="fc" id="L21">@Service</span>
 class FixedRateTriggerService
-<span class="nc" id="L23">@Autowired constructor(</span>
-<span class="nc" id="L24">    internal val funcQueryService: FuncQueryService,</span>
-<span class="nc" id="L25">    internal val triggerQueryRepository: TriggerQueryRepository,</span>
-<span class="nc" id="L26">    internal val eventEmitter: SystemEventEmitter&lt;*&gt;,</span>
-<span class="nc" id="L27">    internal val submitRequest: SubmitRequest,</span>
-<span class="nc" id="L28">    internal val generateDomainId: GenerateDomainId</span>
+<span class="fc" id="L23">@Autowired constructor(</span>
+<span class="pc" id="L24">    internal val funcQueryService: FuncQueryService,</span>
+<span class="pc" id="L25">    internal val triggerQueryRepository: TriggerQueryRepository,</span>
+<span class="pc" id="L26">    internal val eventEmitter: SystemEventEmitter&lt;*&gt;,</span>
+<span class="pc" id="L27">    internal val submitRequest: SubmitRequest,</span>
+<span class="pc" id="L28">    internal val generateDomainId: GenerateDomainId</span>
 ) {
 
-<span class="nc" id="L31">    private val plannedInvocations = mutableMapOf&lt;Trigger, Instant&gt;()</span>
+<span class="fc" id="L31">    private val plannedInvocations = mutableMapOf&lt;Trigger, Instant&gt;()</span>
 
     @PostConstruct
     fun setup() {
-<span class="nc" id="L35">        triggerQueryRepository.query {</span>
+<span class="fc" id="L35">        triggerQueryRepository.query {</span>
 <span class="nc" id="L36">            afterId = TriggerId(0)</span>
 <span class="nc" id="L37">            limit = 10</span>
-<span class="nc" id="L38">        }.filterIsInstance&lt;FixedRateTrigger&gt;().forEach {</span>
+<span class="pc" id="L38">        }.filterIsInstance&lt;FixedRateTrigger&gt;().forEach {</span>
 <span class="nc" id="L39">            plannedInvocations[it] = now().plusMillis(it.duration.inWholeSeconds)</span>
 <span class="nc" id="L40">        }</span>
-<span class="nc" id="L41">    }</span>
+<span class="fc" id="L41">    }</span>
 
     fun triggerAdded(fixedRateTrigger: FixedRateTrigger) {
 <span class="nc" id="L44">        plannedInvocations.putIfAbsent(</span>
@@ -50,12 +50,12 @@ class FixedRateTriggerService
 
     @Scheduled(fixedRate = 1, timeUnit = TimeUnit.SECONDS)
     fun run() {
-<span class="nc" id="L53">        plannedInvocations.filter { now().isAfter(it.value) }.forEach { (trigger, _) -&gt;</span>
+<span class="pc" id="L53">        plannedInvocations.filter { now().isAfter(it.value) }.forEach { (trigger, _) -&gt;</span>
 <span class="nc bnc" id="L54" title="All 2 branches missed.">            require(trigger is FixedRateTrigger)</span>
 <span class="nc" id="L55">            plannedInvocations[trigger] = now().plusSeconds(trigger.duration.inWholeSeconds)</span>
 <span class="nc" id="L56">            requestInvocation(trigger)</span>
 <span class="nc" id="L57">        }</span>
-<span class="nc" id="L58">    }</span>
+<span class="fc" id="L58">    }</span>
 }
 
 internal fun FixedRateTriggerService.requestInvocation(trigger: FixedRateTrigger) {

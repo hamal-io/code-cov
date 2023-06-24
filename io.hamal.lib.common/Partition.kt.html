@@ -10,12 +10,12 @@ import kotlinx.serialization.encoding.Encoder
 <span class="pc" id="L10">@Serializable(with = Partition.Serializer::class)</span>
 <span class="fc" id="L11">data class Partition(val value: Int) {</span>
 <span class="fc" id="L12">    init {</span>
-<span class="fc bfc" id="L13" title="All 4 branches covered.">        require(value &gt;= 0) { &quot;Partition must not be negative - [0, 1023]&quot; }</span>
-<span class="fc bfc" id="L14" title="All 4 branches covered.">        require(value &lt;= 1023) { &quot;Partition is limited to 10 bits - [0, 1023]&quot; }</span>
+<span class="pc bpc" id="L13" title="2 of 4 branches missed.">        require(value &gt;= 0) { &quot;Partition must not be negative - [0, 1023]&quot; }</span>
+<span class="pc bpc" id="L14" title="2 of 4 branches missed.">        require(value &lt;= 1023) { &quot;Partition is limited to 10 bits - [0, 1023]&quot; }</span>
 <span class="fc" id="L15">    }</span>
 
     override fun toString(): String {
-<span class="fc" id="L18">        return &quot;Partition($value)&quot;</span>
+<span class="nc" id="L18">        return &quot;Partition($value)&quot;</span>
     }
 
     object Serializer : KSerializer&lt;Partition&gt; {

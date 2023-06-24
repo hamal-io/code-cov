@@ -21,9 +21,9 @@ import io.hamal.lib.script.impl.token.Token
 <span class="fc" id="L21">            expectCurrentTokenTypToBe(Token.Type.LeftParenthesis)</span>
 <span class="fc" id="L22">            advance()</span>
 
-<span class="fc bfc" id="L24" title="All 2 branches covered.">            if (currentTokenType() == Token.Type.RightParenthesis) {</span>
-<span class="fc" id="L25">                advance()</span>
-<span class="fc" id="L26">                return listOf()</span>
+<span class="pc bpc" id="L24" title="1 of 2 branches missed.">            if (currentTokenType() == Token.Type.RightParenthesis) {</span>
+<span class="nc" id="L25">                advance()</span>
+<span class="nc" id="L26">                return listOf()</span>
             }
 
 <span class="fc" id="L29">            val result = mutableListOf&lt;Expression&gt;()</span>

@@ -15,12 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
-<span class="nc" id="L18">@RestController</span>
-<span class="nc" id="L19">open class ExecController(</span>
-<span class="nc" id="L20">    @Autowired val queryService: ExecQueryService,</span>
-<span class="nc" id="L21">    @Autowired val cmdService: ExecCmdService,</span>
-<span class="nc" id="L22">    @Autowired val eventEmitter: SystemEventEmitter&lt;*&gt;,</span>
-<span class="nc" id="L23">    @Autowired val request: SubmitRequest</span>
+<span class="fc" id="L18">@RestController</span>
+<span class="fc" id="L19">open class ExecController(</span>
+<span class="pc" id="L20">    @Autowired val queryService: ExecQueryService,</span>
+<span class="pc" id="L21">    @Autowired val cmdService: ExecCmdService,</span>
+<span class="pc" id="L22">    @Autowired val eventEmitter: SystemEventEmitter&lt;*&gt;,</span>
+<span class="pc" id="L23">    @Autowired val request: SubmitRequest</span>
 ) {
 
     @GetMapping(&quot;/v1/execs/{execId}&quot;)

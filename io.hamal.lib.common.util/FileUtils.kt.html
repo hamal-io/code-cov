@@ -9,10 +9,10 @@ object FileUtils {
 <span class="fc" id="L9">        return java.nio.file.Files.createDirectories(path, *attribs)</span>
     }
 
-<span class="fc" id="L12">    fun exists(path: Path) = java.nio.file.Files.exists(path)</span>
+<span class="nc" id="L12">    fun exists(path: Path) = java.nio.file.Files.exists(path)</span>
 
     fun delete(path: Path) {
-<span class="fc" id="L15">        path.toFile().deleteRecursively()</span>
-<span class="fc" id="L16">    }</span>
+<span class="nc" id="L15">        path.toFile().deleteRecursively()</span>
+<span class="nc" id="L16">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -5,7 +5,7 @@ import io.hamal.lib.domain.StatePayload
 import io.hamal.lib.domain.vo.*
 import kotlinx.serialization.Serializable
 
-<span class="nc" id="L8">@Serializable</span>
+<span class="fc" id="L8">@Serializable</span>
 sealed interface Req {
     val id: ReqId
 
@@ -14,7 +14,7 @@ sealed interface Req {
 }
 
 
-<span class="nc bnc" id="L17" title="All 13 branches missed.">@Serializable</span>
+<span class="pc bnc" id="L17" title="All 13 branches missed.">@Serializable</span>
 <span class="nc" id="L18">data class InvokeOneshotReq(</span>
 <span class="nc" id="L19">    override val id: ReqId,</span>
 <span class="nc" id="L20">    override var status: ReqStatus,</span>
@@ -23,9 +23,9 @@ sealed interface Req {
 <span class="nc" id="L23">    val correlationId: CorrelationId,</span>
 <span class="nc" id="L24">    val inputs: InvocationInputs,</span>
 <span class="nc" id="L25">    val secrets: InvocationSecrets,</span>
-<span class="nc" id="L26">) : Req</span>
+<span class="fc" id="L26">) : Req</span>
 
-<span class="nc bnc" id="L28" title="All 13 branches missed.">@Serializable</span>
+<span class="pc bnc" id="L28" title="All 13 branches missed.">@Serializable</span>
 <span class="nc" id="L29">data class InvokeFixedRateReq(</span>
 <span class="nc" id="L30">    override val id: ReqId,</span>
 <span class="nc" id="L31">    override var status: ReqStatus,</span>
@@ -34,9 +34,9 @@ sealed interface Req {
 <span class="nc" id="L34">    val correlationId: CorrelationId,</span>
 <span class="nc" id="L35">    val inputs: InvocationInputs,</span>
 <span class="nc" id="L36">    val secrets: InvocationSecrets,</span>
-<span class="nc" id="L37">) : Req</span>
+<span class="fc" id="L37">) : Req</span>
 
-<span class="nc bnc" id="L39" title="All 13 branches missed.">@Serializable</span>
+<span class="pc bnc" id="L39" title="All 13 branches missed.">@Serializable</span>
 <span class="nc" id="L40">data class InvokeEventReq(</span>
 <span class="nc" id="L41">    override val id: ReqId,</span>
 <span class="nc" id="L42">    override var status: ReqStatus,</span>
@@ -45,16 +45,16 @@ sealed interface Req {
 <span class="nc" id="L45">    val correlationId: CorrelationId,</span>
 <span class="nc" id="L46">    val inputs: InvocationInputs,</span>
 <span class="nc" id="L47">    val secrets: InvocationSecrets,</span>
-<span class="nc" id="L48">) : Req</span>
+<span class="fc" id="L48">) : Req</span>
 
 
-<span class="nc bnc" id="L51" title="All 10 branches missed.">@Serializable</span>
+<span class="pc bnc" id="L51" title="All 10 branches missed.">@Serializable</span>
 <span class="nc" id="L52">data class CompleteExecReq(</span>
 <span class="nc" id="L53">    override val id: ReqId,</span>
 <span class="nc" id="L54">    override var status: ReqStatus,</span>
 <span class="nc" id="L55">    val execId: ExecId,</span>
 <span class="nc" id="L56">    val statePayload: StatePayload</span>
-<span class="nc" id="L57">) : Req</span>
+<span class="fc" id="L57">) : Req</span>
 
 
 

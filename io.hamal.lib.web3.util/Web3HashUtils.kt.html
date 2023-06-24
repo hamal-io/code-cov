@@ -4,9 +4,9 @@ import org.bouncycastle.jcajce.provider.digest.Keccak
 
 object Web3HashUtils {
     fun keccak256(bytes: ByteArray): ByteArray {
-<span class="fc" id="L7">        val instance: Keccak.Digest256 = Keccak.Digest256()</span>
-<span class="fc" id="L8">        instance.update(bytes, 0, bytes.size)</span>
-<span class="fc" id="L9">        return instance.digest()</span>
+<span class="nc" id="L7">        val instance: Keccak.Digest256 = Keccak.Digest256()</span>
+<span class="nc" id="L8">        instance.update(bytes, 0, bytes.size)</span>
+<span class="nc" id="L9">        return instance.digest()</span>
     }
 
 }

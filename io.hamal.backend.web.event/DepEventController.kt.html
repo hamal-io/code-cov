@@ -14,11 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
-<span class="nc" id="L17">@RestController</span>
-<span class="nc" id="L18">open class DepEventController(</span>
-<span class="nc" id="L19">    @Autowired private val submitRequest: SubmitRequest,</span>
-<span class="nc" id="L20">    @Autowired private val cmdService: EventCmdService&lt;*&gt;,</span>
-<span class="nc" id="L21">    @Autowired private val queryService: EventQueryService&lt;*&gt;</span>
+<span class="fc" id="L17">@RestController</span>
+<span class="fc" id="L18">open class DepEventController(</span>
+<span class="fc" id="L19">    @Autowired private val submitRequest: SubmitRequest,</span>
+<span class="fc" id="L20">    @Autowired private val cmdService: EventCmdService&lt;*&gt;,</span>
+<span class="fc" id="L21">    @Autowired private val queryService: EventQueryService&lt;*&gt;</span>
 ) {
 
     @PostMapping(&quot;/v1/topics/{topicId}/events&quot;)

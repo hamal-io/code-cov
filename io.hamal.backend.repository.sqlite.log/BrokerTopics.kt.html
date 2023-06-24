@@ -63,18 +63,18 @@ import java.util.concurrent.ConcurrentHashMap
     }
 
     override fun find(name: TopicName): SqliteLogTopic? =
-<span class="nc bnc" id="L66" title="All 2 branches missed.">        topicMapping[name] ?: connection.executeQueryOne(&quot;SELECT id, name FROM topics WHERE name = :name&quot;) {</span>
-<span class="nc" id="L67">            query {</span>
-<span class="nc" id="L68">                set(&quot;name&quot;, name.value)</span>
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">        topicMapping[name] ?: connection.executeQueryOne(&quot;SELECT id, name FROM topics WHERE name = :name&quot;) {</span>
+<span class="fc" id="L67">            query {</span>
+<span class="fc" id="L68">                set(&quot;name&quot;, name.value)</span>
             }
-<span class="nc" id="L70">            map { rs -&gt;</span>
-<span class="nc" id="L71">                SqliteLogTopic(</span>
-<span class="nc" id="L72">                    id = rs.getDomainId(&quot;id&quot;, ::TopicId),</span>
-<span class="nc" id="L73">                    name = TopicName(rs.getString(&quot;name&quot;)),</span>
-<span class="nc" id="L74">                    path = brokerTopics.path</span>
+<span class="fc" id="L70">            map { rs -&gt;</span>
+<span class="fc" id="L71">                SqliteLogTopic(</span>
+<span class="fc" id="L72">                    id = rs.getDomainId(&quot;id&quot;, ::TopicId),</span>
+<span class="fc" id="L73">                    name = TopicName(rs.getString(&quot;name&quot;)),</span>
+<span class="fc" id="L74">                    path = brokerTopics.path</span>
                 )
             }
-<span class="nc bnc" id="L77" title="All 2 branches missed.">        }?.also { topicMapping[it.name] = it }</span>
+<span class="pc bpc" id="L77" title="1 of 2 branches missed.">        }?.also { topicMapping[it.name] = it }</span>
 
     override fun find(id: TopicId): SqliteLogTopic? =
 <span class="nc bnc" id="L80" title="All 6 branches missed.">        topicMapping.values.find { it.id == id }</span>
@@ -107,19 +107,19 @@ import java.util.concurrent.ConcurrentHashMap
     }
 
     override fun clear() {
-<span class="fc" id="L110">        connection.tx {</span>
-<span class="fc" id="L111">            execute(&quot;DELETE FROM topics&quot;)</span>
-<span class="fc" id="L112">        }</span>
-<span class="fc" id="L113">    }</span>
+<span class="nc" id="L110">        connection.tx {</span>
+<span class="nc" id="L111">            execute(&quot;DELETE FROM topics&quot;)</span>
+<span class="nc" id="L112">        }</span>
+<span class="nc" id="L113">    }</span>
 
     override fun close() {
 <span class="fc" id="L116">        connection.close()</span>
 <span class="fc" id="L117">    }</span>
 
-<span class="pc bpc" id="L119" title="1 of 2 branches missed.">    override fun count() = connection.executeQueryOne(&quot;SELECT COUNT(*) as count from topics&quot;) {</span>
-<span class="fc" id="L120">        map {</span>
-<span class="fc" id="L121">            it.getLong(&quot;count&quot;).toULong()</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">    override fun count() = connection.executeQueryOne(&quot;SELECT COUNT(*) as count from topics&quot;) {</span>
+<span class="nc" id="L120">        map {</span>
+<span class="nc" id="L121">            it.getLong(&quot;count&quot;).toULong()</span>
         }
-<span class="pc" id="L123">    } ?: 0UL</span>
+<span class="nc" id="L123">    } ?: 0UL</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

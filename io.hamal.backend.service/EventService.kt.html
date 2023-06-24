@@ -29,62 +29,62 @@ interface SystemEventServiceFactory {
     fun create(): EventService
 }
 
-<span class="nc" id="L32">class DefaultSystemEventService&lt;TOPIC : LogTopic&gt;(</span>
-<span class="nc" id="L33">    val async: Async,</span>
-<span class="nc" id="L34">    val generateDomainId: GenerateDomainId,</span>
-<span class="nc" id="L35">    val logBrokerRepository: LogBrokerRepository&lt;TOPIC&gt;</span>
+<span class="fc" id="L32">class DefaultSystemEventService&lt;TOPIC : LogTopic&gt;(</span>
+<span class="fc" id="L33">    val async: Async,</span>
+<span class="fc" id="L34">    val generateDomainId: GenerateDomainId,</span>
+<span class="fc" id="L35">    val logBrokerRepository: LogBrokerRepository&lt;TOPIC&gt;</span>
 ) : SystemEventServiceFactory {
 
-<span class="nc" id="L38">    private val handlerContainer = SystemEventHandlerContainer()</span>
+<span class="fc" id="L38">    private val handlerContainer = SystemEventHandlerContainer()</span>
 
     override fun &lt;EVENT : SystemEvent&gt; register(
         clazz: KClass&lt;EVENT&gt;,
         handler: SystemEventHandler&lt;EVENT&gt;
     ): SystemEventServiceFactory {
-<span class="nc" id="L44">        handlerContainer.register(clazz, handler)</span>
-<span class="nc" id="L45">        return this</span>
+<span class="fc" id="L44">        handlerContainer.register(clazz, handler)</span>
+<span class="fc" id="L45">        return this</span>
     }
 
     override fun create(): EventService {
-<span class="nc" id="L49">        return object : EventService, DisposableBean {</span>
+<span class="fc" id="L49">        return object : EventService, DisposableBean {</span>
 
-<span class="nc" id="L51">            private val scheduledTasks = mutableListOf&lt;ScheduledFuture&lt;*&gt;&gt;()</span>
+<span class="fc" id="L51">            private val scheduledTasks = mutableListOf&lt;ScheduledFuture&lt;*&gt;&gt;()</span>
 
-<span class="nc" id="L53">            init {</span>
-<span class="nc" id="L54">                val systemEventTopics = handlerContainer.topics()</span>
-<span class="nc" id="L55">                    .map { TopicName(it) }</span>
-<span class="nc" id="L56">                    .map { topicName -&gt;</span>
-<span class="nc" id="L57">                        val topicId = generateDomainId(::TopicId)</span>
-<span class="nc bnc" id="L58" title="All 2 branches missed.">                        logBrokerRepository.find(topicName) ?: logBrokerRepository.create(</span>
-<span class="nc" id="L59">                            CmdId(topicId),</span>
-<span class="nc" id="L60">                            CreateTopic.TopicToCreate(topicId, topicName)</span>
+<span class="fc" id="L53">            init {</span>
+<span class="fc" id="L54">                val systemEventTopics = handlerContainer.topics()</span>
+<span class="fc" id="L55">                    .map { TopicName(it) }</span>
+<span class="fc" id="L56">                    .map { topicName -&gt;</span>
+<span class="fc" id="L57">                        val topicId = generateDomainId(::TopicId)</span>
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">                        logBrokerRepository.find(topicName) ?: logBrokerRepository.create(</span>
+<span class="fc" id="L59">                            CmdId(topicId),</span>
+<span class="fc" id="L60">                            CreateTopic.TopicToCreate(topicId, topicName)</span>
                         )
                     }
 
-<span class="nc" id="L64">                systemEventTopics.forEach { topic -&gt;</span>
-<span class="nc" id="L65">                    val consumer = ProtobufLogConsumer(</span>
-<span class="nc" id="L66">                        GroupId(&quot;event-service&quot;),</span>
-<span class="nc" id="L67">                        topic,</span>
-<span class="nc" id="L68">                        logBrokerRepository,</span>
+<span class="fc" id="L64">                systemEventTopics.forEach { topic -&gt;</span>
+<span class="fc" id="L65">                    val consumer = ProtobufLogConsumer(</span>
+<span class="fc" id="L66">                        GroupId(&quot;event-service&quot;),</span>
+<span class="fc" id="L67">                        topic,</span>
+<span class="fc" id="L68">                        logBrokerRepository,</span>
                         SystemEvent::class
                     )
 
-<span class="nc" id="L72">                    scheduledTasks.add(</span>
-<span class="nc" id="L73">                        async.atFixedRate(1.milliseconds) {</span>
-<span class="nc" id="L74">                            consumer.consume(10) { chunkId, evt -&gt;</span>
-<span class="nc" id="L75">                                handlerContainer[evt::class].forEach { handler -&gt;</span>
-<span class="nc" id="L76">                                    try {</span>
-<span class="nc" id="L77">                                        val cmdId = CmdId(md5(&quot;${evt.topic}-${chunkId.value.value}&quot;))</span>
-<span class="nc" id="L78">                                        handler.handle(cmdId, evt)</span>
+<span class="fc" id="L72">                    scheduledTasks.add(</span>
+<span class="fc" id="L73">                        async.atFixedRate(1.milliseconds) {</span>
+<span class="fc" id="L74">                            consumer.consume(10) { chunkId, evt -&gt;</span>
+<span class="fc" id="L75">                                handlerContainer[evt::class].forEach { handler -&gt;</span>
+<span class="fc" id="L76">                                    try {</span>
+<span class="fc" id="L77">                                        val cmdId = CmdId(md5(&quot;${evt.topic}-${chunkId.value.value}&quot;))</span>
+<span class="fc" id="L78">                                        handler.handle(cmdId, evt)</span>
 <span class="nc" id="L79">                                    } catch (t: Throwable) {</span>
 <span class="nc" id="L80">                                        throw Error(t)</span>
                                     }
-<span class="nc" id="L82">                                }</span>
-<span class="nc" id="L83">                            }</span>
-<span class="nc" id="L84">                        },</span>
+<span class="fc" id="L82">                                }</span>
+<span class="fc" id="L83">                            }</span>
+<span class="fc" id="L84">                        },</span>
                     )
-<span class="nc" id="L86">                }</span>
-<span class="nc" id="L87">            }</span>
+<span class="fc" id="L86">                }</span>
+<span class="fc" id="L87">            }</span>
 
             override fun cancel() {
 <span class="nc" id="L90">                scheduledTasks.forEach {</span>

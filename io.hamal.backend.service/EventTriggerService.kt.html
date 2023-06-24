@@ -20,28 +20,28 @@ import org.springframework.stereotype.Service
 import java.util.concurrent.ScheduledFuture
 import kotlin.time.Duration.Companion.milliseconds
 
-<span class="nc" id="L23">@Service</span>
+<span class="fc" id="L23">@Service</span>
 class EventTriggerService&lt;TOPIC : LogTopic&gt;
-<span class="nc" id="L25">@Autowired constructor(</span>
-<span class="nc" id="L26">    internal val eventBrokerRepository: LogBrokerRepository&lt;TOPIC&gt;,</span>
-<span class="nc" id="L27">    internal val triggerQueryService: TriggerQueryService,</span>
-<span class="nc" id="L28">    internal val submitRequest: SubmitRequest,</span>
-<span class="nc" id="L29">    internal val generateDomainId: GenerateDomainId,</span>
-<span class="nc" id="L30">    internal val async: Async</span>
+<span class="fc" id="L25">@Autowired constructor(</span>
+<span class="pc" id="L26">    internal val eventBrokerRepository: LogBrokerRepository&lt;TOPIC&gt;,</span>
+<span class="pc" id="L27">    internal val triggerQueryService: TriggerQueryService,</span>
+<span class="pc" id="L28">    internal val submitRequest: SubmitRequest,</span>
+<span class="pc" id="L29">    internal val generateDomainId: GenerateDomainId,</span>
+<span class="pc" id="L30">    internal val async: Async</span>
 ) {
 
-<span class="nc" id="L33">    private val scheduledTasks = mutableListOf&lt;ScheduledFuture&lt;*&gt;&gt;()</span>
+<span class="fc" id="L33">    private val scheduledTasks = mutableListOf&lt;ScheduledFuture&lt;*&gt;&gt;()</span>
 
-<span class="nc" id="L35">    val triggerConsumers = mutableMapOf&lt;TriggerId, ProtobufBatchConsumer&lt;TOPIC, Event&gt;&gt;()</span>
+<span class="pc" id="L35">    val triggerConsumers = mutableMapOf&lt;TriggerId, ProtobufBatchConsumer&lt;TOPIC, Event&gt;&gt;()</span>
 
 
     @PostConstruct
     fun setup() {
-<span class="nc" id="L40">        triggerQueryService.list(</span>
-<span class="nc" id="L41">            afterId = TriggerId(0),</span>
-<span class="nc" id="L42">            types = setOf(TriggerType.Event),</span>
-<span class="nc" id="L43">            limit = 10</span>
-<span class="nc" id="L44">        ).forEach { trigger -&gt;</span>
+<span class="fc" id="L40">        triggerQueryService.list(</span>
+<span class="fc" id="L41">            afterId = TriggerId(0),</span>
+<span class="fc" id="L42">            types = setOf(TriggerType.Event),</span>
+<span class="fc" id="L43">            limit = 10</span>
+<span class="fc" id="L44">        ).forEach { trigger -&gt;</span>
 <span class="nc" id="L45">            println(&quot;start $trigger&quot;)</span>
 <span class="nc bnc" id="L46" title="All 2 branches missed.">            require(trigger is EventTrigger)</span>
 
@@ -77,7 +77,7 @@ class EventTriggerService&lt;TOPIC : LogTopic&gt;
 <span class="nc" id="L77">                },</span>
             )
 <span class="nc" id="L79">        }</span>
-<span class="nc" id="L80">    }</span>
+<span class="fc" id="L80">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

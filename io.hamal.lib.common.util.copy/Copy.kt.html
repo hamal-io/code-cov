@@ -9,22 +9,22 @@ import internal.copy.JavaValueObjectStrategy.CopyStrategy
 object Copy {
 
     operator fun invoke(source: Any, target: Any): Any {
-<span class="fc" id="L12">        return internal.copy.JavaCopy.copyFields(</span>
-<span class="fc" id="L13">            source, target, setOf(</span>
-<span class="fc" id="L14">                primitiveFieldStrategy, immutableFieldStrategy, enumFieldStrategy, valueObjectStrategy</span>
+<span class="nc" id="L12">        return internal.copy.JavaCopy.copyFields(</span>
+<span class="nc" id="L13">            source, target, setOf(</span>
+<span class="nc" id="L14">                primitiveFieldStrategy, immutableFieldStrategy, enumFieldStrategy, valueObjectStrategy</span>
             )
         );
     }
 
-<span class="fc" id="L19">    internal val immutableClasses: Set&lt;Class&lt;*&gt;&gt; = mutableSetOf()</span>
+<span class="nc" id="L19">    internal val immutableClasses: Set&lt;Class&lt;*&gt;&gt; = mutableSetOf()</span>
 
-<span class="fc" id="L21">    private val primitiveFieldStrategy = internal.copy.JavaPrimitiveStrategy()</span>
-<span class="fc" id="L22">    private val immutableFieldStrategy = internal.copy.JavaImmutableStrategy(immutableClasses)</span>
-<span class="fc" id="L23">    private val enumFieldStrategy = internal.copy.JavaEnumStrategy()</span>
-<span class="fc" id="L24">    private val valueObjectStrategy = internal.copy.JavaValueObjectStrategy(</span>
-<span class="fc" id="L25">        CopyStrategy(</span>
-<span class="fc" id="L26">            listOf(</span>
-<span class="fc" id="L27">                primitiveFieldStrategy, immutableFieldStrategy, enumFieldStrategy</span>
+<span class="nc" id="L21">    private val primitiveFieldStrategy = internal.copy.JavaPrimitiveStrategy()</span>
+<span class="nc" id="L22">    private val immutableFieldStrategy = internal.copy.JavaImmutableStrategy(immutableClasses)</span>
+<span class="nc" id="L23">    private val enumFieldStrategy = internal.copy.JavaEnumStrategy()</span>
+<span class="nc" id="L24">    private val valueObjectStrategy = internal.copy.JavaValueObjectStrategy(</span>
+<span class="nc" id="L25">        CopyStrategy(</span>
+<span class="nc" id="L26">            listOf(</span>
+<span class="nc" id="L27">                primitiveFieldStrategy, immutableFieldStrategy, enumFieldStrategy</span>
             )
         )
     )

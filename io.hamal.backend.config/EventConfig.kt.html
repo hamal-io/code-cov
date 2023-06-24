@@ -9,26 +9,26 @@ import io.hamal.lib.domain.vo.port.GenerateDomainId
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
-<span class="nc" id="L12">@Configuration</span>
-<span class="nc" id="L13">open class EventConfig {</span>
+<span class="fc" id="L12">@Configuration</span>
+<span class="fc" id="L13">open class EventConfig {</span>
     @Bean
     open fun systemEventEmitter(
         systemEventBrokerRepository: LogBrokerRepository&lt;*&gt;,
         generateDomainId: GenerateDomainId
-<span class="nc" id="L18">    ): SystemEventEmitter&lt;*&gt; = SystemEventEmitter(</span>
-<span class="nc" id="L19">        generateDomainId,</span>
-<span class="nc" id="L20">        systemEventBrokerRepository</span>
-<span class="nc" id="L21">    )</span>
+<span class="fc" id="L18">    ): SystemEventEmitter&lt;*&gt; = SystemEventEmitter(</span>
+<span class="fc" id="L19">        generateDomainId,</span>
+<span class="fc" id="L20">        systemEventBrokerRepository</span>
+<span class="fc" id="L21">    )</span>
 
     @Bean
     open fun systemEventProcessorFactory(
         async: Async,
         generateDomainId: GenerateDomainId,
         systemEventBrokerRepository: LogBrokerRepository&lt;*&gt;
-<span class="nc" id="L28">    ): SystemEventServiceFactory = DefaultSystemEventService(</span>
-<span class="nc" id="L29">        async,</span>
-<span class="nc" id="L30">        generateDomainId,</span>
-<span class="nc" id="L31">        systemEventBrokerRepository</span>
-<span class="nc" id="L32">    )</span>
+<span class="fc" id="L28">    ): SystemEventServiceFactory = DefaultSystemEventService(</span>
+<span class="fc" id="L29">        async,</span>
+<span class="fc" id="L30">        generateDomainId,</span>
+<span class="fc" id="L31">        systemEventBrokerRepository</span>
+<span class="fc" id="L32">    )</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

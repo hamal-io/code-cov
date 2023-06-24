@@ -22,10 +22,10 @@ import org.springframework.web.bind.annotation.*
 import kotlin.time.*
 
 
-<span class="nc" id="L25">@RestController</span>
-<span class="nc" id="L26">open class TriggerController(</span>
-<span class="nc" id="L27">    @Autowired val queryService: TriggerQueryService,</span>
-<span class="nc" id="L28">    @Autowired val cmdService: TriggerCmdService</span>
+<span class="fc" id="L25">@RestController</span>
+<span class="fc" id="L26">open class TriggerController(</span>
+<span class="pc" id="L27">    @Autowired val queryService: TriggerQueryService,</span>
+<span class="pc" id="L28">    @Autowired val cmdService: TriggerCmdService</span>
 ) {
     @PostMapping(&quot;/v1/triggers&quot;)
     fun createTrigger(

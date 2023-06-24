@@ -16,7 +16,7 @@ interface KeyedOnce&lt;KEY : Any, VALUE : Any&gt; {
         }
 
         fun &lt;KEY : Any, VALUE : Any&gt; lru(capacity: Int): KeyedOnce&lt;KEY, VALUE&gt; {
-<span class="fc" id="L19">            return LruImpl(capacity)</span>
+<span class="nc" id="L19">            return LruImpl(capacity)</span>
         }
     }
 
@@ -37,12 +37,12 @@ interface KeyedOnce&lt;KEY : Any, VALUE : Any&gt; {
 <span class="nc" id="L37">        }</span>
     }
 
-<span class="fc" id="L40">    class LruImpl&lt;KEY : Any, VALUE : Any&gt;(maxCapacity: Int) : KeyedOnce&lt;KEY, VALUE&gt; {</span>
-<span class="fc" id="L41">        private val onceStore: LruCache&lt;KEY, Once&lt;VALUE&gt;&gt; = DefaultLruCache(maxCapacity)</span>
+<span class="nc" id="L40">    class LruImpl&lt;KEY : Any, VALUE : Any&gt;(maxCapacity: Int) : KeyedOnce&lt;KEY, VALUE&gt; {</span>
+<span class="nc" id="L41">        private val onceStore: LruCache&lt;KEY, Once&lt;VALUE&gt;&gt; = DefaultLruCache(maxCapacity)</span>
 
         override fun invoke(key: KEY, fn: (key: KEY) -&gt; VALUE): VALUE {
-<span class="fc" id="L44">            onceStore.putIfAbsent(key, Once.default())</span>
-<span class="fc" id="L45">            return onceStore[key]{ fn(key) }</span>
+<span class="nc" id="L44">            onceStore.putIfAbsent(key, Once.default())</span>
+<span class="nc" id="L45">            return onceStore[key]{ fn(key) }</span>
         }
 
         override fun keys(): Set&lt;KEY&gt; {

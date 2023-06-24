@@ -26,21 +26,21 @@ import kotlin.concurrent.withLock
     }
 
     override fun find(name: TopicName): MemoryLogTopic? {
-<span class="nc" id="L29">        return lock.withLock {</span>
-<span class="nc" id="L30">            topicMapping[name]</span>
+<span class="fc" id="L29">        return lock.withLock {</span>
+<span class="fc" id="L30">            topicMapping[name]</span>
         }
     }
 
-<span class="nc" id="L34">    override fun find(id: TopicId): MemoryLogTopic? = lock.withLock {</span>
-<span class="nc bnc" id="L35" title="All 4 branches missed.">        topicMapping.values.find { it.id == id }</span>
-<span class="nc" id="L36">    }</span>
+<span class="fc" id="L34">    override fun find(id: TopicId): MemoryLogTopic? = lock.withLock {</span>
+<span class="pc bpc" id="L35" title="2 of 4 branches missed.">        topicMapping.values.find { it.id == id }</span>
+<span class="fc" id="L36">    }</span>
 
-<span class="nc" id="L38">    override fun query(): List&lt;MemoryLogTopic&gt; = lock.withLock {</span>
-<span class="nc" id="L39">        topicMapping.values.toList()</span>
-<span class="nc" id="L40">    }</span>
+<span class="fc" id="L38">    override fun query(): List&lt;MemoryLogTopic&gt; = lock.withLock {</span>
+<span class="fc" id="L39">        topicMapping.values.toList()</span>
+<span class="fc" id="L40">    }</span>
 
     override fun count(): ULong {
-<span class="fc" id="L43">        return lock.withLock { topicMapping.size.toULong() }</span>
+<span class="nc" id="L43">        return lock.withLock { topicMapping.size.toULong() }</span>
     }
 
     fun clear() {

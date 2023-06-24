@@ -12,25 +12,25 @@ interface HttpOperations {
     fun put(url: String): HttpRequestWithBody
 }
 
-<span class="nc" id="L15">class HttpTemplate(</span>
-<span class="nc" id="L16">    private var baseUrl: String = &quot;&quot;,</span>
-<span class="nc" id="L17">    private val headerFactory: HttpMutableHeaders.() -&gt; Unit = {},</span>
-<span class="nc" id="L18">    private var serdeFactory: HttpSerdeFactory.() -&gt; Unit = {},</span>
-<span class="nc" id="L19">    private var httpClientFactory: HttpClientBuilder.() -&gt; Unit = {}</span>
+<span class="fc" id="L15">class HttpTemplate(</span>
+<span class="pc" id="L16">    private var baseUrl: String = &quot;&quot;,</span>
+<span class="fc" id="L17">    private val headerFactory: HttpMutableHeaders.() -&gt; Unit = {},</span>
+<span class="fc" id="L18">    private var serdeFactory: HttpSerdeFactory.() -&gt; Unit = {},</span>
+<span class="fc" id="L19">    private var httpClientFactory: HttpClientBuilder.() -&gt; Unit = {}</span>
 ) : HttpOperations {
-<span class="nc" id="L21">    override fun delete(url: String): HttpRequest = requestWith(Delete, url)</span>
-<span class="nc" id="L22">    override fun get(url: String): HttpRequest = requestWith(Get, url)</span>
-<span class="nc" id="L23">    override fun patch(url: String): HttpRequestWithBody = requestWith(Patch, url)</span>
-<span class="nc" id="L24">    override fun post(url: String): HttpRequestWithBody = requestWith(Post, url)</span>
-<span class="nc" id="L25">    override fun put(url: String): HttpRequestWithBody = requestWith(Put, url)</span>
+<span class="fc" id="L21">    override fun delete(url: String): HttpRequest = requestWith(Delete, url)</span>
+<span class="fc" id="L22">    override fun get(url: String): HttpRequest = requestWith(Get, url)</span>
+<span class="fc" id="L23">    override fun patch(url: String): HttpRequestWithBody = requestWith(Patch, url)</span>
+<span class="fc" id="L24">    override fun post(url: String): HttpRequestWithBody = requestWith(Post, url)</span>
+<span class="fc" id="L25">    override fun put(url: String): HttpRequestWithBody = requestWith(Put, url)</span>
     private fun requestWith(method: HttpMethod, url: String): DefaultHttpRequest {
-<span class="nc" id="L27">        return DefaultHttpRequest(</span>
-<span class="nc" id="L28">            method = method,</span>
-<span class="nc" id="L29">            url = baseUrl + url,</span>
-<span class="nc" id="L30">            headers = HttpMutableHeaders().apply(headerFactory),</span>
-<span class="nc" id="L31">            serdeFactory = DefaultHttpSerdeFactory.apply(serdeFactory),</span>
-<span class="nc" id="L32">            client = HttpClientBuilder.create().apply(httpClientFactory).build()</span>
+<span class="fc" id="L27">        return DefaultHttpRequest(</span>
+<span class="fc" id="L28">            method = method,</span>
+<span class="fc" id="L29">            url = baseUrl + url,</span>
+<span class="fc" id="L30">            headers = HttpMutableHeaders().apply(headerFactory),</span>
+<span class="fc" id="L31">            serdeFactory = DefaultHttpSerdeFactory.apply(serdeFactory),</span>
+<span class="fc" id="L32">            client = HttpClientBuilder.create().apply(httpClientFactory).build()</span>
         )
     }
-<span class="nc" id="L35">}</span>
+<span class="fc" id="L35">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

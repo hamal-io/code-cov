@@ -9,44 +9,44 @@ interface KeyedOnceEvery&lt;KEY : Any, VALUE : Any&gt; {
     operator fun invoke(key: KEY, fn: () -&gt; VALUE): VALUE
 
     companion object {
-<span class="fc" id="L12">        fun &lt;KEY : Any, VALUE : Any&gt; default(</span>
+<span class="nc" id="L12">        fun &lt;KEY : Any, VALUE : Any&gt; default(</span>
             every: Duration,
-<span class="fc" id="L14">            instantSupplier: InstantSupplier = InstantSupplier.default()</span>
+<span class="nc" id="L14">            instantSupplier: InstantSupplier = InstantSupplier.default()</span>
         ): KeyedOnceEvery&lt;KEY, VALUE&gt; {
-<span class="fc" id="L16">            return DefaultImpl(every, instantSupplier)</span>
+<span class="nc" id="L16">            return DefaultImpl(every, instantSupplier)</span>
         }
 
-<span class="fc" id="L19">        fun &lt;KEY : Any, VALUE : Any&gt; lru(</span>
+<span class="nc" id="L19">        fun &lt;KEY : Any, VALUE : Any&gt; lru(</span>
             capacity: Int,
             every: Duration,
-<span class="fc" id="L22">            instantSupplier: InstantSupplier = InstantSupplier.default()</span>
+<span class="nc" id="L22">            instantSupplier: InstantSupplier = InstantSupplier.default()</span>
         ): KeyedOnceEvery&lt;KEY, VALUE&gt; {
-<span class="fc" id="L24">            return LruImpl(every, instantSupplier, capacity)</span>
+<span class="nc" id="L24">            return LruImpl(every, instantSupplier, capacity)</span>
         }
     }
 
-<span class="fc" id="L28">    class DefaultImpl&lt;KEY : Any, VALUE : Any&gt;(</span>
-<span class="fc" id="L29">        private val every: Duration,</span>
-<span class="fc" id="L30">        private val instantSupplier: InstantSupplier</span>
+<span class="nc" id="L28">    class DefaultImpl&lt;KEY : Any, VALUE : Any&gt;(</span>
+<span class="nc" id="L29">        private val every: Duration,</span>
+<span class="nc" id="L30">        private val instantSupplier: InstantSupplier</span>
     ) : KeyedOnceEvery&lt;KEY, VALUE&gt; {
-<span class="fc" id="L32">        private val onceStore: ConcurrentHashMap&lt;KEY, OnceEvery&lt;VALUE&gt;&gt; = ConcurrentHashMap&lt;KEY, OnceEvery&lt;VALUE&gt;&gt;()</span>
+<span class="nc" id="L32">        private val onceStore: ConcurrentHashMap&lt;KEY, OnceEvery&lt;VALUE&gt;&gt; = ConcurrentHashMap&lt;KEY, OnceEvery&lt;VALUE&gt;&gt;()</span>
 
         override fun invoke(key: KEY, fn: () -&gt; VALUE): VALUE {
-<span class="fc" id="L35">            onceStore.putIfAbsent(key, OnceEvery.default(every, instantSupplier))</span>
-<span class="fc" id="L36">            return onceStore[key]!!.invoke(fn)</span>
+<span class="nc" id="L35">            onceStore.putIfAbsent(key, OnceEvery.default(every, instantSupplier))</span>
+<span class="nc" id="L36">            return onceStore[key]!!.invoke(fn)</span>
         }
     }
 
-<span class="fc" id="L40">    class LruImpl&lt;KEY : Any, VALUE : Any&gt;(</span>
-<span class="fc" id="L41">        private val every: Duration,</span>
-<span class="fc" id="L42">        private val instantSupplier: InstantSupplier,</span>
-<span class="fc" id="L43">        private val maxCapacity: Int</span>
+<span class="nc" id="L40">    class LruImpl&lt;KEY : Any, VALUE : Any&gt;(</span>
+<span class="nc" id="L41">        private val every: Duration,</span>
+<span class="nc" id="L42">        private val instantSupplier: InstantSupplier,</span>
+<span class="nc" id="L43">        private val maxCapacity: Int</span>
     ) : KeyedOnceEvery&lt;KEY, VALUE&gt; {
-<span class="fc" id="L45">        private val onceStore: LruCache&lt;KEY, OnceEvery&lt;VALUE&gt;&gt; = DefaultLruCache(maxCapacity)</span>
+<span class="nc" id="L45">        private val onceStore: LruCache&lt;KEY, OnceEvery&lt;VALUE&gt;&gt; = DefaultLruCache(maxCapacity)</span>
 
         override fun invoke(key: KEY, fn: () -&gt; VALUE): VALUE {
-<span class="fc" id="L48">            onceStore.putIfAbsent(key, OnceEvery.default(every, instantSupplier))</span>
-<span class="fc" id="L49">            return onceStore[key].invoke(fn)</span>
+<span class="nc" id="L48">            onceStore.putIfAbsent(key, OnceEvery.default(every, instantSupplier))</span>
+<span class="nc" id="L49">            return onceStore[key].invoke(fn)</span>
         }
     }
 }

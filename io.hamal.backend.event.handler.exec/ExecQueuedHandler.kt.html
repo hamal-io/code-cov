@@ -5,10 +5,10 @@ import io.hamal.backend.event.handler.SystemEventHandler
 import io.hamal.lib.domain.CmdId
 import logger
 
-<span class="nc" id="L8">class ExecQueuedHandler : SystemEventHandler&lt;ExecutionQueuedEvent&gt; {</span>
-<span class="nc" id="L9">    private val log = logger(ExecQueuedHandler::class)</span>
+<span class="fc" id="L8">class ExecQueuedHandler : SystemEventHandler&lt;ExecutionQueuedEvent&gt; {</span>
+<span class="fc" id="L9">    private val log = logger(ExecQueuedHandler::class)</span>
     override fun handle(cmdId: CmdId, evt: ExecutionQueuedEvent) {
-<span class="nc" id="L11">        log.debug(&quot;Handle: $evt&quot;)</span>
-<span class="nc" id="L12">    }</span>
+<span class="fc" id="L11">        log.debug(&quot;Handle: $evt&quot;)</span>
+<span class="fc" id="L12">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

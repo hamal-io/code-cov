@@ -19,12 +19,12 @@ internal interface HttpRequestFacade {
 }
 
 
-<span class="nc" id="L22">internal sealed class HttpBaseRequestFacade(</span>
-<span class="nc" id="L23">    protected val url: String,</span>
-<span class="nc" id="L24">    protected val headers: HttpHeaders,</span>
-<span class="nc" id="L25">    protected val parameters: List&lt;HttpParameter&gt;,</span>
-<span class="nc" id="L26">    protected val serdeFactory: HttpSerdeFactory,</span>
-<span class="nc" id="L27">    protected val client: HttpClient</span>
+<span class="fc" id="L22">internal sealed class HttpBaseRequestFacade(</span>
+<span class="fc" id="L23">    protected val url: String,</span>
+<span class="pc" id="L24">    protected val headers: HttpHeaders,</span>
+<span class="fc" id="L25">    protected val parameters: List&lt;HttpParameter&gt;,</span>
+<span class="pc" id="L26">    protected val serdeFactory: HttpSerdeFactory,</span>
+<span class="pc" id="L27">    protected val client: HttpClient</span>
 ) : HttpRequestFacade {
 
     private lateinit var response: HttpResponse
@@ -32,104 +32,104 @@ internal interface HttpRequestFacade {
     protected abstract fun buildRequest(): HttpRequestBase
 
     override fun execute() {
-<span class="nc" id="L35">        val request: HttpRequestBase = buildRequest()</span>
-<span class="nc" id="L36">        headers.toBasicHeaders().forEach(request::addHeader)</span>
+<span class="fc" id="L35">        val request: HttpRequestBase = buildRequest()</span>
+<span class="fc" id="L36">        headers.toBasicHeaders().forEach(request::addHeader)</span>
 
-<span class="nc" id="L38">        val httpResponse: org.apache.http.HttpResponse = client.execute(request)</span>
-<span class="nc" id="L39">        val httpHeaders = HttpHeaders(httpResponse.allHeaders.associateBy({ it.name }, { it.value }))</span>
+<span class="fc" id="L38">        val httpResponse: org.apache.http.HttpResponse = client.execute(request)</span>
+<span class="fc" id="L39">        val httpHeaders = HttpHeaders(httpResponse.allHeaders.associateBy({ it.name }, { it.value }))</span>
 
-<span class="nc" id="L41">        val statusCode = HttpStatusCode.of(httpResponse.statusLine.statusCode)</span>
-<span class="nc bnc" id="L42" title="All 3 branches missed.">        response = when (statusCode) {</span>
-<span class="nc" id="L43">            Ok, Created, Accepted -&gt; SuccessHttpResponse(</span>
-<span class="nc" id="L44">                statusCode = statusCode,</span>
-<span class="nc" id="L45">                headers = httpHeaders,</span>
-<span class="nc bnc" id="L46" title="All 4 branches missed.">                inputStream = httpResponse.entity.content?.let(HttpUtils::copyStream) ?: InputStream.nullInputStream(),</span>
-<span class="nc" id="L47">                contentDeserializer = serdeFactory.contentDeserializer</span>
+<span class="fc" id="L41">        val statusCode = HttpStatusCode.of(httpResponse.statusLine.statusCode)</span>
+<span class="fc bfc" id="L42" title="All 3 branches covered.">        response = when (statusCode) {</span>
+<span class="fc" id="L43">            Ok, Created, Accepted -&gt; SuccessHttpResponse(</span>
+<span class="fc" id="L44">                statusCode = statusCode,</span>
+<span class="fc" id="L45">                headers = httpHeaders,</span>
+<span class="pc bpc" id="L46" title="2 of 4 branches missed.">                inputStream = httpResponse.entity.content?.let(HttpUtils::copyStream) ?: InputStream.nullInputStream(),</span>
+<span class="fc" id="L47">                contentDeserializer = serdeFactory.contentDeserializer</span>
             )
 
-<span class="nc" id="L50">            NoContent -&gt; NoContentHttpResponse(</span>
-<span class="nc" id="L51">                statusCode = statusCode,</span>
-<span class="nc" id="L52">                headers = httpHeaders</span>
+<span class="fc" id="L50">            NoContent -&gt; NoContentHttpResponse(</span>
+<span class="fc" id="L51">                statusCode = statusCode,</span>
+<span class="fc" id="L52">                headers = httpHeaders</span>
             )
 
-<span class="nc" id="L55">            else -&gt; ErrorHttpResponse(</span>
-<span class="nc" id="L56">                statusCode = statusCode,</span>
-<span class="nc" id="L57">                headers = httpHeaders,</span>
-<span class="nc bnc" id="L58" title="All 4 branches missed.">                inputStream = httpResponse.entity.content?.let(HttpUtils::copyStream) ?: InputStream.nullInputStream(),</span>
-<span class="nc" id="L59">                errorDeserializer = serdeFactory.errorDeserializer</span>
+<span class="fc" id="L55">            else -&gt; ErrorHttpResponse(</span>
+<span class="fc" id="L56">                statusCode = statusCode,</span>
+<span class="fc" id="L57">                headers = httpHeaders,</span>
+<span class="pc bpc" id="L58" title="2 of 4 branches missed.">                inputStream = httpResponse.entity.content?.let(HttpUtils::copyStream) ?: InputStream.nullInputStream(),</span>
+<span class="fc" id="L59">                errorDeserializer = serdeFactory.errorDeserializer</span>
             )
         }
 
-<span class="nc" id="L63">        request.releaseConnection()</span>
-<span class="nc" id="L64">    }</span>
+<span class="fc" id="L63">        request.releaseConnection()</span>
+<span class="fc" id="L64">    }</span>
 
-<span class="nc bnc" id="L66" title="All 2 branches missed.">    override fun response(): HttpResponse = response</span>
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">    override fun response(): HttpResponse = response</span>
 }
 
-<span class="nc" id="L69">internal class HttpDeleteRequestFacade(</span>
+<span class="fc" id="L69">internal class HttpDeleteRequestFacade(</span>
     url: String,
     headers: HttpHeaders,
     parameters: List&lt;HttpParameter&gt;,
     serdeFactory: HttpSerdeFactory,
     client: HttpClient
-<span class="nc" id="L75">) : HttpBaseRequestFacade(</span>
-<span class="nc" id="L76">    url = url,</span>
-<span class="nc" id="L77">    headers = headers,</span>
-<span class="nc" id="L78">    parameters = parameters,</span>
-<span class="nc" id="L79">    serdeFactory = serdeFactory,</span>
-<span class="nc" id="L80">    client = client</span>
+<span class="fc" id="L75">) : HttpBaseRequestFacade(</span>
+<span class="fc" id="L76">    url = url,</span>
+<span class="fc" id="L77">    headers = headers,</span>
+<span class="fc" id="L78">    parameters = parameters,</span>
+<span class="fc" id="L79">    serdeFactory = serdeFactory,</span>
+<span class="fc" id="L80">    client = client</span>
 ) {
     override fun buildRequest(): HttpRequestBase {
-<span class="nc" id="L83">        return HttpDelete(&quot;${url}${parameters.toQueryString()}&quot;)</span>
+<span class="fc" id="L83">        return HttpDelete(&quot;${url}${parameters.toQueryString()}&quot;)</span>
     }
 }
 
-<span class="nc" id="L87">internal class HttpGetRequestFacade(</span>
+<span class="fc" id="L87">internal class HttpGetRequestFacade(</span>
     url: String,
     headers: HttpHeaders,
     parameters: List&lt;HttpParameter&gt;,
     serdeFactory: HttpSerdeFactory,
     client: HttpClient
-<span class="nc" id="L93">) : HttpBaseRequestFacade(</span>
-<span class="nc" id="L94">    url = url,</span>
-<span class="nc" id="L95">    headers = headers,</span>
-<span class="nc" id="L96">    parameters = parameters,</span>
-<span class="nc" id="L97">    serdeFactory = serdeFactory,</span>
-<span class="nc" id="L98">    client = client</span>
+<span class="fc" id="L93">) : HttpBaseRequestFacade(</span>
+<span class="fc" id="L94">    url = url,</span>
+<span class="fc" id="L95">    headers = headers,</span>
+<span class="fc" id="L96">    parameters = parameters,</span>
+<span class="fc" id="L97">    serdeFactory = serdeFactory,</span>
+<span class="fc" id="L98">    client = client</span>
 ) {
     override fun buildRequest(): HttpRequestBase {
-<span class="nc" id="L101">        return HttpGet(&quot;${url}${parameters.toQueryString()}&quot;)</span>
+<span class="fc" id="L101">        return HttpGet(&quot;${url}${parameters.toQueryString()}&quot;)</span>
     }
 }
 
 
-<span class="nc" id="L106">internal sealed class HttpRequestWithBodyFacade(</span>
+<span class="fc" id="L106">internal sealed class HttpRequestWithBodyFacade(</span>
     url: String,
     headers: HttpHeaders,
     parameters: List&lt;HttpParameter&gt;,
-<span class="nc" id="L110">    val bodies: List&lt;HttpBody&gt;,</span>
+<span class="pc" id="L110">    val bodies: List&lt;HttpBody&gt;,</span>
     serdeFactory: HttpSerdeFactory,
     client: HttpClient
-<span class="nc" id="L113">) : HttpBaseRequestFacade(</span>
-<span class="nc" id="L114">    url = url,</span>
-<span class="nc" id="L115">    headers = headers,</span>
-<span class="nc" id="L116">    parameters = parameters,</span>
-<span class="nc" id="L117">    serdeFactory = serdeFactory,</span>
-<span class="nc" id="L118">    client = client</span>
+<span class="fc" id="L113">) : HttpBaseRequestFacade(</span>
+<span class="fc" id="L114">    url = url,</span>
+<span class="fc" id="L115">    headers = headers,</span>
+<span class="fc" id="L116">    parameters = parameters,</span>
+<span class="fc" id="L117">    serdeFactory = serdeFactory,</span>
+<span class="fc" id="L118">    client = client</span>
 ) {
     protected fun createEntity(): HttpEntity {
-<span class="nc bnc" id="L121" title="All 3 branches missed.">        return when (bodies.size) {</span>
-<span class="nc" id="L122">            0 -&gt; UrlEncodedFormEntity(</span>
-<span class="nc" id="L123">                parameters.map { BasicNameValuePair(it.key, it.value) },</span>
-<span class="nc" id="L124">                Charset.forName(</span>
-<span class="nc" id="L125">                    &quot;UTF-8&quot;</span>
+<span class="pc bpc" id="L121" title="1 of 3 branches missed.">        return when (bodies.size) {</span>
+<span class="fc" id="L122">            0 -&gt; UrlEncodedFormEntity(</span>
+<span class="fc" id="L123">                parameters.map { BasicNameValuePair(it.key, it.value) },</span>
+<span class="fc" id="L124">                Charset.forName(</span>
+<span class="fc" id="L125">                    &quot;UTF-8&quot;</span>
                 )
             )
 
-<span class="nc" id="L129">            1 -&gt; when (val body = bodies.first()) {</span>
-<span class="nc bnc" id="L130" title="All 2 branches missed.">                is HttpStringBody -&gt; ByteArrayEntity(body.content.toByteArray(), ContentType.create(body.contentType))</span>
+<span class="fc" id="L129">            1 -&gt; when (val body = bodies.first()) {</span>
+<span class="pc bpc" id="L130" title="1 of 2 branches missed.">                is HttpStringBody -&gt; ByteArrayEntity(body.content.toByteArray(), ContentType.create(body.contentType))</span>
 <span class="nc bnc" id="L131" title="All 2 branches missed.">                is HttpByteArrayBody -&gt; ByteArrayEntity(body.content, ContentType.create(body.contentType))</span>
-<span class="nc" id="L132">                else -&gt; TODO()</span>
+<span class="pc" id="L132">                else -&gt; TODO()</span>
             }
 
 <span class="nc" id="L135">            else -&gt; TODO()</span>
@@ -138,68 +138,68 @@ internal interface HttpRequestFacade {
 }
 
 
-<span class="nc" id="L141">internal class HttpPatchRequestFacade(</span>
+<span class="fc" id="L141">internal class HttpPatchRequestFacade(</span>
     url: String,
     headers: HttpHeaders,
     parameters: List&lt;HttpParameter&gt;,
     bodies: List&lt;HttpBody&gt;,
     serdeFactory: HttpSerdeFactory,
     client: HttpClient
-<span class="nc" id="L148">) : HttpRequestWithBodyFacade(</span>
-<span class="nc" id="L149">    url = url,</span>
-<span class="nc" id="L150">    headers = headers,</span>
-<span class="nc" id="L151">    parameters = parameters,</span>
-<span class="nc" id="L152">    bodies = bodies,</span>
-<span class="nc" id="L153">    serdeFactory = serdeFactory,</span>
-<span class="nc" id="L154">    client = client</span>
+<span class="fc" id="L148">) : HttpRequestWithBodyFacade(</span>
+<span class="fc" id="L149">    url = url,</span>
+<span class="fc" id="L150">    headers = headers,</span>
+<span class="fc" id="L151">    parameters = parameters,</span>
+<span class="fc" id="L152">    bodies = bodies,</span>
+<span class="fc" id="L153">    serdeFactory = serdeFactory,</span>
+<span class="fc" id="L154">    client = client</span>
 ) {
     override fun buildRequest(): HttpRequestBase {
-<span class="nc" id="L157">        return HttpPatch(url).apply { entity = createEntity() }</span>
+<span class="fc" id="L157">        return HttpPatch(url).apply { entity = createEntity() }</span>
     }
 }
 
 
-<span class="nc" id="L162">internal class HttpPostRequestFacade(</span>
+<span class="fc" id="L162">internal class HttpPostRequestFacade(</span>
     url: String,
     headers: HttpHeaders,
     parameters: List&lt;HttpParameter&gt;,
     bodies: List&lt;HttpBody&gt;,
     serdeFactory: HttpSerdeFactory,
     client: HttpClient
-<span class="nc" id="L169">) : HttpRequestWithBodyFacade(</span>
-<span class="nc" id="L170">    url = url,</span>
-<span class="nc" id="L171">    headers = headers,</span>
-<span class="nc" id="L172">    parameters = parameters,</span>
-<span class="nc" id="L173">    bodies = bodies,</span>
-<span class="nc" id="L174">    serdeFactory = serdeFactory,</span>
-<span class="nc" id="L175">    client = client</span>
+<span class="fc" id="L169">) : HttpRequestWithBodyFacade(</span>
+<span class="fc" id="L170">    url = url,</span>
+<span class="fc" id="L171">    headers = headers,</span>
+<span class="fc" id="L172">    parameters = parameters,</span>
+<span class="fc" id="L173">    bodies = bodies,</span>
+<span class="fc" id="L174">    serdeFactory = serdeFactory,</span>
+<span class="fc" id="L175">    client = client</span>
 ) {
     override fun buildRequest(): HttpRequestBase {
-<span class="nc" id="L178">        return HttpPost(url).apply { entity = createEntity() }</span>
+<span class="fc" id="L178">        return HttpPost(url).apply { entity = createEntity() }</span>
     }
 }
 
-<span class="nc" id="L182">internal class HttpPutRequestFacade(</span>
+<span class="fc" id="L182">internal class HttpPutRequestFacade(</span>
     url: String,
     headers: HttpHeaders,
     parameters: List&lt;HttpParameter&gt;,
     bodies: List&lt;HttpBody&gt;,
     serdeFactory: HttpSerdeFactory,
     client: HttpClient
-<span class="nc" id="L189">) : HttpRequestWithBodyFacade(</span>
-<span class="nc" id="L190">    url = url,</span>
-<span class="nc" id="L191">    headers = headers,</span>
-<span class="nc" id="L192">    parameters = parameters,</span>
-<span class="nc" id="L193">    bodies = bodies,</span>
-<span class="nc" id="L194">    serdeFactory = serdeFactory,</span>
-<span class="nc" id="L195">    client = client</span>
+<span class="fc" id="L189">) : HttpRequestWithBodyFacade(</span>
+<span class="fc" id="L190">    url = url,</span>
+<span class="fc" id="L191">    headers = headers,</span>
+<span class="fc" id="L192">    parameters = parameters,</span>
+<span class="fc" id="L193">    bodies = bodies,</span>
+<span class="fc" id="L194">    serdeFactory = serdeFactory,</span>
+<span class="fc" id="L195">    client = client</span>
 ) {
     override fun buildRequest(): HttpRequestBase {
-<span class="nc" id="L198">        return HttpPut(url).apply { entity = createEntity() }</span>
+<span class="fc" id="L198">        return HttpPut(url).apply { entity = createEntity() }</span>
     }
 }
 
 internal fun HttpHeaders.toBasicHeaders(): List&lt;BasicHeader&gt; {
-<span class="nc" id="L203">    return mapping.map { BasicHeader(it.key, it.value) }</span>
+<span class="fc" id="L203">    return mapping.map { BasicHeader(it.key, it.value) }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

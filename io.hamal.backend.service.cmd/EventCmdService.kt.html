@@ -10,19 +10,19 @@ import io.hamal.lib.domain.vo.TopicId
 import io.hamal.lib.domain.vo.TopicName
 import org.springframework.stereotype.Service
 
-<span class="nc" id="L13">@Service</span>
-<span class="nc" id="L14">class EventCmdService&lt;TOPIC : LogTopic&gt;(</span>
-<span class="nc" id="L15">    private val eventBrokerRepository: LogBrokerRepository&lt;TOPIC&gt;</span>
+<span class="fc" id="L13">@Service</span>
+<span class="fc" id="L14">class EventCmdService&lt;TOPIC : LogTopic&gt;(</span>
+<span class="fc" id="L15">    private val eventBrokerRepository: LogBrokerRepository&lt;TOPIC&gt;</span>
 ) {
 
-<span class="nc" id="L18">    private val appender = ProtobufAppender(Event::class, eventBrokerRepository)</span>
+<span class="fc" id="L18">    private val appender = ProtobufAppender(Event::class, eventBrokerRepository)</span>
 
     fun create(cmdId: CmdId, toCreate: TopicToCreate): LogTopic {
-<span class="nc" id="L21">        return eventBrokerRepository.create(</span>
-<span class="nc" id="L22">            cmdId,</span>
-<span class="nc" id="L23">            CreateTopic.TopicToCreate(</span>
-<span class="nc" id="L24">                id = toCreate.id,</span>
-<span class="nc" id="L25">                name = toCreate.name</span>
+<span class="fc" id="L21">        return eventBrokerRepository.create(</span>
+<span class="fc" id="L22">            cmdId,</span>
+<span class="fc" id="L23">            CreateTopic.TopicToCreate(</span>
+<span class="fc" id="L24">                id = toCreate.id,</span>
+<span class="fc" id="L25">                name = toCreate.name</span>
             )
         )
     }
@@ -37,9 +37,9 @@ import org.springframework.stereotype.Service
         )
 <span class="nc" id="L38">    }</span>
 
-<span class="nc" id="L40">    data class TopicToCreate(</span>
-<span class="nc" id="L41">        val id: TopicId,</span>
-<span class="nc" id="L42">        val name: TopicName</span>
+<span class="fc" id="L40">    data class TopicToCreate(</span>
+<span class="fc" id="L41">        val id: TopicId,</span>
+<span class="fc" id="L42">        val name: TopicName</span>
     )
 
 <span class="nc" id="L45">    data class EventToAppend(</span>

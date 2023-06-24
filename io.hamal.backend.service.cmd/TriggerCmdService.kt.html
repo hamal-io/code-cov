@@ -12,12 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import kotlin.time.Duration
 
-<span class="nc" id="L15">@Service</span>
+<span class="fc" id="L15">@Service</span>
 class TriggerCmdService
-<span class="nc" id="L17">@Autowired constructor(</span>
-<span class="nc" id="L18">    val triggerCmdRepository: TriggerCmdRepository,</span>
-<span class="nc" id="L19">    val eventEmitter: SystemEventEmitter&lt;*&gt;,</span>
-<span class="nc" id="L20">    val generateDomainId: GenerateDomainId</span>
+<span class="fc" id="L17">@Autowired constructor(</span>
+<span class="pc" id="L18">    val triggerCmdRepository: TriggerCmdRepository,</span>
+<span class="pc" id="L19">    val eventEmitter: SystemEventEmitter&lt;*&gt;,</span>
+<span class="pc" id="L20">    val generateDomainId: GenerateDomainId</span>
 ) {
     fun create(cmdId: CmdId, triggerToCreate: TriggerToCreate): Trigger =
 <span class="nc" id="L23">        createTrigger(cmdId, triggerToCreate).also { emitEvent(cmdId, it) }</span>

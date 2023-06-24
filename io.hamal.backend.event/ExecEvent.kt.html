@@ -4,39 +4,39 @@ import io.hamal.backend.repository.api.domain.*
 import kotlinx.serialization.Serializable
 
 
-<span class="nc bnc" id="L7" title="All 8 branches missed.">@Serializable</span>
+<span class="pc bpc" id="L7" title="3 of 8 branches missed.">@Serializable</span>
 @SystemEventTopic(&quot;exec::planned&quot;)
-<span class="nc" id="L9">data class ExecPlannedEvent(</span>
-<span class="nc" id="L10">    val plannedExec: PlannedExec</span>
-<span class="nc" id="L11">) : SystemEvent()</span>
+<span class="fc" id="L9">data class ExecPlannedEvent(</span>
+<span class="fc" id="L10">    val plannedExec: PlannedExec</span>
+<span class="fc" id="L11">) : SystemEvent()</span>
 
-<span class="nc bnc" id="L13" title="All 8 branches missed.">@Serializable</span>
+<span class="pc bpc" id="L13" title="3 of 8 branches missed.">@Serializable</span>
 @SystemEventTopic(&quot;exec::scheduled&quot;)
-<span class="nc" id="L15">data class ExecScheduledEvent(</span>
-<span class="nc" id="L16">    val scheduledExec: ScheduledExec</span>
-<span class="nc" id="L17">) : SystemEvent()</span>
+<span class="fc" id="L15">data class ExecScheduledEvent(</span>
+<span class="fc" id="L16">    val scheduledExec: ScheduledExec</span>
+<span class="fc" id="L17">) : SystemEvent()</span>
 
-<span class="nc bnc" id="L19" title="All 8 branches missed.">@Serializable</span>
+<span class="pc bpc" id="L19" title="3 of 8 branches missed.">@Serializable</span>
 @SystemEventTopic(&quot;exec::queued&quot;)
-<span class="nc" id="L21">data class ExecutionQueuedEvent(</span>
-<span class="nc" id="L22">    val queuedExec: QueuedExec</span>
-<span class="nc" id="L23">) : SystemEvent()</span>
+<span class="fc" id="L21">data class ExecutionQueuedEvent(</span>
+<span class="pc" id="L22">    val queuedExec: QueuedExec</span>
+<span class="fc" id="L23">) : SystemEvent()</span>
 
-<span class="nc bnc" id="L25" title="All 8 branches missed.">@Serializable</span>
+<span class="pc bnc" id="L25" title="All 8 branches missed.">@Serializable</span>
 @SystemEventTopic(&quot;exec::started&quot;)
 <span class="nc" id="L27">data class ExecutionStartedEvent(</span>
 <span class="nc" id="L28">    val startedExec: StartedExec</span>
-<span class="nc" id="L29">) : SystemEvent()</span>
+<span class="pc" id="L29">) : SystemEvent()</span>
 
-<span class="nc bnc" id="L31" title="All 8 branches missed.">@Serializable</span>
+<span class="pc bnc" id="L31" title="All 8 branches missed.">@Serializable</span>
 @SystemEventTopic(&quot;exec::completed&quot;)
 <span class="nc" id="L33">data class ExecutionCompletedEvent(</span>
 <span class="nc" id="L34">    val completedExec: CompletedExec</span>
-<span class="nc" id="L35">) : SystemEvent()</span>
+<span class="pc" id="L35">) : SystemEvent()</span>
 
-<span class="nc bnc" id="L37" title="All 8 branches missed.">@Serializable</span>
+<span class="pc bnc" id="L37" title="All 8 branches missed.">@Serializable</span>
 @SystemEventTopic(&quot;exec::failed&quot;)
 <span class="nc" id="L39">data class ExecutionFailedEvent(</span>
 <span class="nc" id="L40">    val failedExec: FailedExec</span>
-<span class="nc" id="L41">) : SystemEvent()</span>
+<span class="pc" id="L41">) : SystemEvent()</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

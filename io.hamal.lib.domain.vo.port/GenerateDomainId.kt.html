@@ -7,17 +7,17 @@ interface GenerateDomainId {
     operator fun &lt;ID : DomainId&gt; invoke(ctor: (SnowflakeId) -&gt; ID): ID
 }
 
-<span class="nc" id="L10">class DefaultDomainIdGenerator(</span>
-<span class="nc" id="L11">    private val partition: Partition</span>
+<span class="fc" id="L10">class DefaultDomainIdGenerator(</span>
+<span class="fc" id="L11">    private val partition: Partition</span>
 ) : GenerateDomainId {
-<span class="nc" id="L13">    private val provideGenerator = KeyedOnce.default&lt;Partition, SnowflakeId.Generator&gt;()</span>
+<span class="fc" id="L13">    private val provideGenerator = KeyedOnce.default&lt;Partition, SnowflakeId.Generator&gt;()</span>
     override fun &lt;ID : DomainId&gt; invoke(ctor: (SnowflakeId) -&gt; ID): ID {
-<span class="nc" id="L15">        val generator = provideGenerator(partition) {</span>
-<span class="nc" id="L16">            SnowflakeGenerator(</span>
-<span class="nc" id="L17">                DefaultPartitionSource(partition.value)</span>
+<span class="fc" id="L15">        val generator = provideGenerator(partition) {</span>
+<span class="fc" id="L16">            SnowflakeGenerator(</span>
+<span class="fc" id="L17">                DefaultPartitionSource(partition.value)</span>
             )
         }
-<span class="nc" id="L20">        return ctor(generator.next())</span>
+<span class="fc" id="L20">        return ctor(generator.next())</span>
     }
 }
 

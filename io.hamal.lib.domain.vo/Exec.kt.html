@@ -5,7 +5,7 @@ import io.hamal.lib.domain.vo.base.*
 import io.hamal.lib.script.api.value.TableValue
 import kotlinx.serialization.Serializable
 
-<span class="fc" id="L8">@Serializable(with = ExecId.Serializer::class)</span>
+<span class="nc" id="L8">@Serializable(with = ExecId.Serializer::class)</span>
 <span class="fc" id="L9">class ExecId(override val value: SnowflakeId) : DomainId() {</span>
 <span class="nc" id="L10">    constructor(value: Int) : this(SnowflakeId(value.toLong()))</span>
 
@@ -13,31 +13,31 @@ import kotlinx.serialization.Serializable
 }
 
 <span class="nc" id="L15">@Serializable(with = ExecInputs.Serializer::class)</span>
-<span class="nc" id="L16">class ExecInputs(override val value: TableValue = TableValue()) : Inputs() {</span>
-<span class="nc" id="L17">    internal object Serializer : InputsSerializer&lt;ExecInputs&gt;(::ExecInputs)</span>
-<span class="nc" id="L18">}</span>
+<span class="fc" id="L16">class ExecInputs(override val value: TableValue = TableValue()) : Inputs() {</span>
+<span class="fc" id="L17">    internal object Serializer : InputsSerializer&lt;ExecInputs&gt;(::ExecInputs)</span>
+<span class="fc" id="L18">}</span>
 
 <span class="nc" id="L20">@Serializable(with = ExecSecrets.Serializer::class)</span>
-<span class="nc" id="L21">class ExecSecrets(override val value: List&lt;Secret&gt; = listOf()) : Secrets() {</span>
-<span class="nc" id="L22">    internal object Serializer : SecretsSerializer&lt;ExecSecrets&gt;(::ExecSecrets)</span>
-<span class="nc" id="L23">}</span>
+<span class="fc" id="L21">class ExecSecrets(override val value: List&lt;Secret&gt; = listOf()) : Secrets() {</span>
+<span class="fc" id="L22">    internal object Serializer : SecretsSerializer&lt;ExecSecrets&gt;(::ExecSecrets)</span>
+<span class="fc" id="L23">}</span>
 
 
-<span class="nc" id="L26">enum class ExecStatus(val value: Int) {</span>
+<span class="pc" id="L26">enum class ExecStatus(val value: Int) {</span>
 
-<span class="nc" id="L28">    Planned(1),</span>
-<span class="nc" id="L29">    Scheduled(2),</span>
-<span class="nc" id="L30">    Queued(3),</span>
-<span class="nc" id="L31">    Started(4),</span>
-<span class="nc" id="L32">    Completed(5),</span>
-<span class="nc" id="L33">    Failed(6),</span>
-<span class="nc" id="L34">    TerminalFailed(7);</span>
+<span class="fc" id="L28">    Planned(1),</span>
+<span class="fc" id="L29">    Scheduled(2),</span>
+<span class="fc" id="L30">    Queued(3),</span>
+<span class="fc" id="L31">    Started(4),</span>
+<span class="fc" id="L32">    Completed(5),</span>
+<span class="fc" id="L33">    Failed(6),</span>
+<span class="fc" id="L34">    TerminalFailed(7);</span>
 
     companion object {
 <span class="nc bnc" id="L37" title="All 2 branches missed.">        fun valueOf(value: Int) = requireNotNull(mapped[value]) { &quot;$value is not an exec status&quot; }</span>
 
-<span class="nc" id="L39">        private val mapped = ExecStatus.values()</span>
-<span class="nc" id="L40">            .associateBy { it.value }</span>
+<span class="fc" id="L39">        private val mapped = ExecStatus.values()</span>
+<span class="fc" id="L40">            .associateBy { it.value }</span>
     }
 }
 

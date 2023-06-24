@@ -3,8 +3,8 @@
 import io.hamal.lib.domain.req.Req
 import kotlin.reflect.KClass
 
-<span class="nc" id="L6">abstract class ReqHandler&lt;REQUEST : Req&gt;(</span>
-<span class="nc" id="L7">    val reqClass: KClass&lt;REQUEST&gt;</span>
+<span class="fc" id="L6">abstract class ReqHandler&lt;REQUEST : Req&gt;(</span>
+<span class="fc" id="L7">    val reqClass: KClass&lt;REQUEST&gt;</span>
 ) {
     abstract operator fun invoke(req: @UnsafeVariance REQUEST)
 }

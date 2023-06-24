@@ -7,7 +7,7 @@ import java.util.Set;
 
 interface JavaUtil {
 
-<span class="fc" id="L10">    Map&lt;Class&lt;?&gt;, Class&lt;?&gt;&gt; primitiveEquivalentMapping = Map.of(</span>
+<span class="nc" id="L10">    Map&lt;Class&lt;?&gt;, Class&lt;?&gt;&gt; primitiveEquivalentMapping = Map.of(</span>
             boolean.class, Boolean.class,
             byte.class, Byte.class,
             short.class, Short.class,
@@ -18,20 +18,20 @@ interface JavaUtil {
             char.class, Character.class
     );
 
-<span class="fc" id="L21">    Set&lt;Class&lt;?&gt;&gt; primitiveEquivalentClasses = new HashSet&lt;&gt;(primitiveEquivalentMapping.values());</span>
+<span class="nc" id="L21">    Set&lt;Class&lt;?&gt;&gt; primitiveEquivalentClasses = new HashSet&lt;&gt;(primitiveEquivalentMapping.values());</span>
 
-<span class="fc" id="L23">    Set&lt;Class&lt;?&gt;&gt; primitiveClasses = new HashSet&lt;&gt;(primitiveEquivalentMapping.keySet());</span>
+<span class="nc" id="L23">    Set&lt;Class&lt;?&gt;&gt; primitiveClasses = new HashSet&lt;&gt;(primitiveEquivalentMapping.keySet());</span>
 
     static Optional&lt;Class&lt;?&gt;&gt; findEquivalent(Class&lt;?&gt; primitiveClazz) {
-<span class="fc" id="L26">        return Optional.ofNullable(primitiveEquivalentMapping.get(primitiveClazz));</span>
+<span class="nc" id="L26">        return Optional.ofNullable(primitiveEquivalentMapping.get(primitiveClazz));</span>
     }
 
     static boolean isPrimitive(Class&lt;?&gt; clazz) {
-<span class="fc" id="L30">        return clazz.isPrimitive();</span>
+<span class="nc" id="L30">        return clazz.isPrimitive();</span>
     }
 
     static boolean isPrimitiveEquivalent(Class&lt;?&gt; clazz) {
-<span class="fc" id="L34">        return primitiveEquivalentClasses.contains(clazz);</span>
+<span class="nc" id="L34">        return primitiveEquivalentClasses.contains(clazz);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -10,21 +10,21 @@ interface InstantSupplier {
     operator fun invoke(): Instant
 
     object DefaultImpl : InstantSupplier {
-<span class="fc" id="L13">        override operator fun invoke(): Instant = TimeUtils.now()</span>
+<span class="nc" id="L13">        override operator fun invoke(): Instant = TimeUtils.now()</span>
     }
 
-<span class="fc" id="L16">    class FakeImpl(private var fakeValue: Instant) : InstantSupplier {</span>
-<span class="fc" id="L17">        override fun invoke(): Instant = fakeValue</span>
+<span class="nc" id="L16">    class FakeImpl(private var fakeValue: Instant) : InstantSupplier {</span>
+<span class="nc" id="L17">        override fun invoke(): Instant = fakeValue</span>
         fun update(fakeValue: Instant) {
-<span class="fc" id="L19">            this.fakeValue = fakeValue</span>
-<span class="fc" id="L20">        }</span>
+<span class="nc" id="L19">            this.fakeValue = fakeValue</span>
+<span class="nc" id="L20">        }</span>
 
-<span class="fc" id="L22">        fun plus(duration: Duration) = update(fakeValue.plus(duration.toJavaDuration()))</span>
+<span class="nc" id="L22">        fun plus(duration: Duration) = update(fakeValue.plus(duration.toJavaDuration()))</span>
     }
 
     companion object {
-<span class="fc" id="L26">        fun default() = DefaultImpl</span>
-<span class="fc" id="L27">        fun fake(fakeValue: Instant) = FakeImpl(fakeValue)</span>
+<span class="nc" id="L26">        fun default() = DefaultImpl</span>
+<span class="nc" id="L27">        fun fake(fakeValue: Instant) = FakeImpl(fakeValue)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -91,47 +91,47 @@ import kotlin.io.path.Path
 <span class="nc" id="L91">    open fun reqQueryRepository(): ReqQueryRepository = MemoryReqRepository</span>
 }
 
-<span class="nc" id="L94">@Profile(&quot;memory&quot;)</span>
+<span class="fc" id="L94">@Profile(&quot;memory&quot;)</span>
 @Configuration
-<span class="nc" id="L96">open class MemoryRepositoryConfig {</span>
+<span class="fc" id="L96">open class MemoryRepositoryConfig {</span>
     @Bean
     open fun systemEventBrokerRepository(): LogBrokerRepository&lt;MemoryLogTopic&gt; {
-<span class="nc" id="L99">        return MemoryLogBrokerRepository()</span>
+<span class="fc" id="L99">        return MemoryLogBrokerRepository()</span>
     }
 
     @Bean
     open fun eventBrokerRepository(): LogBrokerRepository&lt;MemoryLogTopic&gt; {
-<span class="nc" id="L104">        return MemoryLogBrokerRepository()</span>
+<span class="fc" id="L104">        return MemoryLogBrokerRepository()</span>
     }
 
     @Bean
-<span class="nc" id="L108">    open fun funcCmdRepository(): FuncCmdRepository = MemoryFuncRepository</span>
+<span class="fc" id="L108">    open fun funcCmdRepository(): FuncCmdRepository = MemoryFuncRepository</span>
 
     @Bean
-<span class="nc" id="L111">    open fun funcQueryRepository(): FuncQueryRepository = MemoryFuncRepository</span>
+<span class="fc" id="L111">    open fun funcQueryRepository(): FuncQueryRepository = MemoryFuncRepository</span>
 
     @Bean
-<span class="nc" id="L114">    open fun execCmdRepository(): ExecCmdRepository = MemoryExecRepository</span>
+<span class="fc" id="L114">    open fun execCmdRepository(): ExecCmdRepository = MemoryExecRepository</span>
 
     @Bean
-<span class="nc" id="L117">    open fun execQueryRepository(): ExecQueryRepository = MemoryExecRepository</span>
+<span class="fc" id="L117">    open fun execQueryRepository(): ExecQueryRepository = MemoryExecRepository</span>
 
     @Bean
-<span class="nc" id="L120">    open fun reqCmdRepository(): ReqCmdRepository = MemoryReqRepository</span>
+<span class="fc" id="L120">    open fun reqCmdRepository(): ReqCmdRepository = MemoryReqRepository</span>
 
     @Bean
-<span class="nc" id="L123">    open fun reqQueryRepository(): ReqQueryRepository = MemoryReqRepository</span>
+<span class="fc" id="L123">    open fun reqQueryRepository(): ReqQueryRepository = MemoryReqRepository</span>
 
     @Bean
-<span class="nc" id="L126">    open fun stateCmdRepository(): StateCmdRepository = MemoryStateRepository</span>
+<span class="fc" id="L126">    open fun stateCmdRepository(): StateCmdRepository = MemoryStateRepository</span>
 
     @Bean
-<span class="nc" id="L129">    open fun stateQueryRepository(): StateQueryRepository = MemoryStateRepository</span>
+<span class="fc" id="L129">    open fun stateQueryRepository(): StateQueryRepository = MemoryStateRepository</span>
 
     @Bean
-<span class="nc" id="L132">    open fun triggerCmdRepository(): TriggerCmdRepository = MemoryTriggerRepository</span>
+<span class="fc" id="L132">    open fun triggerCmdRepository(): TriggerCmdRepository = MemoryTriggerRepository</span>
 
     @Bean
-<span class="nc" id="L135">    open fun triggerQueryRepository(): TriggerQueryRepository = MemoryTriggerRepository</span>
+<span class="fc" id="L135">    open fun triggerQueryRepository(): TriggerQueryRepository = MemoryTriggerRepository</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -8,17 +8,17 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 @Component
-<span class="nc" id="L11">class CreateTopicHandler(</span>
-<span class="nc" id="L12">    @Autowired private val eventCmdService: EventCmdService&lt;*&gt;</span>
-<span class="nc" id="L13">) : ReqHandler&lt;SubmittedCreateTopicReq&gt;(SubmittedCreateTopicReq::class) {</span>
+<span class="fc" id="L11">class CreateTopicHandler(</span>
+<span class="fc" id="L12">    @Autowired private val eventCmdService: EventCmdService&lt;*&gt;</span>
+<span class="fc" id="L13">) : ReqHandler&lt;SubmittedCreateTopicReq&gt;(SubmittedCreateTopicReq::class) {</span>
     override fun invoke(req: SubmittedCreateTopicReq) {
-<span class="nc" id="L15">        eventCmdService.create(</span>
-<span class="nc" id="L16">            req.cmdId(),</span>
-<span class="nc" id="L17">            EventCmdService.TopicToCreate(</span>
-<span class="nc" id="L18">                id = req.topicId,</span>
-<span class="nc" id="L19">                name = req.name</span>
+<span class="fc" id="L15">        eventCmdService.create(</span>
+<span class="fc" id="L16">            req.cmdId(),</span>
+<span class="fc" id="L17">            EventCmdService.TopicToCreate(</span>
+<span class="fc" id="L18">                id = req.topicId,</span>
+<span class="fc" id="L19">                name = req.name</span>
             )
         )
-<span class="nc" id="L22">    }</span>
+<span class="fc" id="L22">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

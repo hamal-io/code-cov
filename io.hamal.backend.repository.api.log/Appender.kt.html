@@ -13,14 +13,14 @@ interface Appender&lt;TOPIC : LogTopic, VALUE : Any&gt; {
     fun append(cmdId: CmdId, topic: TOPIC, value: VALUE)
 }
 
-<span class="nc" id="L16">class ProtobufAppender&lt;TOPIC : LogTopic, VALUE : Any&gt;(</span>
-<span class="nc" id="L17">    private val valueClass: KClass&lt;VALUE&gt;,</span>
-<span class="nc" id="L18">    private val logBrokerRepository: LogBrokerRepository&lt;TOPIC&gt;</span>
+<span class="fc" id="L16">class ProtobufAppender&lt;TOPIC : LogTopic, VALUE : Any&gt;(</span>
+<span class="fc" id="L17">    private val valueClass: KClass&lt;VALUE&gt;,</span>
+<span class="fc" id="L18">    private val logBrokerRepository: LogBrokerRepository&lt;TOPIC&gt;</span>
 ) : Appender&lt;TOPIC, VALUE&gt; {
     @OptIn(InternalSerializationApi::class)
     override fun append(cmdId: CmdId, topic: TOPIC, value: VALUE) {
-<span class="nc" id="L22">        val encoded = ProtoBuf.encodeToByteArray(valueClass.serializer(), value)</span>
-<span class="nc" id="L23">        logBrokerRepository.append(cmdId, topic, encoded)</span>
-<span class="nc" id="L24">    }</span>
+<span class="fc" id="L22">        val encoded = ProtoBuf.encodeToByteArray(valueClass.serializer(), value)</span>
+<span class="fc" id="L23">        logBrokerRepository.append(cmdId, topic, encoded)</span>
+<span class="fc" id="L24">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

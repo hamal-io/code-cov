@@ -12,11 +12,11 @@ import kotlinx.serialization.Serializable
 <span class="fc" id="L12">data class TopicId(override val value: SnowflakeId) : DomainId() {</span>
 <span class="fc" id="L13">    constructor(value: Int) : this(SnowflakeId(value.toLong()))</span>
 
-<span class="nc" id="L15">    internal object Serializer : DomainIdSerializer&lt;TopicId&gt;(::TopicId)</span>
+<span class="fc" id="L15">    internal object Serializer : DomainIdSerializer&lt;TopicId&gt;(::TopicId)</span>
 }
 
 <span class="nc" id="L18">@Serializable(with = TopicName.Serializer::class)</span>
 <span class="fc" id="L19">class TopicName(override val value: String) : DomainName() {</span>
-<span class="nc" id="L20">    internal object Serializer : DomainNameSerializer&lt;TopicName&gt;(::TopicName)</span>
+<span class="fc" id="L20">    internal object Serializer : DomainNameSerializer&lt;TopicName&gt;(::TopicName)</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

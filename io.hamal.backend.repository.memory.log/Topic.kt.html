@@ -38,12 +38,12 @@ import io.hamal.lib.domain.vo.TopicName
     }
 
     override fun count(): ULong {
-<span class="fc" id="L41">        return activeLogSegmentRepository.count()</span>
+<span class="nc" id="L41">        return activeLogSegmentRepository.count()</span>
     }
 
     override fun clear() {
-<span class="fc" id="L45">        activeLogSegmentRepository.clear()</span>
-<span class="fc" id="L46">    }</span>
+<span class="nc" id="L45">        activeLogSegmentRepository.clear()</span>
+<span class="nc" id="L46">    }</span>
 
     override fun close() {
 <span class="fc" id="L49">        activeLogSegmentRepository.close()</span>

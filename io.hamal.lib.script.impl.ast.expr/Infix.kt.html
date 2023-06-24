@@ -55,7 +55,7 @@ internal interface ParseInfixExpression {
 <span class="fc" id="L55">            return InfixExpression(lhs = lhs, operator = operator, rhs)</span>
         }
 
-<span class="fc bfc" id="L58" title="All 4 branches covered.">        private fun Operator.rightAssociative(): Boolean = this == Exponential || this == Concat</span>
+<span class="pc bpc" id="L58" title="1 of 4 branches missed.">        private fun Operator.rightAssociative(): Boolean = this == Exponential || this == Concat</span>
 
         private fun injectRightAssociativeExpression(
             lhs: InfixExpression,
@@ -63,8 +63,8 @@ internal interface ParseInfixExpression {
             rhs: Expression
         ): InfixExpression {
 <span class="fc" id="L65">            var nodeToInject: InfixExpression = lhs</span>
-<span class="fc bfc" id="L66" title="All 2 branches covered.">            while (nodeToInject.rhs is InfixExpression) {</span>
-<span class="fc" id="L67">                nodeToInject = nodeToInject.rhs as InfixExpression</span>
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">            while (nodeToInject.rhs is InfixExpression) {</span>
+<span class="nc" id="L67">                nodeToInject = nodeToInject.rhs as InfixExpression</span>
             }
 <span class="fc" id="L69">            val newRhs = InfixExpression(</span>
 <span class="fc" id="L70">                lhs = nodeToInject.rhs,</span>

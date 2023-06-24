@@ -24,8 +24,8 @@ interface NamedResultSet : AutoCloseable {
 <span class="pc" id="L24">    internal val delegate: ResultSet</span>
 ) : NamedResultSet {
     override fun getBoolean(parameter: String): Boolean {
-<span class="nc" id="L27">        ensureParameterExists(parameter)</span>
-<span class="nc" id="L28">        return delegate.getBoolean(parameter)</span>
+<span class="fc" id="L27">        ensureParameterExists(parameter)</span>
+<span class="fc" id="L28">        return delegate.getBoolean(parameter)</span>
     }
 
     override fun getInt(parameter: String): Int {
@@ -59,8 +59,8 @@ interface NamedResultSet : AutoCloseable {
     }
 
     override fun getCommandId(parameter: String): CmdId {
-<span class="nc" id="L62">        ensureParameterExists(parameter)</span>
-<span class="nc" id="L63">        return CmdId(delegate.getBigDecimal(parameter).toBigInteger())</span>
+<span class="fc" id="L62">        ensureParameterExists(parameter)</span>
+<span class="fc" id="L63">        return CmdId(delegate.getBigDecimal(parameter).toBigInteger())</span>
     }
 
     override fun getBytes(parameter: String): ByteArray {
@@ -70,12 +70,12 @@ interface NamedResultSet : AutoCloseable {
 
     private fun ensureParameterExists(parameter: String) {
 <span class="fc" id="L72">        val meta = delegate.metaData</span>
-<span class="pc bpc" id="L73" title="2 of 4 branches missed.">        for (colIdx in 1..meta.columnCount) {</span>
+<span class="pc bpc" id="L73" title="1 of 4 branches missed.">        for (colIdx in 1..meta.columnCount) {</span>
 <span class="fc bfc" id="L74" title="All 2 branches covered.">            if (meta.getColumnName(colIdx) == parameter) {</span>
 <span class="fc" id="L75">                return</span>
             }
         }
-<span class="nc" id="L78">        throw IllegalArgumentException(&quot;Parameter '$parameter' does not exist in result set&quot;)</span>
+<span class="fc" id="L78">        throw IllegalArgumentException(&quot;Parameter '$parameter' does not exist in result set&quot;)</span>
     }
 
     override fun &lt;T : Any&gt; map(mapper: (NamedResultSet) -&gt; T): List&lt;T&gt; {
@@ -87,8 +87,8 @@ interface NamedResultSet : AutoCloseable {
     }
 
     override fun close() {
-<span class="nc" id="L90">        delegate.close()</span>
-<span class="nc" id="L91">    }</span>
+<span class="fc" id="L90">        delegate.close()</span>
+<span class="fc" id="L91">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -3,20 +3,20 @@
 import java.time.Instant
 
 object TimeUtils {
-<span class="fc bfc" id="L6" title="All 2 branches covered.">    fun now(): Instant = injectedNow.get() ?: Instant.now()</span>
+<span class="pc bpc" id="L6" title="1 of 2 branches missed.">    fun now(): Instant = injectedNow.get() ?: Instant.now()</span>
 
-<span class="fc" id="L8">    internal val injectedNow: ThreadLocal&lt;Instant&gt; = ThreadLocal.withInitial { null }</span>
+<span class="pc" id="L8">    internal val injectedNow: ThreadLocal&lt;Instant&gt; = ThreadLocal.withInitial { null }</span>
 
     fun &lt;T&gt; withEpochMilli(millis: Long, fn: () -&gt; T): T {
-<span class="fc" id="L11">        return withInstant(Instant.ofEpochMilli(millis), fn)</span>
+<span class="nc" id="L11">        return withInstant(Instant.ofEpochMilli(millis), fn)</span>
     }
 
     fun &lt;T&gt; withInstant(instant: Instant, fn: () -&gt; T): T {
-<span class="fc" id="L15">        injectedNow.set(instant)</span>
-<span class="fc" id="L16">        try {</span>
-<span class="fc" id="L17">            return fn()</span>
+<span class="nc" id="L15">        injectedNow.set(instant)</span>
+<span class="nc" id="L16">        try {</span>
+<span class="nc" id="L17">            return fn()</span>
         } finally {
-<span class="fc" id="L19">            injectedNow.remove()</span>
+<span class="nc" id="L19">            injectedNow.remove()</span>
         }
     }
 

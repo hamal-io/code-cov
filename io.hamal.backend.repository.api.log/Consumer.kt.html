@@ -9,7 +9,7 @@ import kotlin.reflect.KClass
 interface LogConsumer&lt;VALUE : Any&gt; {
     val groupId: GroupId
     fun consume(limit: Int, fn: (LogChunkId, VALUE) -&gt; Unit): Int {
-<span class="nc" id="L12">        return consumeIndexed(limit) { _, chunkId, value -&gt; fn(chunkId, value) }</span>
+<span class="fc" id="L12">        return consumeIndexed(limit) { _, chunkId, value -&gt; fn(chunkId, value) }</span>
     }
 
     fun consumeIndexed(limit: Int, fn: (Int, LogChunkId, VALUE) -&gt; Unit): Int
@@ -28,26 +28,26 @@ interface BatchConsumer&lt;VALUE : Any&gt; {
 
 }
 
-<span class="nc" id="L31">@OptIn(ExperimentalSerializationApi::class, InternalSerializationApi::class)</span>
-<span class="nc" id="L32">class ProtobufLogConsumer&lt;TOPIC : LogTopic, Value : Any&gt;(</span>
-<span class="nc" id="L33">    override val groupId: GroupId,</span>
-<span class="nc" id="L34">    private val topic: TOPIC,</span>
-<span class="nc" id="L35">    private val logBrokerRepository: LogBrokerRepository&lt;TOPIC&gt;,</span>
-<span class="nc" id="L36">    private val valueClass: KClass&lt;Value&gt;</span>
+<span class="fc" id="L31">@OptIn(ExperimentalSerializationApi::class, InternalSerializationApi::class)</span>
+<span class="fc" id="L32">class ProtobufLogConsumer&lt;TOPIC : LogTopic, Value : Any&gt;(</span>
+<span class="fc" id="L33">    override val groupId: GroupId,</span>
+<span class="fc" id="L34">    private val topic: TOPIC,</span>
+<span class="fc" id="L35">    private val logBrokerRepository: LogBrokerRepository&lt;TOPIC&gt;,</span>
+<span class="fc" id="L36">    private val valueClass: KClass&lt;Value&gt;</span>
 ) : LogConsumer&lt;Value&gt; {
 
     override fun consumeIndexed(limit: Int, fn: (Int, LogChunkId, Value) -&gt; Unit): Int {
-<span class="nc" id="L40">        val chunksToConsume = logBrokerRepository.consume(groupId, topic, limit)</span>
+<span class="fc" id="L40">        val chunksToConsume = logBrokerRepository.consume(groupId, topic, limit)</span>
 
-<span class="nc" id="L42">        chunksToConsume.mapIndexed { index, chunk -&gt;</span>
-<span class="nc" id="L43">            fn(</span>
-<span class="nc" id="L44">                index,</span>
-<span class="nc" id="L45">                chunk.id,</span>
-<span class="nc" id="L46">                ProtoBuf.decodeFromByteArray(valueClass.serializer(), chunk.bytes)</span>
+<span class="fc" id="L42">        chunksToConsume.mapIndexed { index, chunk -&gt;</span>
+<span class="fc" id="L43">            fn(</span>
+<span class="fc" id="L44">                index,</span>
+<span class="fc" id="L45">                chunk.id,</span>
+<span class="fc" id="L46">                ProtoBuf.decodeFromByteArray(valueClass.serializer(), chunk.bytes)</span>
             )
-<span class="nc" id="L48">            chunk.id</span>
-<span class="nc bnc" id="L49" title="All 2 branches missed.">        }.maxByOrNull { it }?.let { logBrokerRepository.commit(groupId, topic, it) }</span>
-<span class="nc" id="L50">        return chunksToConsume.size</span>
+<span class="fc" id="L48">            chunk.id</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        }.maxByOrNull { it }?.let { logBrokerRepository.commit(groupId, topic, it) }</span>
+<span class="fc" id="L50">        return chunksToConsume.size</span>
     }
 }
 

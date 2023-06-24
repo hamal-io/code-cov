@@ -17,7 +17,7 @@ import io.hamal.lib.script.impl.ast.expr.*
 <span class="fc" id="L17">            val ident = ctx.evaluateAsIdentifier { ident }</span>
 
 <span class="fc" id="L19">            when (val func = env.find(ident)) {</span>
-<span class="fc bfc" id="L20" title="All 2 branches covered.">                is BuiltinFuncValue -&gt; {</span>
+<span class="pc bpc" id="L20" title="1 of 2 branches missed.">                is BuiltinFuncValue -&gt; {</span>
 <span class="fc" id="L21">                    return func(</span>
 <span class="fc" id="L22">                        BuiltinFuncValue.Context(</span>
 <span class="fc" id="L23">                            parameters = parameters.zip(toEvaluate.parameters)</span>
@@ -27,8 +27,8 @@ import io.hamal.lib.script.impl.ast.expr.*
                     )
                 }
 
-<span class="pc bpc" id="L30" title="1 of 2 branches missed.">                is PrototypeValue -&gt; {</span>
-<span class="fc" id="L31">                    return ctx.evaluate(func.block)</span>
+<span class="nc bnc" id="L30" title="All 2 branches missed.">                is PrototypeValue -&gt; {</span>
+<span class="nc" id="L31">                    return ctx.evaluate(func.block)</span>
                 }
 
 <span class="nc" id="L34">                else -&gt; TODO()</span>
@@ -59,8 +59,8 @@ import io.hamal.lib.script.impl.ast.expr.*
 <span class="fc" id="L59">internal class EvaluatePrefixExpression&lt;INVOKE_CTX : FuncInvocationContext&gt; :</span>
     Evaluate&lt;PrefixExpression, INVOKE_CTX&gt; {
     override fun invoke(ctx: EvaluationContext&lt;PrefixExpression, INVOKE_CTX&gt;): Value {
-<span class="fc" id="L62">        val value = ctx.evaluate { expression }</span>
-<span class="fc" id="L63">        return ctx.evaluatePrefix(ctx.toEvaluate.operator, value)</span>
+<span class="nc" id="L62">        val value = ctx.evaluate { expression }</span>
+<span class="nc" id="L63">        return ctx.evaluatePrefix(ctx.toEvaluate.operator, value)</span>
     }
 
 }
@@ -94,10 +94,10 @@ import io.hamal.lib.script.impl.ast.expr.*
 <span class="fc" id="L94">        val endValue = ctx.evaluate { endExpression } as NumberValue</span>
 <span class="fc" id="L95">        val stepValue = ctx.evaluate { stepExpression } as NumberValue</span>
 
-<span class="fc bfc" id="L97" title="All 2 branches covered.">        val hasNext = if (stepValue.isGreaterThanEqual(NumberValue.Zero)) {</span>
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">        val hasNext = if (stepValue.isGreaterThanEqual(NumberValue.Zero)) {</span>
 <span class="fc" id="L98">            HasNext.Forward</span>
         } else {
-<span class="fc" id="L100">            HasNext.Backwards</span>
+<span class="nc" id="L100">            HasNext.Backwards</span>
         }
 
 <span class="fc" id="L103">        while (true) {</span>
@@ -121,7 +121,7 @@ import io.hamal.lib.script.impl.ast.expr.*
         },
 <span class="fc" id="L122">        Backwards {</span>
             override fun invoke(nextValue: NumberValue, endValue: NumberValue): Boolean {
-<span class="fc" id="L124">                return nextValue.isGreaterThanEqual(endValue)</span>
+<span class="nc" id="L124">                return nextValue.isGreaterThanEqual(endValue)</span>
             }
         };
 

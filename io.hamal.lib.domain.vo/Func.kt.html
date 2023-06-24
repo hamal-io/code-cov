@@ -5,17 +5,17 @@ import io.hamal.lib.domain.vo.base.*
 import io.hamal.lib.script.api.value.TableValue
 import kotlinx.serialization.Serializable
 
-<span class="fc" id="L8">@Serializable(with = FuncId.Serializer::class)</span>
-<span class="fc" id="L9">class FuncId(override val value: SnowflakeId) : DomainId() {</span>
+<span class="nc" id="L8">@Serializable(with = FuncId.Serializer::class)</span>
+<span class="nc" id="L9">class FuncId(override val value: SnowflakeId) : DomainId() {</span>
 <span class="nc" id="L10">    constructor(value: Int) : this(SnowflakeId(value.toLong()))</span>
 
-<span class="fc" id="L12">    internal object Serializer : DomainIdSerializer&lt;FuncId&gt;(::FuncId)</span>
+<span class="nc" id="L12">    internal object Serializer : DomainIdSerializer&lt;FuncId&gt;(::FuncId)</span>
 }
 
 
-<span class="fc" id="L16">@Serializable(with = FuncName.Serializer::class)</span>
-<span class="fc" id="L17">class FuncName(override val value: String) : DomainName() {</span>
-<span class="fc" id="L18">    internal object Serializer : DomainNameSerializer&lt;FuncName&gt;(::FuncName)</span>
+<span class="nc" id="L16">@Serializable(with = FuncName.Serializer::class)</span>
+<span class="nc" id="L17">class FuncName(override val value: String) : DomainName() {</span>
+<span class="nc" id="L18">    internal object Serializer : DomainNameSerializer&lt;FuncName&gt;(::FuncName)</span>
 }
 
 <span class="nc" id="L21">@Serializable(with = FuncInputs.Serializer::class)</span>

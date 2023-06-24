@@ -16,10 +16,10 @@ interface Assignment : Statement {
 <span class="fc" id="L16">        override val identifiers: List&lt;IdentifierLiteral&gt;,</span>
 <span class="fc" id="L17">        override val expressions: List&lt;Expression&gt;</span>
     ) : Assignment {
-<span class="fc" id="L19">        constructor(ident: IdentifierLiteral, expression: Expression) : this(</span>
-<span class="fc" id="L20">            listOf(ident),</span>
-<span class="fc" id="L21">            listOf(expression)</span>
-<span class="fc" id="L22">        )</span>
+<span class="nc" id="L19">        constructor(ident: IdentifierLiteral, expression: Expression) : this(</span>
+<span class="nc" id="L20">            listOf(ident),</span>
+<span class="nc" id="L21">            listOf(expression)</span>
+<span class="nc" id="L22">        )</span>
 
 <span class="fc" id="L24">        init {</span>
 <span class="pc bpc" id="L25" title="3 of 6 branches missed.">            assert(identifiers.isNotEmpty())</span>
@@ -42,10 +42,10 @@ interface Assignment : Statement {
 <span class="fc" id="L42">        override val identifiers: List&lt;IdentifierLiteral&gt;,</span>
 <span class="fc" id="L43">        override val expressions: List&lt;Expression&gt;</span>
     ) : Assignment {
-<span class="fc" id="L45">        constructor(ident: IdentifierLiteral, expression: Expression) : this(</span>
-<span class="fc" id="L46">            listOf(ident),</span>
-<span class="fc" id="L47">            listOf(expression)</span>
-<span class="fc" id="L48">        )</span>
+<span class="nc" id="L45">        constructor(ident: IdentifierLiteral, expression: Expression) : this(</span>
+<span class="nc" id="L46">            listOf(ident),</span>
+<span class="nc" id="L47">            listOf(expression)</span>
+<span class="nc" id="L48">        )</span>
 
 <span class="fc" id="L50">        init {</span>
 <span class="pc bpc" id="L51" title="3 of 6 branches missed.">            assert(identifiers.isNotEmpty())</span>
@@ -71,22 +71,22 @@ interface Assignment : Statement {
 private fun Context.parseIdentifiers(): List&lt;IdentifierLiteral&gt; {
 <span class="fc" id="L72">    val result = mutableListOf&lt;IdentifierLiteral&gt;()</span>
     do {
-<span class="fc bfc" id="L74" title="All 2 branches covered.">        if (currentTokenType() == Comma) {</span>
-<span class="fc" id="L75">            advance()</span>
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">        if (currentTokenType() == Comma) {</span>
+<span class="nc" id="L75">            advance()</span>
         }
 <span class="fc" id="L77">        result.add(IdentifierLiteral.Parse(this))</span>
-<span class="fc bfc" id="L78" title="All 2 branches covered.">    } while (currentTokenType() == Comma)</span>
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">    } while (currentTokenType() == Comma)</span>
 <span class="fc" id="L79">    return result</span>
 }
 
 private fun Context.parseExpressions(): List&lt;Expression&gt; {
 <span class="fc" id="L83">    val result = mutableListOf&lt;Expression&gt;()</span>
     do {
-<span class="fc bfc" id="L85" title="All 2 branches covered.">        if (currentTokenType() == Comma) {</span>
-<span class="fc" id="L86">            advance()</span>
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">        if (currentTokenType() == Comma) {</span>
+<span class="nc" id="L86">            advance()</span>
         }
 <span class="fc" id="L88">        result.add(parseExpression(Precedence.Lowest))</span>
-<span class="fc bfc" id="L89" title="All 2 branches covered.">    } while (currentTokenType() == Comma)</span>
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">    } while (currentTokenType() == Comma)</span>
 <span class="fc" id="L90">    return result</span>
 }
 

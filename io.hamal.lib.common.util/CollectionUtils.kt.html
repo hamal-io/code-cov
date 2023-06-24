@@ -2,7 +2,7 @@
 
 object CollectionUtils {
     fun &lt;T, U&gt; Array&lt;T&gt;.cross(other: Array&lt;U&gt;): Sequence&lt;Pair&lt;T, U&gt;&gt; {
-<span class="nc" id="L5">        return this.asSequence().cross(other.asSequence())</span>
+<span class="fc" id="L5">        return this.asSequence().cross(other.asSequence())</span>
     }
 
     fun &lt;T, U&gt; Sequence&lt;T&gt;.cross(other: Sequence&lt;U&gt;): Sequence&lt;Pair&lt;T, U&gt;&gt; {

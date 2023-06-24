@@ -20,8 +20,8 @@ import io.hamal.lib.script.impl.token.tokenize
 <span class="fc" id="L20">        val statements = parse(tokens)</span>
 <span class="fc" id="L21">        return try {</span>
 <span class="fc" id="L22">            interpreter.run(statements, env)</span>
-<span class="fc" id="L23">        } catch (e: ScriptEvaluationException) {</span>
-<span class="fc" id="L24">            e.error</span>
+<span class="nc" id="L23">        } catch (e: ScriptEvaluationException) {</span>
+<span class="nc" id="L24">            e.error</span>
 <span class="nc" id="L25">        } catch (t: Throwable) {</span>
 <span class="pc" id="L26">            throw t</span>
         }

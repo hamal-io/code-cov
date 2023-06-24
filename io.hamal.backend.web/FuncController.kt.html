@@ -20,14 +20,14 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
-<span class="nc" id="L23">@RestController</span>
-<span class="nc" id="L24">open class FuncController(</span>
-<span class="nc" id="L25">    @Autowired val queryService: FuncQueryService,</span>
-<span class="nc" id="L26">    @Autowired val funcCmdService: FuncCmdService,</span>
-<span class="nc" id="L27">    @Autowired val execCmdService: ExecCmdService,</span>
-<span class="nc" id="L28">    @Autowired val eventEmitter: SystemEventEmitter&lt;*&gt;,</span>
-<span class="nc" id="L29">    @Autowired val request: SubmitRequest,</span>
-<span class="nc" id="L30">    @Autowired val generateDomainId: GenerateDomainId</span>
+<span class="fc" id="L23">@RestController</span>
+<span class="fc" id="L24">open class FuncController(</span>
+<span class="pc" id="L25">    @Autowired val queryService: FuncQueryService,</span>
+<span class="pc" id="L26">    @Autowired val funcCmdService: FuncCmdService,</span>
+<span class="pc" id="L27">    @Autowired val execCmdService: ExecCmdService,</span>
+<span class="pc" id="L28">    @Autowired val eventEmitter: SystemEventEmitter&lt;*&gt;,</span>
+<span class="pc" id="L29">    @Autowired val request: SubmitRequest,</span>
+<span class="pc" id="L30">    @Autowired val generateDomainId: GenerateDomainId</span>
 ) {
     @PostMapping(&quot;/v1/funcs&quot;)
     fun createFunc(

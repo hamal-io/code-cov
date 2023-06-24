@@ -38,8 +38,8 @@ import io.hamal.lib.script.impl.ast.stmt.*
 <span class="fc" id="L38">        val identifiers = ctx.toEvaluate.identifiers.map(ctx::evaluateAsIdentifier)</span>
 <span class="fc" id="L39">        val values = ctx.toEvaluate.expressions.map(ctx::evaluate)</span>
 <span class="fc" id="L40">        identifiers.zip(values).forEach { (ident, value) -&gt;</span>
-<span class="fc bfc" id="L41" title="All 2 branches covered.">            if (value is IdentValue) {</span>
-<span class="fc" id="L42">                ctx.env.addLocal(ident, ctx.env[value]) //FIXME create a copy if needed - like value is a table</span>
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">            if (value is IdentValue) {</span>
+<span class="nc" id="L42">                ctx.env.addLocal(ident, ctx.env[value]) //FIXME create a copy if needed - like value is a table</span>
             } else {
 <span class="fc" id="L44">                ctx.env.addLocal(ident, value)</span>
             }
@@ -65,8 +65,8 @@ import io.hamal.lib.script.impl.ast.stmt.*
 <span class="fc bfc" id="L65" title="All 2 branches covered.">        for (statement in toEvaluate.statements) {</span>
 <span class="fc" id="L66">            result = ctx.evaluate(statement)</span>
         }
-<span class="fc bfc" id="L68" title="All 2 branches covered.">        if (result is IdentValue) {</span>
-<span class="fc" id="L69">            return ctx.env[result]</span>
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">        if (result is IdentValue) {</span>
+<span class="nc" id="L69">            return ctx.env[result]</span>
         }
 <span class="fc" id="L71">        return result</span>
     }
@@ -87,15 +87,15 @@ import io.hamal.lib.script.impl.ast.stmt.*
 
 <span class="fc" id="L88">internal class EvaluatePrototype&lt;INVOKE_CTX : FuncInvocationContext&gt; : Evaluate&lt;Prototype, INVOKE_CTX&gt; {</span>
     override fun invoke(ctx: EvaluationContext&lt;Prototype, INVOKE_CTX&gt;): Value {
-<span class="fc" id="L90">        val value = ctx.evaluateAsPrototype { expression }</span>
-<span class="fc" id="L91">        ctx.env.addLocal(value.ident, value) //FIXME new env? or putting this in ctx as well like ctx.addLocal</span>
-<span class="fc" id="L92">        return value</span>
+<span class="nc" id="L90">        val value = ctx.evaluateAsPrototype { expression }</span>
+<span class="nc" id="L91">        ctx.env.addLocal(value.ident, value) //FIXME new env? or putting this in ctx as well like ctx.addLocal</span>
+<span class="nc" id="L92">        return value</span>
     }
 }
 
 <span class="fc" id="L96">internal class EvaluateReturn&lt;INVOKE_CTX : FuncInvocationContext&gt; : Evaluate&lt;Return, INVOKE_CTX&gt; {</span>
     override fun invoke(ctx: EvaluationContext&lt;Return, INVOKE_CTX&gt;): Value {
-<span class="fc" id="L98">        return ctx.evaluate { expression }</span>
+<span class="nc" id="L98">        return ctx.evaluate { expression }</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

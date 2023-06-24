@@ -20,8 +20,8 @@ import kotlin.reflect.KClass
         param: String,
         value: Boolean
     ): NamedPreparedStatementDelegate {
-<span class="nc" id="L23">        delegate[param] = value</span>
-<span class="nc" id="L24">        return this</span>
+<span class="fc" id="L23">        delegate[param] = value</span>
+<span class="fc" id="L24">        return this</span>
     }
 
     operator fun set(
@@ -166,7 +166,7 @@ interface Connection : AutoCloseable {
     url: String
 ) : Connection {
 
-<span class="nc" id="L169">    val delegate: java.sql.Connection</span>
+<span class="fc" id="L169">    val delegate: java.sql.Connection</span>
 <span class="fc" id="L170">    private val log = logger(owningClass)</span>
 <span class="fc" id="L171">    private val lock = ReentrantLock()</span>
 
@@ -175,8 +175,8 @@ interface Connection : AutoCloseable {
 <span class="fc" id="L175">        log.trace(&quot;Open sqlite connection with url: $url&quot;)</span>
 <span class="fc" id="L176">    }</span>
 
-<span class="nc bnc" id="L178" title="All 2 branches missed.">    override val isOpen: Boolean get() = !delegate.isClosed</span>
-<span class="nc" id="L179">    override val isClosed: Boolean get() = delegate.isClosed</span>
+<span class="fc bfc" id="L178" title="All 2 branches covered.">    override val isOpen: Boolean get() = !delegate.isClosed</span>
+<span class="fc" id="L179">    override val isClosed: Boolean get() = delegate.isClosed</span>
 
     override fun prepare(sql: String): NamedPreparedStatement&lt;*&gt; {
 <span class="fc" id="L182">        log.trace(&quot;Prepare statement: $sql&quot;)</span>
@@ -186,7 +186,7 @@ interface Connection : AutoCloseable {
     }
 
     override fun execute(sql: String) {
-<span class="pc" id="L189">        prepare(sql).use {</span>
+<span class="fc" id="L189">        prepare(sql).use {</span>
 <span class="fc" id="L190">            log.debug(&quot;Execute: ${it.sql}&quot;)</span>
 <span class="fc" id="L191">            it.execute()</span>
         }
@@ -217,8 +217,8 @@ interface Connection : AutoCloseable {
     }
 
     override fun executeUpdate(sql: String): Int {
-<span class="nc" id="L220">        return prepare(sql).use {</span>
-<span class="nc" id="L221">            log.debug(&quot;Execute update: ${it.sql}&quot;)</span>
+<span class="pc" id="L220">        return prepare(sql).use {</span>
+<span class="fc" id="L221">            log.debug(&quot;Execute update: ${it.sql}&quot;)</span>
 <span class="nc" id="L222">            it.executeUpdate()</span>
         }
     }
@@ -227,10 +227,10 @@ interface Connection : AutoCloseable {
         sql: String,
         block: NamedPreparedStatementDelegate.() -&gt; NamedPreparedStatementDelegate
     ): Int {
-<span class="nc" id="L230">        return prepare(sql).use {</span>
-<span class="nc" id="L231">            block(NamedPreparedStatementDelegate(it))</span>
-<span class="nc" id="L232">            log.debug(&quot;Execute update: ${it.sql}&quot;)</span>
-<span class="nc" id="L233">            it.executeUpdate()</span>
+<span class="pc" id="L230">        return prepare(sql).use {</span>
+<span class="fc" id="L231">            block(NamedPreparedStatementDelegate(it))</span>
+<span class="fc" id="L232">            log.debug(&quot;Execute update: ${it.sql}&quot;)</span>
+<span class="fc" id="L233">            it.executeUpdate()</span>
         }
     }
 
@@ -238,7 +238,7 @@ interface Connection : AutoCloseable {
         sql: String,
         block: NamedPreparedStatementResultSetDelegate&lt;T&gt;.() -&gt; NamedPreparedStatementResultSetDelegate&lt;T&gt;
     ): List&lt;T&gt; {
-<span class="pc" id="L241">        return prepare(sql).use {</span>
+<span class="fc" id="L241">        return prepare(sql).use {</span>
 <span class="fc" id="L242">            val delegate =</span>
 <span class="fc" id="L243">                NamedPreparedStatementResultSetDelegate&lt;T&gt;(</span>
 <span class="fc" id="L244">                    NamedPreparedStatementDelegate(it)</span>
@@ -265,14 +265,14 @@ interface Connection : AutoCloseable {
 <span class="fc" id="L265">                delegate.commit()</span>
 <span class="fc" id="L266">                log.trace(&quot;Transaction committed&quot;)</span>
 <span class="fc" id="L267">                result</span>
-<span class="nc" id="L268">            } catch (a: AbortException) {</span>
-<span class="nc" id="L269">                log.info(&quot;Transaction aborted&quot;)</span>
-<span class="nc" id="L270">                delegate.rollback()</span>
-<span class="nc" id="L271">                throw a</span>
-<span class="nc" id="L272">            } catch (t: Throwable) {</span>
-<span class="nc" id="L273">                log.warn(&quot;Transaction rolled back due to $t&quot;)</span>
-<span class="nc" id="L274">                delegate.rollback()</span>
-<span class="nc" id="L275">                throw t</span>
+<span class="fc" id="L268">            } catch (a: AbortException) {</span>
+<span class="fc" id="L269">                log.info(&quot;Transaction aborted&quot;)</span>
+<span class="fc" id="L270">                delegate.rollback()</span>
+<span class="fc" id="L271">                throw a</span>
+<span class="fc" id="L272">            } catch (t: Throwable) {</span>
+<span class="fc" id="L273">                log.warn(&quot;Transaction rolled back due to $t&quot;)</span>
+<span class="fc" id="L274">                delegate.rollback()</span>
+<span class="fc" id="L275">                throw t</span>
             } finally {
 <span class="fc" id="L277">                log.trace(&quot;Transaction completed&quot;)</span>
 <span class="fc" id="L278">                delegate.autoCommit = true</span>

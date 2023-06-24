@@ -9,60 +9,60 @@ import kotlin.reflect.full.memberProperties
 object ReflectionUtils {
 
     fun declaredProperty(obj: Any, name: String): KProperty&lt;*&gt;? {
-<span class="fc" id="L12">        return declaredPropertiesOf(obj::class)</span>
-<span class="fc" id="L13">            .firstOrNull { it.name == name }</span>
+<span class="nc" id="L12">        return declaredPropertiesOf(obj::class)</span>
+<span class="nc" id="L13">            .firstOrNull { it.name == name }</span>
     }
 
     fun memberProperty(obj: Any, name: String): KProperty&lt;*&gt;? {
-<span class="fc" id="L17">        return memberPropertiesOf(obj::class)</span>
-<span class="fc" id="L18">            .firstOrNull { it.name == name }</span>
+<span class="nc" id="L17">        return memberPropertiesOf(obj::class)</span>
+<span class="nc" id="L18">            .firstOrNull { it.name == name }</span>
     }
 
     fun &lt;TYPE : Any&gt; allFields(clazz: KClass&lt;out TYPE&gt;): List&lt;Field&gt; {
-<span class="fc" id="L22">        return allFields(clazz.java)</span>
+<span class="nc" id="L22">        return allFields(clazz.java)</span>
     }
 
     fun &lt;TYPE : Any&gt; allFields(clazz: Class&lt;out TYPE&gt;): List&lt;Field&gt; {
-<span class="fc" id="L26">        return internal.JavaReflection.Fields.allFieldsOf(clazz)</span>
-<span class="fc" id="L27">            .filterNot { it.name.contains(&quot;this$&quot;) }</span>
+<span class="nc" id="L26">        return internal.JavaReflection.Fields.allFieldsOf(clazz)</span>
+<span class="nc" id="L27">            .filterNot { it.name.contains(&quot;this$&quot;) }</span>
     }
 
     fun &lt;TYPE : Any&gt; allFields(obj: TYPE): List&lt;Field&gt; {
-<span class="fc" id="L31">        return allFields(obj::class)</span>
+<span class="nc" id="L31">        return allFields(obj::class)</span>
     }
 
     fun &lt;TYPE : Any&gt; getValue(obj: TYPE, path: String): Any {
-<span class="fc" id="L35">        var currentObj = obj as Any</span>
+<span class="nc" id="L35">        var currentObj = obj as Any</span>
         fun throwNotFound() {
-<span class="fc" id="L37">            throw IllegalArgumentException(&quot;${obj::class.simpleName} does have field '$path'&quot;)</span>
+<span class="nc" id="L37">            throw IllegalArgumentException(&quot;${obj::class.simpleName} does have field '$path'&quot;)</span>
         }
 
-<span class="fc" id="L40">        val pathParts = path.split(&quot;.&quot;)</span>
-<span class="fc bfc" id="L41" title="All 2 branches covered.">        for (idx in 0 until pathParts.size - 1) {</span>
-<span class="fc bfc" id="L42" title="All 6 branches covered.">            currentObj = allFields(currentObj).find { it.name == pathParts[idx] }</span>
-<span class="fc bfc" id="L43" title="All 2 branches covered.">                ?.let {</span>
-<span class="fc" id="L44">                    it.isAccessible = true</span>
-<span class="fc" id="L45">                    it.get(currentObj)</span>
+<span class="nc" id="L40">        val pathParts = path.split(&quot;.&quot;)</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">        for (idx in 0 until pathParts.size - 1) {</span>
+<span class="nc bnc" id="L42" title="All 6 branches missed.">            currentObj = allFields(currentObj).find { it.name == pathParts[idx] }</span>
+<span class="nc bnc" id="L43" title="All 2 branches missed.">                ?.let {</span>
+<span class="nc" id="L44">                    it.isAccessible = true</span>
+<span class="nc" id="L45">                    it.get(currentObj)</span>
 <span class="nc" id="L46">                } ?: throwNotFound()</span>
         }
 
-<span class="pc bpc" id="L49" title="1 of 8 branches missed.">        return allFields(currentObj).find { it.name == pathParts.last() }?.let {</span>
-<span class="fc" id="L50">            it.isAccessible = true</span>
+<span class="nc bnc" id="L49" title="All 8 branches missed.">        return allFields(currentObj).find { it.name == pathParts.last() }?.let {</span>
+<span class="nc" id="L50">            it.isAccessible = true</span>
             @Suppress(&quot;UNCHECKED_CAST&quot;)
-<span class="fc" id="L52">            it.get(currentObj) as TYPE</span>
+<span class="nc" id="L52">            it.get(currentObj) as TYPE</span>
 <span class="nc" id="L53">        } ?: throwNotFound()</span>
     }
 
     fun memberPropertiesOf(clazz: KClass&lt;*&gt;): List&lt;KProperty&lt;*&gt;&gt; {
-<span class="fc" id="L57">        return clazz::memberProperties.get()</span>
-<span class="fc" id="L58">            .filterNot { it.name.startsWith(&quot;__$&quot;) }</span>
-<span class="fc" id="L59">            .toList()</span>
+<span class="nc" id="L57">        return clazz::memberProperties.get()</span>
+<span class="nc" id="L58">            .filterNot { it.name.startsWith(&quot;__$&quot;) }</span>
+<span class="nc" id="L59">            .toList()</span>
     }
 
     fun declaredPropertiesOf(clazz: KClass&lt;*&gt;): List&lt;KProperty&lt;*&gt;&gt; {
-<span class="fc" id="L63">        return clazz::declaredMemberProperties.get()</span>
-<span class="fc" id="L64">            .filterNot { it.name.startsWith(&quot;__$&quot;) }</span>
-<span class="fc" id="L65">            .toList()</span>
+<span class="nc" id="L63">        return clazz::declaredMemberProperties.get()</span>
+<span class="nc" id="L64">            .filterNot { it.name.startsWith(&quot;__$&quot;) }</span>
+<span class="nc" id="L65">            .toList()</span>
     }
 
 }

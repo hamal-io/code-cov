@@ -6,11 +6,11 @@ import io.hamal.backend.service.OrchestrationService
 import io.hamal.lib.domain.CmdId
 import logger
 
-<span class="nc" id="L9">class ExecCompletedHandler(</span>
-<span class="nc" id="L10">    private val orchestrationService: OrchestrationService</span>
+<span class="fc" id="L9">class ExecCompletedHandler(</span>
+<span class="fc" id="L10">    private val orchestrationService: OrchestrationService</span>
 ) : SystemEventHandler&lt;ExecutionCompletedEvent&gt; {
 
-<span class="nc" id="L13">    private val log = logger(ExecCompletedHandler::class)</span>
+<span class="fc" id="L13">    private val log = logger(ExecCompletedHandler::class)</span>
     override fun handle(cmdId: CmdId, evt: ExecutionCompletedEvent) {
 <span class="nc" id="L15">        log.debug(&quot;Handle: $evt&quot;)</span>
 <span class="nc" id="L16">        orchestrationService.completed(cmdId, evt.completedExec)</span>

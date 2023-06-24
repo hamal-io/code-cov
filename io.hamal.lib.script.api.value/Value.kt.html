@@ -10,13 +10,13 @@ sealed interface Value {
     fun findInfixOperation(type: ValueOperator.Type, otherType: String): InfixValueOperator? {
 <span class="fc" id="L11">        return metaTable.operators</span>
 <span class="fc" id="L12">            .filterIsInstance&lt;InfixValueOperator&gt;()</span>
-<span class="fc bfc" id="L13" title="All 8 branches covered.">            .find { it.operatorType == type &amp;&amp; it.otherType == otherType }</span>
+<span class="pc bpc" id="L13" title="1 of 8 branches missed.">            .find { it.operatorType == type &amp;&amp; it.otherType == otherType }</span>
     }
 
     fun findPrefixOperation(type: ValueOperator.Type): PrefixValueOperator? {
-<span class="fc" id="L17">        return metaTable.operators</span>
-<span class="fc" id="L18">            .filterIsInstance&lt;PrefixValueOperator&gt;()</span>
-<span class="fc bfc" id="L19" title="All 6 branches covered.">            .find { it.operatorType == type }</span>
+<span class="nc" id="L17">        return metaTable.operators</span>
+<span class="nc" id="L18">            .filterIsInstance&lt;PrefixValueOperator&gt;()</span>
+<span class="nc bnc" id="L19" title="All 6 branches missed.">            .find { it.operatorType == type }</span>
     }
 }
 

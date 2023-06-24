@@ -3,11 +3,11 @@
 import io.hamal.lib.script.api.value.ErrorValue
 
 
-<span class="pc" id="L6">sealed class ScriptException(message: String? = null, cause: Throwable? = null) : Exception(message, cause) {</span>
+<span class="nc" id="L6">sealed class ScriptException(message: String? = null, cause: Throwable? = null) : Exception(message, cause) {</span>
 <span class="nc" id="L7">    constructor(cause: Throwable) : this(null, cause)</span>
-<span class="fc" id="L8">}</span>
+<span class="nc" id="L8">}</span>
 
-<span class="fc" id="L10">class ScriptEvaluationException(val error: ErrorValue) : ScriptException(message = error.toString())</span>
+<span class="nc" id="L10">class ScriptEvaluationException(val error: ErrorValue) : ScriptException(message = error.toString())</span>
 
 <span class="nc" id="L12">class NativeFunctionInvocationException(message: String? = null, cause: Throwable? = null) :</span>
 <span class="nc" id="L13">    ScriptException(message, cause) {</span>

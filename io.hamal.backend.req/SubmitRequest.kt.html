@@ -41,20 +41,20 @@ import java.security.SecureRandom
 <span class="nc" id="L41">    val statePayload: StatePayload</span>
 )
 
-<span class="nc" id="L44">@Component</span>
-<span class="nc" id="L45">class SubmitRequest(</span>
-<span class="nc" id="L46">    @Autowired private val generateDomainId: GenerateDomainId,</span>
-<span class="nc" id="L47">    @Autowired private val reqCmdRepository: ReqCmdRepository,</span>
+<span class="fc" id="L44">@Component</span>
+<span class="fc" id="L45">class SubmitRequest(</span>
+<span class="fc" id="L46">    @Autowired private val generateDomainId: GenerateDomainId,</span>
+<span class="fc" id="L47">    @Autowired private val reqCmdRepository: ReqCmdRepository,</span>
 ) {
     operator fun invoke(adhoc: InvokeAdhocReq) =
-<span class="nc" id="L50">        SubmittedInvokeAdhocReq(</span>
-<span class="nc" id="L51">            id = reqId(),</span>
-<span class="nc" id="L52">            status = ReqStatus.Submitted,</span>
-<span class="nc" id="L53">            execId = generateDomainId(::ExecId),</span>
-<span class="nc" id="L54">            inputs = adhoc.inputs,</span>
-<span class="nc" id="L55">            secrets = adhoc.secrets,</span>
-<span class="nc" id="L56">            code = adhoc.code</span>
-<span class="nc" id="L57">        ).also(reqCmdRepository::queue)</span>
+<span class="fc" id="L50">        SubmittedInvokeAdhocReq(</span>
+<span class="fc" id="L51">            id = reqId(),</span>
+<span class="fc" id="L52">            status = ReqStatus.Submitted,</span>
+<span class="fc" id="L53">            execId = generateDomainId(::ExecId),</span>
+<span class="fc" id="L54">            inputs = adhoc.inputs,</span>
+<span class="fc" id="L55">            secrets = adhoc.secrets,</span>
+<span class="fc" id="L56">            code = adhoc.code</span>
+<span class="fc" id="L57">        ).also(reqCmdRepository::queue)</span>
 
 
     operator fun invoke(oneshot: InvokeOneshot) =
@@ -101,16 +101,16 @@ import java.security.SecureRandom
 
 
     operator fun invoke(createTopic: CreateTopicReq) =
-<span class="nc" id="L104">        SubmittedCreateTopicReq(</span>
-<span class="nc" id="L105">            id = reqId(),</span>
-<span class="nc" id="L106">            status = ReqStatus.Submitted,</span>
-<span class="nc" id="L107">            topicId = generateDomainId(::TopicId),</span>
-<span class="nc" id="L108">            name = createTopic.name</span>
-<span class="nc" id="L109">        ).also(reqCmdRepository::queue)</span>
+<span class="fc" id="L104">        SubmittedCreateTopicReq(</span>
+<span class="fc" id="L105">            id = reqId(),</span>
+<span class="fc" id="L106">            status = ReqStatus.Submitted,</span>
+<span class="fc" id="L107">            topicId = generateDomainId(::TopicId),</span>
+<span class="fc" id="L108">            name = createTopic.name</span>
+<span class="fc" id="L109">        ).also(reqCmdRepository::queue)</span>
 
 
-<span class="nc" id="L112">    private val rnd = SecureRandom.getInstance(&quot;SHA1PRNG&quot;, &quot;SUN&quot;)</span>
-<span class="nc" id="L113">    private fun reqId() = ReqId(BigInteger(128, rnd))</span>
+<span class="fc" id="L112">    private val rnd = SecureRandom.getInstance(&quot;SHA1PRNG&quot;, &quot;SUN&quot;)</span>
+<span class="fc" id="L113">    private fun reqId() = ReqId(BigInteger(128, rnd))</span>
 
 }
 

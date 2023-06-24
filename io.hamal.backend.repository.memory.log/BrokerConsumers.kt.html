@@ -27,7 +27,7 @@ import kotlin.concurrent.withLock
     }
 
 <span class="fc" id="L29">    override fun close() {}</span>
-<span class="fc" id="L30">    override fun count(): ULong = lock.withLock { store.size.toULong() }</span>
+<span class="nc" id="L30">    override fun count(): ULong = lock.withLock { store.size.toULong() }</span>
 }
 
 fun MemoryLogBrokerConsumersRepository.clear() {

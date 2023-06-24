@@ -6,20 +6,20 @@ import io.hamal.lib.domain.vo.base.DomainId
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-<span class="nc" id="L9">abstract class BaseRecordRepository&lt;ID : DomainId, RECORD : Record&lt;ID&gt;&gt; {</span>
+<span class="fc" id="L9">abstract class BaseRecordRepository&lt;ID : DomainId, RECORD : Record&lt;ID&gt;&gt; {</span>
 
-<span class="nc" id="L11">    private val lock = ReentrantLock()</span>
-<span class="nc" id="L12">    private val store = mutableMapOf&lt;ID, MutableList&lt;RECORD&gt;&gt;()</span>
+<span class="fc" id="L11">    private val lock = ReentrantLock()</span>
+<span class="fc" id="L12">    private val store = mutableMapOf&lt;ID, MutableList&lt;RECORD&gt;&gt;()</span>
 
     fun addRecord(record: RECORD) {
-<span class="nc" id="L15">        lock.withLock {</span>
-<span class="nc" id="L16">            val records = store.getOrDefault(record.entityId, mutableListOf())</span>
-<span class="nc" id="L17">            record.apply { sequence = RecordSequence(records.size + 1) }</span>
-<span class="nc" id="L18">            store[record.entityId] = records.apply { add(record) }</span>
-<span class="nc" id="L19">        }</span>
-<span class="nc" id="L20">    }</span>
+<span class="fc" id="L15">        lock.withLock {</span>
+<span class="fc" id="L16">            val records = store.getOrDefault(record.entityId, mutableListOf())</span>
+<span class="fc" id="L17">            record.apply { sequence = RecordSequence(records.size + 1) }</span>
+<span class="fc" id="L18">            store[record.entityId] = records.apply { add(record) }</span>
+<span class="fc" id="L19">        }</span>
+<span class="fc" id="L20">    }</span>
 
-<span class="nc" id="L22">    fun listRecords(id: ID): List&lt;RECORD&gt; = lock.withLock { store.getOrDefault(id, listOf()) }</span>
-<span class="nc" id="L23">    fun contains(id: ID) = lock.withLock { store.containsKey(id) }</span>
+<span class="fc" id="L22">    fun listRecords(id: ID): List&lt;RECORD&gt; = lock.withLock { store.getOrDefault(id, listOf()) }</span>
+<span class="fc" id="L23">    fun contains(id: ID) = lock.withLock { store.containsKey(id) }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

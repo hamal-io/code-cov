@@ -8,22 +8,22 @@ import org.springframework.web.filter.OncePerRequestFilter
 
 
 @Component
-<span class="nc" id="L11">class CorsFilter : OncePerRequestFilter() {</span>
+<span class="fc" id="L11">class CorsFilter : OncePerRequestFilter() {</span>
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-<span class="nc" id="L17">        response.setHeader(&quot;Access-Control-Allow-Origin&quot;, &quot;*&quot;)</span>
-<span class="nc" id="L18">        response.setHeader(&quot;Access-Control-Allow-Methods&quot;, &quot;GET, POST, PUT, DELETE, OPTIONS&quot;)</span>
-<span class="nc" id="L19">        response.setHeader(&quot;Access-Control-Max-Age&quot;, &quot;3600&quot;)</span>
-<span class="nc" id="L20">        response.setHeader(&quot;Access-Control-Allow-Headers&quot;, &quot;authorization, content-type, xsrf-token&quot;)</span>
-<span class="nc" id="L21">        response.addHeader(&quot;Access-Control-Expose-Headers&quot;, &quot;xsrf-token&quot;)</span>
-<span class="nc bnc" id="L22" title="All 2 branches missed.">        if (&quot;OPTIONS&quot; == request.method) {</span>
+<span class="fc" id="L17">        response.setHeader(&quot;Access-Control-Allow-Origin&quot;, &quot;*&quot;)</span>
+<span class="fc" id="L18">        response.setHeader(&quot;Access-Control-Allow-Methods&quot;, &quot;GET, POST, PUT, DELETE, OPTIONS&quot;)</span>
+<span class="fc" id="L19">        response.setHeader(&quot;Access-Control-Max-Age&quot;, &quot;3600&quot;)</span>
+<span class="fc" id="L20">        response.setHeader(&quot;Access-Control-Allow-Headers&quot;, &quot;authorization, content-type, xsrf-token&quot;)</span>
+<span class="fc" id="L21">        response.addHeader(&quot;Access-Control-Expose-Headers&quot;, &quot;xsrf-token&quot;)</span>
+<span class="pc bpc" id="L22" title="1 of 2 branches missed.">        if (&quot;OPTIONS&quot; == request.method) {</span>
 <span class="nc" id="L23">            response.status = HttpServletResponse.SC_OK</span>
         } else {
-<span class="nc" id="L25">            filterChain.doFilter(request, response)</span>
+<span class="fc" id="L25">            filterChain.doFilter(request, response)</span>
         }
-<span class="nc" id="L27">    }</span>
+<span class="fc" id="L27">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

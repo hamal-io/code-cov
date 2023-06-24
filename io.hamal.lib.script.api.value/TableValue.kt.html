@@ -16,22 +16,22 @@ import kotlinx.serialization.encoding.Encoder
 @SerialName(&quot;TableEntry&quot;)
 <span class="nc" id="L17">data class TableEntry(val key: Value, val value: Value)</span>
 
-<span class="pc bpc" id="L19" title="3 of 9 branches missed.">@SerialName(&quot;TableValue&quot;)</span>
+<span class="pc bpc" id="L19" title="4 of 9 branches missed.">@SerialName(&quot;TableValue&quot;)</span>
 @Serializable
 <span class="fc" id="L21">data class TableValue(</span>
 <span class="fc" id="L22">    @Serializable(with = Serializer::class)</span>
-<span class="fc bfc" id="L23" title="All 4 branches covered.">    private val entries: MutableMap&lt;Value, Value&gt; = mutableMapOf(),</span>
+<span class="pc bpc" id="L23" title="2 of 4 branches missed.">    private val entries: MutableMap&lt;Value, Value&gt; = mutableMapOf(),</span>
 <span class="fc" id="L24">    @Transient</span>
 <span class="pc" id="L25">    override val metaTable: MetaTable = DefaultTableValueMetaTable</span>
 ) : Value, Collection&lt;TableEntry&gt; {
 
-<span class="fc" id="L28">    constructor(vararg pairs: Pair&lt;Value, Value&gt;) : this() {</span>
-<span class="fc" id="L29">        pairs.forEach { pair -&gt; entries[pair.first] = pair.second }</span>
-<span class="fc" id="L30">    }</span>
+<span class="nc" id="L28">    constructor(vararg pairs: Pair&lt;Value, Value&gt;) : this() {</span>
+<span class="nc" id="L29">        pairs.forEach { pair -&gt; entries[pair.first] = pair.second }</span>
+<span class="nc" id="L30">    }</span>
 
-<span class="fc" id="L32">    constructor(map: Map&lt;Value, Value&gt;) : this() {</span>
-<span class="fc" id="L33">        map.forEach { (key, value) -&gt; entries[key] = value }</span>
-<span class="fc" id="L34">    }</span>
+<span class="nc" id="L32">    constructor(map: Map&lt;Value, Value&gt;) : this() {</span>
+<span class="nc" id="L33">        map.forEach { (key, value) -&gt; entries[key] = value }</span>
+<span class="nc" id="L34">    }</span>
 
     operator fun set(key: Int, value: Value) {
 <span class="nc" id="L37">        this[NumberValue(key)] = value</span>
@@ -42,7 +42,7 @@ import kotlinx.serialization.encoding.Encoder
 <span class="nc" id="L42">    }</span>
 
 <span class="nc bnc" id="L44" title="All 2 branches missed.">    operator fun get(key: Int): Value = entries[NumberValue(key)] ?: NilValue</span>
-<span class="pc bpc" id="L45" title="1 of 2 branches missed.">    operator fun get(key: Value): Value = entries[key] ?: NilValue</span>
+<span class="nc bnc" id="L45" title="All 2 branches missed.">    operator fun get(key: Value): Value = entries[key] ?: NilValue</span>
 
     fun remove(key: Int) {
 <span class="nc" id="L48">        remove(NumberValue(key))</span>
@@ -87,11 +87,11 @@ import kotlinx.serialization.encoding.Encoder
 <span class="fc" id="L87">        override val descriptor = SerialDescriptor(&quot;TableValue&quot;, delegate.descriptor)</span>
 
         override fun deserialize(decoder: Decoder): MutableMap&lt;Value, Value&gt; {
-<span class="fc" id="L90">            return delegate.deserialize(decoder).toMutableMap()</span>
+<span class="nc" id="L90">            return delegate.deserialize(decoder).toMutableMap()</span>
         }
 
         override fun serialize(encoder: Encoder, value: MutableMap&lt;Value, Value&gt;) {
-<span class="fc" id="L94">            return delegate.serialize(encoder, value)</span>
+<span class="nc" id="L94">            return delegate.serialize(encoder, value)</span>
         }
     }
 
@@ -99,27 +99,27 @@ import kotlinx.serialization.encoding.Encoder
 <span class="fc" id="L99">        override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(&quot;KeyValue&quot;, PrimitiveKind.STRING)</span>
 
         override fun deserialize(decoder: Decoder): Value {
-<span class="fc" id="L102">            val str = decoder.decodeString()</span>
-<span class="fc" id="L103">            return when {</span>
-<span class="fc bfc" id="L104" title="All 2 branches covered.">                str.startsWith(&quot;s_&quot;) -&gt; StringValue(str.substring(2))</span>
-<span class="pc bpc" id="L105" title="1 of 2 branches missed.">                str.startsWith(&quot;n_&quot;) -&gt; NumberValue(str.substring(2))</span>
+<span class="nc" id="L102">            val str = decoder.decodeString()</span>
+<span class="nc" id="L103">            return when {</span>
+<span class="nc bnc" id="L104" title="All 2 branches missed.">                str.startsWith(&quot;s_&quot;) -&gt; StringValue(str.substring(2))</span>
+<span class="nc bnc" id="L105" title="All 2 branches missed.">                str.startsWith(&quot;n_&quot;) -&gt; NumberValue(str.substring(2))</span>
 <span class="nc" id="L106">                else -&gt; throw IllegalArgumentException(&quot;Only StringValue and NumberValue are supported&quot;)</span>
             }
         }
 
         override fun serialize(encoder: Encoder, value: Value) {
-<span class="fc" id="L111">            when (value) {</span>
-<span class="fc bfc" id="L112" title="All 2 branches covered.">                is StringValue -&gt; encoder.encodeString(&quot;s_${value.value}&quot;)</span>
-<span class="pc bpc" id="L113" title="1 of 2 branches missed.">                is NumberValue -&gt; encoder.encodeString(&quot;n_${value.value}&quot;)</span>
+<span class="nc" id="L111">            when (value) {</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">                is StringValue -&gt; encoder.encodeString(&quot;s_${value.value}&quot;)</span>
+<span class="nc bnc" id="L113" title="All 2 branches missed.">                is NumberValue -&gt; encoder.encodeString(&quot;n_${value.value}&quot;)</span>
 <span class="nc" id="L114">                else -&gt; TODO()</span>
             }
-<span class="fc" id="L116">        }</span>
+<span class="nc" id="L116">        }</span>
 
     }
 <span class="fc" id="L119">}</span>
 
 object DefaultTableValueMetaTable : MetaTable {
-<span class="fc" id="L122">    override val type = &quot;table&quot;</span>
-<span class="fc" id="L123">    override val operators: List&lt;ValueOperator&gt; = listOf()</span>
+<span class="pc" id="L122">    override val type = &quot;table&quot;</span>
+<span class="pc" id="L123">    override val operators: List&lt;ValueOperator&gt; = listOf()</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

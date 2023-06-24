@@ -31,10 +31,10 @@ import io.hamal.lib.script.impl.ast.expr.*
 <span class="fc" id="L31">internal class EvaluatePrototypeLiteral&lt;INVOKE_CTX : FuncInvocationContext&gt; :</span>
     Evaluate&lt;PrototypeLiteral, INVOKE_CTX&gt; {
     override fun invoke(ctx: EvaluationContext&lt;PrototypeLiteral, INVOKE_CTX&gt;): PrototypeValue {
-<span class="fc" id="L34">        return PrototypeValue(</span>
-<span class="fc" id="L35">            ctx.evaluateAsIdentifier { ident },</span>
-<span class="pc" id="L36">            ctx.toEvaluate.parameters.map { ctx.evaluateAsString(it) },</span>
-<span class="fc" id="L37">            ctx.toEvaluate.block</span>
+<span class="nc" id="L34">        return PrototypeValue(</span>
+<span class="nc" id="L35">            ctx.evaluateAsIdentifier { ident },</span>
+<span class="nc" id="L36">            ctx.toEvaluate.parameters.map { ctx.evaluateAsString(it) },</span>
+<span class="nc" id="L37">            ctx.toEvaluate.block</span>
         )
     }
 }

@@ -13,10 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 @Component
-<span class="nc" id="L16">class InvokeOneshotHandler(</span>
-<span class="nc" id="L17">    @Autowired private val execCmdService: ExecCmdService,</span>
-<span class="nc" id="L18">    @Autowired private val funcQueryService: FuncQueryService</span>
-<span class="nc" id="L19">) : ReqHandler&lt;InvokeOneshotReq&gt;(InvokeOneshotReq::class) {</span>
+<span class="fc" id="L16">class InvokeOneshotHandler(</span>
+<span class="fc" id="L17">    @Autowired private val execCmdService: ExecCmdService,</span>
+<span class="fc" id="L18">    @Autowired private val funcQueryService: FuncQueryService</span>
+<span class="fc" id="L19">) : ReqHandler&lt;InvokeOneshotReq&gt;(InvokeOneshotReq::class) {</span>
     override fun invoke(req: InvokeOneshotReq) {
 <span class="nc" id="L21">        val func = funcQueryService.get(req.funcId)</span>
 <span class="nc" id="L22">        execCmdService.plan(</span>

@@ -12,164 +12,164 @@ sealed interface FieldExpression {
 }
 
 
-<span class="fc" id="L15">data class TableIndexLiteral(val value: Int) : LiteralExpression {</span>
-<span class="fc" id="L16">    init {</span>
-<span class="fc bfc" id="L17" title="All 4 branches covered.">        require(value &gt; 0) { &quot;First element starts with index 1&quot; }</span>
-<span class="fc" id="L18">    }</span>
+<span class="nc" id="L15">data class TableIndexLiteral(val value: Int) : LiteralExpression {</span>
+<span class="nc" id="L16">    init {</span>
+<span class="nc bnc" id="L17" title="All 4 branches missed.">        require(value &gt; 0) { &quot;First element starts with index 1&quot; }</span>
+<span class="nc" id="L18">    }</span>
 
     internal object Parse : ParseLiteralExpression&lt;TableIndexLiteral&gt; {
         override fun invoke(ctx: Parser.Context): TableIndexLiteral {
-<span class="pc bpc" id="L22" title="1 of 2 branches missed.">            require(ctx.isNotEmpty())</span>
-<span class="fc" id="L23">            val token = ctx.currentToken()</span>
-<span class="pc bpc" id="L24" title="3 of 6 branches missed.">            assert(token.type == Token.Type.Number)</span>
-<span class="fc" id="L25">            ctx.advance()</span>
-<span class="fc" id="L26">            return TableIndexLiteral(token.value.toInt())</span>
+<span class="nc bnc" id="L22" title="All 2 branches missed.">            require(ctx.isNotEmpty())</span>
+<span class="nc" id="L23">            val token = ctx.currentToken()</span>
+<span class="nc bnc" id="L24" title="All 6 branches missed.">            assert(token.type == Token.Type.Number)</span>
+<span class="nc" id="L25">            ctx.advance()</span>
+<span class="nc" id="L26">            return TableIndexLiteral(token.value.toInt())</span>
         }
     }
 }
 
-<span class="fc" id="L31">data class IndexFieldExpression(</span>
-<span class="fc" id="L32">    val index: TableIndexLiteral,</span>
-<span class="fc" id="L33">    override val value: Expression</span>
+<span class="nc" id="L31">data class IndexFieldExpression(</span>
+<span class="nc" id="L32">    val index: TableIndexLiteral,</span>
+<span class="nc" id="L33">    override val value: Expression</span>
 ) : FieldExpression {
 
     override fun equals(other: Any?): Boolean {
-<span class="pc bpc" id="L37" title="1 of 2 branches missed.">        if (this === other) return true</span>
-<span class="pc bpc" id="L38" title="2 of 4 branches missed.">        if (javaClass != other?.javaClass) return false</span>
-<span class="fc" id="L39">        other as IndexFieldExpression</span>
-<span class="fc" id="L40">        return index == other.index</span>
+<span class="nc bnc" id="L37" title="All 2 branches missed.">        if (this === other) return true</span>
+<span class="nc bnc" id="L38" title="All 4 branches missed.">        if (javaClass != other?.javaClass) return false</span>
+<span class="nc" id="L39">        other as IndexFieldExpression</span>
+<span class="nc" id="L40">        return index == other.index</span>
     }
 
     override fun hashCode(): Int {
-<span class="fc" id="L44">        return index.hashCode()</span>
+<span class="nc" id="L44">        return index.hashCode()</span>
     }
 }
 
-<span class="fc" id="L48">data class TableKeyLiteral(val value: String) : LiteralExpression {</span>
-<span class="fc" id="L49">    init {</span>
-<span class="pc bpc" id="L50" title="2 of 4 branches missed.">        require(value.trim().isNotEmpty()) { &quot;ident can not be empty&quot; }</span>
-<span class="fc" id="L51">    }</span>
+<span class="nc" id="L48">data class TableKeyLiteral(val value: String) : LiteralExpression {</span>
+<span class="nc" id="L49">    init {</span>
+<span class="nc bnc" id="L50" title="All 4 branches missed.">        require(value.trim().isNotEmpty()) { &quot;ident can not be empty&quot; }</span>
+<span class="nc" id="L51">    }</span>
 
     internal object Parse : ParseLiteralExpression&lt;TableKeyLiteral&gt; {
         override fun invoke(ctx: Parser.Context): TableKeyLiteral {
-<span class="pc bpc" id="L55" title="1 of 2 branches missed.">            require(ctx.isNotEmpty())</span>
-<span class="fc" id="L56">            val token = ctx.currentToken()</span>
-<span class="pc bpc" id="L57" title="3 of 8 branches missed.">            assert(token.type == Token.Type.Ident || token.type == Token.Type.String)</span>
-<span class="fc" id="L58">            ctx.advance()</span>
-<span class="fc" id="L59">            return TableKeyLiteral(token.value)</span>
+<span class="nc bnc" id="L55" title="All 2 branches missed.">            require(ctx.isNotEmpty())</span>
+<span class="nc" id="L56">            val token = ctx.currentToken()</span>
+<span class="nc bnc" id="L57" title="All 8 branches missed.">            assert(token.type == Token.Type.Ident || token.type == Token.Type.String)</span>
+<span class="nc" id="L58">            ctx.advance()</span>
+<span class="nc" id="L59">            return TableKeyLiteral(token.value)</span>
         }
     }
 }
 
-<span class="fc" id="L64">data class KeyFieldExpression(</span>
-<span class="fc" id="L65">    val key: String,</span>
-<span class="fc" id="L66">    override val value: Expression</span>
+<span class="nc" id="L64">data class KeyFieldExpression(</span>
+<span class="nc" id="L65">    val key: String,</span>
+<span class="nc" id="L66">    override val value: Expression</span>
 ) : FieldExpression {
     override fun equals(other: Any?): Boolean {
-<span class="pc bpc" id="L69" title="1 of 2 branches missed.">        if (this === other) return true</span>
-<span class="pc bpc" id="L70" title="2 of 4 branches missed.">        if (javaClass != other?.javaClass) return false</span>
-<span class="fc" id="L71">        other as KeyFieldExpression</span>
-<span class="fc" id="L72">        return key == other.key</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">        if (this === other) return true</span>
+<span class="nc bnc" id="L70" title="All 4 branches missed.">        if (javaClass != other?.javaClass) return false</span>
+<span class="nc" id="L71">        other as KeyFieldExpression</span>
+<span class="nc" id="L72">        return key == other.key</span>
     }
 
     override fun hashCode(): Int {
-<span class="fc" id="L76">        return key.hashCode()</span>
+<span class="nc" id="L76">        return key.hashCode()</span>
     }
 }
 
-<span class="fc" id="L80">class TableConstructorExpression(</span>
-<span class="fc" id="L81">    val fieldExpressions: List&lt;FieldExpression&gt;</span>
+<span class="nc" id="L80">class TableConstructorExpression(</span>
+<span class="nc" id="L81">    val fieldExpressions: List&lt;FieldExpression&gt;</span>
 ) : Expression {
 
     internal object Parse : ParseExpression&lt;TableConstructorExpression&gt; {
         override fun invoke(ctx: Parser.Context): TableConstructorExpression {
-<span class="pc bpc" id="L86" title="1 of 2 branches missed.">            require(ctx.isNotEmpty())</span>
-<span class="fc" id="L87">            ctx.expectCurrentTokenTypToBe(LeftCurlyBracket)</span>
-<span class="fc" id="L88">            ctx.advance()</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">            require(ctx.isNotEmpty())</span>
+<span class="nc" id="L87">            ctx.expectCurrentTokenTypToBe(LeftCurlyBracket)</span>
+<span class="nc" id="L88">            ctx.advance()</span>
 
-<span class="fc" id="L90">            var index = 1</span>
-<span class="fc" id="L91">            val fieldExpressions = mutableListOf&lt;FieldExpression&gt;()</span>
-<span class="fc bfc" id="L92" title="All 2 branches covered.">            while (ctx.currentTokenType() != RightCurlyBracket) {</span>
-<span class="fc" id="L93">                val expression = ctx.parseExpression(Precedence.Lowest)</span>
+<span class="nc" id="L90">            var index = 1</span>
+<span class="nc" id="L91">            val fieldExpressions = mutableListOf&lt;FieldExpression&gt;()</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">            while (ctx.currentTokenType() != RightCurlyBracket) {</span>
+<span class="nc" id="L93">                val expression = ctx.parseExpression(Precedence.Lowest)</span>
 
-<span class="fc bfc" id="L95" title="All 2 branches covered.">                if (ctx.currentTokenType() != Equal) {</span>
-<span class="fc" id="L96">                    fieldExpressions.add(</span>
-<span class="fc" id="L97">                        IndexFieldExpression(</span>
-<span class="fc" id="L98">                            index = TableIndexLiteral(index++),</span>
-<span class="fc" id="L99">                            value = expression</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">                if (ctx.currentTokenType() != Equal) {</span>
+<span class="nc" id="L96">                    fieldExpressions.add(</span>
+<span class="nc" id="L97">                        IndexFieldExpression(</span>
+<span class="nc" id="L98">                            index = TableIndexLiteral(index++),</span>
+<span class="nc" id="L99">                            value = expression</span>
                         )
                     )
                 } else {
-<span class="fc" id="L103">                    ctx.expectCurrentTokenTypToBe(Equal)</span>
-<span class="fc" id="L104">                    ctx.advance()</span>
+<span class="nc" id="L103">                    ctx.expectCurrentTokenTypToBe(Equal)</span>
+<span class="nc" id="L104">                    ctx.advance()</span>
 
-<span class="fc" id="L106">                    val valueExpression = ctx.parseExpression(Precedence.Lowest)</span>
-<span class="pc bpc" id="L107" title="1 of 2 branches missed.">                    require(expression is IdentifierLiteral)</span>
+<span class="nc" id="L106">                    val valueExpression = ctx.parseExpression(Precedence.Lowest)</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">                    require(expression is IdentifierLiteral)</span>
 
-<span class="fc" id="L109">                    fieldExpressions.add(</span>
-<span class="fc" id="L110">                        KeyFieldExpression(</span>
-<span class="fc" id="L111">                            key = expression.value,</span>
-<span class="fc" id="L112">                            value = valueExpression</span>
+<span class="nc" id="L109">                    fieldExpressions.add(</span>
+<span class="nc" id="L110">                        KeyFieldExpression(</span>
+<span class="nc" id="L111">                            key = expression.value,</span>
+<span class="nc" id="L112">                            value = valueExpression</span>
                         )
                     )
                 }
 
-<span class="fc bfc" id="L117" title="All 2 branches covered.">                if (ctx.currentTokenType() == Comma) {</span>
-<span class="fc" id="L118">                    ctx.advance()</span>
+<span class="nc bnc" id="L117" title="All 2 branches missed.">                if (ctx.currentTokenType() == Comma) {</span>
+<span class="nc" id="L118">                    ctx.advance()</span>
                 }
             }
-<span class="fc" id="L121">            ctx.expectCurrentTokenTypToBe(RightCurlyBracket)</span>
-<span class="fc" id="L122">            ctx.advance()</span>
-<span class="fc" id="L123">            return TableConstructorExpression(fieldExpressions)</span>
+<span class="nc" id="L121">            ctx.expectCurrentTokenTypToBe(RightCurlyBracket)</span>
+<span class="nc" id="L122">            ctx.advance()</span>
+<span class="nc" id="L123">            return TableConstructorExpression(fieldExpressions)</span>
         }
     }
 
 }
 
-<span class="fc" id="L129">class TableAccessExpression(</span>
-<span class="fc" id="L130">    val ident: IdentifierLiteral,</span>
-<span class="fc" id="L131">    val parameter: Expression</span>
+<span class="nc" id="L129">class TableAccessExpression(</span>
+<span class="nc" id="L130">    val ident: IdentifierLiteral,</span>
+<span class="nc" id="L131">    val parameter: Expression</span>
 ) : Expression {
 
     object Parse : ParseInfixExpression {
         override fun invoke(ctx: Parser.Context, lhs: Expression): Expression {
-<span class="pc bpc" id="L136" title="1 of 2 branches missed.">            require(lhs is IdentifierLiteral)</span>
-<span class="fc" id="L137">            return TableAccessExpression(</span>
-<span class="fc" id="L138">                ident = lhs,</span>
-<span class="fc" id="L139">                parameter = ctx.parseParameter()</span>
+<span class="nc bnc" id="L136" title="All 2 branches missed.">            require(lhs is IdentifierLiteral)</span>
+<span class="nc" id="L137">            return TableAccessExpression(</span>
+<span class="nc" id="L138">                ident = lhs,</span>
+<span class="nc" id="L139">                parameter = ctx.parseParameter()</span>
             )
         }
 
         private fun Parser.Context.parseParameter(): Expression {
-<span class="fc" id="L144">            return when {</span>
-<span class="fc bfc" id="L145" title="All 4 branches covered.">                currentTokenType() == LeftBracket &amp;&amp; nextTokenType() == Number -&gt; parseIndex()</span>
-<span class="fc" id="L146">                else -&gt; parseKey()</span>
+<span class="nc" id="L144">            return when {</span>
+<span class="nc bnc" id="L145" title="All 4 branches missed.">                currentTokenType() == LeftBracket &amp;&amp; nextTokenType() == Number -&gt; parseIndex()</span>
+<span class="nc" id="L146">                else -&gt; parseKey()</span>
             }
         }
 
         private fun Parser.Context.parseIndex(): Expression {
-<span class="fc" id="L151">            expectCurrentTokenTypToBe(LeftBracket)</span>
-<span class="fc" id="L152">            advance()</span>
-<span class="fc" id="L153">            expectCurrentTokenTypToBe(Number)</span>
-<span class="fc" id="L154">            val result = TableIndexLiteral.Parse(this)</span>
-<span class="fc" id="L155">            expectCurrentTokenTypToBe(RightBracket)</span>
-<span class="fc" id="L156">            advance()</span>
-<span class="fc" id="L157">            return result</span>
+<span class="nc" id="L151">            expectCurrentTokenTypToBe(LeftBracket)</span>
+<span class="nc" id="L152">            advance()</span>
+<span class="nc" id="L153">            expectCurrentTokenTypToBe(Number)</span>
+<span class="nc" id="L154">            val result = TableIndexLiteral.Parse(this)</span>
+<span class="nc" id="L155">            expectCurrentTokenTypToBe(RightBracket)</span>
+<span class="nc" id="L156">            advance()</span>
+<span class="nc" id="L157">            return result</span>
         }
 
         private fun Parser.Context.parseKey(): Expression {
-<span class="fc bfc" id="L161" title="All 2 branches covered.">            if (currentTokenType() == Token.Type.Dot) {</span>
-<span class="fc" id="L162">                advance()</span>
-<span class="fc" id="L163">                expectCurrentTokenTypToBe(Ident)</span>
-<span class="fc" id="L164">                return TableKeyLiteral.Parse(this)</span>
+<span class="nc bnc" id="L161" title="All 2 branches missed.">            if (currentTokenType() == Token.Type.Dot) {</span>
+<span class="nc" id="L162">                advance()</span>
+<span class="nc" id="L163">                expectCurrentTokenTypToBe(Ident)</span>
+<span class="nc" id="L164">                return TableKeyLiteral.Parse(this)</span>
             }
-<span class="fc" id="L166">            expectCurrentTokenTypToBe(LeftBracket)</span>
-<span class="fc" id="L167">            advance()</span>
-<span class="fc" id="L168">            expectCurrentTokenTypToBe(Token.Type.String)</span>
-<span class="fc" id="L169">            val result = TableKeyLiteral.Parse(this)</span>
-<span class="fc" id="L170">            expectCurrentTokenTypToBe(RightBracket)</span>
-<span class="fc" id="L171">            advance()</span>
-<span class="fc" id="L172">            return result</span>
+<span class="nc" id="L166">            expectCurrentTokenTypToBe(LeftBracket)</span>
+<span class="nc" id="L167">            advance()</span>
+<span class="nc" id="L168">            expectCurrentTokenTypToBe(Token.Type.String)</span>
+<span class="nc" id="L169">            val result = TableKeyLiteral.Parse(this)</span>
+<span class="nc" id="L170">            expectCurrentTokenTypToBe(RightBracket)</span>
+<span class="nc" id="L171">            advance()</span>
+<span class="nc" id="L172">            return result</span>
         }
     }
 }

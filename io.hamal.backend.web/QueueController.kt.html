@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RestController
 import java.math.BigInteger
 import java.security.SecureRandom
 
-<span class="nc" id="L14">@RestController</span>
+<span class="fc" id="L14">@RestController</span>
 class QueueController
-<span class="nc" id="L16">@Autowired constructor(</span>
-<span class="nc" id="L17">    val execCmdService: ExecCmdService,</span>
-<span class="nc" id="L18">    val stateQueryService: StateQueryService</span>
+<span class="fc" id="L16">@Autowired constructor(</span>
+<span class="pc" id="L17">    val execCmdService: ExecCmdService,</span>
+<span class="pc" id="L18">    val stateQueryService: StateQueryService</span>
 ) {
     @PostMapping(&quot;/v1/dequeue&quot;)
     fun dequeueExec(): ApiAgentExecRequests {

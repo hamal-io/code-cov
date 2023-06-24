@@ -17,10 +17,10 @@ import kotlinx.serialization.encoding.Encoder
 }
 
 internal object DomainNameValidator {
-<span class="fc" id="L20">    private val regex = Regex(&quot;^([A-Za-z0-9-_@:.]{1,255})$&quot;)</span>
+<span class="nc" id="L20">    private val regex = Regex(&quot;^([A-Za-z0-9-_@:.]{1,255})$&quot;)</span>
     fun validate(value: String) {
-<span class="fc bfc" id="L22" title="All 2 branches covered.">        require(regex.matches(value)) { IllegalArgumentException(&quot;DomainName('$value') is illegal&quot;) }</span>
-<span class="fc" id="L23">    }</span>
+<span class="nc bnc" id="L22" title="All 2 branches missed.">        require(regex.matches(value)) { IllegalArgumentException(&quot;DomainName('$value') is illegal&quot;) }</span>
+<span class="nc" id="L23">    }</span>
 }
 
 

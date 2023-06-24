@@ -7,80 +7,80 @@ import io.hamal.lib.script.impl.ast.stmt.Block
 import io.hamal.lib.script.impl.token.Token.Type.*
 import io.hamal.lib.script.impl.token.Token.Type.Function
 
-<span class="fc" id="L10">class PrototypeLiteral(</span>
-<span class="fc" id="L11">    val ident: IdentifierLiteral,</span>
-<span class="fc" id="L12">    val parameters: List&lt;IdentifierLiteral&gt;,</span>
-<span class="fc" id="L13">    val block: Block</span>
+<span class="nc" id="L10">class PrototypeLiteral(</span>
+<span class="nc" id="L11">    val ident: IdentifierLiteral,</span>
+<span class="nc" id="L12">    val parameters: List&lt;IdentifierLiteral&gt;,</span>
+<span class="nc" id="L13">    val block: Block</span>
 ) : LiteralExpression {
 
     internal object Parse : ParseLiteralExpression&lt;PrototypeLiteral&gt; {
         override fun invoke(ctx: Context): PrototypeLiteral {
-<span class="pc bpc" id="L18" title="1 of 2 branches missed.">            require(ctx.isNotEmpty())</span>
-<span class="fc" id="L19">            ctx.expectCurrentTokenTypToBe(Function)</span>
-<span class="fc" id="L20">            ctx.advance()</span>
+<span class="nc bnc" id="L18" title="All 2 branches missed.">            require(ctx.isNotEmpty())</span>
+<span class="nc" id="L19">            ctx.expectCurrentTokenTypToBe(Function)</span>
+<span class="nc" id="L20">            ctx.advance()</span>
 
-<span class="fc bfc" id="L22" title="All 2 branches covered.">            val ident = if (ctx.currentTokenType() != LeftParenthesis) {</span>
-<span class="fc" id="L23">                val ident = ctx.parseIdentifier()</span>
-<span class="fc" id="L24">                ctx.expectCurrentTokenTypToBe(LeftParenthesis)</span>
-<span class="fc" id="L25">                ctx.advance()</span>
-<span class="fc" id="L26">                ident</span>
+<span class="nc bnc" id="L22" title="All 2 branches missed.">            val ident = if (ctx.currentTokenType() != LeftParenthesis) {</span>
+<span class="nc" id="L23">                val ident = ctx.parseIdentifier()</span>
+<span class="nc" id="L24">                ctx.expectCurrentTokenTypToBe(LeftParenthesis)</span>
+<span class="nc" id="L25">                ctx.advance()</span>
+<span class="nc" id="L26">                ident</span>
             } else {
-<span class="fc" id="L28">                ctx.advance()</span>
-<span class="fc" id="L29">                IdentifierLiteral(&quot;lambda&quot;)</span>
+<span class="nc" id="L28">                ctx.advance()</span>
+<span class="nc" id="L29">                IdentifierLiteral(&quot;lambda&quot;)</span>
             }
 
-<span class="fc" id="L32">            val parameterIdentifiers = ctx.parseParameters()</span>
-<span class="fc" id="L33">            ctx.expectCurrentTokenTypToBe(RightParenthesis)</span>
-<span class="fc" id="L34">            ctx.advance()</span>
+<span class="nc" id="L32">            val parameterIdentifiers = ctx.parseParameters()</span>
+<span class="nc" id="L33">            ctx.expectCurrentTokenTypToBe(RightParenthesis)</span>
+<span class="nc" id="L34">            ctx.advance()</span>
 
-<span class="fc" id="L36">            return PrototypeLiteral(</span>
-<span class="fc" id="L37">                ident,</span>
-<span class="fc" id="L38">                parameterIdentifiers,</span>
-<span class="fc" id="L39">                ctx.parseBody()</span>
+<span class="nc" id="L36">            return PrototypeLiteral(</span>
+<span class="nc" id="L37">                ident,</span>
+<span class="nc" id="L38">                parameterIdentifiers,</span>
+<span class="nc" id="L39">                ctx.parseBody()</span>
             )
         }
 
 
         private fun Context.parseParameters(): List&lt;IdentifierLiteral&gt; {
-<span class="fc" id="L45">            val result = mutableListOf&lt;IdentifierLiteral&gt;()</span>
-<span class="fc bfc" id="L46" title="All 2 branches covered.">            while (currentTokenType() != RightParenthesis) {</span>
-<span class="fc" id="L47">                expectCurrentTokenTypToBe(Ident)</span>
-<span class="fc" id="L48">                result.add(parseIdentifier())</span>
-<span class="fc bfc" id="L49" title="All 2 branches covered.">                if (currentTokenType() == Comma) {</span>
-<span class="fc" id="L50">                    advance()</span>
+<span class="nc" id="L45">            val result = mutableListOf&lt;IdentifierLiteral&gt;()</span>
+<span class="nc bnc" id="L46" title="All 2 branches missed.">            while (currentTokenType() != RightParenthesis) {</span>
+<span class="nc" id="L47">                expectCurrentTokenTypToBe(Ident)</span>
+<span class="nc" id="L48">                result.add(parseIdentifier())</span>
+<span class="nc bnc" id="L49" title="All 2 branches missed.">                if (currentTokenType() == Comma) {</span>
+<span class="nc" id="L50">                    advance()</span>
                 }
             }
-<span class="fc" id="L53">            return result</span>
+<span class="nc" id="L53">            return result</span>
         }
 
         private fun Context.parseBody(): Block {
-<span class="fc" id="L57">            val statements = mutableListOf&lt;Statement&gt;()</span>
-<span class="fc bfc" id="L58" title="All 2 branches covered.">            while (currentTokenType() != End) {</span>
-<span class="pc bpc" id="L59" title="2 of 4 branches missed.">                require(currentTokenType() != Eof) {</span>
+<span class="nc" id="L57">            val statements = mutableListOf&lt;Statement&gt;()</span>
+<span class="nc bnc" id="L58" title="All 2 branches missed.">            while (currentTokenType() != End) {</span>
+<span class="nc bnc" id="L59" title="All 4 branches missed.">                require(currentTokenType() != Eof) {</span>
 <span class="nc" id="L60">                    &quot;Expected end  but reached end of file&quot;</span>
                 }
-<span class="fc" id="L62">                parseStatement().let(statements::add)</span>
+<span class="nc" id="L62">                parseStatement().let(statements::add)</span>
             }
-<span class="fc" id="L64">            expectCurrentTokenTypToBe(End)</span>
-<span class="fc" id="L65">            advance()</span>
-<span class="fc" id="L66">            return Block(statements)</span>
+<span class="nc" id="L64">            expectCurrentTokenTypToBe(End)</span>
+<span class="nc" id="L65">            advance()</span>
+<span class="nc" id="L66">            return Block(statements)</span>
         }
     }
 
     override fun equals(other: Any?): Boolean {
-<span class="pc bpc" id="L71" title="1 of 2 branches missed.">        if (this === other) return true</span>
-<span class="pc bpc" id="L72" title="2 of 4 branches missed.">        if (javaClass != other?.javaClass) return false</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">        if (this === other) return true</span>
+<span class="nc bnc" id="L72" title="All 4 branches missed.">        if (javaClass != other?.javaClass) return false</span>
 
-<span class="fc" id="L74">        other as PrototypeLiteral</span>
+<span class="nc" id="L74">        other as PrototypeLiteral</span>
 
-<span class="fc bfc" id="L76" title="All 2 branches covered.">        if (ident != other.ident) return false</span>
-<span class="fc" id="L77">        return parameters == other.parameters</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">        if (ident != other.ident) return false</span>
+<span class="nc" id="L77">        return parameters == other.parameters</span>
     }
 
     override fun hashCode(): Int {
-<span class="fc" id="L81">        var result = ident.hashCode()</span>
-<span class="fc" id="L82">        result = 31 * result + parameters.hashCode()</span>
-<span class="fc" id="L83">        return result</span>
+<span class="nc" id="L81">        var result = ident.hashCode()</span>
+<span class="nc" id="L82">        result = 31 * result + parameters.hashCode()</span>
+<span class="nc" id="L83">        return result</span>
     }
 
     override fun toString(): String {

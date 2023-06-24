@@ -6,24 +6,24 @@
 public class JavaEnumStrategy extends JavaCopy.Strategy {
 
     public JavaEnumStrategy() {
-<span class="fc" id="L9">        super(new CopyStrategy());</span>
-<span class="fc" id="L10">    }</span>
+<span class="nc" id="L9">        super(new CopyStrategy());</span>
+<span class="nc" id="L10">    }</span>
 
     @Override
     public boolean supports(Class&lt;?&gt; sourceClass, Class&lt;?&gt; targetClass) {
-<span class="fc bfc" id="L14" title="All 4 branches covered.">        return sourceClass.equals(targetClass) &amp;&amp; copyStrategy.supports(sourceClass);</span>
+<span class="nc bnc" id="L14" title="All 4 branches missed.">        return sourceClass.equals(targetClass) &amp;&amp; copyStrategy.supports(sourceClass);</span>
     }
 
-<span class="fc" id="L17">    public static class CopyStrategy implements JavaCopy.CopyStrategy {</span>
+<span class="nc" id="L17">    public static class CopyStrategy implements JavaCopy.CopyStrategy {</span>
 
         @Override
         public boolean supports(Class&lt;?&gt; valueClass) {
-<span class="fc" id="L21">            return valueClass.isEnum();</span>
+<span class="nc" id="L21">            return valueClass.isEnum();</span>
         }
 
         @Override
         public Object apply(Class&lt;?&gt; valueClass, Object value) {
-<span class="fc" id="L26">            return value;</span>
+<span class="nc" id="L26">            return value;</span>
         }
     }
 

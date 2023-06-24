@@ -12,9 +12,9 @@ import io.hamal.lib.script.impl.token.Token.Type.RightParenthesis
 <span class="fc" id="L12">            ctx.expectCurrentTokenTypToBe(LeftParenthesis)</span>
 <span class="fc" id="L13">            ctx.advance()</span>
 
-<span class="fc bfc" id="L15" title="All 2 branches covered.">            if (ctx.currentTokenType() == RightParenthesis) {</span>
-<span class="fc" id="L16">                ctx.advance()</span>
-<span class="fc" id="L17">                return GroupedExpression(NilLiteral)</span>
+<span class="pc bpc" id="L15" title="1 of 2 branches missed.">            if (ctx.currentTokenType() == RightParenthesis) {</span>
+<span class="nc" id="L16">                ctx.advance()</span>
+<span class="nc" id="L17">                return GroupedExpression(NilLiteral)</span>
             }
 
 <span class="fc" id="L20">            val result = GroupedExpression(ctx.parseExpression(Precedence.Lowest))</span>
@@ -24,6 +24,6 @@ import io.hamal.lib.script.impl.token.Token.Type.RightParenthesis
         }
     }
 
-<span class="nc" id="L27">    override fun toString() = &quot;($expression)&quot;</span>
+<span class="fc" id="L27">    override fun toString() = &quot;($expression)&quot;</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

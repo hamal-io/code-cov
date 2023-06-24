@@ -3,14 +3,14 @@
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-<span class="fc bfc" id="L6" title="All 2 branches covered.">fun booleanOf(value: Boolean) = if (value) TrueValue else FalseValue</span>
+<span class="pc bpc" id="L6" title="1 of 2 branches missed.">fun booleanOf(value: Boolean) = if (value) TrueValue else FalseValue</span>
 
 <span class="pc" id="L8">@Serializable</span>
 @SerialName(&quot;TrueValue&quot;)
 object TrueValue : Value {
     @Transient
 <span class="pc" id="L12">    override val metaTable = DefaultBooleanMetaTable</span>
-<span class="fc" id="L13">    override fun toString() = &quot;true&quot;</span>
+<span class="nc" id="L13">    override fun toString() = &quot;true&quot;</span>
 }
 
 <span class="pc" id="L16">@Serializable</span>
@@ -18,11 +18,11 @@ object TrueValue : Value {
 object FalseValue : Value {
     @Transient
 <span class="pc" id="L20">    override val metaTable = DefaultBooleanMetaTable</span>
-<span class="fc" id="L21">    override fun toString() = &quot;false&quot;</span>
+<span class="nc" id="L21">    override fun toString() = &quot;false&quot;</span>
 }
 
 object DefaultBooleanMetaTable : MetaTable {
-<span class="fc" id="L25">    override val type = &quot;boolean&quot;</span>
-<span class="fc" id="L26">    override val operators = listOf&lt;ValueOperator&gt;()</span>
+<span class="pc" id="L25">    override val type = &quot;boolean&quot;</span>
+<span class="pc" id="L26">    override val operators = listOf&lt;ValueOperator&gt;()</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

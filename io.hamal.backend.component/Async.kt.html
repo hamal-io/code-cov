@@ -8,16 +8,16 @@ import java.util.concurrent.ScheduledFuture
 import kotlin.time.Duration
 import kotlin.time.toJavaDuration
 
-<span class="nc" id="L11">@Component</span>
-<span class="nc" id="L12">class Async(</span>
-<span class="nc" id="L13">    @Autowired val executor: ThreadPoolTaskScheduler,</span>
+<span class="fc" id="L11">@Component</span>
+<span class="fc" id="L12">class Async(</span>
+<span class="pc" id="L13">    @Autowired val executor: ThreadPoolTaskScheduler,</span>
 ) {
     fun runAsync(runnable: Runnable): CompletableFuture&lt;Unit&gt; {
 <span class="nc" id="L16">        return CompletableFuture.runAsync(runnable, executor).thenApply { }</span>
     }
 
     fun atFixedRate(period: Duration, task: Runnable): ScheduledFuture&lt;*&gt; {
-<span class="nc" id="L20">        return executor.scheduleAtFixedRate(task, period.toJavaDuration())</span>
+<span class="fc" id="L20">        return executor.scheduleAtFixedRate(task, period.toJavaDuration())</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

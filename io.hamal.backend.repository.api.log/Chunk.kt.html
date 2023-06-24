@@ -12,10 +12,10 @@ import java.time.Instant
 
 <span class="fc" id="L13">data class LogChunk(</span>
 <span class="fc" id="L14">    val id: LogChunkId,</span>
-<span class="fc" id="L15">    val segmentId: LogSegment.Id,</span>
-<span class="fc" id="L16">    val topicId: TopicId,</span>
+<span class="pc" id="L15">    val segmentId: LogSegment.Id,</span>
+<span class="pc" id="L16">    val topicId: TopicId,</span>
 <span class="fc" id="L17">    val bytes: ByteArray,</span>
-<span class="fc" id="L18">    val instant: Instant</span>
+<span class="pc" id="L18">    val instant: Instant</span>
 )
 
 
@@ -24,7 +24,7 @@ interface LogChunkAppender {
 }
 
 interface LogChunkReader {
-<span class="fc" id="L27">    fun read(firstId: LogChunkId, limit: Int = 1): List&lt;LogChunk&gt;</span>
+<span class="nc" id="L27">    fun read(firstId: LogChunkId, limit: Int = 1): List&lt;LogChunk&gt;</span>
 }
 
 interface LogChunkCounter {

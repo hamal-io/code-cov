@@ -53,20 +53,20 @@ import io.hamal.lib.script.impl.ast.expr.Operator
 <span class="fc" id="L53">        return result</span>
     }
 
-<span class="fc" id="L56">    fun &lt;NEW_TYPE : Node&gt; evaluateAsPrototype(</span>
-<span class="fc" id="L57">        env: EnvValue = this.env,</span>
+<span class="nc" id="L56">    fun &lt;NEW_TYPE : Node&gt; evaluateAsPrototype(</span>
+<span class="nc" id="L57">        env: EnvValue = this.env,</span>
         block: TYPE.() -&gt; NEW_TYPE
     ): PrototypeValue {
-<span class="fc" id="L60">        return evaluateAsPrototype(block(toEvaluate), env)</span>
+<span class="nc" id="L60">        return evaluateAsPrototype(block(toEvaluate), env)</span>
     }
 
 <span class="nc" id="L63">    fun &lt;TYPE : Node&gt; evaluateAsPrototype(</span>
         toEvaluate: TYPE,
 <span class="nc" id="L65">        env: EnvValue = this.env</span>
     ): PrototypeValue {
-<span class="fc" id="L67">        val result = evaluate(toEvaluate, env)</span>
-<span class="pc bpc" id="L68" title="1 of 2 branches missed.">        require(result is PrototypeValue)</span>
-<span class="fc" id="L69">        return result</span>
+<span class="nc" id="L67">        val result = evaluate(toEvaluate, env)</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">        require(result is PrototypeValue)</span>
+<span class="nc" id="L69">        return result</span>
     }
 
 <span class="nc" id="L72">    fun &lt;NEW_TYPE : Node&gt; evaluateAsString(</span>
@@ -92,14 +92,14 @@ import io.hamal.lib.script.impl.ast.expr.Operator
     ): Value {
 <span class="fc" id="L93">        val operationType = resolveInfixOperationType(operator)</span>
 
-<span class="pc bpc" id="L95" title="1 of 2 branches missed.">        val selfValue = if (self is IdentValue) {</span>
-<span class="nc" id="L96">            env[self]</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">        val selfValue = if (self is IdentValue) {</span>
+<span class="fc" id="L96">            env[self]</span>
         } else {
 <span class="fc" id="L98">            self</span>
         }
 
-<span class="pc bpc" id="L101" title="1 of 2 branches missed.">        val otherValue = if (other is IdentValue) {</span>
-<span class="nc" id="L102">            env[other]</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">        val otherValue = if (other is IdentValue) {</span>
+<span class="fc" id="L102">            env[other]</span>
         } else {
 <span class="fc" id="L104">            other</span>
         }
@@ -115,35 +115,35 @@ import io.hamal.lib.script.impl.ast.expr.Operator
         operator: Operator,
         self: SELF,
     ): Value {
-<span class="fc" id="L118">        val operationType = resolvePrefixOperationType(operator)</span>
-<span class="pc bpc" id="L119" title="1 of 2 branches missed.">        val operation = requireNotNull(self.findPrefixOperation(operationType)) {</span>
+<span class="nc" id="L118">        val operationType = resolvePrefixOperationType(operator)</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">        val operation = requireNotNull(self.findPrefixOperation(operationType)) {</span>
 <span class="nc" id="L120">            &quot;No prefix operation specified for: $operationType ${self.type()}&quot;</span>
         }
-<span class="fc" id="L122">        return operation(self)</span>
+<span class="nc" id="L122">        return operation(self)</span>
     }
 }
 
 private fun resolveInfixOperationType(operator: Operator): ValueOperator.Type {
 <span class="fc" id="L127">    return when {</span>
-<span class="fc bfc" id="L128" title="All 2 branches covered.">        operator == Operator.Divide -&gt; Div</span>
+<span class="pc bpc" id="L128" title="1 of 2 branches missed.">        operator == Operator.Divide -&gt; Div</span>
 <span class="fc bfc" id="L129" title="All 2 branches covered.">        operator == Operator.Equals -&gt; Eq</span>
 <span class="fc bfc" id="L130" title="All 2 branches covered.">        operator == Operator.Exponential -&gt; Pow</span>
-<span class="fc bfc" id="L131" title="All 2 branches covered.">        operator == Operator.GreaterThan -&gt; Gt</span>
-<span class="fc bfc" id="L132" title="All 2 branches covered.">        operator == Operator.GreaterThanEquals -&gt; Gte</span>
+<span class="pc bpc" id="L131" title="1 of 2 branches missed.">        operator == Operator.GreaterThan -&gt; Gt</span>
+<span class="pc bpc" id="L132" title="1 of 2 branches missed.">        operator == Operator.GreaterThanEquals -&gt; Gte</span>
 <span class="fc bfc" id="L133" title="All 2 branches covered.">        operator == Operator.LessThan -&gt; Lt</span>
 <span class="fc bfc" id="L134" title="All 2 branches covered.">        operator == Operator.LessThanEquals -&gt; Lte</span>
-<span class="fc bfc" id="L135" title="All 2 branches covered.">        operator == Operator.Minus -&gt; Sub</span>
-<span class="fc bfc" id="L136" title="All 2 branches covered.">        operator == Operator.Modulo -&gt; Mod</span>
+<span class="pc bpc" id="L135" title="1 of 2 branches missed.">        operator == Operator.Minus -&gt; Sub</span>
+<span class="pc bpc" id="L136" title="1 of 2 branches missed.">        operator == Operator.Modulo -&gt; Mod</span>
 <span class="fc bfc" id="L137" title="All 2 branches covered.">        operator == Operator.Multiply -&gt; Mul</span>
-<span class="fc bfc" id="L138" title="All 2 branches covered.">        operator == Operator.NotEqual -&gt; Neq</span>
-<span class="pc bpc" id="L139" title="1 of 2 branches missed.">        operator == Operator.Plus -&gt; Add</span>
+<span class="pc bpc" id="L138" title="1 of 2 branches missed.">        operator == Operator.NotEqual -&gt; Neq</span>
+<span class="nc bnc" id="L139" title="All 2 branches missed.">        operator == Operator.Plus -&gt; Add</span>
 <span class="nc" id="L140">        else -&gt; TODO()</span>
     }
 }
 
 private fun resolvePrefixOperationType(operator: Operator): ValueOperator.Type {
-<span class="fc" id="L145">    return when {</span>
-<span class="pc bpc" id="L146" title="1 of 2 branches missed.">        operator == Operator.Minus -&gt; Negate</span>
+<span class="nc" id="L145">    return when {</span>
+<span class="nc bnc" id="L146" title="All 2 branches missed.">        operator == Operator.Minus -&gt; Negate</span>
 <span class="nc" id="L147">        else -&gt; TODO()</span>
     }
 }

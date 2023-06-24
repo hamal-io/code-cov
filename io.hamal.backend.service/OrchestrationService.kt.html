@@ -13,30 +13,30 @@ import org.springframework.stereotype.Service
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-<span class="nc" id="L16">@Service</span>
+<span class="fc" id="L16">@Service</span>
 class OrchestrationService
-<span class="nc" id="L18">@Autowired constructor(</span>
-<span class="nc" id="L19">    internal val execCmdService: ExecCmdService</span>
+<span class="fc" id="L18">@Autowired constructor(</span>
+<span class="fc" id="L19">    internal val execCmdService: ExecCmdService</span>
 ) {
 
-<span class="nc" id="L22">    internal val lock: ReentrantLock = ReentrantLock()</span>
+<span class="pc" id="L22">    internal val lock: ReentrantLock = ReentrantLock()</span>
 
-<span class="nc" id="L24">    internal val backlog = mutableMapOf&lt;Correlation, MutableList&lt;PlannedExec&gt;&gt;()</span>
+<span class="pc" id="L24">    internal val backlog = mutableMapOf&lt;Correlation, MutableList&lt;PlannedExec&gt;&gt;()</span>
 
     // all execs in state of scheduled or greater
-<span class="nc" id="L27">    internal val execs = mutableMapOf&lt;ExecId, Exec&gt;()</span>
+<span class="fc" id="L27">    internal val execs = mutableMapOf&lt;ExecId, Exec&gt;()</span>
 
     // mapping of correlations being inflight
-<span class="nc" id="L30">    internal val inflight = mutableMapOf&lt;Correlation, ExecId&gt;()</span>
+<span class="pc" id="L30">    internal val inflight = mutableMapOf&lt;Correlation, ExecId&gt;()</span>
 
 
     fun schedule(cmdId: CmdId, plannedExec: PlannedExec) {
-<span class="nc" id="L34">        lock.withLock {</span>
-<span class="nc" id="L35">            val correlation = plannedExec.correlation</span>
+<span class="pc" id="L34">        lock.withLock {</span>
+<span class="fc" id="L35">            val correlation = plannedExec.correlation</span>
 
-<span class="nc bnc" id="L37" title="All 2 branches missed.">            if (correlation == null) {</span>
-<span class="nc" id="L38">                scheduleExec(cmdId, plannedExec)</span>
-<span class="nc" id="L39">                return</span>
+<span class="pc bpc" id="L37" title="1 of 2 branches missed.">            if (correlation == null) {</span>
+<span class="fc" id="L38">                scheduleExec(cmdId, plannedExec)</span>
+<span class="fc" id="L39">                return</span>
             }
 
 <span class="nc bnc" id="L42" title="All 2 branches missed.">            if (!inflight.containsKey(correlation)) {</span>
@@ -83,7 +83,7 @@ class OrchestrationService
 }
 
 fun OrchestrationService.scheduleExec(cmdId: CmdId, plannedExec: PlannedExec) {
-<span class="nc" id="L86">    val scheduledExec = execCmdService.schedule(cmdId, plannedExec)</span>
-<span class="nc" id="L87">    execs[scheduledExec.id] = scheduledExec</span>
-<span class="nc" id="L88">}</span>
+<span class="fc" id="L86">    val scheduledExec = execCmdService.schedule(cmdId, plannedExec)</span>
+<span class="fc" id="L87">    execs[scheduledExec.id] = scheduledExec</span>
+<span class="fc" id="L88">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

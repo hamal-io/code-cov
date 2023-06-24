@@ -13,45 +13,45 @@ public interface JavaReflection {
     interface Fields {
 
         static Predicate&lt;Field&gt; filterNotStatic() {
-<span class="fc bfc" id="L16" title="All 2 branches covered.">            return field -&gt; !isStatic(field.getModifiers());</span>
+<span class="nc bnc" id="L16" title="All 2 branches missed.">            return field -&gt; !isStatic(field.getModifiers());</span>
         }
 
         static List&lt;Field&gt; allFieldsOf(Class&lt;?&gt; fromClass) {
-<span class="fc" id="L20">            return allFieldsOf(fromClass, Object.class);</span>
+<span class="nc" id="L20">            return allFieldsOf(fromClass, Object.class);</span>
         }
 
         static List&lt;Field&gt; allFieldsOf(Class&lt;?&gt; fromClass, Class&lt;?&gt; stopAtInclusive) {
 
-<span class="fc" id="L25">            List&lt;Field&gt; fields = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L26">            List&lt;Class&lt;?&gt;&gt; classes = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L25">            List&lt;Field&gt; fields = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L26">            List&lt;Class&lt;?&gt;&gt; classes = new ArrayList&lt;&gt;();</span>
 
             {
-<span class="fc" id="L29">                Class&lt;?&gt; clazz = fromClass;</span>
+<span class="nc" id="L29">                Class&lt;?&gt; clazz = fromClass;</span>
                 while (true) {
-<span class="fc" id="L31">                    classes.add(clazz);</span>
-<span class="pc bpc" id="L32" title="1 of 2 branches missed.">                    if ((clazz = clazz.getSuperclass()) == null) {</span>
+<span class="nc" id="L31">                    classes.add(clazz);</span>
+<span class="nc bnc" id="L32" title="All 2 branches missed.">                    if ((clazz = clazz.getSuperclass()) == null) {</span>
 <span class="nc" id="L33">                        break;</span>
                     }
-<span class="fc bfc" id="L35" title="All 2 branches covered.">                    if (clazz.equals(stopAtInclusive)) {</span>
-<span class="fc" id="L36">                        classes.add(clazz);</span>
-<span class="fc" id="L37">                        break;</span>
+<span class="nc bnc" id="L35" title="All 2 branches missed.">                    if (clazz.equals(stopAtInclusive)) {</span>
+<span class="nc" id="L36">                        classes.add(clazz);</span>
+<span class="nc" id="L37">                        break;</span>
                     }
                 }
             }
 
-<span class="fc bfc" id="L42" title="All 2 branches covered.">            for (var clazz : classes) {</span>
-<span class="fc" id="L43">                Arrays.stream(clazz.getDeclaredFields())</span>
-<span class="fc" id="L44">                        .filter(filterNotStatic())</span>
-<span class="pc bpc" id="L45" title="1 of 2 branches missed.">                        .filter(field -&gt; !field.getName().contains(&quot;__$&quot;)) //ignore injected fields by coverage tools</span>
-<span class="fc" id="L46">                        .forEach(fields::add);</span>
-<span class="fc" id="L47">            }</span>
-<span class="fc" id="L48">            return fields;</span>
+<span class="nc bnc" id="L42" title="All 2 branches missed.">            for (var clazz : classes) {</span>
+<span class="nc" id="L43">                Arrays.stream(clazz.getDeclaredFields())</span>
+<span class="nc" id="L44">                        .filter(filterNotStatic())</span>
+<span class="nc bnc" id="L45" title="All 2 branches missed.">                        .filter(field -&gt; !field.getName().contains(&quot;__$&quot;)) //ignore injected fields by coverage tools</span>
+<span class="nc" id="L46">                        .forEach(fields::add);</span>
+<span class="nc" id="L47">            }</span>
+<span class="nc" id="L48">            return fields;</span>
         }
     }
 
     interface Interfaces {
         static boolean implementsInterface(Class&lt;?&gt; targetClass, Class&lt;?&gt; interfaceClass) {
-<span class="fc" id="L54">            return interfaceClass.isAssignableFrom(targetClass);</span>
+<span class="nc" id="L54">            return interfaceClass.isAssignableFrom(targetClass);</span>
         }
     }
 }

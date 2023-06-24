@@ -4,12 +4,12 @@ import io.hamal.lib.script.api.ast.Statement
 import io.hamal.lib.script.impl.ast.Parser.Context
 import io.hamal.lib.script.impl.ast.expr.PrototypeLiteral
 
-<span class="fc" id="L7">class Prototype(</span>
-<span class="fc" id="L8">    val expression: PrototypeLiteral</span>
+<span class="nc" id="L7">class Prototype(</span>
+<span class="nc" id="L8">    val expression: PrototypeLiteral</span>
 ) : Statement {
     internal object Parse : ParseStatement&lt;Prototype&gt; {
         override fun invoke(ctx: Context): Prototype {
-<span class="fc" id="L12">            return Prototype(PrototypeLiteral.Parse(ctx))</span>
+<span class="nc" id="L12">            return Prototype(PrototypeLiteral.Parse(ctx))</span>
         }
     }
 }

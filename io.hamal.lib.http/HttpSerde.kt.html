@@ -17,9 +17,9 @@ interface HttpSerdeFactory {
 }
 
 object DefaultHttpSerdeFactory : HttpSerdeFactory {
-<span class="nc" id="L20">    override var errorDeserializer: HttpErrorDeserializer = DefaultErrorDeserializer</span>
-<span class="nc" id="L21">    override var contentDeserializer: HttpContentDeserializer = KotlinJsonHttpContentDeserializer</span>
-<span class="nc" id="L22">    override var contentSerializer: HttpContentSerializer = KotlinJsonHttpContentSerializer</span>
+<span class="pc" id="L20">    override var errorDeserializer: HttpErrorDeserializer = DefaultErrorDeserializer</span>
+<span class="pc" id="L21">    override var contentDeserializer: HttpContentDeserializer = KotlinJsonHttpContentDeserializer</span>
+<span class="pc" id="L22">    override var contentSerializer: HttpContentSerializer = KotlinJsonHttpContentSerializer</span>
 }
 
 interface HttpErrorDeserializer {
@@ -46,10 +46,10 @@ interface HttpContentDeserializer {
 object KotlinJsonHttpContentDeserializer : HttpContentDeserializer {
     @OptIn(InternalSerializationApi::class, ExperimentalSerializationApi::class)
     override fun &lt;VALUE : Any&gt; deserialize(inputStream: InputStream, clazz: KClass&lt;VALUE&gt;): VALUE {
-<span class="nc" id="L49">        return delegate.decodeFromStream(clazz.serializer(), inputStream)</span>
+<span class="fc" id="L49">        return delegate.decodeFromStream(clazz.serializer(), inputStream)</span>
     }
 
-<span class="nc" id="L52">    private val delegate = Json { ignoreUnknownKeys = true }</span>
+<span class="fc" id="L52">    private val delegate = Json { ignoreUnknownKeys = true }</span>
 }
 
 interface HttpContentSerializer {
@@ -59,9 +59,9 @@ interface HttpContentSerializer {
 object KotlinJsonHttpContentSerializer : HttpContentSerializer {
     @OptIn(InternalSerializationApi::class)
     override fun &lt;VALUE : Any&gt; serialize(value: VALUE, clazz: KClass&lt;VALUE&gt;): String {
-<span class="nc" id="L62">        return delegate.encodeToString(clazz.serializer(), value)</span>
+<span class="fc" id="L62">        return delegate.encodeToString(clazz.serializer(), value)</span>
     }
 
-<span class="nc" id="L65">    private val delegate = Json { ignoreUnknownKeys = true }</span>
+<span class="fc" id="L65">    private val delegate = Json { ignoreUnknownKeys = true }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

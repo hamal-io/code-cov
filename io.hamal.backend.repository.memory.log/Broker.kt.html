@@ -16,35 +16,35 @@ import io.hamal.lib.domain.vo.TopicName
 <span class="fc" id="L16">    private val repositoryMapping = KeyedOnce.default&lt;MemoryLogTopic, LogTopicRepository&gt;()</span>
 
     override fun append(cmdId: CmdId, topic: MemoryLogTopic, bytes: ByteArray) {
-<span class="nc" id="L19">        resolveRepository(topic).append(cmdId, bytes)</span>
-<span class="nc" id="L20">    }</span>
+<span class="fc" id="L19">        resolveRepository(topic).append(cmdId, bytes)</span>
+<span class="fc" id="L20">    }</span>
 
     override fun close() {
-<span class="nc" id="L23">        topicsRepository.close()</span>
-<span class="nc" id="L24">        consumersRepository.close()</span>
-<span class="nc" id="L25">        repositoryMapping.keys()</span>
-<span class="nc" id="L26">            .forEach { topic -&gt;</span>
-<span class="nc" id="L27">                resolveRepository(topic).close()</span>
-<span class="nc" id="L28">            }</span>
-<span class="nc" id="L29">    }</span>
+<span class="fc" id="L23">        topicsRepository.close()</span>
+<span class="fc" id="L24">        consumersRepository.close()</span>
+<span class="fc" id="L25">        repositoryMapping.keys()</span>
+<span class="fc" id="L26">            .forEach { topic -&gt;</span>
+<span class="fc" id="L27">                resolveRepository(topic).close()</span>
+<span class="fc" id="L28">            }</span>
+<span class="fc" id="L29">    }</span>
 
     override fun consume(groupId: GroupId, topic: MemoryLogTopic, limit: Int): List&lt;LogChunk&gt; {
-<span class="nc" id="L32">        val nextChunkId = consumersRepository.nextChunkId(groupId, topic.id)</span>
-<span class="nc" id="L33">        return resolveRepository(topic).read(nextChunkId, limit)</span>
+<span class="fc" id="L32">        val nextChunkId = consumersRepository.nextChunkId(groupId, topic.id)</span>
+<span class="fc" id="L33">        return resolveRepository(topic).read(nextChunkId, limit)</span>
     }
 
     override fun commit(groupId: GroupId, topic: MemoryLogTopic, chunkId: LogChunkId) {
-<span class="nc" id="L37">        consumersRepository.commit(groupId, topic.id, chunkId)</span>
-<span class="nc" id="L38">    }</span>
+<span class="fc" id="L37">        consumersRepository.commit(groupId, topic.id, chunkId)</span>
+<span class="fc" id="L38">    }</span>
 
     override fun clear() {
-<span class="nc" id="L41">        topicsRepository.clear()</span>
-<span class="nc" id="L42">        consumersRepository.clear()</span>
-<span class="nc" id="L43">        repositoryMapping.keys()</span>
-<span class="nc" id="L44">            .forEach { topic -&gt;</span>
+<span class="fc" id="L41">        topicsRepository.clear()</span>
+<span class="fc" id="L42">        consumersRepository.clear()</span>
+<span class="fc" id="L43">        repositoryMapping.keys()</span>
+<span class="fc" id="L44">            .forEach { topic -&gt;</span>
 <span class="nc" id="L45">                resolveRepository(topic).clear()</span>
 <span class="nc" id="L46">            }</span>
-<span class="nc" id="L47">    }</span>
+<span class="fc" id="L47">    }</span>
 
     override fun create(cmdId: CmdId, topicToCreate: CreateTopic.TopicToCreate): MemoryLogTopic =
 <span class="fc" id="L50">        topicsRepository.create(</span>
@@ -55,18 +55,18 @@ import io.hamal.lib.domain.vo.TopicName
             )
 <span class="fc" id="L56">        )</span>
 
-<span class="nc" id="L58">    override fun find(topicId: TopicId) = topicsRepository.find(topicId)</span>
-<span class="nc" id="L59">    override fun find(topicName: TopicName) = topicsRepository.find(topicName)</span>
+<span class="fc" id="L58">    override fun find(topicId: TopicId) = topicsRepository.find(topicId)</span>
+<span class="fc" id="L59">    override fun find(topicName: TopicName) = topicsRepository.find(topicName)</span>
     override fun queryTopics(): List&lt;MemoryLogTopic&gt; {
-<span class="nc" id="L61">        return topicsRepository.query()</span>
+<span class="fc" id="L61">        return topicsRepository.query()</span>
     }
 
     override fun read(lastId: LogChunkId, topic: MemoryLogTopic, limit: Int): List&lt;LogChunk&gt; {
 <span class="nc" id="L65">        return resolveRepository(topic).read(lastId, limit)</span>
     }
 
-<span class="nc" id="L68">    private fun resolveRepository(topic: MemoryLogTopic) = repositoryMapping(topic) {</span>
-<span class="nc" id="L69">        MemoryLogTopicRepository(topic)</span>
-<span class="nc" id="L70">    }</span>
+<span class="fc" id="L68">    private fun resolveRepository(topic: MemoryLogTopic) = repositoryMapping(topic) {</span>
+<span class="fc" id="L69">        MemoryLogTopicRepository(topic)</span>
+<span class="fc" id="L70">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

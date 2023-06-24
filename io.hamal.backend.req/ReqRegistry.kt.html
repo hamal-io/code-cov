@@ -8,34 +8,34 @@ import org.springframework.stereotype.Component
 import kotlin.reflect.KClass
 
 
-<span class="nc" id="L11">@Component</span>
-<span class="nc" id="L12">class ReqRegistry : ApplicationListener&lt;ContextRefreshedEvent&gt; {</span>
+<span class="fc" id="L11">@Component</span>
+<span class="fc" id="L12">class ReqRegistry : ApplicationListener&lt;ContextRefreshedEvent&gt; {</span>
     override fun onApplicationEvent(event: ContextRefreshedEvent) {
-<span class="nc" id="L14">        event.applicationContext.getBeansOfType(ReqHandler::class.java)</span>
-<span class="nc" id="L15">            .forEach { (_, handler) -&gt;</span>
-<span class="nc" id="L16">                register(handler.reqClass, handler as ReqHandler&lt;*&gt;)</span>
-<span class="nc" id="L17">            }</span>
-<span class="nc" id="L18">    }</span>
+<span class="fc" id="L14">        event.applicationContext.getBeansOfType(ReqHandler::class.java)</span>
+<span class="fc" id="L15">            .forEach { (_, handler) -&gt;</span>
+<span class="fc" id="L16">                register(handler.reqClass, handler as ReqHandler&lt;*&gt;)</span>
+<span class="fc" id="L17">            }</span>
+<span class="fc" id="L18">    }</span>
 
     @Suppress(&quot;UNCHECKED_CAST&quot;)
     operator fun &lt;REQ : Req&gt; get(reqClass: KClass&lt;out REQ&gt;): ReqHandler&lt;REQ&gt; =
-<span class="nc" id="L22">        reqOnce(reqClass) {</span>
-<span class="nc bnc" id="L23" title="All 4 branches missed.">            val result = reqHandler[reqClass]</span>
+<span class="fc" id="L22">        reqOnce(reqClass) {</span>
+<span class="pc bpc" id="L23" title="3 of 4 branches missed.">            val result = reqHandler[reqClass]</span>
 <span class="nc bnc" id="L24" title="All 2 branches missed.">                ?: reqClass.java.interfaces.asSequence().firstOrNull { reqHandler[it.kotlin] != null }</span>
 <span class="nc" id="L25">                ?: throw IllegalArgumentException(&quot;No req handler registered for $reqClass&quot;)</span>
 
-<span class="nc" id="L27">            result as ReqHandler&lt;Req&gt;</span>
-<span class="nc" id="L28">        } as ReqHandler&lt;REQ&gt;</span>
+<span class="fc" id="L27">            result as ReqHandler&lt;Req&gt;</span>
+<span class="fc" id="L28">        } as ReqHandler&lt;REQ&gt;</span>
 
     @Suppress(&quot;UNCHECKED_CAST&quot;)
     private fun register(
         reqClass: KClass&lt;out Req&gt;, operation: ReqHandler&lt;*&gt;
     ) {
-<span class="nc bnc" id="L34" title="All 2 branches missed.">        check(operation.reqClass == reqClass)</span>
-<span class="nc" id="L35">        reqHandler[reqClass] = operation as ReqHandler&lt;Req&gt;</span>
-<span class="nc" id="L36">    }</span>
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">        check(operation.reqClass == reqClass)</span>
+<span class="fc" id="L35">        reqHandler[reqClass] = operation as ReqHandler&lt;Req&gt;</span>
+<span class="fc" id="L36">    }</span>
 
-<span class="nc" id="L38">    private val reqHandler = mutableMapOf&lt;KClass&lt;out Req&gt;, ReqHandler&lt;Req&gt;&gt;()</span>
-<span class="nc" id="L39">    private val reqOnce: KeyedOnce&lt;KClass&lt;out Req&gt;, ReqHandler&lt;Req&gt;&gt; = KeyedOnce.default()</span>
+<span class="fc" id="L38">    private val reqHandler = mutableMapOf&lt;KClass&lt;out Req&gt;, ReqHandler&lt;Req&gt;&gt;()</span>
+<span class="fc" id="L39">    private val reqOnce: KeyedOnce&lt;KClass&lt;out Req&gt;, ReqHandler&lt;Req&gt;&gt; = KeyedOnce.default()</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

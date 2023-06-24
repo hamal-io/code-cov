@@ -14,8 +14,8 @@ interface RecordType {
     val value: Int
 }
 
-<span class="nc" id="L17">@Serializable(with = RecordSequence.Serializer::class)</span>
-<span class="nc" id="L18">data class RecordSequence(val value: Int) : Comparable&lt;RecordSequence&gt;//FIXME becomes VO</span>
+<span class="fc" id="L17">@Serializable(with = RecordSequence.Serializer::class)</span>
+<span class="pc" id="L18">data class RecordSequence(val value: Int) : Comparable&lt;RecordSequence&gt;//FIXME becomes VO</span>
 {
 <span class="nc" id="L20">    companion object {</span>
 <span class="nc" id="L21">        fun first() = RecordSequence(1)</span>
@@ -39,13 +39,13 @@ interface RecordType {
 
 }
 
-<span class="nc" id="L42">abstract class Record&lt;ID : DomainId&gt; {</span>
+<span class="fc" id="L42">abstract class Record&lt;ID : DomainId&gt; {</span>
     abstract var sequence: RecordSequence?
     abstract val entityId: ID
     abstract val cmdId: CmdId
 
     fun sequence() =
-<span class="nc bnc" id="L48" title="All 2 branches missed.">        sequence ?: throw IllegalStateException(&quot;Records needs to be stored to db before it can be accessed&quot;)</span>
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">        sequence ?: throw IllegalStateException(&quot;Records needs to be stored to db before it can be accessed&quot;)</span>
 }
 
 interface RecordEntity&lt;ID : DomainId, RECORD : Record&lt;ID&gt;, OBJ : DomainObject&lt;ID&gt;&gt; {

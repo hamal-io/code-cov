@@ -10,37 +10,37 @@ import io.hamal.lib.domain.vo.TopicId
 import io.hamal.lib.domain.vo.port.GenerateDomainId
 
 
-<span class="nc" id="L13">class SystemEventEmitter&lt;TOPIC : LogTopic&gt;(</span>
-<span class="nc" id="L14">    private val generateDomainId: GenerateDomainId,</span>
-<span class="nc" id="L15">    private val brokerRepository: LogBrokerRepository&lt;TOPIC&gt;</span>
+<span class="fc" id="L13">class SystemEventEmitter&lt;TOPIC : LogTopic&gt;(</span>
+<span class="fc" id="L14">    private val generateDomainId: GenerateDomainId,</span>
+<span class="fc" id="L15">    private val brokerRepository: LogBrokerRepository&lt;TOPIC&gt;</span>
 ) {
 
-<span class="nc" id="L18">    private val local: ThreadLocal&lt;List&lt;Pair&lt;TOPIC, SystemEvent&gt;&gt;&gt; = ThreadLocal&lt;List&lt;Pair&lt;TOPIC, SystemEvent&gt;&gt;&gt;()</span>
+<span class="fc" id="L18">    private val local: ThreadLocal&lt;List&lt;Pair&lt;TOPIC, SystemEvent&gt;&gt;&gt; = ThreadLocal&lt;List&lt;Pair&lt;TOPIC, SystemEvent&gt;&gt;&gt;()</span>
 
-<span class="nc" id="L20">    private val appender = ProtobufAppender(SystemEvent::class, brokerRepository)</span>
+<span class="fc" id="L20">    private val appender = ProtobufAppender(SystemEvent::class, brokerRepository)</span>
 
-<span class="nc" id="L22">    init {</span>
-<span class="nc" id="L23">        local.set(listOf())</span>
-<span class="nc" id="L24">    }</span>
+<span class="fc" id="L22">    init {</span>
+<span class="fc" id="L23">        local.set(listOf())</span>
+<span class="fc" id="L24">    }</span>
 
     fun &lt;EVENT : SystemEvent&gt; emit(cmdId: CmdId, evt: EVENT) {
-<span class="nc bnc" id="L27" title="All 2 branches missed.">        val topic = brokerRepository.find(evt.topic) ?: brokerRepository.create(</span>
+<span class="pc bpc" id="L27" title="1 of 2 branches missed.">        val topic = brokerRepository.find(evt.topic) ?: brokerRepository.create(</span>
 <span class="nc" id="L28">            cmdId,</span>
 <span class="nc" id="L29">            CreateTopic.TopicToCreate(generateDomainId(::TopicId), evt.topic)</span>
         )
-<span class="nc bnc" id="L31" title="All 2 branches missed.">        if (local.get() == null) {</span>
-<span class="nc" id="L32">            local.set(listOf(Pair(topic, evt)))</span>
+<span class="pc bpc" id="L31" title="1 of 2 branches missed.">        if (local.get() == null) {</span>
+<span class="fc" id="L32">            local.set(listOf(Pair(topic, evt)))</span>
         } else {
 <span class="nc" id="L34">            local.set(local.get().plus(Pair(topic, evt)))</span>
         }
-<span class="nc" id="L36">        flush(cmdId)</span>
-<span class="nc" id="L37">    }</span>
+<span class="fc" id="L36">        flush(cmdId)</span>
+<span class="fc" id="L37">    }</span>
 
 
     fun flush(cmdId: CmdId) {
-<span class="nc bnc" id="L41" title="All 2 branches missed.">        val notificationsToFlush = local.get() ?: listOf()</span>
-<span class="nc" id="L42">        notificationsToFlush.forEach { (topic, evt) -&gt; appender.append(cmdId, topic, evt) }</span>
-<span class="nc" id="L43">        local.remove()</span>
-<span class="nc" id="L44">    }</span>
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">        val notificationsToFlush = local.get() ?: listOf()</span>
+<span class="fc" id="L42">        notificationsToFlush.forEach { (topic, evt) -&gt; appender.append(cmdId, topic, evt) }</span>
+<span class="fc" id="L43">        local.remove()</span>
+<span class="fc" id="L44">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

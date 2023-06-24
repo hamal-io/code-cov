@@ -9,24 +9,24 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler
 import org.springframework.scheduling.config.ScheduledTaskRegistrar
 
 
-<span class="nc" id="L12">@Async</span>
+<span class="fc" id="L12">@Async</span>
 @Configuration
 @EnableScheduling
-<span class="nc" id="L15">open class AsyncConfig : SchedulingConfigurer {</span>
+<span class="fc" id="L15">open class AsyncConfig : SchedulingConfigurer {</span>
     @Bean
     open fun executor(): ThreadPoolTaskScheduler {
-<span class="nc" id="L18">        val result = ThreadPoolTaskScheduler()</span>
-<span class="nc" id="L19">        result.threadNamePrefix = &quot;h4m41-&quot;</span>
-<span class="nc" id="L20">        result.poolSize = 4</span>
-<span class="nc" id="L21">        result.initialize()</span>
-<span class="nc" id="L22">        return result</span>
+<span class="fc" id="L18">        val result = ThreadPoolTaskScheduler()</span>
+<span class="fc" id="L19">        result.threadNamePrefix = &quot;h4m41-&quot;</span>
+<span class="fc" id="L20">        result.poolSize = 4</span>
+<span class="fc" id="L21">        result.initialize()</span>
+<span class="fc" id="L22">        return result</span>
     }
 
     override fun configureTasks(taskRegistrar: ScheduledTaskRegistrar) {
-<span class="nc" id="L26">        val scheduler = executor()</span>
+<span class="fc" id="L26">        val scheduler = executor()</span>
 
-<span class="nc" id="L28">        taskRegistrar.setScheduler(scheduler)</span>
-<span class="nc" id="L29">        taskRegistrar.setTaskScheduler(scheduler)</span>
-<span class="nc" id="L30">    }</span>
+<span class="fc" id="L28">        taskRegistrar.setScheduler(scheduler)</span>
+<span class="fc" id="L29">        taskRegistrar.setTaskScheduler(scheduler)</span>
+<span class="fc" id="L30">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

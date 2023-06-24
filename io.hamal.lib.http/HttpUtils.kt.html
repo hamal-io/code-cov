@@ -9,21 +9,21 @@ object HttpUtils {
 
     @Throws(IOException::class)
     fun convert(`is`: InputStream): ByteArray? {
-<span class="nc" id="L12">        var len: Int</span>
-<span class="nc" id="L13">        val size = 4096 * 4</span>
-<span class="nc" id="L14">        val bos = ByteArrayOutputStream()</span>
-<span class="nc" id="L15">        val buffer = ByteArray(size)</span>
-<span class="nc bnc" id="L16" title="All 2 branches missed.">        while (`is`.read(buffer, 0, size).also { len = it } != -1) {</span>
-<span class="nc" id="L17">            bos.write(buffer, 0, len)</span>
+<span class="fc" id="L12">        var len: Int</span>
+<span class="fc" id="L13">        val size = 4096 * 4</span>
+<span class="fc" id="L14">        val bos = ByteArrayOutputStream()</span>
+<span class="fc" id="L15">        val buffer = ByteArray(size)</span>
+<span class="fc bfc" id="L16" title="All 2 branches covered.">        while (`is`.read(buffer, 0, size).also { len = it } != -1) {</span>
+<span class="fc" id="L17">            bos.write(buffer, 0, len)</span>
         }
-<span class="nc" id="L19">        return bos.toByteArray()</span>
+<span class="fc" id="L19">        return bos.toByteArray()</span>
     }
 
     fun copyStream(inputStream: InputStream?): InputStream? {
-<span class="nc bnc" id="L23" title="All 2 branches missed.">        return if (inputStream == null) {</span>
+<span class="pc bpc" id="L23" title="1 of 2 branches missed.">        return if (inputStream == null) {</span>
 <span class="nc" id="L24">            ByteArrayInputStream(ByteArray(0))</span>
         } else {
-<span class="nc" id="L26">            ByteArrayInputStream(convert(inputStream))</span>
+<span class="fc" id="L26">            ByteArrayInputStream(convert(inputStream))</span>
         }
     }
 

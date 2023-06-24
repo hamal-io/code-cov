@@ -24,7 +24,7 @@ interface ValueObject&lt;VALUE_TYPE : Any&gt; {
 <span class="fc" id="L24">    abstract class ComparableImpl&lt;VALUE_TYPE : Comparable&lt;VALUE_TYPE&gt;&gt; : BaseImpl&lt;VALUE_TYPE&gt;(),</span>
         Comparable&lt;ValueObject&lt;VALUE_TYPE&gt;&gt; {
         override fun compareTo(other: ValueObject&lt;VALUE_TYPE&gt;): Int {
-<span class="nc" id="L27">            return value.compareTo(other.value)</span>
+<span class="fc" id="L27">            return value.compareTo(other.value)</span>
         }
     }
 }

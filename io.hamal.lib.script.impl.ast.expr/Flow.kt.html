@@ -94,9 +94,9 @@ import io.hamal.lib.script.impl.token.Token.Type.*
 <span class="fc" id="L94">            val endExpression = ctx.parseExpression(Lowest)</span>
 
 
-<span class="fc bfc" id="L97" title="All 2 branches covered.">            val stepExpression = if (ctx.currentTokenType() == Comma) {</span>
-<span class="fc" id="L98">                ctx.advance()</span>
-<span class="fc" id="L99">                ctx.parseExpression(Lowest)</span>
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">            val stepExpression = if (ctx.currentTokenType() == Comma) {</span>
+<span class="nc" id="L98">                ctx.advance()</span>
+<span class="nc" id="L99">                ctx.parseExpression(Lowest)</span>
             } else {
 <span class="fc" id="L101">                NumberLiteral(1)</span>
             }

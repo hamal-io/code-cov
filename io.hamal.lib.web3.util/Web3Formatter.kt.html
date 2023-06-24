@@ -4,25 +4,25 @@ import java.util.*
 import kotlin.math.abs
 
 object Web3Formatter {
-<span class="fc" id="L7">    fun formatToHex(bytes: ByteArray): String = HexFormat.of().formatHex(bytes)</span>
+<span class="nc" id="L7">    fun formatToHex(bytes: ByteArray): String = HexFormat.of().formatHex(bytes)</span>
 
     fun formatWithoutLeadingZeros(bytes: ByteArray): String {
-<span class="fc" id="L10">        val result = formatToHex(bytes)</span>
-<span class="fc" id="L11">        return result.replaceFirst(&quot;^0+(?!$)&quot;.toRegex(), &quot;&quot;)</span>
+<span class="nc" id="L10">        val result = formatToHex(bytes)</span>
+<span class="nc" id="L11">        return result.replaceFirst(&quot;^0+(?!$)&quot;.toRegex(), &quot;&quot;)</span>
     }
 
     fun formatFixLength(bytes: ByteArray, length: Int): String {
-<span class="pc bpc" id="L15" title="2 of 4 branches missed.">        require(length &gt; 0) { &quot;Length must be &gt;= 1&quot; }</span>
+<span class="nc bnc" id="L15" title="All 4 branches missed.">        require(length &gt; 0) { &quot;Length must be &gt;= 1&quot; }</span>
 
-<span class="fc" id="L17">        var result = HexFormat.of().formatHex(bytes)</span>
-<span class="fc" id="L18">        val padding = length - result.length</span>
-<span class="fc bfc" id="L19" title="All 2 branches covered.">        if (padding &lt; 0) {</span>
-<span class="fc" id="L20">            return result.substring(abs(padding))</span>
+<span class="nc" id="L17">        var result = HexFormat.of().formatHex(bytes)</span>
+<span class="nc" id="L18">        val padding = length - result.length</span>
+<span class="nc bnc" id="L19" title="All 2 branches missed.">        if (padding &lt; 0) {</span>
+<span class="nc" id="L20">            return result.substring(abs(padding))</span>
         }
-<span class="fc bfc" id="L22" title="All 2 branches covered.">        if (padding &gt; 0) {</span>
-<span class="fc" id="L23">            result = &quot;0&quot;.repeat(padding) + result</span>
+<span class="nc bnc" id="L22" title="All 2 branches missed.">        if (padding &gt; 0) {</span>
+<span class="nc" id="L23">            result = &quot;0&quot;.repeat(padding) + result</span>
         }
-<span class="fc" id="L25">        return result</span>
+<span class="nc" id="L25">        return result</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

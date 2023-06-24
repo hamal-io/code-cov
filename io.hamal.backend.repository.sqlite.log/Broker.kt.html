@@ -44,28 +44,28 @@ import java.nio.file.Path
 <span class="fc" id="L44">        )</span>
 
     override fun append(cmdId: CmdId, topic: SqliteLogTopic, bytes: ByteArray) {
-<span class="nc" id="L47">        resolveRepository(topic).append(cmdId, bytes)</span>
-<span class="nc" id="L48">    }</span>
+<span class="fc" id="L47">        resolveRepository(topic).append(cmdId, bytes)</span>
+<span class="fc" id="L48">    }</span>
 
     override fun close() {
 <span class="fc" id="L51">        topicsRepository.close()</span>
 <span class="fc" id="L52">        consumersRepository.close()</span>
 <span class="fc" id="L53">        topicRepositoryMapping.keys().forEach { topic -&gt;</span>
-<span class="nc" id="L54">            resolveRepository(topic).close()</span>
-<span class="nc" id="L55">        }</span>
+<span class="fc" id="L54">            resolveRepository(topic).close()</span>
+<span class="fc" id="L55">        }</span>
 <span class="fc" id="L56">    }</span>
 
     override fun consume(groupId: GroupId, topic: SqliteLogTopic, limit: Int): List&lt;LogChunk&gt; {
-<span class="nc" id="L59">        val nextChunkId = consumersRepository.nextChunkId(groupId, topic.id)</span>
-<span class="nc" id="L60">        return resolveRepository(topic).read(nextChunkId, limit)</span>
+<span class="fc" id="L59">        val nextChunkId = consumersRepository.nextChunkId(groupId, topic.id)</span>
+<span class="fc" id="L60">        return resolveRepository(topic).read(nextChunkId, limit)</span>
     }
 
     override fun commit(groupId: GroupId, topic: SqliteLogTopic, chunkId: LogChunkId) {
-<span class="nc" id="L64">        consumersRepository.commit(groupId, topic.id, chunkId)</span>
-<span class="nc" id="L65">    }</span>
+<span class="fc" id="L64">        consumersRepository.commit(groupId, topic.id, chunkId)</span>
+<span class="fc" id="L65">    }</span>
 
 <span class="nc" id="L67">    override fun find(topicId: TopicId) = topicsRepository.find(topicId)</span>
-<span class="nc" id="L68">    override fun find(topicName: TopicName) = topicsRepository.find(topicName)</span>
+<span class="fc" id="L68">    override fun find(topicName: TopicName) = topicsRepository.find(topicName)</span>
     override fun queryTopics(): List&lt;SqliteLogTopic&gt; {
 <span class="nc" id="L70">        return topicsRepository.query()</span>
     }
@@ -83,8 +83,8 @@ import java.nio.file.Path
 <span class="nc" id="L83">        return resolveRepository(topic).read(lastId, limit)</span>
     }
 
-<span class="nc" id="L86">    private fun resolveRepository(topic: SqliteLogTopic) = topicRepositoryMapping(topic) {</span>
-<span class="nc" id="L87">        SqliteLogTopicRepository(topic)</span>
-<span class="nc" id="L88">    }</span>
+<span class="fc" id="L86">    private fun resolveRepository(topic: SqliteLogTopic) = topicRepositoryMapping(topic) {</span>
+<span class="fc" id="L87">        SqliteLogTopicRepository(topic)</span>
+<span class="fc" id="L88">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -22,7 +22,7 @@ interface Transaction {
 
     fun abort()
 
-<span class="nc" id="L25">    class AbortException : RuntimeException()</span>
+<span class="fc" id="L25">    class AbortException : RuntimeException()</span>
 }
 
 <span class="pc" id="L28">internal class DefaultTransaction(</span>
@@ -50,10 +50,10 @@ interface Transaction {
     override fun &lt;T : Any&gt; executeQuery(
         sql: String,
         block: NamedPreparedStatementResultSetDelegate&lt;T&gt;.() -&gt; NamedPreparedStatementResultSetDelegate&lt;T&gt;
-<span class="nc" id="L53">    ): List&lt;T&gt; = delegate.executeQuery(sql, block)</span>
+<span class="fc" id="L53">    ): List&lt;T&gt; = delegate.executeQuery(sql, block)</span>
 
     override fun abort() {
-<span class="nc" id="L56">        throw Transaction.AbortException()</span>
+<span class="fc" id="L56">        throw Transaction.AbortException()</span>
     }
 
 }

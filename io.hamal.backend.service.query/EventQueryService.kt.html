@@ -9,20 +9,20 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.protobuf.ProtoBuf
 import org.springframework.stereotype.Service
 
-<span class="nc" id="L12">@Service</span>
-<span class="nc" id="L13">class EventQueryService&lt;TOPIC : LogTopic&gt;(</span>
-<span class="nc" id="L14">    private val eventBrokerRepository: LogBrokerRepository&lt;TOPIC&gt;</span>
+<span class="fc" id="L12">@Service</span>
+<span class="fc" id="L13">class EventQueryService&lt;TOPIC : LogTopic&gt;(</span>
+<span class="fc" id="L14">    private val eventBrokerRepository: LogBrokerRepository&lt;TOPIC&gt;</span>
 ) {
 
-<span class="nc" id="L17">    fun findTopic(topicId: TopicId) = eventBrokerRepository.find(topicId)</span>
+<span class="fc" id="L17">    fun findTopic(topicId: TopicId) = eventBrokerRepository.find(topicId)</span>
 
     fun queryTopics(block: TopicQuery.() -&gt; Unit): List&lt;TOPIC&gt; {
-<span class="nc" id="L20">        val query = TopicQuery()</span>
-<span class="nc" id="L21">        block(query)</span>
+<span class="fc" id="L20">        val query = TopicQuery()</span>
+<span class="fc" id="L21">        block(query)</span>
         //FIXME apply query filter
 
-<span class="nc" id="L24">        return eventBrokerRepository.queryTopics()</span>
-<span class="nc" id="L25">            .toList()</span>
+<span class="fc" id="L24">        return eventBrokerRepository.queryTopics()</span>
+<span class="fc" id="L25">            .toList()</span>
     }
 
     @OptIn(ExperimentalSerializationApi::class)
@@ -35,10 +35,10 @@ import org.springframework.stereotype.Service
     }
 
 
-<span class="nc" id="L38">    data class TopicQuery(</span>
-<span class="nc" id="L39">        val afterId: TopicId = TopicId(0),</span>
-<span class="nc" id="L40">        val limit: Int = 100 //FIXME VO</span>
-<span class="nc" id="L41">    )</span>
+<span class="fc" id="L38">    data class TopicQuery(</span>
+<span class="pc" id="L39">        val afterId: TopicId = TopicId(0),</span>
+<span class="pc" id="L40">        val limit: Int = 100 //FIXME VO</span>
+<span class="fc" id="L41">    )</span>
 
 <span class="nc" id="L43">    data class EventQuery(</span>
 <span class="nc" id="L44">        val topicId: TopicId,</span>

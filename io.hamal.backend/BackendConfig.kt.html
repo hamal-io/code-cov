@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.event.ContextRefreshedEvent
 import org.springframework.scheduling.annotation.EnableScheduling
 
-<span class="nc" id="L27">@Configuration</span>
+<span class="fc" id="L27">@Configuration</span>
 @ComponentScan
 @EnableScheduling
 @EnableAutoConfiguration(
@@ -37,7 +37,7 @@ import org.springframework.scheduling.annotation.EnableScheduling
         JmxAutoConfiguration::class
     ]
 )
-<span class="nc" id="L40">open class BackendConfig : ApplicationListener&lt;ContextRefreshedEvent&gt; {</span>
+<span class="fc" id="L40">open class BackendConfig : ApplicationListener&lt;ContextRefreshedEvent&gt; {</span>
 
     @Bean
     open fun backendEventConsumer(
@@ -48,16 +48,16 @@ import org.springframework.scheduling.annotation.EnableScheduling
         fixedRateTriggerService: FixedRateTriggerService,
         orchestrationService: OrchestrationService,
         eventEmitter: SystemEventEmitter&lt;*&gt;
-<span class="nc" id="L51">    ) = eventServiceFactory</span>
-<span class="nc" id="L52">        .register(TriggerCreatedEvent::class, TriggerCreatedHandler(fixedRateTriggerService))</span>
+<span class="fc" id="L51">    ) = eventServiceFactory</span>
+<span class="fc" id="L52">        .register(TriggerCreatedEvent::class, TriggerCreatedHandler(fixedRateTriggerService))</span>
 
-<span class="nc" id="L54">        .register(ExecPlannedEvent::class, ExecPlannedHandler(orchestrationService))</span>
-<span class="nc" id="L55">        .register(ExecScheduledEvent::class, ExecScheduledHandler(execCmdService))</span>
-<span class="nc" id="L56">        .register(ExecutionQueuedEvent::class, ExecQueuedHandler())</span>
-<span class="nc" id="L57">        .register(ExecutionCompletedEvent::class, ExecCompletedHandler(orchestrationService))</span>
-<span class="nc" id="L58">        .register(ExecutionFailedEvent::class, ExecFailedHandler(orchestrationService))</span>
+<span class="fc" id="L54">        .register(ExecPlannedEvent::class, ExecPlannedHandler(orchestrationService))</span>
+<span class="fc" id="L55">        .register(ExecScheduledEvent::class, ExecScheduledHandler(execCmdService))</span>
+<span class="fc" id="L56">        .register(ExecutionQueuedEvent::class, ExecQueuedHandler())</span>
+<span class="fc" id="L57">        .register(ExecutionCompletedEvent::class, ExecCompletedHandler(orchestrationService))</span>
+<span class="fc" id="L58">        .register(ExecutionFailedEvent::class, ExecFailedHandler(orchestrationService))</span>
 
-<span class="nc" id="L60">        .create()</span>
+<span class="fc" id="L60">        .create()</span>
 
     override fun onApplicationEvent(event: ContextRefreshedEvent) {
 //        val execRepository = SqliteExecRepository(
@@ -66,7 +66,7 @@ import org.springframework.scheduling.annotation.EnableScheduling
 //                partition = Partition(1)
 //            )
 //        )
-<span class="nc" id="L69">    }</span>
+<span class="fc" id="L69">    }</span>
 
 }
 

@@ -12,8 +12,8 @@ internal interface ParseStatement&lt;out STATEMENT : Statement&gt; {
 <span class="fc" id="L12">data class ExpressionStatement(val expression: Expression) : Statement</span>
 
 
-<span class="fc" id="L15">data class Block(val statements: List&lt;Statement&gt;, override val size: Int) : Statement, Collection&lt;Statement&gt; {</span>
-<span class="fc" id="L16">    constructor(vararg statements: Statement) : this(statements.toList())</span>
+<span class="pc" id="L15">data class Block(val statements: List&lt;Statement&gt;, override val size: Int) : Statement, Collection&lt;Statement&gt; {</span>
+<span class="nc" id="L16">    constructor(vararg statements: Statement) : this(statements.toList())</span>
 <span class="fc" id="L17">    constructor(statements: List&lt;Statement&gt;) : this(statements, statements.size)</span>
 
     companion object {

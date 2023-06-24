@@ -4,15 +4,15 @@ import io.hamal.lib.domain.vo.TopicName
 import kotlinx.serialization.Serializable
 import kotlin.reflect.KClass
 
-<span class="nc bnc" id="L7" title="All 2 branches missed.">@Serializable</span>
-<span class="nc" id="L8">sealed class SystemEvent {</span>
-<span class="nc bnc" id="L9" title="All 4 branches missed.">    val topic = TopicName(this::class.topic())</span>
+<span class="pc bpc" id="L7" title="1 of 2 branches missed.">@Serializable</span>
+<span class="fc" id="L8">sealed class SystemEvent {</span>
+<span class="pc bpc" id="L9" title="2 of 4 branches missed.">    val topic = TopicName(this::class.topic())</span>
 }
 
 fun &lt;EVENT : SystemEvent&gt; KClass&lt;EVENT&gt;.topic() =
-<span class="nc bnc" id="L13" title="All 6 branches missed.">    (annotations.find { annotation -&gt; annotation.annotationClass == SystemEventTopic::class }</span>
+<span class="pc bpc" id="L13" title="2 of 6 branches missed.">    (annotations.find { annotation -&gt; annotation.annotationClass == SystemEventTopic::class }</span>
 <span class="nc" id="L14">        ?: throw IllegalStateException(&quot;SystemEvent not annotated with @SystemEventTopic&quot;))</span>
-<span class="nc" id="L15">        .let { it as SystemEventTopic }.value</span>
+<span class="fc" id="L15">        .let { it as SystemEventTopic }.value</span>
 
 @MustBeDocumented
 @Target(AnnotationTarget.CLASS)
