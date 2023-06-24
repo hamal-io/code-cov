@@ -91,20 +91,35 @@ import java.util.concurrent.ConcurrentHashMap
                 }
 <span class="nc bnc" id="L92" title="All 2 branches missed.">            }?.also { topicMapping[it.name] = it }</span>
 
+    override fun query(): List&lt;SqliteLogTopic&gt; {
+<span class="nc" id="L95">        return connection.executeQuery&lt;SqliteLogTopic&gt;(&quot;SELECT id,name FROM topics&quot;) {</span>
+<span class="nc" id="L96">            query {</span>
+<span class="nc" id="L97">                set(&quot;some_value&quot;, true)</span>
+            }
+<span class="nc" id="L99">            map { rs -&gt;</span>
+<span class="nc" id="L100">                SqliteLogTopic(</span>
+<span class="nc" id="L101">                    id = rs.getDomainId(&quot;id&quot;, ::TopicId),</span>
+<span class="nc" id="L102">                    name = TopicName(rs.getString(&quot;name&quot;)),</span>
+<span class="nc" id="L103">                    path = brokerTopics.path</span>
+                )
+            }
+        }
+    }
+
     override fun clear() {
-<span class="fc" id="L95">        connection.tx {</span>
-<span class="fc" id="L96">            execute(&quot;DELETE FROM topics&quot;)</span>
-<span class="fc" id="L97">        }</span>
-<span class="fc" id="L98">    }</span>
+<span class="fc" id="L110">        connection.tx {</span>
+<span class="fc" id="L111">            execute(&quot;DELETE FROM topics&quot;)</span>
+<span class="fc" id="L112">        }</span>
+<span class="fc" id="L113">    }</span>
 
     override fun close() {
-<span class="fc" id="L101">        connection.close()</span>
-<span class="fc" id="L102">    }</span>
+<span class="fc" id="L116">        connection.close()</span>
+<span class="fc" id="L117">    }</span>
 
-<span class="pc bpc" id="L104" title="1 of 2 branches missed.">    override fun count() = connection.executeQueryOne(&quot;SELECT COUNT(*) as count from topics&quot;) {</span>
-<span class="fc" id="L105">        map {</span>
-<span class="fc" id="L106">            it.getLong(&quot;count&quot;).toULong()</span>
+<span class="pc bpc" id="L119" title="1 of 2 branches missed.">    override fun count() = connection.executeQueryOne(&quot;SELECT COUNT(*) as count from topics&quot;) {</span>
+<span class="fc" id="L120">        map {</span>
+<span class="fc" id="L121">            it.getLong(&quot;count&quot;).toULong()</span>
         }
-<span class="pc" id="L108">    } ?: 0UL</span>
+<span class="pc" id="L123">    } ?: 0UL</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

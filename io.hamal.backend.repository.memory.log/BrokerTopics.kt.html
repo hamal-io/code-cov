@@ -35,15 +35,19 @@ import kotlin.concurrent.withLock
 <span class="nc bnc" id="L35" title="All 4 branches missed.">        topicMapping.values.find { it.id == id }</span>
 <span class="nc" id="L36">    }</span>
 
+<span class="nc" id="L38">    override fun query(): List&lt;MemoryLogTopic&gt; = lock.withLock {</span>
+<span class="nc" id="L39">        topicMapping.values.toList()</span>
+<span class="nc" id="L40">    }</span>
+
     override fun count(): ULong {
-<span class="fc" id="L39">        return lock.withLock { topicMapping.size.toULong() }</span>
+<span class="fc" id="L43">        return lock.withLock { topicMapping.size.toULong() }</span>
     }
 
     fun clear() {
-<span class="fc" id="L43">        topicMapping.clear()</span>
-<span class="fc" id="L44">    }</span>
+<span class="fc" id="L47">        topicMapping.clear()</span>
+<span class="fc" id="L48">    }</span>
 
     override fun close() {
-<span class="fc" id="L47">    }</span>
+<span class="fc" id="L51">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

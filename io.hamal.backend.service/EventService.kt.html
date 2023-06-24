@@ -70,8 +70,8 @@ interface SystemEventServiceFactory {
                     )
 
 <span class="nc" id="L72">                    scheduledTasks.add(</span>
-<span class="nc" id="L73">                        async.atFixedRate(10.milliseconds) {</span>
-<span class="nc" id="L74">                            consumer.consume(100) { chunkId, evt -&gt;</span>
+<span class="nc" id="L73">                        async.atFixedRate(1.milliseconds) {</span>
+<span class="nc" id="L74">                            consumer.consume(10) { chunkId, evt -&gt;</span>
 <span class="nc" id="L75">                                handlerContainer[evt::class].forEach { handler -&gt;</span>
 <span class="nc" id="L76">                                    try {</span>
 <span class="nc" id="L77">                                        val cmdId = CmdId(md5(&quot;${evt.topic}-${chunkId.value.value}&quot;))</span>

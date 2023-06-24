@@ -29,7 +29,7 @@ interface ReadFromTopic&lt;TOPIC : LogTopic&gt; {
 }
 
 interface GetTopics&lt;TOPIC : LogTopic&gt; {
-    fun topics(): Set&lt;TOPIC&gt;
+    fun queryTopics(): List&lt;TOPIC&gt;
 }
 
 interface FindTopic&lt;TOPIC : LogTopic&gt; {
@@ -47,5 +47,7 @@ interface FindTopic&lt;TOPIC : LogTopic&gt; {
     FindTopic&lt;TOPIC&gt;,
     GetTopics&lt;TOPIC&gt;,
     ReadFromTopic&lt;TOPIC&gt;,
-<span class="nc" id="L50">    Closeable</span>
+    Closeable {
+    fun clear()
+<span class="nc" id="L52">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
