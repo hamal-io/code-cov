@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 <span class="nc" id="L9">class FuncId(override val value: SnowflakeId) : DomainId() {</span>
 <span class="nc" id="L10">    constructor(value: Int) : this(SnowflakeId(value.toLong()))</span>
 
-<span class="nc" id="L12">    internal object Serializer : DomainIdSerializer&lt;FuncId&gt;(::FuncId)</span>
+<span class="fc" id="L12">    internal object Serializer : DomainIdSerializer&lt;FuncId&gt;(::FuncId)</span>
 }
 
 

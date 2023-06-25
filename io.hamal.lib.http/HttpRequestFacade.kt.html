@@ -127,8 +127,8 @@ internal interface HttpRequestFacade {
             )
 
 <span class="fc" id="L129">            1 -&gt; when (val body = bodies.first()) {</span>
-<span class="pc bpc" id="L130" title="1 of 2 branches missed.">                is HttpStringBody -&gt; ByteArrayEntity(body.content.toByteArray(), ContentType.create(body.contentType))</span>
-<span class="nc bnc" id="L131" title="All 2 branches missed.">                is HttpByteArrayBody -&gt; ByteArrayEntity(body.content, ContentType.create(body.contentType))</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">                is HttpStringBody -&gt; ByteArrayEntity(body.content.toByteArray(), ContentType.create(body.contentType))</span>
+<span class="pc bpc" id="L131" title="1 of 2 branches missed.">                is HttpByteArrayBody -&gt; ByteArrayEntity(body.content, ContentType.create(body.contentType))</span>
 <span class="pc" id="L132">                else -&gt; TODO()</span>
             }
 

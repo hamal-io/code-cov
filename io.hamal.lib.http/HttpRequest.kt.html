@@ -67,14 +67,14 @@ inline fun &lt;reified BODY_TYPE : Any&gt; HttpRequestWithBody.body(body: BODY_T
     }
 
     override fun body(contentType: String, bytes: ByteArray): HttpRequestWithBody {
-<span class="nc" id="L70">        bodies.add(</span>
-<span class="nc" id="L71">            HttpByteArrayBody(</span>
-<span class="nc" id="L72">                name = &quot;cmd&quot;,</span>
-<span class="nc" id="L73">                content = bytes,</span>
-<span class="nc" id="L74">                contentType = contentType</span>
+<span class="fc" id="L70">        bodies.add(</span>
+<span class="fc" id="L71">            HttpByteArrayBody(</span>
+<span class="fc" id="L72">                name = &quot;cmd&quot;,</span>
+<span class="fc" id="L73">                content = bytes,</span>
+<span class="fc" id="L74">                contentType = contentType</span>
             )
         )
-<span class="nc" id="L77">        return this</span>
+<span class="fc" id="L77">        return this</span>
     }
 
     override fun header(key: String, value: String): DefaultHttpRequest {
@@ -150,10 +150,10 @@ inline fun &lt;reified BODY_TYPE : Any&gt; HttpRequestWithBody.body(body: BODY_T
     }
 
     override fun &lt;RESULT : Any&gt; execute(clazz: KClass&lt;RESULT&gt;): RESULT {
-<span class="nc" id="L153">        return when (val response = execute()) {</span>
-<span class="nc bnc" id="L154" title="All 2 branches missed.">            is SuccessHttpResponse -&gt; response.result(clazz)</span>
+<span class="fc" id="L153">        return when (val response = execute()) {</span>
+<span class="pc bpc" id="L154" title="1 of 2 branches missed.">            is SuccessHttpResponse -&gt; response.result(clazz)</span>
 <span class="nc bnc" id="L155" title="All 2 branches missed.">            is NoContentHttpResponse -&gt; throw IllegalStateException(&quot;No content was returned from the server&quot;)</span>
-<span class="nc" id="L156">            is ErrorHttpResponse -&gt; throw response.error()</span>
+<span class="nc" id="L156">            is ErrorHttpResponse -&gt; throw IllegalStateException(&quot;Http request was not successful&quot;)</span>
         }
     }
 }

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Content.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.domain.vo</a> &gt; <span class="el_source">Content.kt</span></div><h1>Content.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.domain.vo
+
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import java.nio.charset.StandardCharsets.UTF_8
+import java.util.*
+
+<span class="pc" id="L12">@Serializable(with = Content.Serializer::class)</span>
+<span class="fc" id="L13">data class Content(</span>
+<span class="fc" id="L14">    val value: ByteArray</span>
+) {
+<span class="fc" id="L16">    constructor(value: String) : this(value.toByteArray(UTF_8))</span>
+
+    internal object Serializer : KSerializer&lt;Content&gt; {
+<span class="fc" id="L19">        override val descriptor = PrimitiveSerialDescriptor(&quot;Content&quot;, PrimitiveKind.STRING)</span>
+<span class="fc" id="L20">        override fun deserialize(decoder: Decoder) = Content(Base64.getDecoder().decode(decoder.decodeString()))</span>
+
+        override fun serialize(encoder: Encoder, value: Content) {
+<span class="fc" id="L23">            encoder.encodeString(Base64.getEncoder().encodeToString(value.value))</span>
+<span class="fc" id="L24">        }</span>
+    }
+
+    override fun equals(other: Any?): Boolean {
+<span class="pc bpc" id="L28" title="1 of 2 branches missed.">        if (this === other) return true</span>
+<span class="pc bpc" id="L29" title="2 of 4 branches missed.">        if (javaClass != other?.javaClass) return false</span>
+<span class="fc" id="L30">        other as Content</span>
+<span class="fc" id="L31">        return value.contentEquals(other.value)</span>
+    }
+
+    override fun hashCode(): Int {
+<span class="nc" id="L35">        return value.contentHashCode()</span>
+    }
+}
+
+<span class="pc" id="L39">@Serializable(with = ContentType.Serializer::class)</span>
+<span class="fc" id="L40">data class ContentType(</span>
+<span class="fc" id="L41">    val value: String</span>
+) {
+    internal object Serializer : KSerializer&lt;ContentType&gt; {
+<span class="fc" id="L44">        override val descriptor = PrimitiveSerialDescriptor(&quot;ContentType&quot;, PrimitiveKind.STRING)</span>
+<span class="fc" id="L45">        override fun deserialize(decoder: Decoder) = ContentType(decoder.decodeString())</span>
+
+        override fun serialize(encoder: Encoder, value: ContentType) {
+<span class="fc" id="L48">            encoder.encodeString(value.value)</span>
+<span class="fc" id="L49">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -46,15 +46,22 @@ import kotlinx.serialization.Transient
 
 <span class="nc bnc" id="L47" title="All 8 branches missed.">@Serializable</span>
 @SerialName(&quot;ESTR&quot;)
-<span class="nc" id="L49">data class ExecStartedRecord(</span>
-<span class="nc" id="L50">    override val entityId: ExecId,</span>
-<span class="nc" id="L51">    override val cmdId: CmdId,</span>
-<span class="nc" id="L52">) : ExecRecord()</span>
+<span class="fc" id="L49">data class ExecStartedRecord(</span>
+<span class="fc" id="L50">    override val entityId: ExecId,</span>
+<span class="fc" id="L51">    override val cmdId: CmdId,</span>
+<span class="pc" id="L52">) : ExecRecord()</span>
 
 <span class="nc bnc" id="L54" title="All 8 branches missed.">@Serializable</span>
 @SerialName(&quot;ECR&quot;)
-<span class="nc" id="L56">data class ExecCompletedRecord(</span>
-<span class="nc" id="L57">    override val entityId: ExecId,</span>
-<span class="nc" id="L58">    override val cmdId: CmdId,</span>
-<span class="nc" id="L59">) : ExecRecord()</span>
+<span class="fc" id="L56">data class ExecCompletedRecord(</span>
+<span class="fc" id="L57">    override val entityId: ExecId,</span>
+<span class="fc" id="L58">    override val cmdId: CmdId,</span>
+<span class="pc" id="L59">) : ExecRecord()</span>
+
+<span class="nc bnc" id="L61" title="All 8 branches missed.">@Serializable</span>
+@SerialName(&quot;EFR&quot;)
+<span class="fc" id="L63">data class ExecFailedRecord(</span>
+<span class="fc" id="L64">    override val entityId: ExecId,</span>
+<span class="fc" id="L65">    override val cmdId: CmdId,</span>
+<span class="pc" id="L66">) : ExecRecord()</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

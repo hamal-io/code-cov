@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SubmitRequest.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.instance.req</a> &gt; <span class="el_source">SubmitRequest.kt</span></div><h1>SubmitRequest.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.instance.req
+
+import io.hamal.backend.repository.api.ReqCmdRepository
+import io.hamal.lib.domain.Event
+import io.hamal.lib.domain.ReqId
+import io.hamal.lib.domain.State
+import io.hamal.lib.domain.req.*
+import io.hamal.lib.domain.vo.*
+import io.hamal.lib.domain.vo.port.GenerateDomainId
+import kotlinx.serialization.Serializable
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
+import java.math.BigInteger
+import java.security.SecureRandom
+
+
+<span class="nc" id="L17">data class InvokeOneshot(</span>
+<span class="nc" id="L18">    val execId: ExecId,</span>
+<span class="nc" id="L19">    val funcId: FuncId,</span>
+<span class="nc" id="L20">    val correlationId: CorrelationId,</span>
+<span class="nc" id="L21">    val inputs: InvocationInputs,</span>
+<span class="nc" id="L22">    val secrets: InvocationSecrets</span>
+)
+
+<span class="nc" id="L25">data class InvokeFixedRate(</span>
+<span class="nc" id="L26">    val execId: ExecId,</span>
+<span class="nc" id="L27">    val funcId: FuncId,</span>
+<span class="nc" id="L28">    val correlationId: CorrelationId,</span>
+<span class="nc" id="L29">    val inputs: InvocationInputs,</span>
+<span class="nc" id="L30">    val secrets: InvocationSecrets</span>
+)
+
+<span class="nc" id="L33">data class InvokeEvent(</span>
+<span class="nc" id="L34">    val execId: ExecId,</span>
+<span class="nc" id="L35">    val funcId: FuncId,</span>
+<span class="nc" id="L36">    val correlationId: CorrelationId,</span>
+<span class="nc" id="L37">    val inputs: InvocationInputs,</span>
+<span class="nc" id="L38">    val secrets: InvocationSecrets</span>
+)
+
+<span class="nc bnc" id="L41" title="All 9 branches missed.">@Serializable</span>
+<span class="nc" id="L42">data class CompleteExec(</span>
+<span class="nc" id="L43">    val execId: ExecId,</span>
+<span class="nc" id="L44">    val statePayload: State,</span>
+<span class="nc" id="L45">    val events: List&lt;Event&gt;</span>
+<span class="nc" id="L46">)</span>
+
+<span class="fc" id="L48">@Component</span>
+<span class="fc" id="L49">class SubmitRequest(</span>
+<span class="fc" id="L50">    @Autowired private val generateDomainId: GenerateDomainId,</span>
+<span class="fc" id="L51">    @Autowired private val reqCmdRepository: ReqCmdRepository,</span>
+) {
+    operator fun invoke(adhoc: InvokeAdhocReq) =
+<span class="fc" id="L54">        SubmittedInvokeAdhocReq(</span>
+<span class="fc" id="L55">            id = reqId(),</span>
+<span class="fc" id="L56">            status = ReqStatus.Submitted,</span>
+<span class="fc" id="L57">            execId = generateDomainId(::ExecId),</span>
+<span class="fc" id="L58">            inputs = adhoc.inputs,</span>
+<span class="fc" id="L59">            secrets = adhoc.secrets,</span>
+<span class="fc" id="L60">            code = adhoc.code</span>
+<span class="fc" id="L61">        ).also(reqCmdRepository::queue)</span>
+
+
+    operator fun invoke(oneshot: InvokeOneshot) =
+<span class="nc" id="L65">        InvokeOneshotReq(</span>
+<span class="nc" id="L66">            id = reqId(),</span>
+<span class="nc" id="L67">            status = ReqStatus.Submitted,</span>
+<span class="nc" id="L68">            execId = generateDomainId(::ExecId),</span>
+<span class="nc" id="L69">            funcId = oneshot.funcId,</span>
+<span class="nc" id="L70">            correlationId = oneshot.correlationId,</span>
+<span class="nc" id="L71">            inputs = oneshot.inputs,</span>
+<span class="nc" id="L72">            secrets = oneshot.secrets,</span>
+<span class="nc" id="L73">        ).also(reqCmdRepository::queue)</span>
+
+    operator fun invoke(fixedRate: InvokeFixedRate) =
+<span class="nc" id="L76">        InvokeFixedRateReq(</span>
+<span class="nc" id="L77">            id = reqId(),</span>
+<span class="nc" id="L78">            status = ReqStatus.Submitted,</span>
+<span class="nc" id="L79">            execId = generateDomainId(::ExecId),</span>
+<span class="nc" id="L80">            funcId = fixedRate.funcId,</span>
+<span class="nc" id="L81">            correlationId = fixedRate.correlationId,</span>
+<span class="nc" id="L82">            inputs = fixedRate.inputs,</span>
+<span class="nc" id="L83">            secrets = fixedRate.secrets,</span>
+<span class="nc" id="L84">        ).also(reqCmdRepository::queue)</span>
+
+
+    operator fun invoke(evt: InvokeEvent) =
+<span class="nc" id="L88">        InvokeEventReq(</span>
+<span class="nc" id="L89">            id = reqId(),</span>
+<span class="nc" id="L90">            status = ReqStatus.Submitted,</span>
+<span class="nc" id="L91">            execId = generateDomainId(::ExecId),</span>
+<span class="nc" id="L92">            funcId = evt.funcId,</span>
+<span class="nc" id="L93">            correlationId = evt.correlationId,</span>
+<span class="nc" id="L94">            inputs = evt.inputs,</span>
+<span class="nc" id="L95">            secrets = evt.secrets,</span>
+<span class="nc" id="L96">        ).also(reqCmdRepository::queue)</span>
+
+    operator fun invoke(execId: ExecId, complete: CompleteExecReq) =
+<span class="fc" id="L99">        SubmittedCompleteExecReq(</span>
+<span class="fc" id="L100">            id = reqId(),</span>
+<span class="fc" id="L101">            status = ReqStatus.Submitted,</span>
+<span class="fc" id="L102">            execId = execId,</span>
+<span class="fc" id="L103">            state = complete.state,</span>
+<span class="fc" id="L104">            events = complete.events</span>
+<span class="fc" id="L105">        ).also(reqCmdRepository::queue)</span>
+
+
+    operator fun invoke(createTopic: CreateTopicReq) =
+<span class="fc" id="L109">        SubmittedCreateTopicReq(</span>
+<span class="fc" id="L110">            id = reqId(),</span>
+<span class="fc" id="L111">            status = ReqStatus.Submitted,</span>
+<span class="fc" id="L112">            topicId = generateDomainId(::TopicId),</span>
+<span class="fc" id="L113">            name = createTopic.name</span>
+<span class="fc" id="L114">        ).also(reqCmdRepository::queue)</span>
+
+    operator fun invoke(appendEvent: AppendEventReq) =
+<span class="fc" id="L117">        SubmittedAppendEventReq(</span>
+<span class="fc" id="L118">            id = reqId(),</span>
+<span class="fc" id="L119">            status = ReqStatus.Submitted,</span>
+<span class="fc" id="L120">            topicId = appendEvent.topicId,</span>
+<span class="fc" id="L121">            contentType = appendEvent.contentType,</span>
+<span class="fc" id="L122">            bytes = appendEvent.bytes</span>
+<span class="fc" id="L123">        ).also(reqCmdRepository::queue)</span>
+
+
+<span class="fc" id="L126">    private val rnd = SecureRandom.getInstance(&quot;SHA1PRNG&quot;, &quot;SUN&quot;)</span>
+<span class="fc" id="L127">    private fun reqId() = ReqId(BigInteger(128, rnd))</span>
+
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

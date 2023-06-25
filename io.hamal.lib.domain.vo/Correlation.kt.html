@@ -17,7 +17,7 @@ import kotlinx.serialization.encoding.Encoder
 
     object Serializer : KSerializer&lt;CorrelationId&gt; {
         override val descriptor: SerialDescriptor
-<span class="nc" id="L20">            get() = PrimitiveSerialDescriptor(&quot;CorrelationId&quot;, PrimitiveKind.STRING)</span>
+<span class="fc" id="L20">            get() = PrimitiveSerialDescriptor(&quot;CorrelationId&quot;, PrimitiveKind.STRING)</span>
 
         override fun deserialize(decoder: Decoder): CorrelationId {
 <span class="nc" id="L23">            return CorrelationId(decoder.decodeString())</span>

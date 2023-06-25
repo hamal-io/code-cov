@@ -21,5 +21,11 @@ import kotlin.concurrent.withLock
 
 <span class="fc" id="L22">    fun listRecords(id: ID): List&lt;RECORD&gt; = lock.withLock { store.getOrDefault(id, listOf()) }</span>
 <span class="fc" id="L23">    fun contains(id: ID) = lock.withLock { store.containsKey(id) }</span>
+
+    open fun clear() {
+<span class="fc" id="L26">        lock.withLock {</span>
+<span class="fc" id="L27">            store.clear()</span>
+<span class="fc" id="L28">        }</span>
+<span class="fc" id="L29">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

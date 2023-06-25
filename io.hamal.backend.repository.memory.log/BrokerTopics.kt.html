@@ -14,40 +14,38 @@ import kotlin.concurrent.withLock
 <span class="fc" id="L14">    private val topicMapping = mutableMapOf&lt;TopicName, MemoryLogTopic&gt;()</span>
     override fun create(cmdId: CmdId, toCreate: LogBrokerTopicsRepository.TopicToCreate): MemoryLogTopic {
 <span class="fc" id="L16">        return lock.withLock {</span>
-<span class="fc" id="L17">            topicMapping.putIfAbsent(</span>
-<span class="fc" id="L18">                toCreate.name,</span>
-<span class="fc" id="L19">                MemoryLogTopic(</span>
-<span class="fc" id="L20">                    id = toCreate.id,</span>
-<span class="fc" id="L21">                    name = toCreate.name</span>
-                )
+<span class="fc bfc" id="L17" title="All 4 branches covered.">            require(!topicMapping.containsKey(toCreate.name)) { &quot;${toCreate.name} already exists&quot; }</span>
+<span class="fc" id="L18">            topicMapping[toCreate.name] = MemoryLogTopic(</span>
+<span class="fc" id="L19">                id = toCreate.id,</span>
+<span class="fc" id="L20">                name = toCreate.name</span>
             )
-<span class="fc" id="L24">            topicMapping[toCreate.name]!!</span>
+<span class="fc" id="L22">            topicMapping[toCreate.name]!!</span>
         }
     }
 
     override fun find(name: TopicName): MemoryLogTopic? {
-<span class="fc" id="L29">        return lock.withLock {</span>
-<span class="fc" id="L30">            topicMapping[name]</span>
+<span class="fc" id="L27">        return lock.withLock {</span>
+<span class="fc" id="L28">            topicMapping[name]</span>
         }
     }
 
-<span class="fc" id="L34">    override fun find(id: TopicId): MemoryLogTopic? = lock.withLock {</span>
-<span class="pc bpc" id="L35" title="2 of 4 branches missed.">        topicMapping.values.find { it.id == id }</span>
-<span class="fc" id="L36">    }</span>
+<span class="fc" id="L32">    override fun find(id: TopicId): MemoryLogTopic? = lock.withLock {</span>
+<span class="fc bfc" id="L33" title="All 4 branches covered.">        topicMapping.values.find { it.id == id }</span>
+<span class="fc" id="L34">    }</span>
 
-<span class="fc" id="L38">    override fun query(): List&lt;MemoryLogTopic&gt; = lock.withLock {</span>
-<span class="fc" id="L39">        topicMapping.values.toList()</span>
-<span class="fc" id="L40">    }</span>
+<span class="fc" id="L36">    override fun list(): List&lt;MemoryLogTopic&gt; = lock.withLock {</span>
+<span class="fc" id="L37">        topicMapping.values.toList()</span>
+<span class="fc" id="L38">    }</span>
 
     override fun count(): ULong {
-<span class="nc" id="L43">        return lock.withLock { topicMapping.size.toULong() }</span>
+<span class="nc" id="L41">        return lock.withLock { topicMapping.size.toULong() }</span>
     }
 
     fun clear() {
-<span class="fc" id="L47">        topicMapping.clear()</span>
-<span class="fc" id="L48">    }</span>
+<span class="fc" id="L45">        topicMapping.clear()</span>
+<span class="fc" id="L46">    }</span>
 
     override fun close() {
-<span class="fc" id="L51">    }</span>
+<span class="fc" id="L49">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

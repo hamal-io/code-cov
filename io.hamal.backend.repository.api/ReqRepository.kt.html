@@ -8,14 +8,15 @@ interface ReqCmdRepository {
     fun next(limit: Int): List&lt;Req&gt;
     fun complete(reqId: ReqId)
     fun fail(reqId: ReqId)
+    fun clear()
 }
 
 interface ReqQueryRepository {
     fun find(reqId: ReqId): Req?
-    fun query(block: Query.() -&gt; Unit): List&lt;Req&gt;
-<span class="nc" id="L16">    data class Query(</span>
-<span class="nc" id="L17">        var afterId: ReqId,</span>
-<span class="nc" id="L18">        var limit: Int</span>
+    fun list(block: Query.() -&gt; Unit): List&lt;Req&gt;
+<span class="fc" id="L17">    data class Query(</span>
+<span class="pc" id="L18">        var afterId: ReqId,</span>
+<span class="pc" id="L19">        var limit: Int</span>
     )
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

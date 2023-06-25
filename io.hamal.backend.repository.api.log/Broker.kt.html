@@ -25,7 +25,7 @@ interface ConsumeFromTopic&lt;TOPIC : LogTopic&gt; {
 }
 
 interface ReadFromTopic&lt;TOPIC : LogTopic&gt; {
-    fun read(lastId: LogChunkId, topic: TOPIC, limit: Int): List&lt;LogChunk&gt;
+    fun read(firstId: LogChunkId, topic: TOPIC, limit: Int): List&lt;LogChunk&gt;
 }
 
 interface GetTopics&lt;TOPIC : LogTopic&gt; {
@@ -33,14 +33,14 @@ interface GetTopics&lt;TOPIC : LogTopic&gt; {
 }
 
 interface FindTopic&lt;TOPIC : LogTopic&gt; {
-<span class="nc bnc" id="L36" title="All 2 branches missed.">    fun get(topicId: TopicId): TOPIC = requireNotNull(find(topicId)) { &quot;Topic with id $topicId not found&quot; }</span>
+<span class="pc bpc" id="L36" title="1 of 2 branches missed.">    fun get(topicId: TopicId): TOPIC = requireNotNull(find(topicId)) { &quot;Topic with id $topicId not found&quot; }</span>
 
     fun find(topicId: TopicId): TOPIC?
 
     fun find(topicName: TopicName): TOPIC?
 }
 
-<span class="nc" id="L43">interface LogBrokerRepository&lt;TOPIC : LogTopic&gt; :</span>
+<span class="fc" id="L43">interface LogBrokerRepository&lt;TOPIC : LogTopic&gt; :</span>
     CreateTopic&lt;TOPIC&gt;,
     AppendToTopic&lt;TOPIC&gt;,
     ConsumeFromTopic&lt;TOPIC&gt;,
@@ -49,5 +49,5 @@ interface FindTopic&lt;TOPIC : LogTopic&gt; {
     ReadFromTopic&lt;TOPIC&gt;,
     Closeable {
     fun clear()
-<span class="nc" id="L52">}</span>
+<span class="fc" id="L52">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

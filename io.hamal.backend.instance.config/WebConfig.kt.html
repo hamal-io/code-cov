@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WebConfig.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.instance.config</a> &gt; <span class="el_source">WebConfig.kt</span></div><h1>WebConfig.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.instance.config
+
+import io.hamal.lib.domain.HamalError
+import kotlinx.serialization.json.Json
+import org.springframework.context.annotation.Configuration
+import org.springframework.core.Ordered
+import org.springframework.core.annotation.Order
+import org.springframework.format.FormatterRegistry
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.http.converter.HttpMessageConverter
+import org.springframework.http.converter.json.KotlinSerializationJsonHttpMessageConverter
+import org.springframework.web.bind.annotation.ControllerAdvice
+import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
+
+<span class="fc" id="L18">@Configuration</span>
+<span class="fc" id="L19">open class WebConfig : WebMvcConfigurer {</span>
+    override fun configureMessageConverters(converters: MutableList&lt;HttpMessageConverter&lt;*&gt;&gt;) {
+<span class="fc" id="L21">        super.configureMessageConverters(converters)</span>
+<span class="fc" id="L22">        converters.add(KotlinSerializationJsonHttpMessageConverter(Json {</span>
+<span class="fc" id="L23">            ignoreUnknownKeys = false</span>
+<span class="fc" id="L24">            encodeDefaults = true</span>
+<span class="fc" id="L25">        }))</span>
+<span class="fc" id="L26">    }</span>
+
+    override fun addFormatters(registry: FormatterRegistry) {
+<span class="fc" id="L29">        super.addFormatters(registry)</span>
+
+<span class="fc" id="L31">        registry.addConverter(EventIdConverter)</span>
+<span class="fc" id="L32">        registry.addConverter(ExecIdConverter)</span>
+<span class="fc" id="L33">        registry.addConverter(LimitConverter)</span>
+<span class="fc" id="L34">        registry.addConverter(TopicIdConverter)</span>
+<span class="fc" id="L35">    }</span>
+
+
+<span class="fc" id="L38">    @ControllerAdvice</span>
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+<span class="fc" id="L40">    class ErrorHandler {</span>
+
+
+        @ExceptionHandler(Exception::class)
+        fun handle(e: Exception): ResponseEntity&lt;HamalError&gt; {
+<span class="fc" id="L45">            return when (e) {</span>
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">                is IllegalArgumentException -&gt; ResponseEntity(</span>
+<span class="nc" id="L47">                    HamalError(</span>
+<span class="nc" id="L48">                        message = e.message</span>
+<span class="nc" id="L49">                    ), HttpStatus.BAD_REQUEST</span>
+                )
+
+<span class="pc bpc" id="L52" title="1 of 2 branches missed.">                is NoSuchElementException -&gt; ResponseEntity(</span>
+<span class="fc" id="L53">                    HamalError(</span>
+<span class="fc" id="L54">                        message = e.message</span>
+<span class="fc" id="L55">                    ), HttpStatus.NOT_FOUND</span>
+                )
+
+<span class="nc bnc" id="L58" title="All 2 branches missed.">                is IllegalStateException -&gt; ResponseEntity(</span>
+<span class="nc" id="L59">                    HamalError(</span>
+<span class="nc" id="L60">                        message = e.message</span>
+<span class="nc" id="L61">                    ), HttpStatus.INTERNAL_SERVER_ERROR</span>
+                )
+
+<span class="nc bnc" id="L64" title="All 2 branches missed.">                is MethodArgumentTypeMismatchException -&gt; ResponseEntity(</span>
+<span class="nc" id="L65">                    HamalError(</span>
+<span class="nc bnc" id="L66" title="All 2 branches missed.">                        message = e.cause?.message</span>
+<span class="nc" id="L67">                    ), HttpStatus.BAD_REQUEST</span>
+                )
+
+<span class="nc" id="L70">                else -&gt; ResponseEntity(HamalError(e.message), HttpStatus.INTERNAL_SERVER_ERROR)</span>
+            }
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

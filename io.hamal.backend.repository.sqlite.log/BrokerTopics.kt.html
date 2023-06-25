@@ -91,7 +91,7 @@ import java.util.concurrent.ConcurrentHashMap
                 }
 <span class="nc bnc" id="L92" title="All 2 branches missed.">            }?.also { topicMapping[it.name] = it }</span>
 
-    override fun query(): List&lt;SqliteLogTopic&gt; {
+    override fun list(): List&lt;SqliteLogTopic&gt; {
 <span class="nc" id="L95">        return connection.executeQuery&lt;SqliteLogTopic&gt;(&quot;SELECT id,name FROM topics&quot;) {</span>
 <span class="nc" id="L96">            query {</span>
 <span class="nc" id="L97">                set(&quot;some_value&quot;, true)</span>

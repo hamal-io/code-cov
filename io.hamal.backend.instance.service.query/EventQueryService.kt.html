@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EventQueryService.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.instance.service.query</a> &gt; <span class="el_source">EventQueryService.kt</span></div><h1>EventQueryService.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.instance.service.query
+
+import io.hamal.backend.repository.api.log.LogBrokerRepository
+import io.hamal.backend.repository.api.log.LogChunkId
+import io.hamal.backend.repository.api.log.LogTopic
+import io.hamal.lib.common.SnowflakeId
+import io.hamal.lib.domain.Event
+import io.hamal.lib.domain.EventWithId
+import io.hamal.lib.domain.vo.EventId
+import io.hamal.lib.domain.vo.Limit
+import io.hamal.lib.domain.vo.TopicId
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.protobuf.ProtoBuf
+import org.springframework.stereotype.Service
+
+<span class="fc" id="L16">@Service</span>
+<span class="fc" id="L17">class EventQueryService&lt;TOPIC : LogTopic&gt;(</span>
+<span class="fc" id="L18">    private val eventBrokerRepository: LogBrokerRepository&lt;TOPIC&gt;</span>
+) {
+
+<span class="fc bfc" id="L21" title="All 2 branches covered.">    fun getTopic(topicId: TopicId) = eventBrokerRepository.find(topicId)</span>
+<span class="fc" id="L22">        ?: throw NoSuchElementException(&quot;Topic not found&quot;)</span>
+
+<span class="fc" id="L24">    fun findTopic(topicId: TopicId) = eventBrokerRepository.find(topicId)</span>
+
+    fun listTopics(block: TopicQuery.() -&gt; Unit): List&lt;TOPIC&gt; {
+<span class="fc" id="L27">        val query = TopicQuery().also(block)</span>
+        //FIXME apply query filter
+<span class="fc" id="L29">        return eventBrokerRepository.queryTopics()</span>
+<span class="fc" id="L30">            .toList()</span>
+    }
+
+    @OptIn(ExperimentalSerializationApi::class)
+    fun listEvents(topic: TOPIC, block: EventQuery.() -&gt; Unit): List&lt;EventWithId&gt; {
+<span class="fc" id="L35">        val query = EventQuery().also(block)</span>
+<span class="fc" id="L36">        val firstId = LogChunkId(SnowflakeId(query.afterId.value.value + 1))</span>
+<span class="fc" id="L37">        return eventBrokerRepository.read(firstId, topic, query.limit.value)</span>
+<span class="fc" id="L38">            .map { chunk -&gt;</span>
+<span class="fc" id="L39">                val evt = ProtoBuf.decodeFromByteArray(Event.serializer(), chunk.bytes)</span>
+<span class="fc" id="L40">                EventWithId(</span>
+<span class="fc" id="L41">                    id = EventId(chunk.id.value),</span>
+<span class="fc" id="L42">                    contentType = evt.contentType,</span>
+<span class="fc" id="L43">                    content = evt.content</span>
+                )
+            }
+    }
+
+
+<span class="fc" id="L49">    data class TopicQuery(</span>
+<span class="pc" id="L50">        var afterId: TopicId = TopicId(0),</span>
+<span class="pc" id="L51">        var limit: Limit = Limit(1)</span>
+<span class="fc" id="L52">    )</span>
+
+<span class="fc" id="L54">    data class EventQuery(</span>
+<span class="fc" id="L55">        var afterId: EventId = EventId(0),</span>
+<span class="fc" id="L56">        var limit: Limit = Limit(1)</span>
+<span class="fc" id="L57">    )</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
