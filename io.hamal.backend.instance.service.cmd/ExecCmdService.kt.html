@@ -29,7 +29,7 @@ import org.springframework.stereotype.Service
 <span class="fc" id="L29">        execCmdRepository.queue(ExecCmdRepository.QueueCmd(cmdId, scheduledExec.id)).also { emitEvent(cmdId, it) }</span>
 
     fun start(cmdId: CmdId): List&lt;StartedExec&gt; =
-<span class="nc" id="L32">        execCmdRepository.start(ExecCmdRepository.StartCmd(cmdId)).also { emitEvents(cmdId, it) }</span>
+<span class="fc" id="L32">        execCmdRepository.start(ExecCmdRepository.StartCmd(cmdId)).also { emitEvents(cmdId, it) }</span>
 
     fun complete(cmdId: CmdId, startedExec: StartedExec): CompletedExec =
 <span class="fc" id="L35">        execCmdRepository.complete(ExecCmdRepository.CompleteCmd(cmdId, startedExec.id)).also { emitEvent(cmdId, it) }</span>
@@ -84,14 +84,14 @@ private fun ExecCmdService.emitEvent(cmdId: CmdId, exec: QueuedExec) {
 <span class="fc" id="L84">}</span>
 
 private fun ExecCmdService.emitEvents(cmdId: CmdId, execs: List&lt;StartedExec&gt;) {
-<span class="nc" id="L87">    execs.forEach {</span>
-<span class="nc" id="L88">        eventEmitter.emit(</span>
-<span class="nc" id="L89">            cmdId, ExecutionStartedEvent(</span>
-<span class="nc" id="L90">                startedExec = it</span>
+<span class="fc" id="L87">    execs.forEach {</span>
+<span class="fc" id="L88">        eventEmitter.emit(</span>
+<span class="fc" id="L89">            cmdId, ExecutionStartedEvent(</span>
+<span class="fc" id="L90">                startedExec = it</span>
             )
         )
-<span class="nc" id="L93">    }</span>
-<span class="nc" id="L94">}</span>
+<span class="fc" id="L93">    }</span>
+<span class="fc" id="L94">}</span>
 
 
 private fun ExecCmdService.emitEvent(cmdId: CmdId, exec: CompletedExec) {

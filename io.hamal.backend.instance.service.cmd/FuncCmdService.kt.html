@@ -12,39 +12,39 @@ import org.springframework.stereotype.Service
 <span class="fc" id="L12">@Service</span>
 class FuncCmdService
 <span class="fc" id="L14">@Autowired constructor(</span>
-<span class="pc" id="L15">    val funcCmdRepository: FuncCmdRepository,</span>
-<span class="pc" id="L16">    val eventEmitter: SystemEventEmitter&lt;*&gt;</span>
+<span class="fc" id="L15">    val funcCmdRepository: FuncCmdRepository,</span>
+<span class="fc" id="L16">    val eventEmitter: SystemEventEmitter&lt;*&gt;</span>
 ) {
     fun create(cmdId: CmdId, toCreate: ToCreate): Func =
-<span class="nc" id="L19">        createFunc(cmdId, toCreate).also { emitEvent(cmdId, it) }</span>
+<span class="fc" id="L19">        createFunc(cmdId, toCreate).also { emitEvent(cmdId, it) }</span>
 
-<span class="nc" id="L21">    data class ToCreate(</span>
-<span class="nc" id="L22">        val funcId: FuncId,</span>
-<span class="nc" id="L23">        val name: FuncName,</span>
-<span class="nc" id="L24">        val inputs: FuncInputs,</span>
-<span class="nc" id="L25">        val secrets: FuncSecrets,</span>
-<span class="nc" id="L26">        val code: Code</span>
+<span class="fc" id="L21">    data class ToCreate(</span>
+<span class="fc" id="L22">        val id: FuncId,</span>
+<span class="fc" id="L23">        val name: FuncName,</span>
+<span class="fc" id="L24">        val inputs: FuncInputs,</span>
+<span class="fc" id="L25">        val secrets: FuncSecrets,</span>
+<span class="fc" id="L26">        val code: Code</span>
     )
 }
 
 private fun FuncCmdService.createFunc(cmdId: CmdId, toCreate: FuncCmdService.ToCreate): Func {
-<span class="nc" id="L31">    return funcCmdRepository.create(</span>
-<span class="nc" id="L32">        FuncCmdRepository.CreateCmd(</span>
-<span class="nc" id="L33">            id = cmdId,</span>
-<span class="nc" id="L34">            funcId = toCreate.funcId,</span>
-<span class="nc" id="L35">            name = toCreate.name,</span>
-<span class="nc" id="L36">            inputs = toCreate.inputs,</span>
-<span class="nc" id="L37">            secrets = toCreate.secrets,</span>
-<span class="nc" id="L38">            code = toCreate.code</span>
+<span class="fc" id="L31">    return funcCmdRepository.create(</span>
+<span class="fc" id="L32">        FuncCmdRepository.CreateCmd(</span>
+<span class="fc" id="L33">            id = cmdId,</span>
+<span class="fc" id="L34">            funcId = toCreate.id,</span>
+<span class="fc" id="L35">            name = toCreate.name,</span>
+<span class="fc" id="L36">            inputs = toCreate.inputs,</span>
+<span class="fc" id="L37">            secrets = toCreate.secrets,</span>
+<span class="fc" id="L38">            code = toCreate.code</span>
         )
     )
 }
 
 private fun FuncCmdService.emitEvent(cmdId: CmdId, func: Func) {
-<span class="nc" id="L44">    eventEmitter.emit(</span>
-<span class="nc" id="L45">        cmdId, FuncCreatedEvent(</span>
-<span class="nc" id="L46">            funcId = func.id</span>
+<span class="fc" id="L44">    eventEmitter.emit(</span>
+<span class="fc" id="L45">        cmdId, FuncCreatedEvent(</span>
+<span class="fc" id="L46">            funcId = func.id</span>
         )
     )
-<span class="nc" id="L49">}</span>
+<span class="fc" id="L49">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

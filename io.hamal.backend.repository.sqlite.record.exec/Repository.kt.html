@@ -121,7 +121,7 @@ internal object CreateExec : CreateDomainObject&lt;ExecId, ExecRecord, Exec&gt; 
 <span class="nc" id="L121">        val result = mutableListOf&lt;StartedExec&gt;()</span>
 
 <span class="nc" id="L123">        tx {</span>
-<span class="nc" id="L124">            ProjectionQueue.pop(this, 2).forEach { queuedExec -&gt;</span>
+<span class="nc" id="L124">            ProjectionQueue.pop(this, 1).forEach { queuedExec -&gt;</span>
 <span class="nc" id="L125">                val execId = queuedExec.id</span>
 <span class="nc bnc" id="L126" title="All 2 branches missed.">                check(currentVersion(execId) is QueuedExec) { &quot;current version of $execId is not queued&quot; }</span>
 

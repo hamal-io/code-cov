@@ -10,10 +10,10 @@ import io.hamal.lib.domain.FixedRateTrigger
 <span class="pc" id="L10">    val fixedRateTriggerService: FixedRateTriggerService</span>
 ) : SystemEventHandler&lt;TriggerCreatedEvent&gt; {
     override fun handle(cmdId: CmdId, evt: TriggerCreatedEvent) {
-<span class="nc" id="L13">        println(evt)</span>
-<span class="nc bnc" id="L14" title="All 2 branches missed.">        if (evt.trigger is FixedRateTrigger) {</span>
-<span class="nc" id="L15">            fixedRateTriggerService.triggerAdded(evt.trigger)</span>
+<span class="fc" id="L13">        println(evt)</span>
+<span class="pc bpc" id="L14" title="1 of 2 branches missed.">        if (evt.trigger is FixedRateTrigger) {</span>
+<span class="fc" id="L15">            fixedRateTriggerService.triggerAdded(evt.trigger)</span>
         }
-<span class="nc" id="L17">    }</span>
+<span class="fc" id="L17">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

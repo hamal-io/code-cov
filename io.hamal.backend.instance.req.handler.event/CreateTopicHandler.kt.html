@@ -4,21 +4,20 @@ import io.hamal.backend.instance.req.ReqHandler
 import io.hamal.backend.instance.req.handler.cmdId
 import io.hamal.backend.instance.service.cmd.EventCmdService
 import io.hamal.lib.domain.req.SubmittedCreateTopicReq
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 @Component
-<span class="fc" id="L11">class CreateTopicHandler(</span>
-<span class="fc" id="L12">    @Autowired private val eventCmdService: EventCmdService&lt;*&gt;</span>
-<span class="fc" id="L13">) : ReqHandler&lt;SubmittedCreateTopicReq&gt;(SubmittedCreateTopicReq::class) {</span>
+<span class="fc" id="L10">class CreateTopicHandler(</span>
+<span class="fc" id="L11">    private val eventCmdService: EventCmdService&lt;*&gt;</span>
+<span class="fc" id="L12">) : ReqHandler&lt;SubmittedCreateTopicReq&gt;(SubmittedCreateTopicReq::class) {</span>
     override fun invoke(req: SubmittedCreateTopicReq) {
-<span class="fc" id="L15">        eventCmdService.create(</span>
-<span class="fc" id="L16">            req.cmdId(),</span>
-<span class="fc" id="L17">            EventCmdService.TopicToCreate(</span>
-<span class="fc" id="L18">                id = req.topicId,</span>
-<span class="fc" id="L19">                name = req.name</span>
+<span class="fc" id="L14">        eventCmdService.create(</span>
+<span class="fc" id="L15">            req.cmdId(),</span>
+<span class="fc" id="L16">            EventCmdService.TopicToCreate(</span>
+<span class="fc" id="L17">                id = req.topicId,</span>
+<span class="fc" id="L18">                name = req.name</span>
             )
         )
-<span class="fc" id="L22">    }</span>
+<span class="fc" id="L21">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -33,19 +33,19 @@ class FixedRateTriggerService
     @PostConstruct
     fun setup() {
 <span class="fc" id="L35">        triggerQueryRepository.list {</span>
-<span class="nc" id="L36">            afterId = TriggerId(0)</span>
-<span class="nc" id="L37">            limit = 10</span>
-<span class="pc" id="L38">        }.filterIsInstance&lt;FixedRateTrigger&gt;().forEach {</span>
+<span class="fc" id="L36">            afterId = TriggerId(0)</span>
+<span class="fc" id="L37">            limit = Limit(10)</span>
+<span class="fc" id="L38">        }.filterIsInstance&lt;FixedRateTrigger&gt;().forEach {</span>
 <span class="nc" id="L39">            plannedInvocations[it] = now().plusMillis(it.duration.inWholeSeconds)</span>
 <span class="nc" id="L40">        }</span>
 <span class="fc" id="L41">    }</span>
 
     fun triggerAdded(fixedRateTrigger: FixedRateTrigger) {
-<span class="nc" id="L44">        plannedInvocations.putIfAbsent(</span>
-<span class="nc" id="L45">            fixedRateTrigger,</span>
-<span class="nc" id="L46">            now().plusSeconds(fixedRateTrigger.duration.inWholeSeconds)</span>
+<span class="fc" id="L44">        plannedInvocations.putIfAbsent(</span>
+<span class="fc" id="L45">            fixedRateTrigger,</span>
+<span class="fc" id="L46">            now().plusSeconds(fixedRateTrigger.duration.inWholeSeconds)</span>
         )
-<span class="nc" id="L48">    }</span>
+<span class="fc" id="L48">    }</span>
 
 
     @Scheduled(fixedRate = 1, timeUnit = TimeUnit.SECONDS)

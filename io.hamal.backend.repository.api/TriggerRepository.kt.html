@@ -14,14 +14,14 @@ interface TriggerCmdRepository {
 
     fun create(cmd: CreateEventCmd): EventTrigger
 
-<span class="nc" id="L17">    data class CreateFixedRateCmd(</span>
-<span class="nc" id="L18">        val id: CmdId,</span>
-<span class="nc" id="L19">        val triggerId: TriggerId,</span>
-<span class="nc" id="L20">        val name: TriggerName,</span>
-<span class="nc" id="L21">        val funcId: FuncId,</span>
-<span class="nc" id="L22">        val inputs: TriggerInputs,</span>
-<span class="nc" id="L23">        val secrets: TriggerSecrets,</span>
-<span class="nc" id="L24">        val duration: Duration</span>
+<span class="fc" id="L17">    data class CreateFixedRateCmd(</span>
+<span class="fc" id="L18">        val id: CmdId,</span>
+<span class="fc" id="L19">        val triggerId: TriggerId,</span>
+<span class="fc" id="L20">        val name: TriggerName,</span>
+<span class="fc" id="L21">        val funcId: FuncId,</span>
+<span class="fc" id="L22">        val inputs: TriggerInputs,</span>
+<span class="fc" id="L23">        val secrets: TriggerSecrets,</span>
+<span class="fc" id="L24">        val duration: Duration</span>
     )
 
 <span class="nc" id="L27">    data class CreateEventCmd(</span>
@@ -38,13 +38,13 @@ interface TriggerCmdRepository {
 interface TriggerQueryRepository {
     fun find(triggerId: TriggerId): Trigger?
 
-    fun list(block: Query.() -&gt; Unit): List&lt;Trigger&gt;
+    fun list(block: TriggerQuery.() -&gt; Unit): List&lt;Trigger&gt;
 
-<span class="nc" id="L43">    data class Query(</span>
-<span class="nc" id="L44">        var afterId: TriggerId,</span>
-<span class="nc" id="L45">        var types: Set&lt;TriggerType&gt;,</span>
-<span class="nc" id="L46">        var limit: Int</span>
-    )
+<span class="fc" id="L43">    data class TriggerQuery(</span>
+<span class="fc" id="L44">        var afterId: TriggerId = TriggerId(0),</span>
+<span class="pc" id="L45">        var types: Set&lt;TriggerType&gt; = TriggerType.values().toSet(),</span>
+<span class="fc" id="L46">        var limit: Limit = Limit(1)</span>
+<span class="fc" id="L47">    )</span>
 
 }
 

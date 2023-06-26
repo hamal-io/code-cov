@@ -7,30 +7,29 @@ import io.hamal.backend.instance.service.cmd.ExecCmdService
 import io.hamal.backend.instance.service.cmd.ExecCmdService.ToPlan
 import io.hamal.backend.instance.service.query.FuncQueryService
 import io.hamal.lib.domain.Correlation
-import io.hamal.lib.domain.req.InvokeOneshotReq
+import io.hamal.lib.domain.req.SubmittedInvokeOneshotReq
 import io.hamal.lib.domain.vo.ExecInputs
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 @Component
-<span class="fc" id="L16">class InvokeOneshotHandler(</span>
-<span class="fc" id="L17">    @Autowired private val execCmdService: ExecCmdService,</span>
-<span class="fc" id="L18">    @Autowired private val funcQueryService: FuncQueryService</span>
-<span class="fc" id="L19">) : ReqHandler&lt;InvokeOneshotReq&gt;(InvokeOneshotReq::class) {</span>
-    override fun invoke(req: InvokeOneshotReq) {
-<span class="nc" id="L21">        val func = funcQueryService.get(req.funcId)</span>
-<span class="nc" id="L22">        execCmdService.plan(</span>
-<span class="nc" id="L23">            req.cmdId(), ToPlan(</span>
-<span class="nc" id="L24">                execId = req.execId,</span>
-<span class="nc" id="L25">                code = func.code,</span>
-<span class="nc" id="L26">                correlation = Correlation(</span>
-<span class="nc" id="L27">                    correlationId = req.correlationId,</span>
-<span class="nc" id="L28">                    funcId = func.id</span>
+<span class="fc" id="L15">class InvokeOneshotHandler(</span>
+<span class="fc" id="L16">    private val execCmdService: ExecCmdService,</span>
+<span class="fc" id="L17">    private val funcQueryService: FuncQueryService</span>
+<span class="fc" id="L18">) : ReqHandler&lt;SubmittedInvokeOneshotReq&gt;(SubmittedInvokeOneshotReq::class) {</span>
+    override fun invoke(req: SubmittedInvokeOneshotReq) {
+<span class="fc" id="L20">        val func = funcQueryService.get(req.funcId)</span>
+<span class="fc" id="L21">        execCmdService.plan(</span>
+<span class="fc" id="L22">            req.cmdId(), ToPlan(</span>
+<span class="fc" id="L23">                execId = req.execId,</span>
+<span class="fc" id="L24">                code = func.code,</span>
+<span class="fc" id="L25">                correlation = Correlation(</span>
+<span class="fc" id="L26">                    correlationId = req.correlationId,</span>
+<span class="fc" id="L27">                    funcId = func.id</span>
                 ),
-<span class="nc" id="L30">                inputs = ExecInputs(func.inputs.value),</span>
-<span class="nc" id="L31">                secrets = req.secrets.toExecSecrets()</span>
+<span class="fc" id="L29">                inputs = ExecInputs(func.inputs.value),</span>
+<span class="fc" id="L30">                secrets = req.secrets.toExecSecrets()</span>
             )
         )
-<span class="nc" id="L34">    }</span>
+<span class="fc" id="L33">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

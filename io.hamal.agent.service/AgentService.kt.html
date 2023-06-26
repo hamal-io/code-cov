@@ -74,7 +74,7 @@ import java.util.concurrent.TimeUnit
 <span class="nc" id="L74">        CompletableFuture.runAsync {</span>
 <span class="nc" id="L75">            DefaultHamalSdk(&quot;http://localhost:8084&quot;).execService()</span>
 <span class="nc" id="L76">                .poll()</span>
-<span class="nc" id="L77">                .requests.forEach { request -&gt;</span>
+<span class="nc" id="L77">                .execs.forEach { request -&gt;</span>
 
 <span class="nc" id="L79">                    try {</span>
 

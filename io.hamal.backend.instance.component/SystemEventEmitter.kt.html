@@ -24,9 +24,9 @@ import io.hamal.lib.domain.vo.port.GenerateDomainId
 <span class="fc" id="L24">    }</span>
 
     fun &lt;EVENT : SystemEvent&gt; emit(cmdId: CmdId, evt: EVENT) {
-<span class="pc bpc" id="L27" title="1 of 2 branches missed.">        val topic = brokerRepository.find(evt.topic) ?: brokerRepository.create(</span>
-<span class="nc" id="L28">            cmdId,</span>
-<span class="nc" id="L29">            CreateTopic.TopicToCreate(generateDomainId(::TopicId), evt.topic)</span>
+<span class="fc bfc" id="L27" title="All 2 branches covered.">        val topic = brokerRepository.find(evt.topic) ?: brokerRepository.create(</span>
+<span class="fc" id="L28">            cmdId,</span>
+<span class="fc" id="L29">            CreateTopic.TopicToCreate(generateDomainId(::TopicId), evt.topic)</span>
         )
 <span class="pc bpc" id="L31" title="1 of 2 branches missed.">        if (local.get() == null) {</span>
 <span class="fc" id="L32">            local.set(listOf(Pair(topic, evt)))</span>

@@ -95,9 +95,9 @@ sealed class Exec : DomainObject&lt;ExecId&gt; {
 <span class="fc" id="L95">) : Exec() {</span>
 <span class="pc bpc" id="L96" title="2 of 4 branches missed.">    override val status = ExecStatus.Started</span>
 <span class="fc" id="L97">    override val correlation get() = queuedExec.correlation</span>
-<span class="nc" id="L98">    override val inputs get() = queuedExec.inputs</span>
-<span class="nc" id="L99">    override val secrets get() = queuedExec.secrets</span>
-<span class="nc" id="L100">    override val code get() = queuedExec.code</span>
+<span class="fc" id="L98">    override val inputs get() = queuedExec.inputs</span>
+<span class="fc" id="L99">    override val secrets get() = queuedExec.secrets</span>
+<span class="fc" id="L100">    override val code get() = queuedExec.code</span>
     override fun toString(): String {
 <span class="nc" id="L102">        return &quot;StartedExec($id)&quot;</span>
     }

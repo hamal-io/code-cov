@@ -9,28 +9,27 @@ import io.hamal.backend.instance.service.cmd.ExecCmdService.ToPlan
 import io.hamal.backend.instance.service.query.FuncQueryService
 import io.hamal.lib.domain.Correlation
 import io.hamal.lib.domain.req.InvokeFixedRateReq
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 @Component
-<span class="fc" id="L16">class InvokeFixedRateHandler(</span>
-<span class="fc" id="L17">    @Autowired private val execCmdService: ExecCmdService,</span>
-<span class="fc" id="L18">    @Autowired private val funcQueryService: FuncQueryService</span>
-<span class="fc" id="L19">) : ReqHandler&lt;InvokeFixedRateReq&gt;(InvokeFixedRateReq::class) {</span>
+<span class="fc" id="L15">class InvokeFixedRateHandler(</span>
+<span class="fc" id="L16">    private val execCmdService: ExecCmdService,</span>
+<span class="fc" id="L17">    private val funcQueryService: FuncQueryService</span>
+<span class="fc" id="L18">) : ReqHandler&lt;InvokeFixedRateReq&gt;(InvokeFixedRateReq::class) {</span>
     override fun invoke(req: InvokeFixedRateReq) {
-<span class="nc" id="L21">        val func = funcQueryService.get(req.funcId)</span>
-<span class="nc" id="L22">        execCmdService.plan(</span>
-<span class="nc" id="L23">            req.cmdId(), ToPlan(</span>
-<span class="nc" id="L24">                execId = req.execId,</span>
-<span class="nc" id="L25">                correlation = Correlation(</span>
-<span class="nc" id="L26">                    correlationId = req.correlationId,</span>
-<span class="nc" id="L27">                    funcId = func.id</span>
+<span class="nc" id="L20">        val func = funcQueryService.get(req.funcId)</span>
+<span class="nc" id="L21">        execCmdService.plan(</span>
+<span class="nc" id="L22">            req.cmdId(), ToPlan(</span>
+<span class="nc" id="L23">                execId = req.execId,</span>
+<span class="nc" id="L24">                correlation = Correlation(</span>
+<span class="nc" id="L25">                    correlationId = req.correlationId,</span>
+<span class="nc" id="L26">                    funcId = func.id</span>
                 ),
-<span class="nc" id="L29">                inputs = req.inputs.toExecInputs(),</span>
-<span class="nc" id="L30">                secrets = req.secrets.toExecSecrets(),</span>
-<span class="nc" id="L31">                code = func.code,</span>
+<span class="nc" id="L28">                inputs = req.inputs.toExecInputs(),</span>
+<span class="nc" id="L29">                secrets = req.secrets.toExecSecrets(),</span>
+<span class="nc" id="L30">                code = func.code,</span>
             )
         )
-<span class="nc" id="L34">    }</span>
+<span class="nc" id="L33">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

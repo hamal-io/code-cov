@@ -43,15 +43,17 @@ import java.time.Instant
         @JvmStatic
 <span class="fc" id="L44">        fun now(): CompletedAt = CompletedAt(TimeUtils.now())</span>
     }
-<span class="fc" id="L46">    internal object Serializer : DomainAtSerializer&lt;CompletedAt&gt;(::CompletedAt)</span>
+
+<span class="fc" id="L47">    internal object Serializer : DomainAtSerializer&lt;CompletedAt&gt;(::CompletedAt)</span>
 }
 
 @Serializable(with = FailedAt.Serializer::class)
-<span class="pc" id="L50">class FailedAt(override val value: Instant) : DomainAt() {</span>
-<span class="nc" id="L51">    companion object {</span>
+<span class="pc" id="L51">class FailedAt(override val value: Instant) : DomainAt() {</span>
+<span class="nc" id="L52">    companion object {</span>
         @JvmStatic
-<span class="fc" id="L53">        fun now(): FailedAt = FailedAt(TimeUtils.now())</span>
+<span class="fc" id="L54">        fun now(): FailedAt = FailedAt(TimeUtils.now())</span>
     }
-<span class="fc" id="L55">    internal object Serializer : DomainAtSerializer&lt;FailedAt&gt;(::FailedAt)</span>
+
+<span class="fc" id="L57">    internal object Serializer : DomainAtSerializer&lt;FailedAt&gt;(::FailedAt)</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

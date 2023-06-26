@@ -6,25 +6,24 @@ import io.hamal.lib.script.api.value.TableValue
 import kotlinx.serialization.Serializable
 
 <span class="nc" id="L8">@Serializable(with = FuncId.Serializer::class)</span>
-<span class="nc" id="L9">class FuncId(override val value: SnowflakeId) : DomainId() {</span>
-<span class="nc" id="L10">    constructor(value: Int) : this(SnowflakeId(value.toLong()))</span>
-
-<span class="fc" id="L12">    internal object Serializer : DomainIdSerializer&lt;FuncId&gt;(::FuncId)</span>
+<span class="fc" id="L9">class FuncId(override val value: SnowflakeId) : DomainId() {</span>
+<span class="fc" id="L10">    constructor(value: Int) : this(SnowflakeId(value.toLong()))</span>
+<span class="fc" id="L11">    internal object Serializer : DomainIdSerializer&lt;FuncId&gt;(::FuncId)</span>
 }
 
 
-<span class="nc" id="L16">@Serializable(with = FuncName.Serializer::class)</span>
-<span class="nc" id="L17">class FuncName(override val value: String) : DomainName() {</span>
-<span class="nc" id="L18">    internal object Serializer : DomainNameSerializer&lt;FuncName&gt;(::FuncName)</span>
+<span class="nc" id="L15">@Serializable(with = FuncName.Serializer::class)</span>
+<span class="fc" id="L16">class FuncName(override val value: String) : DomainName() {</span>
+<span class="fc" id="L17">    internal object Serializer : DomainNameSerializer&lt;FuncName&gt;(::FuncName)</span>
 }
 
-<span class="nc" id="L21">@Serializable(with = FuncInputs.Serializer::class)</span>
-<span class="nc" id="L22">class FuncInputs(override val value: TableValue) : Inputs() {</span>
-<span class="nc" id="L23">    internal object Serializer : InputsSerializer&lt;FuncInputs&gt;(::FuncInputs)</span>
-}
+<span class="nc" id="L20">@Serializable(with = FuncInputs.Serializer::class)</span>
+<span class="fc" id="L21">class FuncInputs(override val value: TableValue = TableValue()) : Inputs() {</span>
+<span class="fc" id="L22">    internal object Serializer : InputsSerializer&lt;FuncInputs&gt;(::FuncInputs)</span>
+<span class="fc" id="L23">}</span>
 
-<span class="nc" id="L26">@Serializable(with = FuncSecrets.Serializer::class)</span>
-<span class="nc" id="L27">class FuncSecrets(override val value: List&lt;Secret&gt;) : Secrets() {</span>
-<span class="nc" id="L28">    internal object Serializer : SecretsSerializer&lt;FuncSecrets&gt;(::FuncSecrets)</span>
-}
+<span class="nc" id="L25">@Serializable(with = FuncSecrets.Serializer::class)</span>
+<span class="fc" id="L26">class FuncSecrets(override val value: List&lt;Secret&gt; = listOf()) : Secrets() {</span>
+<span class="fc" id="L27">    internal object Serializer : SecretsSerializer&lt;FuncSecrets&gt;(::FuncSecrets)</span>
+<span class="fc" id="L28">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

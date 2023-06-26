@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Trigger.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.domain.req</a> &gt; <span class="el_source">Trigger.kt</span></div><h1>Trigger.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.domain.req
+
+import io.hamal.lib.domain.ReqId
+import io.hamal.lib.domain._enum.TriggerType
+import io.hamal.lib.domain.vo.*
+import kotlinx.serialization.Serializable
+import kotlin.time.Duration
+
+<span class="pc bpc" id="L9" title="7 of 22 branches missed.">@Serializable</span>
+<span class="pc" id="L10">data class CreateTriggerReq(</span>
+<span class="fc" id="L11">    val type: TriggerType,</span>
+<span class="fc" id="L12">    val name: TriggerName,</span>
+<span class="fc" id="L13">    val funcId: FuncId,</span>
+<span class="fc" id="L14">    val inputs: TriggerInputs,</span>
+<span class="fc" id="L15">    val secrets: TriggerSecrets,</span>
+<span class="pc" id="L16">    val duration: Duration? = null,</span>
+<span class="pc" id="L17">)</span>
+
+<span class="pc bpc" id="L19" title="7 of 25 branches missed.">@Serializable</span>
+<span class="pc" id="L20">data class SubmittedCreateTriggerReq(</span>
+<span class="fc" id="L21">    override val id: ReqId,</span>
+<span class="fc" id="L22">    override var status: ReqStatus,</span>
+<span class="fc" id="L23">    val type: TriggerType,</span>
+<span class="fc" id="L24">    val triggerId: TriggerId,</span>
+<span class="fc" id="L25">    val triggerName: TriggerName,</span>
+<span class="fc" id="L26">    val funcId: FuncId,</span>
+<span class="fc" id="L27">    val inputs: TriggerInputs,</span>
+<span class="fc" id="L28">    val secrets: TriggerSecrets,</span>
+<span class="pc" id="L29">    val duration: Duration? = null,</span>
+<span class="pc" id="L30">) : SubmittedReq</span>
+
+
+<span class="pc bnc" id="L33" title="All 13 branches missed.">@Serializable</span>
+<span class="nc" id="L34">data class InvokeFixedRateReq(</span>
+<span class="nc" id="L35">    override val id: ReqId,</span>
+<span class="nc" id="L36">    override var status: ReqStatus,</span>
+<span class="nc" id="L37">    val execId: ExecId,</span>
+<span class="nc" id="L38">    val funcId: FuncId,</span>
+<span class="nc" id="L39">    val correlationId: CorrelationId,</span>
+<span class="nc" id="L40">    val inputs: InvocationInputs,</span>
+<span class="nc" id="L41">    val secrets: InvocationSecrets,</span>
+<span class="fc" id="L42">) : SubmittedReq</span>
+
+<span class="pc bnc" id="L44" title="All 13 branches missed.">@Serializable</span>
+<span class="nc" id="L45">data class InvokeEventReq(</span>
+<span class="nc" id="L46">    override val id: ReqId,</span>
+<span class="nc" id="L47">    override var status: ReqStatus,</span>
+<span class="nc" id="L48">    val execId: ExecId,</span>
+<span class="nc" id="L49">    val funcId: FuncId,</span>
+<span class="nc" id="L50">    val correlationId: CorrelationId,</span>
+<span class="nc" id="L51">    val inputs: InvocationInputs,</span>
+<span class="nc" id="L52">    val secrets: InvocationSecrets,</span>
+<span class="fc" id="L53">) : SubmittedReq</span>
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

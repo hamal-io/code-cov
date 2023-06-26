@@ -7,23 +7,22 @@ import io.hamal.backend.instance.req.handler.toExecSecrets
 import io.hamal.backend.instance.service.cmd.ExecCmdService
 import io.hamal.backend.instance.service.cmd.ExecCmdService.ToPlan
 import io.hamal.lib.domain.req.SubmittedInvokeAdhocReq
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 @Component
-<span class="fc" id="L14">class InvokeAdhocHandler(</span>
-<span class="fc" id="L15">    @Autowired private val execCmdService: ExecCmdService,</span>
-<span class="fc" id="L16">) : ReqHandler&lt;SubmittedInvokeAdhocReq&gt;(SubmittedInvokeAdhocReq::class) {</span>
+<span class="fc" id="L13">class InvokeAdhocHandler(</span>
+<span class="fc" id="L14">    private val execCmdService: ExecCmdService,</span>
+<span class="fc" id="L15">) : ReqHandler&lt;SubmittedInvokeAdhocReq&gt;(SubmittedInvokeAdhocReq::class) {</span>
     override fun invoke(req: SubmittedInvokeAdhocReq) {
-<span class="fc" id="L18">        execCmdService.plan(</span>
-<span class="fc" id="L19">            req.cmdId(), ToPlan(</span>
-<span class="fc" id="L20">                execId = req.execId,</span>
-<span class="fc" id="L21">                correlation = null,</span>
-<span class="fc" id="L22">                inputs = req.inputs.toExecInputs(),</span>
-<span class="fc" id="L23">                secrets = req.secrets.toExecSecrets(),</span>
-<span class="fc" id="L24">                code = req.code</span>
+<span class="fc" id="L17">        execCmdService.plan(</span>
+<span class="fc" id="L18">            req.cmdId(), ToPlan(</span>
+<span class="fc" id="L19">                execId = req.execId,</span>
+<span class="fc" id="L20">                correlation = null,</span>
+<span class="fc" id="L21">                inputs = req.inputs.toExecInputs(),</span>
+<span class="fc" id="L22">                secrets = req.secrets.toExecSecrets(),</span>
+<span class="fc" id="L23">                code = req.code</span>
             )
         )
-<span class="fc" id="L27">    }</span>
+<span class="fc" id="L26">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -7,19 +7,24 @@ import io.hamal.lib.domain.vo.*
 
 interface FuncCmdRepository {
     fun create(cmd: CreateCmd): Func
-<span class="nc" id="L10">    data class CreateCmd(</span>
-<span class="nc" id="L11">        val id: CmdId,</span>
-<span class="nc" id="L12">        val funcId: FuncId,</span>
-<span class="nc" id="L13">        val name: FuncName,</span>
-<span class="nc" id="L14">        val inputs: FuncInputs,</span>
-<span class="nc" id="L15">        val secrets: FuncSecrets,</span>
-<span class="nc" id="L16">        val code: Code,</span>
+    fun clear()
+<span class="fc" id="L11">    data class CreateCmd(</span>
+<span class="fc" id="L12">        val id: CmdId,</span>
+<span class="fc" id="L13">        val funcId: FuncId,</span>
+<span class="fc" id="L14">        val name: FuncName,</span>
+<span class="fc" id="L15">        val inputs: FuncInputs,</span>
+<span class="fc" id="L16">        val secrets: FuncSecrets,</span>
+<span class="fc" id="L17">        val code: Code,</span>
     )
 }
 
 interface FuncQueryRepository {
     fun find(funcId: FuncId): Func?
 
-    fun list(afterId: FuncId, limit: Int): List&lt;Func&gt;
+    fun list(block: FuncQuery.() -&gt; Unit): List&lt;Func&gt;
+<span class="fc" id="L25">    data class FuncQuery(</span>
+<span class="fc" id="L26">        var afterId: FuncId = FuncId(0),</span>
+<span class="fc" id="L27">        var limit: Limit = Limit(1)</span>
+<span class="fc" id="L28">    )</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

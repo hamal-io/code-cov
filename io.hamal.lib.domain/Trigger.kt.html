@@ -7,7 +7,7 @@ import io.hamal.lib.domain.vo.*
 import kotlinx.serialization.Serializable
 import kotlin.time.Duration
 
-<span class="nc" id="L10">@Serializable</span>
+<span class="fc" id="L10">@Serializable</span>
 sealed class Trigger : DomainObject&lt;TriggerId&gt; {
     abstract val cmdId: CmdId
     abstract val name: TriggerName
@@ -17,20 +17,20 @@ sealed class Trigger : DomainObject&lt;TriggerId&gt; {
     abstract val secrets: TriggerSecrets
 }
 
-<span class="nc bnc" id="L20" title="All 20 branches missed.">@Serializable</span>
-<span class="nc" id="L21">class FixedRateTrigger(</span>
-<span class="nc" id="L22">    override val cmdId: CmdId,</span>
-<span class="nc" id="L23">    override val id: TriggerId,</span>
-<span class="nc" id="L24">    override val name: TriggerName,</span>
-<span class="nc" id="L25">    override val funcId: FuncId,</span>
-<span class="nc" id="L26">    override val inputs: TriggerInputs,</span>
-<span class="nc" id="L27">    override val secrets: TriggerSecrets,</span>
-<span class="nc" id="L28">    val duration: Duration</span>
-<span class="nc" id="L29">) : Trigger() {</span>
-<span class="nc bnc" id="L30" title="All 4 branches missed.">    override val type = FixedRate</span>
-<span class="nc" id="L31">}</span>
+<span class="pc bpc" id="L20" title="6 of 20 branches missed.">@Serializable</span>
+<span class="fc" id="L21">class FixedRateTrigger(</span>
+<span class="fc" id="L22">    override val cmdId: CmdId,</span>
+<span class="fc" id="L23">    override val id: TriggerId,</span>
+<span class="fc" id="L24">    override val name: TriggerName,</span>
+<span class="fc" id="L25">    override val funcId: FuncId,</span>
+<span class="fc" id="L26">    override val inputs: TriggerInputs,</span>
+<span class="fc" id="L27">    override val secrets: TriggerSecrets,</span>
+<span class="fc" id="L28">    val duration: Duration</span>
+<span class="fc" id="L29">) : Trigger() {</span>
+<span class="pc bpc" id="L30" title="2 of 4 branches missed.">    override val type = FixedRate</span>
+<span class="fc" id="L31">}</span>
 
-<span class="nc bnc" id="L33" title="All 16 branches missed.">@Serializable</span>
+<span class="pc bnc" id="L33" title="All 16 branches missed.">@Serializable</span>
 <span class="nc" id="L34">class EventTrigger(</span>
 <span class="nc" id="L35">    override val cmdId: CmdId,</span>
 <span class="nc" id="L36">    override val id: TriggerId,</span>
@@ -41,5 +41,5 @@ sealed class Trigger : DomainObject&lt;TriggerId&gt; {
 <span class="nc" id="L41">    val topicId: TopicId</span>
 <span class="nc" id="L42">) : Trigger() {</span>
 <span class="nc bnc" id="L43" title="All 4 branches missed.">    override val type = Event</span>
-<span class="nc" id="L44">}</span>
+<span class="fc" id="L44">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

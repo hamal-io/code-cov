@@ -7,26 +7,26 @@ import kotlinx.serialization.Serializable
 
 
 <span class="nc" id="L9">@Serializable(with = TriggerId.Serializer::class)</span>
-<span class="pc" id="L10">class TriggerId(override val value: SnowflakeId) : DomainId() {</span>
+<span class="fc" id="L10">class TriggerId(override val value: SnowflakeId) : DomainId() {</span>
 <span class="fc" id="L11">    constructor(value: Int) : this(SnowflakeId(value.toLong()))</span>
 <span class="nc" id="L12">    constructor(value: String) : this(SnowflakeId(value.toLong()))</span>
 
-<span class="nc" id="L14">    internal object Serializer : DomainIdSerializer&lt;TriggerId&gt;(::TriggerId)</span>
+<span class="fc" id="L14">    internal object Serializer : DomainIdSerializer&lt;TriggerId&gt;(::TriggerId)</span>
 }
 
 <span class="nc" id="L17">@Serializable(with = TriggerName.Serializer::class)</span>
-<span class="nc" id="L18">class TriggerName(override val value: String) : DomainName() {</span>
-<span class="nc" id="L19">    internal object Serializer : DomainNameSerializer&lt;TriggerName&gt;(::TriggerName)</span>
+<span class="fc" id="L18">class TriggerName(override val value: String) : DomainName() {</span>
+<span class="fc" id="L19">    internal object Serializer : DomainNameSerializer&lt;TriggerName&gt;(::TriggerName)</span>
 }
 
 <span class="nc" id="L22">@Serializable(with = TriggerInputs.Serializer::class)</span>
-<span class="nc" id="L23">class TriggerInputs(override val value: TableValue) : Inputs() {</span>
-<span class="nc" id="L24">    internal object Serializer : InputsSerializer&lt;TriggerInputs&gt;(::TriggerInputs)</span>
-}
+<span class="fc" id="L23">class TriggerInputs(override val value: TableValue = TableValue()) : Inputs() {</span>
+<span class="fc" id="L24">    internal object Serializer : InputsSerializer&lt;TriggerInputs&gt;(::TriggerInputs)</span>
+<span class="fc" id="L25">}</span>
 
 
 <span class="nc" id="L28">@Serializable(with = TriggerSecrets.Serializer::class)</span>
-<span class="nc" id="L29">class TriggerSecrets(override val value: List&lt;Secret&gt;) : Secrets() {</span>
-<span class="nc" id="L30">    internal object Serializer : SecretsSerializer&lt;TriggerSecrets&gt;(::TriggerSecrets)</span>
-}
+<span class="fc" id="L29">class TriggerSecrets(override val value: List&lt;Secret&gt; = listOf()) : Secrets() {</span>
+<span class="fc" id="L30">    internal object Serializer : SecretsSerializer&lt;TriggerSecrets&gt;(::TriggerSecrets)</span>
+<span class="fc" id="L31">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

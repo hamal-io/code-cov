@@ -18,7 +18,7 @@ import kotlinx.serialization.Serializable
 <span class="fc" id="L18">    override var status: ReqStatus,</span>
 <span class="fc" id="L19">    val topicId: TopicId,</span>
 <span class="fc" id="L20">    val name: TopicName</span>
-<span class="fc" id="L21">) : Req</span>
+<span class="fc" id="L21">) : SubmittedReq</span>
 
 
 <span class="pc bnc" id="L24" title="All 9 branches missed.">@Serializable</span>
@@ -35,5 +35,5 @@ import kotlinx.serialization.Serializable
 <span class="fc" id="L35">    val topicId: TopicId,</span>
 <span class="fc" id="L36">    val contentType: ContentType,</span>
 <span class="fc" id="L37">    val bytes: Content</span>
-<span class="fc" id="L38">) : Req</span>
+<span class="fc" id="L38">) : SubmittedReq</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -38,15 +38,15 @@ import kotlin.concurrent.withLock
         /**
          * Blocks if sequence is exhausted until next milliseconds
          */
-        fun next(elapsedSource: () -&gt; Elapsed): Tuple2&lt;Elapsed, Sequence&gt;
+        fun next(elapsedSource: () -&gt; Elapsed): Pair&lt;Elapsed, Sequence&gt;
 
         @JvmInline
 <span class="nc" id="L44">        value class Sequence(val value: Short) {</span>
 <span class="fc" id="L45">            constructor(value: Int) : this(value.toShort())</span>
 
             init {
-<span class="pc bpc" id="L48" title="2 of 4 branches missed.">                require(value &gt; 0) { &quot;Sequence must be positive - [1, 4096]&quot; }</span>
-<span class="pc bpc" id="L49" title="2 of 4 branches missed.">                require(value &lt;= 4096) { &quot;Sequence is limited to 12 bits - [1, 4096]&quot; }</span>
+<span class="pc bpc" id="L48" title="2 of 4 branches missed.">                require(value &gt;= 0) { &quot;Sequence must not be negative - [0, 4095]&quot; }</span>
+<span class="pc bpc" id="L49" title="2 of 4 branches missed.">                require(value &lt;= 4095) { &quot;Sequence is limited to 12 bits - [0, 4095]&quot; }</span>
             }
         }
     }
@@ -60,7 +60,7 @@ import kotlin.concurrent.withLock
 <span class="nc" id="L60">    fun partition(): Partition = Partition(</span>
 <span class="nc" id="L61">        BitUtils.extractRange(</span>
 <span class="nc" id="L62">            value = value,</span>
-<span class="nc" id="L63">            startIndex = 53,</span>
+<span class="nc" id="L63">            startIndex = 0,</span>
 <span class="nc" id="L64">            numberOfBits = 10</span>
 <span class="nc" id="L65">        ).toInt()</span>
 <span class="nc" id="L66">    )</span>
@@ -68,7 +68,7 @@ import kotlin.concurrent.withLock
 <span class="nc" id="L68">    fun sequence(): Sequence = Sequence(</span>
 <span class="nc" id="L69">        BitUtils.extractRange(</span>
 <span class="nc" id="L70">            value = value,</span>
-<span class="nc" id="L71">            startIndex = 41,</span>
+<span class="nc" id="L71">            startIndex = 10,</span>
 <span class="nc" id="L72">            numberOfBits = 12</span>
 <span class="nc" id="L73">        ).toShort()</span>
 <span class="nc" id="L74">    )</span>
@@ -77,7 +77,7 @@ import kotlin.concurrent.withLock
 <span class="nc" id="L77">    fun elapsed(): Elapsed = Elapsed(</span>
 <span class="nc" id="L78">        BitUtils.extractRange(</span>
 <span class="nc" id="L79">            value = value,</span>
-<span class="nc" id="L80">            startIndex = 0,</span>
+<span class="nc" id="L80">            startIndex = 22,</span>
 <span class="nc" id="L81">            numberOfBits = 41</span>
         )
 <span class="nc" id="L83">    )</span>
@@ -121,7 +121,7 @@ import kotlin.concurrent.withLock
     private var nextSequence = 0
 <span class="fc" id="L122">    private val maxSequence = 4096</span>
 
-    override fun next(elapsedSource: () -&gt; Elapsed): Tuple2&lt;Elapsed, Sequence&gt; {
+    override fun next(elapsedSource: () -&gt; Elapsed): Pair&lt;Elapsed, Sequence&gt; {
 <span class="fc" id="L125">        val elapsed = elapsedSource()</span>
 <span class="pc bpc" id="L126" title="2 of 4 branches missed.">        check(elapsed &gt;= previousCalledAt) { &quot;Elapsed must be monotonic&quot; }</span>
 
@@ -145,7 +145,7 @@ import kotlin.concurrent.withLock
 <span class="fc" id="L145">            nextSequence = 0</span>
         }
 
-<span class="fc" id="L148">        return Tuple2(previousCalledAt, Sequence(++nextSequence))</span>
+<span class="fc" id="L148">        return Pair(previousCalledAt, Sequence(nextSequence++))</span>
     }
 }
 
@@ -173,10 +173,10 @@ import kotlin.concurrent.withLock
         partition: Partition,
         sequence: Sequence
     ): SnowflakeId {
-<span class="fc" id="L176">        val partitionValue = partition.value.toLong().shl(53)</span>
-<span class="fc" id="L177">        val sequenceValue = sequence.value.toLong().shl(41)</span>
-<span class="fc" id="L178">        val elapsedValue = elapsed.value</span>
-<span class="fc" id="L179">        val result = partitionValue + sequenceValue + elapsedValue</span>
+<span class="fc" id="L176">        val elapsedValue = elapsed.value.shl(22)</span>
+<span class="fc" id="L177">        val sequenceValue = sequence.value.toLong().shl(10)</span>
+<span class="fc" id="L178">        val partitionValue = partition.value.toLong()</span>
+<span class="fc" id="L179">        val result = elapsedValue + sequenceValue + partitionValue</span>
 <span class="fc" id="L180">        return SnowflakeId(result)</span>
     }
 <span class="fc" id="L182">}</span>

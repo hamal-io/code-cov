@@ -5,76 +5,76 @@ import io.hamal.backend.repository.api.ReqQueryRepository
 import io.hamal.backend.repository.memory.record.CurrentExecProjection
 import io.hamal.backend.repository.memory.record.QueueProjection
 import io.hamal.lib.domain.ReqId
-import io.hamal.lib.domain.req.Req
 import io.hamal.lib.domain.req.ReqStatus
+import io.hamal.lib.domain.req.SubmittedReq
 import kotlinx.serialization.protobuf.ProtoBuf
-import java.math.BigInteger
-import java.util.concurrent.locks.ReentrantReadWriteLock
+import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
 object MemoryReqRepository : ReqCmdRepository, ReqQueryRepository {
 
-<span class="pc" id="L17">    val queue = mutableListOf&lt;ReqId&gt;()</span>
-<span class="pc" id="L18">    val store = mutableMapOf&lt;ReqId, ByteArray&gt;()</span>
-<span class="pc" id="L19">    val lock = ReentrantReadWriteLock()</span>
+<span class="pc" id="L16">    val queue = mutableListOf&lt;ReqId&gt;()</span>
+<span class="pc" id="L17">    val store = mutableMapOf&lt;ReqId, ByteArray&gt;()</span>
+<span class="pc" id="L18">    val lock = ReentrantLock()</span>
 
-    override fun queue(req: Req) {
-<span class="fc" id="L22">        return lock.writeLock().withLock {</span>
-<span class="fc" id="L23">            store[req.id] = ProtoBuf { }.encodeToByteArray(Req.serializer(), req)</span>
-<span class="fc" id="L24">            queue.add(req.id)</span>
-<span class="fc" id="L25">        }</span>
+    override fun queue(req: SubmittedReq) {
+<span class="fc" id="L21">        return lock.withLock {</span>
+<span class="fc" id="L22">            store[req.id] = ProtoBuf { }.encodeToByteArray(SubmittedReq.serializer(), req)</span>
+<span class="fc" id="L23">            queue.add(req.id)</span>
+<span class="fc" id="L24">        }</span>
     }
 
-    override fun next(limit: Int): List&lt;Req&gt; {
-<span class="pc" id="L29">        return lock.writeLock().withLock {</span>
-<span class="fc" id="L30">            val result = mutableListOf&lt;Req&gt;()</span>
+    override fun next(limit: Int): List&lt;SubmittedReq&gt; {
+<span class="pc" id="L28">        return lock.withLock {</span>
+<span class="fc" id="L29">            val result = mutableListOf&lt;SubmittedReq&gt;()</span>
 
-<span class="pc bpc" id="L32" title="1 of 2 branches missed.">            repeat(limit) {</span>
-<span class="fc bfc" id="L33" title="All 2 branches covered.">                val reqId = queue.removeFirstOrNull() ?: return result</span>
-<span class="fc" id="L34">                result.add(find(reqId)!!)</span>
-<span class="fc" id="L35">            }</span>
+<span class="pc bpc" id="L31" title="1 of 2 branches missed.">            repeat(limit) {</span>
+<span class="fc bfc" id="L32" title="All 2 branches covered.">                val reqId = queue.removeFirstOrNull() ?: return result</span>
+<span class="fc" id="L33">                result.add(find(reqId)!!)</span>
+<span class="fc" id="L34">            }</span>
 
-<span class="nc" id="L37">            result</span>
+<span class="nc" id="L36">            result</span>
         }
     }
 
     override fun complete(reqId: ReqId) {
-<span class="pc bpc" id="L42" title="1 of 2 branches missed.">        val req = find(reqId) ?: return</span>
-<span class="fc" id="L43">        lock.writeLock().withLock {</span>
-<span class="fc" id="L44">            store[req.id] = ProtoBuf { }.encodeToByteArray(Req.serializer(), req.apply { status = ReqStatus.Completed })</span>
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">        val req = find(reqId) ?: return</span>
+<span class="fc" id="L42">        lock.withLock {</span>
+<span class="fc" id="L43">            store[req.id] =</span>
+<span class="fc" id="L44">                ProtoBuf { }.encodeToByteArray(SubmittedReq.serializer(), req.apply { status = ReqStatus.Completed })</span>
 <span class="fc" id="L45">        }</span>
 <span class="fc" id="L46">    }</span>
 
     override fun fail(reqId: ReqId) {
 <span class="pc bpc" id="L49" title="1 of 2 branches missed.">        val req = find(reqId) ?: return</span>
-<span class="fc" id="L50">        lock.writeLock().withLock {</span>
-<span class="fc" id="L51">            store[req.id] = ProtoBuf { }.encodeToByteArray(Req.serializer(), req.apply { status = ReqStatus.Failed })</span>
-<span class="fc" id="L52">        }</span>
-<span class="fc" id="L53">    }</span>
+<span class="fc" id="L50">        lock.withLock {</span>
+<span class="fc" id="L51">            store[req.id] =</span>
+<span class="fc" id="L52">                ProtoBuf { }.encodeToByteArray(SubmittedReq.serializer(), req.apply { status = ReqStatus.Failed })</span>
+<span class="fc" id="L53">        }</span>
+<span class="fc" id="L54">    }</span>
 
     override fun clear() {
-<span class="fc" id="L56">        lock.writeLock().withLock {</span>
-<span class="fc" id="L57">            store.clear()</span>
-<span class="fc" id="L58">            queue.clear()</span>
-<span class="fc" id="L59">            QueueProjection.clear()</span>
-<span class="fc" id="L60">            CurrentExecProjection.clear()</span>
-<span class="fc" id="L61">        }</span>
-<span class="fc" id="L62">    }</span>
+<span class="fc" id="L57">        lock.withLock {</span>
+<span class="fc" id="L58">            store.clear()</span>
+<span class="fc" id="L59">            queue.clear()</span>
+<span class="fc" id="L60">            QueueProjection.clear()</span>
+<span class="fc" id="L61">            CurrentExecProjection.clear()</span>
+<span class="fc" id="L62">        }</span>
+<span class="fc" id="L63">    }</span>
 
 
-    override fun find(reqId: ReqId): Req? {
-<span class="pc bpc" id="L66" title="1 of 2 branches missed.">        val result = lock.readLock().withLock { store[reqId] } ?: return null</span>
-<span class="fc" id="L67">        return ProtoBuf { }.decodeFromByteArray(Req.serializer(), result)</span>
+    override fun find(reqId: ReqId): SubmittedReq? {
+<span class="fc bfc" id="L67" title="All 2 branches covered.">        val result = lock.withLock { store[reqId] } ?: return null</span>
+<span class="fc" id="L68">        return ProtoBuf { }.decodeFromByteArray(SubmittedReq.serializer(), result)</span>
     }
 
-    override fun list(block: ReqQueryRepository.Query.() -&gt; Unit): List&lt;Req&gt; {
-<span class="fc" id="L71">        val query = ReqQueryRepository.Query(ReqId(BigInteger.ZERO), limit = 25)</span>
-<span class="fc" id="L72">        block(query)</span>
-<span class="fc" id="L73">        return lock.readLock().withLock {</span>
+    override fun list(block: ReqQueryRepository.Query.() -&gt; Unit): List&lt;SubmittedReq&gt; {
+<span class="fc" id="L72">        val query = ReqQueryRepository.Query().also(block)</span>
+<span class="fc" id="L73">        return lock.withLock {</span>
 <span class="fc" id="L74">            store.keys.sorted()</span>
-<span class="pc bnc" id="L75" title="All 2 branches missed.">                .dropWhile { it &lt;= query.afterId }</span>
-<span class="fc" id="L76">                .take(query.limit)</span>
-<span class="pc" id="L77">                .mapNotNull { find(it) }</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">                .dropWhile { it &lt;= query.afterId }</span>
+<span class="fc" id="L76">                .take(query.limit.value)</span>
+<span class="fc" id="L77">                .mapNotNull { find(it) }</span>
 <span class="fc" id="L78">                .reversed()</span>
         }
     }

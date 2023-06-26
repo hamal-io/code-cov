@@ -2,21 +2,82 @@
 
 import io.hamal.backend.repository.api.FuncCmdRepository
 import io.hamal.backend.repository.api.FuncQueryRepository
+import io.hamal.backend.repository.api.FuncQueryRepository.FuncQuery
+import io.hamal.backend.repository.record.func.FuncCreationRecord
+import io.hamal.backend.repository.record.func.FuncRecord
+import io.hamal.backend.repository.record.func.createEntity
+import io.hamal.lib.common.util.CollectionUtils.takeWhileInclusive
+import io.hamal.lib.domain.CmdId
 import io.hamal.lib.domain.Func
 import io.hamal.lib.domain.vo.FuncId
+import io.hamal.lib.domain.vo.Limit
 
+internal object CurrentFuncProjection {
+<span class="fc" id="L16">    private val projection = mutableMapOf&lt;FuncId, Func&gt;()</span>
+    fun apply(func: Func) {
+<span class="fc" id="L18">        projection[func.id] = func</span>
+<span class="fc" id="L19">    }</span>
 
-object MemoryFuncRepository : FuncCmdRepository, FuncQueryRepository {
+<span class="fc" id="L21">    fun find(funcId: FuncId): Func? = projection[funcId]</span>
+
+    fun list(afterId: FuncId, limit: Limit): List&lt;Func&gt; {
+<span class="fc" id="L24">        return projection.keys.sorted()</span>
+<span class="fc bfc" id="L25" title="All 2 branches covered.">            .dropWhile { it &lt;= afterId }</span>
+<span class="fc" id="L26">            .take(limit.value)</span>
+<span class="fc" id="L27">            .mapNotNull { find(it) }</span>
+<span class="fc" id="L28">            .reversed()</span>
+    }
+
+    fun clear() {
+<span class="fc" id="L32">        projection.clear()</span>
+<span class="fc" id="L33">    }</span>
+}
+
+object MemoryFuncRepository : BaseRecordRepository&lt;FuncId, FuncRecord&gt;(), FuncCmdRepository, FuncQueryRepository {
     override fun create(cmd: FuncCmdRepository.CreateCmd): Func {
-<span class="nc" id="L11">        TODO(&quot;Not yet implemented&quot;)</span>
+<span class="fc" id="L38">        val funcId = cmd.funcId</span>
+<span class="pc bpc" id="L39" title="1 of 2 branches missed.">        if (contains(funcId)) {</span>
+<span class="nc" id="L40">            return versionOf(funcId, cmd.id)</span>
+        }
+<span class="fc" id="L42">        addRecord(</span>
+<span class="fc" id="L43">            FuncCreationRecord(</span>
+<span class="fc" id="L44">                entityId = funcId,</span>
+<span class="fc" id="L45">                cmdId = cmd.id,</span>
+<span class="fc" id="L46">                name = cmd.name,</span>
+<span class="fc" id="L47">                inputs = cmd.inputs,</span>
+<span class="fc" id="L48">                secrets = cmd.secrets,</span>
+<span class="fc" id="L49">                code = cmd.code</span>
+            )
+        )
+<span class="fc" id="L52">        return (currentVersion(funcId))</span>
+<span class="fc" id="L53">            .also(CurrentFuncProjection::apply)</span>
     }
 
-    override fun find(funcId: FuncId): Func? {
-<span class="nc" id="L15">        TODO(&quot;Not yet implemented&quot;)</span>
+<span class="fc" id="L56">    override fun find(funcId: FuncId): Func? = CurrentFuncProjection.find(funcId)</span>
+
+    override fun list(block: FuncQuery.() -&gt; Unit): List&lt;Func&gt; {
+<span class="fc" id="L59">        val query = FuncQuery().also(block)</span>
+<span class="fc" id="L60">        return CurrentFuncProjection.list(query.afterId, query.limit)</span>
     }
 
-    override fun list(afterId: FuncId, limit: Int): List&lt;Func&gt; {
-<span class="nc" id="L19">        TODO(&quot;Not yet implemented&quot;)</span>
-    }
+    override fun clear() {
+<span class="fc" id="L64">        super.clear()</span>
+<span class="fc" id="L65">        CurrentFuncProjection.clear()</span>
+<span class="fc" id="L66">    }</span>
+}
+
+private fun MemoryFuncRepository.currentVersion(id: FuncId): Func {
+<span class="fc" id="L70">    return listRecords(id)</span>
+<span class="fc" id="L71">        .createEntity()</span>
+<span class="fc" id="L72">        .toDomainObject()</span>
+}
+
+private fun MemoryFuncRepository.commandAlreadyApplied(id: FuncId, cmdId: CmdId) =
+<span class="nc" id="L76">    listRecords(id).any { it.cmdId == cmdId }</span>
+
+private fun MemoryFuncRepository.versionOf(id: FuncId, cmdId: CmdId): Func {
+<span class="nc bnc" id="L79" title="All 2 branches missed.">    return listRecords(id).takeWhileInclusive { it.cmdId != cmdId }</span>
+<span class="nc" id="L80">        .createEntity()</span>
+<span class="nc" id="L81">        .toDomainObject()</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

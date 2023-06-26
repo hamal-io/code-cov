@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InvokeOneshotRoute.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.instance.web.func</a> &gt; <span class="el_source">InvokeOneshotRoute.kt</span></div><h1>InvokeOneshotRoute.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.instance.web.func
+
+import io.hamal.backend.instance.req.SubmitRequest
+import io.hamal.backend.instance.service.query.FuncQueryService
+import io.hamal.lib.domain.req.InvokeOneshotReq
+import io.hamal.lib.domain.req.SubmittedInvokeOneshotReq
+import io.hamal.lib.domain.vo.*
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
+
+<span class="fc" id="L12">@RestController</span>
+<span class="fc" id="L13">open class InvokeOneshotRoute(</span>
+<span class="fc" id="L14">    private val request: SubmitRequest,</span>
+<span class="fc" id="L15">    private val funcQueryService: FuncQueryService</span>
+) {
+    @PostMapping(&quot;/v1/funcs/{funcId}/exec&quot;)
+    fun execFunc(
+        @PathVariable(&quot;funcId&quot;) funcId: FuncId,
+        @RequestBody oneshot: InvokeOneshotReq
+    ): ResponseEntity&lt;SubmittedInvokeOneshotReq&gt; {
+<span class="fc" id="L22">        val func = funcQueryService.get(funcId)</span>
+<span class="fc" id="L23">        val result = request(func.id, oneshot)</span>
+<span class="fc" id="L24">        return ResponseEntity(result, HttpStatus.ACCEPTED)</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
