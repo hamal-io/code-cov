@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CreateTriggerRoute.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.instance.web.trigger</a> &gt; <span class="el_source">CreateTriggerRoute.kt</span></div><h1>CreateTriggerRoute.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.instance.web.trigger
 
 import io.hamal.backend.instance.req.SubmitRequest
+import io.hamal.backend.instance.service.query.FuncQueryService
 import io.hamal.lib.domain.req.CreateTriggerReq
 import io.hamal.lib.domain.req.SubmittedCreateTriggerReq
 import kotlinx.serialization.*
@@ -10,16 +11,23 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import kotlin.time.*
 
-<span class="fc" id="L13">@RestController</span>
-<span class="fc" id="L14">open class CreateTriggerRoute(</span>
-<span class="fc" id="L15">    private val request: SubmitRequest</span>
+<span class="fc" id="L14">@RestController</span>
+<span class="fc" id="L15">open class CreateTriggerRoute(</span>
+<span class="fc" id="L16">    private val funcQueryService: FuncQueryService,</span>
+<span class="fc" id="L17">    private val request: SubmitRequest</span>
 ) {
     @PostMapping(&quot;/v1/triggers&quot;)
     fun createTrigger(
         @RequestBody createTrigger: CreateTriggerReq
     ): ResponseEntity&lt;SubmittedCreateTriggerReq&gt; {
-<span class="fc" id="L21">        val result = request(createTrigger)</span>
-<span class="fc" id="L22">        return ResponseEntity(result, HttpStatus.ACCEPTED)</span>
+<span class="fc" id="L23">        ensureFuncExists(createTrigger)</span>
+
+<span class="fc" id="L25">        val result = request(createTrigger)</span>
+<span class="fc" id="L26">        return ResponseEntity(result, HttpStatus.ACCEPTED)</span>
     }
+
+    private fun ensureFuncExists(createTrigger: CreateTriggerReq) {
+<span class="fc" id="L30">        funcQueryService.get(createTrigger.funcId)</span>
+<span class="fc" id="L31">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

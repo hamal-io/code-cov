@@ -20,19 +20,19 @@ internal object CurrentTriggerProjection {
 <span class="fc" id="L20">        projection[trigger.id] = trigger</span>
 <span class="fc" id="L21">    }</span>
 
-<span class="nc" id="L23">    fun find(triggerId: TriggerId): Trigger? = projection[triggerId]</span>
+<span class="fc" id="L23">    fun find(triggerId: TriggerId): Trigger? = projection[triggerId]</span>
 
     fun list(afterId: TriggerId, limit: Limit): List&lt;Trigger&gt; {
 <span class="fc" id="L26">        return projection.keys.sorted()</span>
-<span class="pc bnc" id="L27" title="All 2 branches missed.">            .dropWhile { it &lt;= afterId }</span>
+<span class="fc bfc" id="L27" title="All 2 branches covered.">            .dropWhile { it &lt;= afterId }</span>
 <span class="fc" id="L28">            .take(limit.value)</span>
-<span class="pc" id="L29">            .mapNotNull { find(it) }</span>
+<span class="fc" id="L29">            .mapNotNull { find(it) }</span>
 <span class="fc" id="L30">            .reversed()</span>
     }
 
     fun clear() {
-<span class="nc" id="L34">        projection.clear()</span>
-<span class="nc" id="L35">    }</span>
+<span class="fc" id="L34">        projection.clear()</span>
+<span class="fc" id="L35">    }</span>
 }
 
 
@@ -62,7 +62,7 @@ object MemoryTriggerRepository : BaseRecordRepository&lt;TriggerId, TriggerRecor
 <span class="nc" id="L62">        TODO(&quot;Not yet implemented&quot;)</span>
     }
 
-<span class="nc" id="L65">    override fun find(triggerId: TriggerId) = CurrentTriggerProjection.find(triggerId)</span>
+<span class="fc" id="L65">    override fun find(triggerId: TriggerId) = CurrentTriggerProjection.find(triggerId)</span>
 
     override fun list(block: TriggerQuery.() -&gt; Unit): List&lt;Trigger&gt; {
 <span class="fc" id="L68">        val query = TriggerQuery().also(block)</span>
@@ -70,9 +70,9 @@ object MemoryTriggerRepository : BaseRecordRepository&lt;TriggerId, TriggerRecor
     }
 
     override fun clear() {
-<span class="nc" id="L73">        super.clear()</span>
-<span class="nc" id="L74">        CurrentTriggerProjection.clear()</span>
-<span class="nc" id="L75">    }</span>
+<span class="fc" id="L73">        super.clear()</span>
+<span class="fc" id="L74">        CurrentTriggerProjection.clear()</span>
+<span class="fc" id="L75">    }</span>
 }
 
 private fun MemoryTriggerRepository.currentVersion(id: TriggerId): Trigger {
