@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Flow.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.script.impl.ast.expr</a> &gt; <span class="el_source">Flow.kt</span></div><h1>Flow.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.script.impl.ast.expr
 
 import io.hamal.lib.script.api.ast.Expression
+import io.hamal.lib.script.api.ast.Node.Position
 import io.hamal.lib.script.impl.ast.Parser
 import io.hamal.lib.script.impl.ast.expr.Precedence.Lowest
 import io.hamal.lib.script.impl.ast.parseBlockStatement
@@ -9,107 +10,160 @@ import io.hamal.lib.script.impl.ast.stmt.Block
 import io.hamal.lib.script.impl.ast.stmt.DoStmt
 import io.hamal.lib.script.impl.token.Token.Type.*
 
-<span class="fc" id="L12">data class ConditionalExpression(</span>
-<span class="fc" id="L13">    val condition: Expression,</span>
-<span class="fc" id="L14">    val block: Block</span>
-)
+<span class="fc" id="L13">class ConditionalExpression(</span>
+<span class="pc" id="L14">    override val position: Position,</span>
+<span class="fc" id="L15">    val condition: Expression,</span>
+<span class="fc" id="L16">    val block: Block</span>
+) : Expression{
+    override fun equals(other: Any?): Boolean {
+<span class="nc bnc" id="L19" title="All 2 branches missed.">        if (this === other) return true</span>
+<span class="nc bnc" id="L20" title="All 4 branches missed.">        if (javaClass != other?.javaClass) return false</span>
+<span class="nc" id="L21">        other as ConditionalExpression</span>
+<span class="nc bnc" id="L22" title="All 2 branches missed.">        if (condition != other.condition) return false</span>
+<span class="nc" id="L23">        return block == other.block</span>
+    }
 
-<span class="fc" id="L17">data class IfExpression(</span>
-<span class="fc" id="L18">    val conditionalExpression: List&lt;ConditionalExpression&gt;</span>
+    override fun hashCode(): Int {
+<span class="nc" id="L27">        var result = condition.hashCode()</span>
+<span class="nc" id="L28">        result = 31 * result + block.hashCode()</span>
+<span class="nc" id="L29">        return result</span>
+    }
+}
+
+<span class="fc" id="L33">class IfExpression(</span>
+<span class="pc" id="L34">    override val position: Position,</span>
+<span class="fc" id="L35">    val conditionalExpression: List&lt;ConditionalExpression&gt;</span>
 ) : Expression {
     internal object Parse : ParseExpression&lt;IfExpression&gt; {
         override fun invoke(ctx: Parser.Context): IfExpression {
-<span class="fc" id="L22">            val conditionals = mutableListOf&lt;ConditionalExpression&gt;()</span>
-<span class="fc" id="L23">            ctx.expectCurrentTokenTypToBe(If)</span>
-<span class="fc" id="L24">            ctx.advance()</span>
+<span class="fc" id="L39">            val position = ctx.currentPosition()</span>
+<span class="fc" id="L40">            val conditionals = mutableListOf&lt;ConditionalExpression&gt;()</span>
+<span class="fc" id="L41">            ctx.expectCurrentTokenTypToBe(If)</span>
+<span class="fc" id="L42">            ctx.advance()</span>
 
-<span class="fc" id="L26">            conditionals.add(ctx.parseIf())</span>
-<span class="fc" id="L27">            conditionals.addAll(ctx.parseElseIf())</span>
-<span class="fc bfc" id="L28" title="All 2 branches covered.">            ctx.parseElse()?.let(conditionals::add)</span>
+<span class="fc" id="L44">            conditionals.add(ctx.parseIf())</span>
+<span class="fc" id="L45">            conditionals.addAll(ctx.parseElseIf())</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">            ctx.parseElse()?.let(conditionals::add)</span>
 
-<span class="fc" id="L30">            ctx.expectCurrentTokenTypToBe(End)</span>
-<span class="fc" id="L31">            ctx.advance()</span>
-<span class="fc" id="L32">            return IfExpression(conditionals)</span>
+<span class="fc" id="L48">            ctx.expectCurrentTokenTypToBe(End)</span>
+<span class="fc" id="L49">            ctx.advance()</span>
+<span class="fc" id="L50">            return IfExpression(position, conditionals)</span>
         }
 
-
         private fun Parser.Context.parseIf(): ConditionalExpression {
-<span class="fc" id="L37">            val condition = parseExpression(Lowest)</span>
-<span class="fc" id="L38">            expectCurrentTokenTypToBe(Then)</span>
-<span class="fc" id="L39">            advance()</span>
-<span class="fc" id="L40">            return ConditionalExpression(</span>
-<span class="fc" id="L41">                condition = condition,</span>
-<span class="fc" id="L42">                block = parseBlockStatement()</span>
+<span class="fc" id="L54">            val position = currentPosition()</span>
+<span class="fc" id="L55">            val condition = parseExpression(Lowest)</span>
+<span class="fc" id="L56">            expectCurrentTokenTypToBe(Then)</span>
+<span class="fc" id="L57">            advance()</span>
+<span class="fc" id="L58">            return ConditionalExpression(</span>
+<span class="fc" id="L59">                position = position,</span>
+<span class="fc" id="L60">                condition = condition,</span>
+<span class="fc" id="L61">                block = parseBlockStatement()</span>
             )
         }
 
         private fun Parser.Context.parseElseIf(): List&lt;ConditionalExpression&gt; {
-<span class="fc" id="L47">            val result = mutableListOf&lt;ConditionalExpression&gt;()</span>
-<span class="fc bfc" id="L48" title="All 2 branches covered.">            while (currentTokenType() == ElseIf) {</span>
-<span class="fc" id="L49">                advance()</span>
-<span class="fc" id="L50">                val condition = parseExpression(Lowest)</span>
-<span class="fc" id="L51">                expectCurrentTokenTypToBe(Then)</span>
-<span class="fc" id="L52">                advance()</span>
-<span class="fc" id="L53">                result.add(</span>
-<span class="fc" id="L54">                    ConditionalExpression(</span>
-<span class="fc" id="L55">                        condition = condition,</span>
-<span class="fc" id="L56">                        block = parseBlockStatement()</span>
+<span class="fc" id="L66">            val result = mutableListOf&lt;ConditionalExpression&gt;()</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">            while (currentTokenType() == ElseIf) {</span>
+<span class="fc" id="L68">                advance()</span>
+<span class="fc" id="L69">                val condition = parseExpression(Lowest)</span>
+<span class="fc" id="L70">                expectCurrentTokenTypToBe(Then)</span>
+<span class="fc" id="L71">                advance()</span>
+<span class="fc" id="L72">                result.add(</span>
+<span class="fc" id="L73">                    ConditionalExpression(</span>
+<span class="fc" id="L74">                        position = currentPosition(),</span>
+<span class="fc" id="L75">                        condition = condition,</span>
+<span class="fc" id="L76">                        block = parseBlockStatement()</span>
                     )
                 )
             }
-<span class="fc" id="L60">            return result</span>
+<span class="fc" id="L80">            return result</span>
         }
 
         private fun Parser.Context.parseElse(): ConditionalExpression? {
-<span class="fc bfc" id="L64" title="All 2 branches covered.">            if (currentTokenType() != Else) {</span>
-<span class="fc" id="L65">                return null</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">            if (currentTokenType() != Else) {</span>
+<span class="fc" id="L85">                return null</span>
             }
-<span class="fc" id="L67">            advance()</span>
-<span class="fc" id="L68">            return ConditionalExpression(</span>
-<span class="fc" id="L69">                condition = TrueLiteral,</span>
-<span class="fc" id="L70">                block = parseBlockStatement()</span>
+<span class="fc" id="L87">            advance()</span>
+<span class="fc" id="L88">            return ConditionalExpression(</span>
+<span class="fc" id="L89">                position = currentPosition(),</span>
+<span class="fc" id="L90">                condition = TrueLiteral(currentPosition()),</span>
+<span class="fc" id="L91">                block = parseBlockStatement()</span>
             )
         }
     }
+
+    override fun equals(other: Any?): Boolean {
+<span class="nc bnc" id="L97" title="All 2 branches missed.">        if (this === other) return true</span>
+<span class="nc bnc" id="L98" title="All 4 branches missed.">        if (javaClass != other?.javaClass) return false</span>
+<span class="nc" id="L99">        other as IfExpression</span>
+<span class="nc" id="L100">        return conditionalExpression == other.conditionalExpression</span>
+    }
+
+    override fun hashCode(): Int {
+<span class="nc" id="L104">        return conditionalExpression.hashCode()</span>
+    }
 }
 
-<span class="fc" id="L76">data class ForLoopExpression(</span>
-<span class="fc" id="L77">    val ident: IdentifierLiteral,</span>
-<span class="fc" id="L78">    val startExpression: Expression,</span>
-<span class="fc" id="L79">    val endExpression: Expression,</span>
-<span class="fc" id="L80">    val stepExpression: Expression,</span>
-<span class="fc" id="L81">    val block: DoStmt</span>
+<span class="fc" id="L108">class ForLoopExpression(</span>
+<span class="pc" id="L109">    override val position: Position,</span>
+<span class="fc" id="L110">    val ident: IdentifierLiteral,</span>
+<span class="fc" id="L111">    val startExpression: Expression,</span>
+<span class="fc" id="L112">    val endExpression: Expression,</span>
+<span class="fc" id="L113">    val stepExpression: Expression,</span>
+<span class="fc" id="L114">    val block: DoStmt</span>
 ) : Expression {
     internal object Parse : ParseExpression&lt;ForLoopExpression&gt; {
         override fun invoke(ctx: Parser.Context): ForLoopExpression {
-<span class="fc" id="L85">            ctx.expectCurrentTokenTypToBe(For)</span>
-<span class="fc" id="L86">            ctx.advance()</span>
+<span class="fc" id="L118">            val position = ctx.currentPosition()</span>
+<span class="fc" id="L119">            ctx.expectCurrentTokenTypToBe(For)</span>
+<span class="fc" id="L120">            ctx.advance()</span>
 
-<span class="fc" id="L88">            val ident = ctx.parseIdentifier()</span>
-<span class="fc" id="L89">            ctx.expectCurrentTokenTypToBe(Equal)</span>
-<span class="fc" id="L90">            ctx.advance()</span>
-<span class="fc" id="L91">            val startExpression = ctx.parseExpression(Lowest)</span>
-<span class="fc" id="L92">            ctx.expectCurrentTokenTypToBe(Comma)</span>
-<span class="fc" id="L93">            ctx.advance()</span>
-<span class="fc" id="L94">            val endExpression = ctx.parseExpression(Lowest)</span>
+<span class="fc" id="L122">            val ident = ctx.parseIdentifier()</span>
+<span class="fc" id="L123">            ctx.expectCurrentTokenTypToBe(Equal)</span>
+<span class="fc" id="L124">            ctx.advance()</span>
+<span class="fc" id="L125">            val startExpression = ctx.parseExpression(Lowest)</span>
+<span class="fc" id="L126">            ctx.expectCurrentTokenTypToBe(Comma)</span>
+<span class="fc" id="L127">            ctx.advance()</span>
+<span class="fc" id="L128">            val endExpression = ctx.parseExpression(Lowest)</span>
 
-
-<span class="pc bpc" id="L97" title="1 of 2 branches missed.">            val stepExpression = if (ctx.currentTokenType() == Comma) {</span>
-<span class="nc" id="L98">                ctx.advance()</span>
-<span class="nc" id="L99">                ctx.parseExpression(Lowest)</span>
+<span class="pc bpc" id="L130" title="1 of 2 branches missed.">            val stepExpression = if (ctx.currentTokenType() == Comma) {</span>
+<span class="nc" id="L131">                ctx.advance()</span>
+<span class="nc" id="L132">                ctx.parseExpression(Lowest)</span>
             } else {
-<span class="fc" id="L101">                NumberLiteral(1)</span>
+<span class="fc" id="L134">                NumberLiteral(ctx.currentPosition(), 1)</span>
             }
 
-<span class="fc" id="L104">            return ForLoopExpression(</span>
-<span class="fc" id="L105">                ident = ident,</span>
-<span class="fc" id="L106">                startExpression = startExpression,</span>
-<span class="fc" id="L107">                endExpression = endExpression,</span>
-<span class="fc" id="L108">                stepExpression = stepExpression,</span>
-<span class="fc" id="L109">                block = DoStmt.Parse(ctx)</span>
+<span class="fc" id="L137">            return ForLoopExpression(</span>
+<span class="fc" id="L138">                position = position,</span>
+<span class="fc" id="L139">                ident = ident,</span>
+<span class="fc" id="L140">                startExpression = startExpression,</span>
+<span class="fc" id="L141">                endExpression = endExpression,</span>
+<span class="fc" id="L142">                stepExpression = stepExpression,</span>
+<span class="fc" id="L143">                block = DoStmt.Parse(ctx)</span>
             )
 
         }
+    }
+
+    override fun equals(other: Any?): Boolean {
+<span class="nc bnc" id="L150" title="All 2 branches missed.">        if (this === other) return true</span>
+<span class="nc bnc" id="L151" title="All 4 branches missed.">        if (javaClass != other?.javaClass) return false</span>
+<span class="nc" id="L152">        other as ForLoopExpression</span>
+<span class="nc bnc" id="L153" title="All 2 branches missed.">        if (ident != other.ident) return false</span>
+<span class="nc bnc" id="L154" title="All 2 branches missed.">        if (startExpression != other.startExpression) return false</span>
+<span class="nc bnc" id="L155" title="All 2 branches missed.">        if (endExpression != other.endExpression) return false</span>
+<span class="nc bnc" id="L156" title="All 2 branches missed.">        if (stepExpression != other.stepExpression) return false</span>
+<span class="nc" id="L157">        return block == other.block</span>
+    }
+
+    override fun hashCode(): Int {
+<span class="nc" id="L161">        var result = ident.hashCode()</span>
+<span class="nc" id="L162">        result = 31 * result + startExpression.hashCode()</span>
+<span class="nc" id="L163">        result = 31 * result + endExpression.hashCode()</span>
+<span class="nc" id="L164">        result = 31 * result + stepExpression.hashCode()</span>
+<span class="nc" id="L165">        result = 31 * result + block.hashCode()</span>
+<span class="nc" id="L166">        return result</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

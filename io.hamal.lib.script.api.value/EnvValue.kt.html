@@ -2,88 +2,69 @@
 
 <span class="pc" id="L3">class EnvValue(</span>
 <span class="fc" id="L4">    val ident: IdentValue,</span>
-<span class="fc" id="L5">    values: Map&lt;IdentValue, Value&gt;? = null,</span>
+<span class="fc" id="L5">    values: TableValue? = null,</span>
 <span class="fc" id="L6">    global: EnvValue? = null,</span>
 <span class="fc" id="L7">    parent: EnvValue? = null</span>
 ) : Value {
 
-<span class="pc" id="L10">    override val metaTable: MetaTable = DefaultEnvValueMetaTable</span>
+<span class="pc" id="L10">    override val metaTable = DefaultEnvValueMetaTable</span>
 
 <span class="nc" id="L12">    internal val global: EnvValue</span>
-<span class="nc" id="L13">    internal val parent: EnvValue</span>
+    private val parent: EnvValue
+<span class="fc" id="L14">    private val values = TableValue()</span>
 
-<span class="fc" id="L15">    private val values = mutableMapOf&lt;IdentValue, Value&gt;()</span>
-
-<span class="fc" id="L17">    init {</span>
-<span class="fc bfc" id="L18" title="All 2 branches covered.">        this.global = global ?: this</span>
-<span class="fc bfc" id="L19" title="All 2 branches covered.">        this.parent = parent ?: this</span>
-<span class="fc bfc" id="L20" title="All 2 branches covered.">        values?.let(this.values::putAll)</span>
-<span class="fc" id="L21">    }</span>
+<span class="fc" id="L16">    init {</span>
+<span class="fc bfc" id="L17" title="All 2 branches covered.">        this.global = global ?: this</span>
+<span class="fc bfc" id="L18" title="All 2 branches covered.">        this.parent = parent ?: this</span>
+<span class="fc bfc" id="L19" title="All 2 branches covered.">        values?.let(this.values::setAll)</span>
+<span class="fc" id="L20">    }</span>
 
     fun enterScope(): EnvValue {
-<span class="fc" id="L24">        return EnvValue(</span>
-<span class="fc" id="L25">            ident = ident,</span>
-<span class="fc" id="L26">            values = mutableMapOf(),</span>
-<span class="fc" id="L27">            global = this.global,</span>
-<span class="fc" id="L28">            parent = this</span>
+<span class="fc" id="L23">        return EnvValue(</span>
+<span class="fc" id="L24">            ident = ident,</span>
+<span class="fc" id="L25">            values = TableValue(),</span>
+<span class="fc" id="L26">            global = this.global,</span>
+<span class="fc" id="L27">            parent = this</span>
         )
     }
 
     fun leaveScope(): EnvValue {
-<span class="fc" id="L33">        return parent</span>
+<span class="fc" id="L32">        return parent</span>
     }
 
 
     fun addLocal(identValue: IdentValue, value: Value) {
-<span class="fc" id="L38">        values[identValue] = value</span>
-<span class="fc" id="L39">    }</span>
+<span class="fc" id="L37">        values[identValue] = value</span>
+<span class="fc" id="L38">    }</span>
 
     fun addGlobal(identValue: IdentValue, value: Value) {
-<span class="fc" id="L42">        global.values[identValue] = value</span>
-<span class="fc" id="L43">    }</span>
+<span class="fc" id="L41">        global.values[identValue] = value</span>
+<span class="fc" id="L42">    }</span>
 
     operator fun get(identValue: IdentValue): Value {
-<span class="fc bfc" id="L46" title="All 2 branches covered.">        return find(identValue) ?: NilValue</span>
+<span class="pc bpc" id="L45" title="1 of 2 branches missed.">        return find(identValue) ?: NilValue</span>
     }
 
-<span class="nc" id="L49">    operator fun get(identValue: String) = get(IdentValue(identValue))</span>
+<span class="nc" id="L48">    operator fun get(identValue: String): Value = get(IdentValue(identValue))</span>
 
     fun find(identValue: IdentValue): Value? {
-<span class="fc bfc" id="L52" title="All 2 branches covered.">        return if (parent == this) values[identValue]</span>
-<span class="fc bfc" id="L53" title="All 2 branches covered.">        else values[identValue] ?: parent.find(identValue)</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        return if (parent == this) values[identValue]</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        else values[identValue].let { if (it == NilValue) parent.find(identValue) else it }</span>
     }
-
-//    fun findFunctionValue(identValue: IdentValue): FunctionValue? {
-//        val result = find(identValue)
-//        return if (result is FunctionValue) {
-//            result
-//        } else {
-//            null
-//        }
-//    }
 
     fun findEnvironmentValue(identValue: IdentValue): EnvValue? {
-<span class="fc" id="L66">        val result = find(identValue)</span>
-<span class="pc bpc" id="L67" title="1 of 2 branches missed.">        return if (result is EnvValue) {</span>
-<span class="fc" id="L68">            result</span>
+<span class="fc" id="L56">        val result = find(identValue)</span>
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">        return if (result is EnvValue) {</span>
+<span class="fc" id="L58">            result</span>
         } else {
-<span class="nc" id="L70">            null</span>
+<span class="nc" id="L60">            null</span>
         }
     }
+<span class="fc" id="L63">}</span>
 
-//    fun findProtoTypeValue(identValue: IdentValue): PrototypeValue? {
-//        val result = find(identValue)
-//        return if (result is PrototypeValue) {
-//            result
-//        } else {
-//            null
-//        }
-//    }
-
-<span class="fc" id="L83">}</span>
-
-object DefaultEnvValueMetaTable : MetaTable {
-<span class="pc" id="L86">    override val type = &quot;env&quot;</span>
-<span class="pc" id="L87">    override val operators = listOf&lt;ValueOperator&gt;()</span>
+object DefaultEnvValueMetaTable : MetaTable&lt;EnvValue&gt; {
+<span class="pc" id="L66">    override val type = &quot;env&quot;</span>
+<span class="pc" id="L67">    override val operators = listOf&lt;ValueOperator&gt;()</span>
+<span class="pc" id="L68">    override val props: Map&lt;IdentValue, ValueProp&lt;EnvValue&gt;&gt; = mapOf()</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

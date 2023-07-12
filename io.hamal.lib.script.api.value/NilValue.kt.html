@@ -15,7 +15,7 @@ object NilValue : Value {
     }
 }
 
-object DefaultNilValueMetaTable : MetaTable {
+object DefaultNilValueMetaTable : MetaTable&lt;NilValue&gt; {
 <span class="fc" id="L19">    override val type = &quot;nil&quot;</span>
 <span class="fc" id="L20">    override val operators = listOf&lt;ValueOperator&gt;(</span>
 <span class="fc" id="L21">        nilInfix(Eq, &quot;nil&quot;) { TrueValue },</span>
@@ -24,6 +24,7 @@ object DefaultNilValueMetaTable : MetaTable {
 <span class="pc" id="L24">        nilInfix(Eq, &quot;number&quot;) { booleanOf(it is NilValue) },</span>
 <span class="pc bpc" id="L25" title="1 of 2 branches missed.">        nilInfix(Neq, &quot;number&quot;) { booleanOf(it !is NilValue) },</span>
     )
+<span class="pc" id="L27">    override val props: Map&lt;IdentValue, ValueProp&lt;NilValue&gt;&gt; = mapOf()</span>
 }
 
 
@@ -32,11 +33,11 @@ fun nilInfix(
     otherType: String,
     fn: (other: Value) -&gt; Value
 ): InfixValueOperator {
-<span class="fc" id="L35">    return object : InfixValueOperator {</span>
-<span class="pc" id="L36">        override val selfType = DefaultNilValueMetaTable.type</span>
-<span class="fc" id="L37">        override val otherType = otherType</span>
-<span class="fc" id="L38">        override val operatorType = operator</span>
-<span class="fc" id="L39">        override fun invoke(self: Value, other: Value) = fn(other)</span>
+<span class="fc" id="L36">    return object : InfixValueOperator {</span>
+<span class="pc" id="L37">        override val selfType = DefaultNilValueMetaTable.type</span>
+<span class="fc" id="L38">        override val otherType = otherType</span>
+<span class="fc" id="L39">        override val operatorType = operator</span>
+<span class="fc" id="L40">        override fun invoke(self: Value, other: Value) = fn(other)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

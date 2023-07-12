@@ -3,7 +3,7 @@
 import io.hamal.backend.repository.api.log.*
 import io.hamal.backend.repository.api.log.LogBrokerTopicsRepository.TopicToCreate
 import io.hamal.lib.common.KeyedOnce
-import io.hamal.lib.domain.CmdId
+import io.hamal.lib.common.domain.CmdId
 import io.hamal.lib.domain.vo.TopicId
 import io.hamal.lib.domain.vo.TopicName
 
@@ -55,9 +55,9 @@ import io.hamal.lib.domain.vo.TopicName
             )
 <span class="fc" id="L56">        )</span>
 
-<span class="fc" id="L58">    override fun find(topicId: TopicId) = topicsRepository.find(topicId)</span>
-<span class="fc" id="L59">    override fun find(topicName: TopicName) = topicsRepository.find(topicName)</span>
-    override fun queryTopics(): List&lt;MemoryLogTopic&gt; {
+<span class="fc" id="L58">    override fun findTopic(topicId: TopicId) = topicsRepository.find(topicId)</span>
+<span class="fc" id="L59">    override fun findTopic(topicName: TopicName) = topicsRepository.find(topicName)</span>
+    override fun listTopics(): List&lt;MemoryLogTopic&gt; {
 <span class="fc" id="L61">        return topicsRepository.list()</span>
     }
 

@@ -2,7 +2,7 @@
 
 import io.hamal.backend.repository.api.log.*
 import io.hamal.lib.common.KeyedOnce
-import io.hamal.lib.domain.CmdId
+import io.hamal.lib.common.domain.CmdId
 import io.hamal.lib.domain.vo.TopicId
 import io.hamal.lib.domain.vo.TopicName
 import java.nio.file.Path
@@ -64,9 +64,9 @@ import java.nio.file.Path
 <span class="fc" id="L64">        consumersRepository.commit(groupId, topic.id, chunkId)</span>
 <span class="fc" id="L65">    }</span>
 
-<span class="nc" id="L67">    override fun find(topicId: TopicId) = topicsRepository.find(topicId)</span>
-<span class="fc" id="L68">    override fun find(topicName: TopicName) = topicsRepository.find(topicName)</span>
-    override fun queryTopics(): List&lt;SqliteLogTopic&gt; {
+<span class="nc" id="L67">    override fun findTopic(topicId: TopicId) = topicsRepository.find(topicId)</span>
+<span class="fc" id="L68">    override fun findTopic(topicName: TopicName) = topicsRepository.find(topicName)</span>
+    override fun listTopics(): List&lt;SqliteLogTopic&gt; {
 <span class="nc" id="L70">        return topicsRepository.list()</span>
     }
 

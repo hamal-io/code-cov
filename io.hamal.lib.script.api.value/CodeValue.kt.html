@@ -4,17 +4,39 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
-<span class="pc bnc" id="L7" title="All 7 branches missed.">@Serializable</span>
+<span class="pc bpc" id="L7" title="2 of 7 branches missed.">@Serializable</span>
 @SerialName(&quot;CodeValue&quot;)
-<span class="nc" id="L9">data class CodeValue(val value: String) : Value {</span>
+<span class="fc" id="L9">data class CodeValue(val value: String) : Value {</span>
+<span class="nc" id="L10">    constructor(str: StringValue) : this(str.value)</span>
+
     @Transient
-<span class="nc" id="L11">    override val metaTable = DefaultCodeValueMetaTable</span>
+<span class="fc" id="L13">    override val metaTable = DefaultCodeValueMetaTable</span>
 
-<span class="fc" id="L13">}</span>
+<span class="fc" id="L15">}</span>
 
-object DefaultCodeValueMetaTable : MetaTable {
-<span class="nc" id="L16">    override val type = &quot;code&quot;</span>
-<span class="nc" id="L17">    override val operators: List&lt;ValueOperator&gt; = listOf()</span>
+object DefaultCodeValueMetaTable : MetaTable&lt;CodeValue&gt; {
+<span class="fc" id="L18">    override val type = &quot;code&quot;</span>
+<span class="fc" id="L19">    override val operators: List&lt;ValueOperator&gt; = listOf(</span>
+<span class="fc" id="L20">        codeInfix(ValueOperator.Type.Eq) { self, other -&gt; booleanOf(self == other) },</span>
+<span class="pc bnc" id="L21" title="All 2 branches missed.">        codeInfix(ValueOperator.Type.Neq) { self, other -&gt; booleanOf(self != other) },</span>
+    )
+<span class="pc" id="L23">    override val props: Map&lt;IdentValue, ValueProp&lt;CodeValue&gt;&gt; = mapOf()</span>
 }
 
+
+private fun codeInfix(
+    operatorType: ValueOperator.Type,
+    fn: (self: CodeValue, other: CodeValue) -&gt; Value
+): InfixValueOperator {
+<span class="fc" id="L31">    return object : InfixValueOperator {</span>
+<span class="fc" id="L32">        override val operatorType = operatorType</span>
+<span class="pc" id="L33">        override val selfType = &quot;code&quot;</span>
+<span class="fc" id="L34">        override val otherType = &quot;code&quot;</span>
+        override operator fun invoke(self: Value, other: Value): Value {
+<span class="pc bpc" id="L36" title="1 of 2 branches missed.">            require(self is CodeValue)</span>
+<span class="pc bpc" id="L37" title="1 of 2 branches missed.">            require(other is CodeValue)</span>
+<span class="fc" id="L38">            return fn(self, other)</span>
+        }
+    }
+}
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

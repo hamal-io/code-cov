@@ -11,8 +11,9 @@ import io.hamal.lib.script.api.ast.Statement
 <span class="nc" id="L11">    override val metaTable = DefaultStringValueMetaTable</span>
 }
 
-object DefaultPrototypeValueMetaTable : MetaTable {
+object DefaultPrototypeValueMetaTable : MetaTable&lt;PrototypeValue&gt; {
 <span class="nc" id="L15">    override val type = &quot;prototype&quot;</span>
 <span class="nc" id="L16">    override val operators: List&lt;ValueOperator&gt; = listOf()</span>
+<span class="nc" id="L17">    override val props: Map&lt;IdentValue, ValueProp&lt;PrototypeValue&gt;&gt; = mapOf()</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

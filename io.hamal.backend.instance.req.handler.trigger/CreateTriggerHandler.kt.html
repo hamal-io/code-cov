@@ -1,29 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CreateTriggerHandler.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.instance.req.handler.trigger</a> &gt; <span class="el_source">CreateTriggerHandler.kt</span></div><h1>CreateTriggerHandler.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.instance.req.handler.trigger
 
+import io.hamal.backend.instance.event.SystemEventEmitter
+import io.hamal.backend.instance.event.TriggerCreatedEvent
 import io.hamal.backend.instance.req.ReqHandler
 import io.hamal.backend.instance.req.handler.cmdId
-import io.hamal.backend.instance.service.cmd.TriggerCmdService
+import io.hamal.backend.repository.api.FuncQueryRepository
+import io.hamal.backend.repository.api.TriggerCmdRepository
+import io.hamal.backend.repository.api.log.LogBrokerRepository
+import io.hamal.lib.common.domain.CmdId
+import io.hamal.lib.domain.Trigger
+import io.hamal.lib.domain._enum.TriggerType
 import io.hamal.lib.domain.req.SubmittedCreateTriggerReq
 import org.springframework.stereotype.Component
 
 @Component
-<span class="fc" id="L10">class CreateTriggerHandler(</span>
-<span class="fc" id="L11">    private val triggerCmdService: TriggerCmdService</span>
-<span class="fc" id="L12">) : ReqHandler&lt;SubmittedCreateTriggerReq&gt;(SubmittedCreateTriggerReq::class) {</span>
+<span class="fc" id="L17">class CreateTriggerHandler(</span>
+<span class="fc" id="L18">    private val triggerCmdRepository: TriggerCmdRepository,</span>
+<span class="fc" id="L19">    private val eventEmitter: SystemEventEmitter&lt;*&gt;,</span>
+<span class="fc" id="L20">    private val funcQueryRepository: FuncQueryRepository,</span>
+<span class="fc" id="L21">    private val eventBrokerRepository: LogBrokerRepository&lt;*&gt;</span>
+<span class="fc" id="L22">) : ReqHandler&lt;SubmittedCreateTriggerReq&gt;(SubmittedCreateTriggerReq::class) {</span>
     override fun invoke(req: SubmittedCreateTriggerReq) {
-<span class="fc" id="L14">        triggerCmdService.create(</span>
-<span class="fc" id="L15">            req.cmdId(),</span>
-<span class="fc" id="L16">            TriggerCmdService.TriggerToCreate(</span>
-<span class="fc" id="L17">                type = req.type,</span>
-<span class="fc" id="L18">                id = req.triggerId,</span>
-<span class="fc" id="L19">                name = req.triggerName,</span>
-<span class="fc" id="L20">                funcId = req.funcId,</span>
-<span class="fc" id="L21">                inputs = req.inputs,</span>
-<span class="fc" id="L22">                secrets = req.secrets,</span>
-<span class="fc" id="L23">                duration = req.duration,</span>
-<span class="fc" id="L24">                topicId = null</span>
+<span class="fc" id="L24">        funcQueryRepository.get(req.funcId)</span>
+
+<span class="fc bfc" id="L26" title="All 2 branches covered.">        val trigger = when (req.type) {</span>
+<span class="fc" id="L27">            TriggerType.FixedRate -&gt; triggerCmdRepository.create(</span>
+<span class="fc" id="L28">                TriggerCmdRepository.CreateFixedRateCmd(</span>
+<span class="fc" id="L29">                    id = req.cmdId(),</span>
+<span class="fc" id="L30">                    triggerId = req.triggerId,</span>
+<span class="fc" id="L31">                    name = req.triggerName,</span>
+<span class="fc" id="L32">                    funcId = req.funcId,</span>
+<span class="fc" id="L33">                    inputs = req.inputs,</span>
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">                    duration = requireNotNull(req.duration) { &quot;duration must not be null&quot; }</span>
+                )
             )
-        )
-<span class="fc" id="L27">    }</span>
+
+            TriggerType.Event -&gt; {
+<span class="fc" id="L39">                eventBrokerRepository.getTopic(req.topicId!!)</span>
+
+<span class="fc" id="L41">                triggerCmdRepository.create(</span>
+<span class="fc" id="L42">                    TriggerCmdRepository.CreateEventCmd(</span>
+<span class="fc" id="L43">                        id = req.cmdId(),</span>
+<span class="fc" id="L44">                        triggerId = req.triggerId,</span>
+<span class="fc" id="L45">                        name = req.triggerName,</span>
+<span class="fc" id="L46">                        funcId = req.funcId,</span>
+<span class="fc" id="L47">                        inputs = req.inputs,</span>
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">                        topicId = requireNotNull(req.topicId) { &quot;topicId must not be null&quot; }</span>
+                    )
+                )
+            }
+        }
+
+<span class="fc" id="L54">        emitEvent(req.cmdId(), trigger)</span>
+<span class="fc" id="L55">    }</span>
+
+    private fun emitEvent(cmdId: CmdId, trigger: Trigger) {
+<span class="fc" id="L58">        eventEmitter.emit(cmdId, TriggerCreatedEvent(trigger))</span>
+<span class="fc" id="L59">    }</span>
 }
+
+
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

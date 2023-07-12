@@ -3,8 +3,8 @@
 import io.hamal.backend.repository.record.Record
 import io.hamal.backend.repository.record.RecordSequence
 import io.hamal.lib.common.KeyedOnce
-import io.hamal.lib.domain.DomainObject
-import io.hamal.lib.domain.vo.base.DomainId
+import io.hamal.lib.common.domain.DomainId
+import io.hamal.lib.common.domain.DomainObject
 
 <span class="nc" id="L9">class RecordCache&lt;ID : DomainId, RECORD : Record&lt;ID&gt;, OBJ : DomainObject&lt;ID&gt;&gt;(</span>
 <span class="nc" id="L10">    private val recordLoader: RecordLoader&lt;ID, RECORD&gt;</span>

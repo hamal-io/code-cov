@@ -2,43 +2,43 @@
 
 import io.hamal.backend.repository.record.RecordEntity
 import io.hamal.backend.repository.record.RecordSequence
-import io.hamal.lib.domain.CmdId
+import io.hamal.lib.common.domain.CmdId
 import io.hamal.lib.domain.Func
-import io.hamal.lib.domain.vo.*
+import io.hamal.lib.domain.vo.FuncId
+import io.hamal.lib.domain.vo.FuncInputs
+import io.hamal.lib.domain.vo.FuncName
+import io.hamal.lib.script.api.value.CodeValue
 
-<span class="fc" id="L9">data class Entity(</span>
-<span class="fc" id="L10">    override val id: FuncId,</span>
-<span class="fc" id="L11">    override val cmdId: CmdId,</span>
-<span class="pc" id="L12">    override val sequence: RecordSequence,</span>
+<span class="fc" id="L12">data class Entity(</span>
+<span class="fc" id="L13">    override val id: FuncId,</span>
+<span class="fc" id="L14">    override val cmdId: CmdId,</span>
+<span class="pc" id="L15">    override val sequence: RecordSequence,</span>
 
-<span class="pc" id="L14">    var name: FuncName? = null,</span>
-<span class="pc" id="L15">    var inputs: FuncInputs? = null,</span>
-<span class="pc" id="L16">    var secrets: FuncSecrets? = null,</span>
-<span class="pc" id="L17">    var code: Code? = null</span>
+<span class="pc" id="L17">    var name: FuncName? = null,</span>
+<span class="pc" id="L18">    var inputs: FuncInputs? = null,</span>
+<span class="pc" id="L19">    var code: CodeValue? = null</span>
 
 ) : RecordEntity&lt;FuncId, FuncRecord, Func&gt; {
 
     override fun apply(rec: FuncRecord): Entity {
-<span class="fc" id="L22">        return when (rec) {</span>
-<span class="fc" id="L23">            is FuncCreationRecord -&gt; copy(</span>
-<span class="fc" id="L24">                id = rec.entityId,</span>
-<span class="fc" id="L25">                cmdId = rec.cmdId,</span>
-<span class="fc" id="L26">                sequence = rec.sequence(),</span>
-<span class="fc" id="L27">                name = rec.name,</span>
-<span class="fc" id="L28">                inputs = rec.inputs,</span>
-<span class="fc" id="L29">                secrets = rec.secrets,</span>
-<span class="fc" id="L30">                code = rec.code</span>
+<span class="fc" id="L24">        return when (rec) {</span>
+<span class="fc" id="L25">            is FuncCreationRecord -&gt; copy(</span>
+<span class="fc" id="L26">                id = rec.entityId,</span>
+<span class="fc" id="L27">                cmdId = rec.cmdId,</span>
+<span class="fc" id="L28">                sequence = rec.sequence(),</span>
+<span class="fc" id="L29">                name = rec.name,</span>
+<span class="fc" id="L30">                inputs = rec.inputs,</span>
+<span class="fc" id="L31">                code = rec.code</span>
             )
         }
     }
 
     override fun toDomainObject(): Func {
-<span class="fc" id="L36">        return Func(</span>
-<span class="fc" id="L37">            cmdId = cmdId,</span>
-<span class="fc" id="L38">            id = id,</span>
-<span class="fc" id="L39">            name = name!!,</span>
-<span class="fc" id="L40">            inputs = inputs!!,</span>
-<span class="fc" id="L41">            secrets = secrets!!,</span>
+<span class="fc" id="L37">        return Func(</span>
+<span class="fc" id="L38">            cmdId = cmdId,</span>
+<span class="fc" id="L39">            id = id,</span>
+<span class="fc" id="L40">            name = name!!,</span>
+<span class="fc" id="L41">            inputs = inputs!!,</span>
 <span class="fc" id="L42">            code = code!!,</span>
         )
     }

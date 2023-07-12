@@ -20,14 +20,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
     override fun configureMessageConverters(converters: MutableList&lt;HttpMessageConverter&lt;*&gt;&gt;) {
 <span class="fc" id="L21">        super.configureMessageConverters(converters)</span>
 <span class="fc" id="L22">        converters.add(KotlinSerializationJsonHttpMessageConverter(Json {</span>
-<span class="fc" id="L23">            ignoreUnknownKeys = false</span>
+<span class="fc" id="L23">            ignoreUnknownKeys = true</span>
 <span class="fc" id="L24">            encodeDefaults = true</span>
 <span class="fc" id="L25">        }))</span>
 <span class="fc" id="L26">    }</span>
 
     override fun addFormatters(registry: FormatterRegistry) {
 <span class="fc" id="L29">        super.addFormatters(registry)</span>
-
+<span class="fc" id="L30">        registry.addConverter(CorrelationIdConverter)</span>
 <span class="fc" id="L31">        registry.addConverter(EventIdConverter)</span>
 <span class="fc" id="L32">        registry.addConverter(ExecIdConverter)</span>
 <span class="fc" id="L33">        registry.addConverter(FuncIdConverter)</span>
@@ -41,35 +41,34 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
     @Order(Ordered.HIGHEST_PRECEDENCE)
 <span class="fc" id="L42">    class ErrorHandler {</span>
 
-
         @ExceptionHandler(Exception::class)
         fun handle(e: Exception): ResponseEntity&lt;HamalError&gt; {
-<span class="fc" id="L47">            return when (e) {</span>
-<span class="pc bpc" id="L48" title="1 of 2 branches missed.">                is IllegalArgumentException -&gt; ResponseEntity(</span>
-<span class="nc" id="L49">                    HamalError(</span>
-<span class="nc" id="L50">                        message = e.message</span>
-<span class="nc" id="L51">                    ), HttpStatus.BAD_REQUEST</span>
+<span class="fc" id="L46">            return when (e) {</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">                is IllegalArgumentException -&gt; ResponseEntity(</span>
+<span class="fc" id="L48">                    HamalError(</span>
+<span class="fc" id="L49">                        message = e.message</span>
+<span class="fc" id="L50">                    ), HttpStatus.BAD_REQUEST</span>
                 )
 
-<span class="pc bpc" id="L54" title="1 of 2 branches missed.">                is NoSuchElementException -&gt; ResponseEntity(</span>
-<span class="fc" id="L55">                    HamalError(</span>
-<span class="fc" id="L56">                        message = e.message</span>
-<span class="fc" id="L57">                    ), HttpStatus.NOT_FOUND</span>
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">                is NoSuchElementException -&gt; ResponseEntity(</span>
+<span class="fc" id="L54">                    HamalError(</span>
+<span class="fc" id="L55">                        message = e.message</span>
+<span class="fc" id="L56">                    ), HttpStatus.NOT_FOUND</span>
                 )
 
-<span class="nc bnc" id="L60" title="All 2 branches missed.">                is IllegalStateException -&gt; ResponseEntity(</span>
-<span class="nc" id="L61">                    HamalError(</span>
-<span class="nc" id="L62">                        message = e.message</span>
-<span class="nc" id="L63">                    ), HttpStatus.INTERNAL_SERVER_ERROR</span>
+<span class="nc bnc" id="L59" title="All 2 branches missed.">                is IllegalStateException -&gt; ResponseEntity(</span>
+<span class="nc" id="L60">                    HamalError(</span>
+<span class="nc" id="L61">                        message = e.message</span>
+<span class="nc" id="L62">                    ), HttpStatus.INTERNAL_SERVER_ERROR</span>
                 )
 
-<span class="nc bnc" id="L66" title="All 2 branches missed.">                is MethodArgumentTypeMismatchException -&gt; ResponseEntity(</span>
-<span class="nc" id="L67">                    HamalError(</span>
-<span class="nc bnc" id="L68" title="All 2 branches missed.">                        message = e.cause?.message</span>
-<span class="nc" id="L69">                    ), HttpStatus.BAD_REQUEST</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">                is MethodArgumentTypeMismatchException -&gt; ResponseEntity(</span>
+<span class="nc" id="L66">                    HamalError(</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">                        message = e.cause?.message</span>
+<span class="nc" id="L68">                    ), HttpStatus.BAD_REQUEST</span>
                 )
 
-<span class="nc" id="L72">                else -&gt; ResponseEntity(HamalError(e.message), HttpStatus.INTERNAL_SERVER_ERROR)</span>
+<span class="nc" id="L71">                else -&gt; ResponseEntity(HamalError(e.message), HttpStatus.INTERNAL_SERVER_ERROR)</span>
             }
         }
     }

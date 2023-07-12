@@ -3,35 +3,53 @@
 import io.hamal.lib.script.api.value.*
 import io.hamal.lib.script.impl.ast.expr.*
 
-<span class="fc" id="L6">internal class EvaluateTableConstructor&lt;INVOKE_CTX : FuncInvocationContext&gt; :</span>
-    Evaluate&lt;TableConstructorExpression, INVOKE_CTX&gt; {
-    override fun invoke(ctx: EvaluationContext&lt;TableConstructorExpression, INVOKE_CTX&gt;): Value {
-<span class="nc" id="L9">        val result: List&lt;Pair&lt;Value, Value&gt;&gt; = ctx.toEvaluate.fieldExpressions.map { fieldExpression -&gt;</span>
-<span class="nc bnc" id="L10" title="All 2 branches missed.">            if (fieldExpression is IndexFieldExpression) {</span>
-<span class="nc" id="L11">                NumberValue(fieldExpression.index.value) to ctx.evaluate(fieldExpression.value)</span>
-            } else {
-<span class="nc bnc" id="L13" title="All 2 branches missed.">                require(fieldExpression is KeyFieldExpression)</span>
-<span class="nc" id="L14">                IdentValue(fieldExpression.key) to ctx.evaluate(fieldExpression.value)</span>
-            }
-        }
-<span class="nc" id="L17">        return TableValue(result.toMap())</span>
+<span class="fc" id="L6">internal class EvaluateTableKeyLiteral :</span>
+    Evaluate&lt;TableKeyLiteral&gt; {
+    override fun invoke(ctx: EvaluationContext&lt;TableKeyLiteral&gt;): Value {
+<span class="fc" id="L9">        return IdentValue(ctx.toEvaluate.value)</span>
     }
 }
 
-<span class="fc" id="L21">internal class EvaluateTableAccess&lt;INVOKE_CTX : FuncInvocationContext&gt; : Evaluate&lt;TableAccessExpression, INVOKE_CTX&gt; {</span>
-    override fun invoke(ctx: EvaluationContext&lt;TableAccessExpression, INVOKE_CTX&gt;): Value {
-<span class="nc" id="L23">        val tableIdentifier = ctx.toEvaluate.ident</span>
+<span class="fc" id="L13">internal class EvaluateTableIndexLiteral :</span>
+    Evaluate&lt;TableIndexLiteral&gt; {
+    override fun invoke(ctx: EvaluationContext&lt;TableIndexLiteral&gt;): Value {
+<span class="fc" id="L16">        return NumberValue(ctx.toEvaluate.value)</span>
+    }
+}
 
-<span class="nc" id="L25">        val target = ctx.env[tableIdentifier.value]</span>
-<span class="nc bnc" id="L26" title="All 2 branches missed.">        if (target is EnvValue) {</span>
-<span class="nc bnc" id="L27" title="All 2 branches missed.">            require(ctx.toEvaluate.parameter is TableKeyLiteral)</span>
-<span class="nc" id="L28">            return target[IdentValue(ctx.toEvaluate.parameter.value)]</span>
+
+<span class="fc" id="L21">internal class EvaluateTableConstructor :</span>
+    Evaluate&lt;TableConstructorExpression&gt; {
+    override fun invoke(ctx: EvaluationContext&lt;TableConstructorExpression&gt;): Value {
+<span class="fc" id="L24">        val result: List&lt;Pair&lt;IdentValue, Value&gt;&gt; = ctx.toEvaluate.fieldExpressions.map { fieldExpression -&gt;</span>
+<span class="fc bfc" id="L25" title="All 2 branches covered.">            if (fieldExpression is IndexFieldExpression) {</span>
+<span class="fc" id="L26">                IdentValue((fieldExpression.index.value).toString()) to ctx.evaluate(fieldExpression.value)</span>
+            } else {
+<span class="pc bpc" id="L28" title="1 of 2 branches missed.">                require(fieldExpression is KeyFieldExpression)</span>
+<span class="fc" id="L29">                IdentValue(fieldExpression.key) to ctx.evaluate(fieldExpression.value)</span>
+            }
         }
+<span class="fc" id="L32">        return TableValue(result.toMap())</span>
+    }
+}
 
-<span class="nc" id="L31">        val table = ctx.env[tableIdentifier.value] as TableValue</span>
-        //FIXME evaluate
-<span class="nc bnc" id="L33" title="All 2 branches missed.">        require(ctx.toEvaluate.parameter is TableKeyLiteral)</span>
-<span class="nc" id="L34">        return table.get(IdentValue(ctx.toEvaluate.parameter.value))</span>
+<span class="fc" id="L36">internal class EvaluateTableAccess : Evaluate&lt;TableAccessExpression&gt; {</span>
+    override fun invoke(ctx: EvaluationContext&lt;TableAccessExpression&gt;): Value {
+<span class="fc" id="L38">        val key = ctx.evaluate(ctx.toEvaluate.key)</span>
+
+<span class="fc" id="L40">        return when (val target = ctx.evaluate(ctx.toEvaluate.target)) {</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">            is IdentValue -&gt; {</span>
+<span class="fc" id="L42">                when (val table = ctx.env[target]) {</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">                    is EnvValue -&gt; table[key as IdentValue]</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">                    is TableValue -&gt; table[key]</span>
+<span class="pc bpc" id="L45" title="1 of 2 branches missed.">                    is ErrorValue -&gt; table[key as IdentValue]</span>
+<span class="nc" id="L46">                    else -&gt; TODO()</span>
+                }
+            }
+
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">            is TableValue -&gt; target[key]</span>
+<span class="nc" id="L51">            else -&gt; TODO()</span>
+        }
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

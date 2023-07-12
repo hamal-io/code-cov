@@ -2,9 +2,11 @@
 
 import io.hamal.lib.domain.State
 import io.hamal.lib.domain.req.CompleteExecReq
+import io.hamal.lib.domain.req.FailExecReq
 import io.hamal.lib.domain.vo.ExecId
 import io.hamal.lib.http.HttpTemplate
 import io.hamal.lib.http.body
+import io.hamal.lib.script.api.value.ErrorValue
 import io.hamal.lib.sdk.domain.DequeueExecsResponse
 
 interface ExecService {
@@ -13,33 +15,33 @@ interface ExecService {
     //FIXME list of events to publish
     fun complete(execId: ExecId, stateAfterCompletion: State)
 
-    fun fail(execId: ExecId)
+    fun fail(execId: ExecId, error: ErrorValue)
 }
 
-<span class="nc" id="L19">data class DefaultExecService(val template: HttpTemplate) : ExecService {</span>
+<span class="pc" id="L21">data class DefaultExecService(val template: HttpTemplate) : ExecService {</span>
     override fun poll(): DequeueExecsResponse {
-<span class="nc" id="L21">        return HttpTemplate(&quot;http://localhost:8084&quot;)</span>
-<span class="nc" id="L22">            .post(&quot;/v1/dequeue&quot;)</span>
-<span class="nc" id="L23">            .execute(DequeueExecsResponse::class)</span>
+<span class="fc" id="L23">        return template</span>
+<span class="fc" id="L24">            .post(&quot;/v1/dequeue&quot;)</span>
+<span class="fc" id="L25">            .execute(DequeueExecsResponse::class)</span>
     }
 
     override fun complete(execId: ExecId, stateAfterCompletion: State) {
-<span class="nc" id="L27">        HttpTemplate(&quot;http://localhost:8084&quot;)</span>
-<span class="nc" id="L28">            .post(&quot;/v1/execs/${execId.value.value}/complete&quot;)</span>
-<span class="nc" id="L29">            .body(</span>
-<span class="nc" id="L30">                CompleteExecReq(</span>
-<span class="nc" id="L31">                    state = stateAfterCompletion,</span>
-<span class="nc" id="L32">                    events = listOf()</span>
+<span class="fc" id="L29">        template</span>
+<span class="fc" id="L30">            .post(&quot;/v1/execs/${execId.value.value}/complete&quot;)</span>
+<span class="fc" id="L31">            .body(</span>
+<span class="fc" id="L32">                CompleteExecReq(</span>
+<span class="fc" id="L33">                    state = stateAfterCompletion,</span>
+<span class="fc" id="L34">                    events = listOf()</span>
                 )
             )
-<span class="nc" id="L35">            .execute()</span>
-<span class="nc" id="L36">    }</span>
+<span class="fc" id="L37">            .execute()</span>
+<span class="fc" id="L38">    }</span>
 
-    override fun fail(execId: ExecId) {
-<span class="nc" id="L39">        HttpTemplate(&quot;http://localhost:8084&quot;)</span>
-<span class="nc" id="L40">            .post(&quot;/v1/execs/${execId.value.value}/fail&quot;)</span>
-<span class="nc" id="L41">            .execute()</span>
-<span class="nc" id="L42">    }</span>
-
+    override fun fail(execId: ExecId, error: ErrorValue) {
+<span class="nc" id="L41">        template</span>
+<span class="nc" id="L42">            .post(&quot;/v1/execs/${execId.value.value}/fail&quot;)</span>
+<span class="nc" id="L43">            .body(FailExecReq(reason = error))</span>
+<span class="nc" id="L44">            .execute()</span>
+<span class="nc" id="L45">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

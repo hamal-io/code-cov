@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StdSysExtension.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.agent.extension.std.sys</a> &gt; <span class="el_source">StdSysExtension.kt</span></div><h1>StdSysExtension.kt</h1><pre class="source lang-java linenums">package io.hamal.agent.extension.std.sys
+
+import io.hamal.agent.extension.api.Extension
+import io.hamal.lib.domain.Exec
+import io.hamal.lib.domain.Func
+import io.hamal.lib.domain.HamalError
+import io.hamal.lib.domain.req.*
+import io.hamal.lib.domain.vo.FuncInputs
+import io.hamal.lib.domain.vo.FuncName
+import io.hamal.lib.domain.vo.InvocationInputs
+import io.hamal.lib.domain.vo.TopicName
+import io.hamal.lib.http.ErrorHttpResponse
+import io.hamal.lib.http.HttpTemplate
+import io.hamal.lib.http.SuccessHttpResponse
+import io.hamal.lib.http.body
+import io.hamal.lib.script.api.value.*
+import io.hamal.lib.sdk.domain.ListEventsResponse
+import io.hamal.lib.sdk.domain.ListExecsResponse
+import io.hamal.lib.sdk.domain.ListFuncsResponse
+import io.hamal.lib.sdk.domain.ListTopicsResponse
+import java.lang.Thread.sleep
+
+<span class="fc" id="L23">class StdSysExtension(</span>
+<span class="fc" id="L24">    private val templateSupplier: () -&gt; HttpTemplate</span>
+) : Extension {
+    override fun create(): EnvValue {
+<span class="fc" id="L27">        return EnvValue(</span>
+<span class="fc" id="L28">            ident = IdentValue(&quot;sys&quot;),</span>
+<span class="fc" id="L29">            values = TableValue(</span>
+<span class="fc" id="L30">                &quot;_cfg&quot; to TableValue(),</span>
+<span class="fc" id="L31">                &quot;adhoc&quot; to InvokeAdhoc(templateSupplier),</span>
+<span class="fc" id="L32">                &quot;exec&quot; to TableValue(</span>
+<span class="fc" id="L33">                    &quot;list&quot; to ListExecs(templateSupplier),</span>
+<span class="fc" id="L34">                    &quot;get&quot; to GetExec(templateSupplier)</span>
+                ),
+<span class="fc" id="L36">                &quot;func&quot; to TableValue(</span>
+<span class="fc" id="L37">                    &quot;create&quot; to CreateFunc(templateSupplier),</span>
+<span class="fc" id="L38">                    &quot;get&quot; to GetFunc(templateSupplier),</span>
+<span class="fc" id="L39">                    &quot;list&quot; to ListFuncs(templateSupplier)</span>
+                ),
+<span class="fc" id="L41">                &quot;topic&quot; to TableValue(</span>
+<span class="fc" id="L42">                    &quot;create&quot; to CreateTopic(templateSupplier),</span>
+<span class="fc" id="L43">                    &quot;list&quot; to ListTopics(templateSupplier)</span>
+                ),
+<span class="fc" id="L45">                &quot;evt&quot; to TableValue(</span>
+<span class="fc" id="L46">                    &quot;emitter&quot; to CreateEventEmitter(templateSupplier),</span>
+<span class="fc" id="L47">                    &quot;list&quot; to ListEvents(templateSupplier</span>
+                    )
+                ),
+            )
+        )
+
+    }
+}
+
+<span class="fc" id="L56">class InvokeAdhoc(</span>
+<span class="fc" id="L57">    private val templateSupplier: () -&gt; HttpTemplate</span>
+<span class="fc" id="L58">) : FuncValue() {</span>
+    override fun invoke(ctx: FuncContext): Value {
+<span class="fc" id="L60">        try {</span>
+<span class="fc" id="L61">            val f = ctx.params.first().value as TableValue</span>
+
+<span class="fc" id="L63">            val inputs = when (val x = f[&quot;inputs&quot;]) {</span>
+<span class="pc bpc" id="L64" title="1 of 2 branches missed.">                is NilValue -&gt; TableValue()</span>
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">                is TableValue -&gt; x</span>
+<span class="nc" id="L66">                else -&gt; TODO()</span>
+            }
+
+<span class="fc" id="L69">            val code = when (val x = f[&quot;code&quot;]) {</span>
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">                is NilValue -&gt; CodeValue(&quot;&quot;)</span>
+<span class="pc bpc" id="L71" title="1 of 2 branches missed.">                is CodeValue -&gt; x</span>
+<span class="nc bnc" id="L72" title="All 2 branches missed.">                is StringValue -&gt; CodeValue(x)</span>
+<span class="nc" id="L73">                else -&gt; TODO()</span>
+            }
+
+<span class="fc" id="L76">            val r = InvokeAdhocReq(</span>
+<span class="fc" id="L77">                inputs = InvocationInputs(inputs),</span>
+<span class="fc" id="L78">                code = code</span>
+            )
+
+<span class="fc" id="L81">            val res = templateSupplier()</span>
+<span class="fc" id="L82">                .post(&quot;/v1/adhoc&quot;)</span>
+<span class="fc" id="L83">                .body(r)</span>
+<span class="fc" id="L84">                .execute(SubmittedInvokeAdhocReq::class)</span>
+
+<span class="fc" id="L86">            sleep(500)</span>
+
+<span class="fc" id="L88">            return StringValue(res.execId.value.toString())</span>
+<span class="nc" id="L89">        } catch (t: Throwable) {</span>
+<span class="nc" id="L90">            t.printStackTrace()</span>
+<span class="nc" id="L91">            throw t</span>
+        }
+    }
+
+}
+
+<span class="fc" id="L97">class CreateEventEmitter(</span>
+<span class="fc" id="L98">    private val templateSupplier: () -&gt; HttpTemplate</span>
+<span class="fc" id="L99">) : FuncValue() {</span>
+    override fun invoke(ctx: FuncContext): Value {
+<span class="nc" id="L101">        val topicId = ctx.params.first().value as IdentValue</span>
+
+<span class="nc" id="L103">        return TableValue(</span>
+<span class="nc" id="L104">            &quot;topic_id&quot; to StringValue(topicId.value),</span>
+<span class="nc" id="L105">            &quot;emit&quot; to object : FuncValue() {</span>
+                override fun invoke(ctx: FuncContext): Value {
+<span class="nc" id="L107">                    println(&quot;EMIT&quot;)</span>
+<span class="nc" id="L108">                    println(ctx.env[&quot;topic_id&quot;])</span>
+
+<span class="nc" id="L110">                    templateSupplier()</span>
+<span class="nc" id="L111">                        .post(&quot;/v1/topics/${ctx.env[&quot;topic_id&quot;]}/events&quot;)</span>
+<span class="nc" id="L112">                        .header(&quot;Content-Type&quot;, &quot;application/json&quot;)</span>
+<span class="nc" id="L113">                        .body(&quot;&quot;&quot;{}&quot;&quot;&quot;)</span>
+<span class="nc" id="L114">                        .execute(SubmittedAppendEventReq::class)</span>
+
+<span class="nc" id="L116">                    sleep(500)</span>
+
+<span class="nc" id="L118">                    return NilValue</span>
+                }
+            }
+        )
+    }
+}
+
+<span class="fc" id="L125">class ListEvents(</span>
+<span class="fc" id="L126">    private val templateSupplier: () -&gt; HttpTemplate</span>
+<span class="fc" id="L127">) : FuncValue() {</span>
+    override fun invoke(ctx: FuncContext): Value {
+<span class="nc" id="L129">        println(&quot;List Events&quot;)</span>
+
+<span class="nc" id="L131">        val f = ctx.params.first().value as TableValue</span>
+<span class="nc" id="L132">        val topicId = when (val t = f[&quot;topic_id&quot;]) {</span>
+<span class="nc bnc" id="L133" title="All 2 branches missed.">            is IdentValue -&gt; ctx.env[&quot;topic_id&quot;]</span>
+<span class="nc" id="L134">            else -&gt; t</span>
+        }
+
+<span class="nc" id="L137">        val response = templateSupplier()</span>
+<span class="nc" id="L138">            .get(&quot;/v1/topics/$topicId/events&quot;)</span>
+<span class="nc" id="L139">            .execute(ListEventsResponse::class)</span>
+<span class="nc" id="L140">            .events</span>
+<span class="nc" id="L141">            .mapIndexed { idx, evt -&gt;</span>
+<span class="nc" id="L142">                IdentValue((idx + 1).toString()) to TableValue(</span>
+<span class="nc" id="L143">                    &quot;id&quot; to StringValue(evt.id.value.toString()),</span>
+<span class="nc" id="L144">                    &quot;content_type&quot; to StringValue(evt.contentType.value),</span>
+//                    &quot;content&quot; to evt.content
+                )
+<span class="nc" id="L147">            }.toMap&lt;IdentValue, Value&gt;()</span>
+
+
+<span class="nc" id="L150">        return TableValue(response)</span>
+    }
+}
+
+<span class="fc" id="L154">class GetFunc(</span>
+<span class="fc" id="L155">    private val templateSupplier: () -&gt; HttpTemplate</span>
+<span class="fc" id="L156">) : FuncValue() {</span>
+    override fun invoke(ctx: FuncContext): Value {
+<span class="fc" id="L158">        println(&quot;GetFunc&quot;)</span>
+<span class="fc" id="L159">        val funcId = when (val value = ctx.params.first().value) {</span>
+<span class="fc bfc" id="L160" title="All 2 branches covered.">            is StringValue -&gt; value.value</span>
+<span class="pc bpc" id="L161" title="1 of 2 branches missed.">            is IdentValue -&gt; (ctx.env[value] as StringValue).value</span>
+<span class="nc" id="L162">            else -&gt; TODO()</span>
+        }
+
+<span class="fc" id="L165">        val response = templateSupplier()</span>
+<span class="fc" id="L166">            .get(&quot;/v1/funcs/${funcId}&quot;)</span>
+<span class="fc" id="L167">            .execute()</span>
+
+<span class="fc bfc" id="L169" title="All 2 branches covered.">        if (response is SuccessHttpResponse) {</span>
+<span class="fc" id="L170">            return response.result(Func::class)</span>
+<span class="fc" id="L171">                .let { func -&gt;</span>
+<span class="fc" id="L172">                    TableValue(</span>
+<span class="fc" id="L173">                        &quot;id&quot; to StringValue(func.id.value.toString()),</span>
+<span class="fc" id="L174">                        &quot;name&quot; to StringValue(func.name.value),</span>
+<span class="fc" id="L175">                        &quot;inputs&quot; to func.inputs.value,</span>
+<span class="fc" id="L176">                        &quot;code&quot; to CodeValue(func.code.value)</span>
+                    )
+                }
+        } else {
+<span class="pc bpc" id="L180" title="1 of 2 branches missed.">            require(response is ErrorHttpResponse)</span>
+<span class="fc" id="L181">            return response.error(HamalError::class)</span>
+<span class="fc" id="L182">                .let { error -&gt;</span>
+<span class="pc bpc" id="L183" title="1 of 2 branches missed.">                    ErrorValue(error.message ?: &quot;An unknown error occurred&quot;)</span>
+                }
+        }
+    }
+}
+
+<span class="fc" id="L189">class GetExec(</span>
+<span class="fc" id="L190">    private val templateSupplier: () -&gt; HttpTemplate</span>
+<span class="fc" id="L191">) : FuncValue() {</span>
+    override fun invoke(ctx: FuncContext): Value {
+<span class="fc" id="L193">        println(&quot;GetExec&quot;)</span>
+<span class="fc" id="L194">        val execId = when (val value = ctx.params.first().value) {</span>
+<span class="pc bpc" id="L195" title="1 of 2 branches missed.">            is StringValue -&gt; value.value</span>
+<span class="nc bnc" id="L196" title="All 2 branches missed.">            is IdentValue -&gt; (ctx.env[value] as StringValue).value</span>
+<span class="nc" id="L197">            else -&gt; TODO()</span>
+        }
+
+<span class="fc" id="L200">        val response = templateSupplier()</span>
+<span class="fc" id="L201">            .get(&quot;/v1/execs/${execId}&quot;)</span>
+<span class="fc" id="L202">            .execute()</span>
+
+<span class="pc bpc" id="L204" title="1 of 2 branches missed.">        if (response is SuccessHttpResponse) {</span>
+<span class="fc" id="L205">            return response.result(Exec::class)</span>
+<span class="fc" id="L206">                .let { exec -&gt;</span>
+<span class="fc" id="L207">                    TableValue(</span>
+<span class="fc" id="L208">                        &quot;id&quot; to StringValue(exec.id.value.toString()),</span>
+<span class="fc" id="L209">                        &quot;status&quot; to StringValue(exec.status.name),</span>
+<span class="fc" id="L210">                        &quot;inputs&quot; to exec.inputs.value,</span>
+<span class="pc bpc" id="L211" title="5 of 6 branches missed.">                        &quot;correlationId&quot; to (exec.correlation?.correlationId?.value?.let { StringValue(it) }</span>
+<span class="fc" id="L212">                            ?: NilValue),</span>
+<span class="fc" id="L213">                        &quot;code&quot; to exec.code</span>
+                    )
+                }
+        } else {
+<span class="nc bnc" id="L217" title="All 2 branches missed.">            require(response is ErrorHttpResponse)</span>
+<span class="nc" id="L218">            return response.error(HamalError::class)</span>
+<span class="nc" id="L219">                .let { error -&gt;</span>
+<span class="nc bnc" id="L220" title="All 2 branches missed.">                    ErrorValue(error.message ?: &quot;An unknown error occurred&quot;)</span>
+                }
+        }
+    }
+}
+
+<span class="fc" id="L226">class ListFuncs(</span>
+<span class="fc" id="L227">    private val templateSupplier: () -&gt; HttpTemplate</span>
+<span class="fc" id="L228">) : FuncValue() {</span>
+    override fun invoke(ctx: FuncContext): Value {
+<span class="fc" id="L230">        println(&quot;ListFuncs&quot;)</span>
+
+<span class="fc" id="L232">        val response = templateSupplier()</span>
+<span class="fc" id="L233">            .get(&quot;/v1/funcs&quot;)</span>
+<span class="fc" id="L234">            .execute(ListFuncsResponse::class)</span>
+<span class="fc" id="L235">            .funcs</span>
+<span class="fc" id="L236">            .mapIndexed { idx, func -&gt;</span>
+<span class="fc" id="L237">                IdentValue((idx + 1).toString()) to TableValue(</span>
+<span class="fc" id="L238">                    &quot;id&quot; to StringValue(func.id.value.toString()),</span>
+<span class="fc" id="L239">                    &quot;name&quot; to StringValue(func.name.value)</span>
+                )
+<span class="fc" id="L241">            }.toMap&lt;IdentValue, Value&gt;()</span>
+
+<span class="fc" id="L243">        return TableValue(response)</span>
+    }
+}
+
+<span class="fc" id="L247">class ListExecs(</span>
+<span class="fc" id="L248">    private val templateSupplier: () -&gt; HttpTemplate</span>
+<span class="fc" id="L249">) : FuncValue() {</span>
+    override fun invoke(ctx: FuncContext): Value {
+<span class="fc" id="L251">        println(&quot;ListExecs&quot;)</span>
+
+<span class="fc" id="L253">        val response = templateSupplier()</span>
+<span class="fc" id="L254">            .get(&quot;/v1/execs&quot;)</span>
+<span class="fc" id="L255">            .execute(ListExecsResponse::class)</span>
+<span class="fc" id="L256">            .execs</span>
+<span class="fc" id="L257">            .mapIndexed { idx, exec -&gt;</span>
+<span class="fc" id="L258">                IdentValue((idx + 1).toString()) to TableValue(</span>
+<span class="fc" id="L259">                    &quot;id&quot; to StringValue(exec.id.value.toString()),</span>
+<span class="fc" id="L260">                    &quot;status&quot; to StringValue(exec.status.name)</span>
+                )
+<span class="fc" id="L262">            }.toMap&lt;IdentValue, Value&gt;()</span>
+
+<span class="fc" id="L264">        return TableValue(response)</span>
+    }
+}
+
+
+<span class="fc" id="L269">class ListTopics(</span>
+<span class="fc" id="L270">    private val templateSupplier: () -&gt; HttpTemplate</span>
+<span class="fc" id="L271">) : FuncValue() {</span>
+    override fun invoke(ctx: FuncContext): Value {
+<span class="nc" id="L273">        println(&quot;ListFuncs&quot;)</span>
+
+<span class="nc" id="L275">        val response = templateSupplier()</span>
+<span class="nc" id="L276">            .get(&quot;/v1/topics&quot;)</span>
+<span class="nc" id="L277">            .execute(ListTopicsResponse::class)</span>
+<span class="nc" id="L278">            .topics</span>
+<span class="nc" id="L279">            .mapIndexed { idx, topic -&gt;</span>
+<span class="nc" id="L280">                IdentValue((idx + 1).toString()) to TableValue(</span>
+<span class="nc" id="L281">                    &quot;id&quot; to StringValue(topic.id.value.toString()),</span>
+<span class="nc" id="L282">                    &quot;name&quot; to StringValue(topic.name.value)</span>
+                )
+<span class="nc" id="L284">            }.toMap&lt;IdentValue, Value&gt;()</span>
+
+<span class="nc" id="L286">        return TableValue(response)</span>
+    }
+}
+
+
+<span class="fc" id="L291">class CreateTopic(</span>
+<span class="fc" id="L292">    private val templateSupplier: () -&gt; HttpTemplate</span>
+<span class="fc" id="L293">) : FuncValue() {</span>
+    override fun invoke(ctx: FuncContext): Value {
+<span class="nc" id="L295">        try {</span>
+<span class="nc" id="L296">            println(&quot;CREATE TOPIC&quot;)</span>
+
+<span class="nc" id="L298">            val f = ctx.params.first().value as TableValue</span>
+<span class="nc" id="L299">            println(f)</span>
+
+<span class="nc" id="L301">            val r = CreateTopicReq(</span>
+<span class="nc" id="L302">                name = TopicName((f[IdentValue(&quot;name&quot;)] as StringValue).value)</span>
+            )
+
+<span class="nc" id="L305">            val res = templateSupplier()</span>
+<span class="nc" id="L306">                .post(&quot;/v1/topics&quot;)</span>
+<span class="nc" id="L307">                .body(r)</span>
+<span class="nc" id="L308">                .execute(SubmittedCreateTopicReq::class)</span>
+<span class="nc" id="L309">            sleep(500)</span>
+
+
+<span class="nc" id="L312">            println(res)</span>
+<span class="nc" id="L313">            return StringValue(res.topicId.value.toString())</span>
+<span class="nc" id="L314">        } catch (t: Throwable) {</span>
+<span class="nc" id="L315">            t.printStackTrace()</span>
+<span class="nc" id="L316">            throw t</span>
+        }
+    }
+}
+
+<span class="nc" id="L321">class InvokeFunc(</span>
+<span class="nc" id="L322">    private val templateSupplier: () -&gt; HttpTemplate</span>
+<span class="nc" id="L323">) : FuncValue() {</span>
+    override fun invoke(ctx: FuncContext): Value {
+<span class="nc" id="L325">        val funcId = (ctx.params.first().value as StringValue).toString().replace(&quot;'&quot;, &quot;&quot;)</span>
+<span class="nc" id="L326">        println(&quot;DEBUG: ${funcId}&quot;)</span>
+
+<span class="nc" id="L328">        templateSupplier()</span>
+<span class="nc" id="L329">            .post(&quot;/v1/funcs/${funcId}/exec&quot;)</span>
+<span class="nc" id="L330">            .body(</span>
+<span class="nc" id="L331">                InvokeOneshotReq(</span>
+<span class="nc" id="L332">                    inputs = InvocationInputs(),</span>
+<span class="nc" id="L333">                    correlationId = null</span>
+                )
+            )
+<span class="nc" id="L336">            .execute()</span>
+
+<span class="nc" id="L338">        sleep(500)</span>
+<span class="nc" id="L339">        return NilValue</span>
+    }
+
+}
+
+
+<span class="fc" id="L345">class CreateFunc(</span>
+<span class="fc" id="L346">    private val templateSupplier: () -&gt; HttpTemplate</span>
+<span class="fc" id="L347">) : FuncValue() {</span>
+    override fun invoke(ctx: FuncContext): Value {
+<span class="fc" id="L349">        try {</span>
+<span class="fc" id="L350">            val f = ctx.params.first().value as TableValue</span>
+
+<span class="fc" id="L352">            val name: StringValue = when (val x = f[&quot;name&quot;]) {</span>
+<span class="fc bfc" id="L353" title="All 2 branches covered.">                is NilValue -&gt; StringValue(&quot;&quot;)</span>
+<span class="pc bpc" id="L354" title="1 of 2 branches missed.">                is StringValue -&gt; x</span>
+<span class="nc bnc" id="L355" title="All 2 branches missed.">                is IdentValue -&gt; ctx.env[x] as StringValue</span>
+<span class="nc" id="L356">                else -&gt; TODO()</span>
+            }
+
+<span class="fc" id="L359">            val inputs = when (val x = f[&quot;inputs&quot;]) {</span>
+<span class="fc bfc" id="L360" title="All 2 branches covered.">                is NilValue -&gt; TableValue()</span>
+<span class="pc bpc" id="L361" title="1 of 2 branches missed.">                is TableValue -&gt; x</span>
+<span class="nc" id="L362">                else -&gt; TODO()</span>
+            }
+
+<span class="fc" id="L365">            val code = when (val x = f[&quot;code&quot;]) {</span>
+<span class="fc bfc" id="L366" title="All 2 branches covered.">                is NilValue -&gt; CodeValue(&quot;&quot;)</span>
+<span class="pc bpc" id="L367" title="1 of 2 branches missed.">                is CodeValue -&gt; x</span>
+<span class="nc bnc" id="L368" title="All 2 branches missed.">                is StringValue -&gt; CodeValue(x)</span>
+<span class="nc" id="L369">                else -&gt; TODO()</span>
+            }
+
+<span class="fc" id="L372">            val r = CreateFuncReq(</span>
+<span class="fc" id="L373">                name = FuncName(name.value),</span>
+<span class="fc" id="L374">                inputs = FuncInputs(inputs),</span>
+<span class="fc" id="L375">                code = code</span>
+            )
+
+<span class="fc" id="L378">            val res = templateSupplier()</span>
+<span class="fc" id="L379">                .post(&quot;/v1/funcs&quot;)</span>
+<span class="fc" id="L380">                .body(r)</span>
+<span class="fc" id="L381">                .execute(SubmittedCreateFuncReq::class)</span>
+<span class="fc" id="L382">            sleep(500)</span>
+
+<span class="fc" id="L384">            return StringValue(res.funcId.value.toString())</span>
+<span class="nc" id="L385">        } catch (t: Throwable) {</span>
+<span class="nc" id="L386">            t.printStackTrace()</span>
+<span class="nc" id="L387">            throw t</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

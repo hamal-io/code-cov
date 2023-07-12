@@ -6,213 +6,199 @@ import io.hamal.backend.repository.api.ExecQueryRepository
 import io.hamal.backend.repository.api.ExecQueryRepository.ExecQuery
 import io.hamal.backend.repository.api.record.exec.createEntity
 import io.hamal.backend.repository.record.exec.*
+import io.hamal.lib.common.domain.CmdId
+import io.hamal.lib.common.domain.Limit
 import io.hamal.lib.common.util.CollectionUtils.takeWhileInclusive
 import io.hamal.lib.domain.*
 import io.hamal.lib.domain.vo.ExecId
-import io.hamal.lib.domain.vo.Limit
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 internal object CurrentExecProjection {
-<span class="fc" id="L15">    private val projection = mutableMapOf&lt;ExecId, Exec&gt;()</span>
+<span class="fc" id="L18">    private val projection = mutableMapOf&lt;ExecId, Exec&gt;()</span>
     fun apply(exec: Exec) {
-<span class="fc" id="L17">        projection[exec.id] = exec</span>
-<span class="fc" id="L18">    }</span>
+<span class="fc" id="L20">        projection[exec.id] = exec</span>
+<span class="fc" id="L21">    }</span>
 
-<span class="fc" id="L20">    fun find(execId: ExecId): Exec? = projection[execId]</span>
+<span class="fc" id="L23">    fun find(execId: ExecId): Exec? = projection[execId]</span>
 
     fun list(afterId: ExecId, limit: Limit): List&lt;Exec&gt; {
-<span class="fc" id="L23">        return projection.keys.sorted()</span>
-<span class="fc bfc" id="L24" title="All 2 branches covered.">            .dropWhile { it &lt;= afterId }</span>
-<span class="fc" id="L25">            .take(limit.value)</span>
-<span class="fc" id="L26">            .mapNotNull { find(it) }</span>
+<span class="fc" id="L26">        return projection.keys.sorted()</span>
 <span class="fc" id="L27">            .reversed()</span>
+<span class="fc bfc" id="L28" title="All 2 branches covered.">            .dropWhile { it &gt;= afterId }</span>
+<span class="fc" id="L29">            .take(limit.value)</span>
+<span class="fc" id="L30">            .mapNotNull { find(it) }</span>
     }
 
     fun clear() {
-<span class="fc" id="L31">        projection.clear()</span>
-<span class="fc" id="L32">    }</span>
+<span class="fc" id="L34">        projection.clear()</span>
+<span class="fc" id="L35">    }</span>
 }
 
 //FIXME this must be concurrent safe
 internal object QueueProjection {
-<span class="fc" id="L37">    private val queue = mutableListOf&lt;QueuedExec&gt;()</span>
+<span class="fc" id="L40">    private val queue = mutableListOf&lt;QueuedExec&gt;()</span>
     fun add(exec: QueuedExec) {
-<span class="fc" id="L39">        queue.add(exec)</span>
-<span class="fc" id="L40">    }</span>
+<span class="fc" id="L42">        queue.add(exec)</span>
+<span class="fc" id="L43">    }</span>
 
     fun pop(limit: Int): List&lt;QueuedExec&gt; {
-<span class="fc" id="L43">        val result = mutableListOf&lt;QueuedExec&gt;()</span>
-<span class="fc bfc" id="L44" title="All 2 branches covered.">        for (idx in 0 until limit) {</span>
-<span class="fc bfc" id="L45" title="All 2 branches covered.">            if (queue.isEmpty()) {</span>
-<span class="fc" id="L46">                break</span>
+<span class="fc" id="L46">        val result = mutableListOf&lt;QueuedExec&gt;()</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        for (idx in 0 until limit) {</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">            if (queue.isEmpty()) {</span>
+<span class="fc" id="L49">                break</span>
             }
-<span class="fc" id="L48">            result.add(queue.removeFirst())</span>
+<span class="fc" id="L51">            result.add(queue.removeFirst())</span>
         }
-<span class="fc" id="L50">        return result</span>
+<span class="fc" id="L53">        return result</span>
     }
 
     fun clear() {
-<span class="fc" id="L54">        queue.clear()</span>
-<span class="fc" id="L55">    }</span>
+<span class="fc" id="L57">        queue.clear()</span>
+<span class="fc" id="L58">    }</span>
 }
 
-object MemoryExecRepository : BaseRecordRepository&lt;ExecId, ExecRecord&gt;(), ExecCmdRepository, ExecQueryRepository {
+<span class="fc" id="L61">object MemoryExecRepository : BaseRecordRepository&lt;ExecId, ExecRecord&gt;(), ExecCmdRepository, ExecQueryRepository {</span>
+<span class="fc" id="L62">    private val lock = ReentrantLock()</span>
 
     override fun plan(cmd: PlanCmd): PlannedExec {
-<span class="fc" id="L61">        val execId = cmd.execId</span>
-<span class="pc bpc" id="L62" title="1 of 2 branches missed.">        if (contains(execId)) {</span>
-<span class="nc" id="L63">            return versionOf(execId, cmd.id) as PlannedExec</span>
+<span class="fc" id="L65">        return lock.withLock {</span>
+<span class="fc" id="L66">            val execId = cmd.execId</span>
+<span class="pc bpc" id="L67" title="1 of 2 branches missed.">            if (contains(execId)) {</span>
+<span class="nc" id="L68">                versionOf(execId, cmd.id) as PlannedExec</span>
+            } else {
+
+<span class="fc" id="L71">                addRecord(</span>
+<span class="fc" id="L72">                    ExecPlannedRecord(</span>
+<span class="fc" id="L73">                        entityId = execId,</span>
+<span class="fc" id="L74">                        cmdId = cmd.id,</span>
+<span class="fc" id="L75">                        correlation = cmd.correlation,</span>
+<span class="fc" id="L76">                        inputs = cmd.inputs,</span>
+<span class="fc" id="L77">                        code = cmd.code</span>
+                    )
+                )
+<span class="fc" id="L80">                (currentVersion(execId) as PlannedExec).also(CurrentExecProjection::apply)</span>
+            }
         }
-<span class="fc" id="L65">        addRecord(</span>
-<span class="fc" id="L66">            ExecPlannedRecord(</span>
-<span class="fc" id="L67">                entityId = execId,</span>
-<span class="fc" id="L68">                cmdId = cmd.id,</span>
-<span class="fc" id="L69">                correlation = cmd.correlation,</span>
-<span class="fc" id="L70">                inputs = cmd.inputs,</span>
-<span class="fc" id="L71">                secrets = cmd.secrets,</span>
-<span class="fc" id="L72">                code = cmd.code</span>
-            )
-        )
-<span class="fc" id="L75">        return (currentVersion(execId) as PlannedExec)</span>
-<span class="fc" id="L76">            .also(CurrentExecProjection::apply)</span>
     }
 
     override fun schedule(cmd: ScheduleCmd): ScheduledExec {
-<span class="fc" id="L80">        val execId = cmd.execId</span>
-<span class="fc" id="L81">        val cmdId = cmd.id</span>
+<span class="fc" id="L86">        return lock.withLock {</span>
+<span class="fc" id="L87">            val execId = cmd.execId</span>
+<span class="fc" id="L88">            val cmdId = cmd.id</span>
 
-<span class="pc bpc" id="L83" title="1 of 2 branches missed.">        if (commandAlreadyApplied(execId, cmdId)) {</span>
-<span class="nc" id="L84">            return versionOf(execId, cmdId) as ScheduledExec</span>
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">            if (commandAlreadyApplied(execId, cmdId)) {</span>
+<span class="nc" id="L91">                versionOf(execId, cmdId) as ScheduledExec</span>
+            } else {
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">                check(currentVersion(execId) is PlannedExec) { &quot;current version of $execId is not planned&quot; }</span>
+
+<span class="fc" id="L95">                addRecord(ExecScheduledRecord(execId, cmdId))</span>
+
+<span class="fc" id="L97">                (currentVersion(execId) as ScheduledExec).also(CurrentExecProjection::apply)</span>
+            }
         }
-
-<span class="pc bpc" id="L87" title="1 of 2 branches missed.">        check(currentVersion(execId) is PlannedExec) { &quot;current version of $execId is not planned&quot; }</span>
-
-<span class="fc" id="L89">        addRecord(</span>
-<span class="fc" id="L90">            ExecScheduledRecord(</span>
-<span class="fc" id="L91">                entityId = execId,</span>
-<span class="fc" id="L92">                cmdId = cmdId</span>
-            )
-        )
-
-<span class="fc" id="L96">        return (currentVersion(execId) as ScheduledExec)</span>
-<span class="fc" id="L97">            .also(CurrentExecProjection::apply)</span>
-
     }
 
     override fun queue(cmd: QueueCmd): QueuedExec {
-<span class="fc" id="L102">        val execId = cmd.execId</span>
-<span class="fc" id="L103">        val cmdId = cmd.id</span>
+<span class="fc" id="L103">        return lock.withLock {</span>
+<span class="fc" id="L104">            val execId = cmd.execId</span>
+<span class="fc" id="L105">            val cmdId = cmd.id</span>
 
-<span class="pc bpc" id="L105" title="1 of 2 branches missed.">        if (commandAlreadyApplied(execId, cmdId)) {</span>
-<span class="nc" id="L106">            return versionOf(execId, cmdId) as QueuedExec</span>
+<span class="pc bpc" id="L107" title="1 of 2 branches missed.">            if (commandAlreadyApplied(execId, cmdId)) {</span>
+<span class="nc" id="L108">                versionOf(execId, cmdId) as QueuedExec</span>
+            } else {
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">                check(currentVersion(execId) is ScheduledExec) { &quot;current version of $execId is not scheduled&quot; }</span>
+
+<span class="fc" id="L112">                addRecord(ExecQueuedRecord(execId, cmdId))</span>
+
+<span class="fc" id="L114">                (currentVersion(execId) as QueuedExec)</span>
+<span class="fc" id="L115">                    .also(CurrentExecProjection::apply)</span>
+<span class="fc" id="L116">                    .also(QueueProjection::add)</span>
+            }
         }
-
-<span class="pc bpc" id="L109" title="1 of 2 branches missed.">        check(currentVersion(execId) is ScheduledExec) { &quot;current version of $execId is not scheduled&quot; }</span>
-
-<span class="fc" id="L111">        addRecord(</span>
-<span class="fc" id="L112">            ExecQueuedRecord(</span>
-<span class="fc" id="L113">                entityId = execId,</span>
-<span class="fc" id="L114">                cmdId = cmdId</span>
-            )
-        )
-
-<span class="fc" id="L118">        return (currentVersion(execId) as QueuedExec)</span>
-<span class="fc" id="L119">            .also(CurrentExecProjection::apply)</span>
-<span class="fc" id="L120">            .also(QueueProjection::add)</span>
     }
 
     override fun start(cmd: StartCmd): List&lt;StartedExec&gt; {
-<span class="fc" id="L124">        val result = mutableListOf&lt;StartedExec&gt;()</span>
-<span class="fc" id="L125">        QueueProjection.pop(1).forEach { queuedExec -&gt;</span>
-<span class="fc" id="L126">            val execId = queuedExec.id</span>
-<span class="pc bpc" id="L127" title="1 of 2 branches missed.">            check(currentVersion(execId) is QueuedExec) { &quot;current version of $execId is not queued&quot; }</span>
+<span class="fc" id="L122">        return lock.withLock {</span>
+<span class="fc" id="L123">            val result = mutableListOf&lt;StartedExec&gt;()</span>
+<span class="fc" id="L124">            QueueProjection.pop(1).forEach { queuedExec -&gt;</span>
+<span class="fc" id="L125">                val execId = queuedExec.id</span>
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">                check(currentVersion(execId) is QueuedExec) { &quot;current version of $execId is not queued&quot; }</span>
 
-<span class="fc" id="L129">            addRecord(</span>
-<span class="fc" id="L130">                ExecStartedRecord(</span>
-<span class="fc" id="L131">                    entityId = execId,</span>
-<span class="fc" id="L132">                    cmdId = cmd.id</span>
-                )
-            )
+<span class="fc" id="L128">                addRecord(ExecStartedRecord(execId, cmd.id))</span>
 
-<span class="fc" id="L136">            result.add((currentVersion(execId) as StartedExec).also(CurrentExecProjection::apply))</span>
-<span class="fc" id="L137">        }</span>
-
-<span class="fc" id="L139">        return result</span>
+<span class="fc" id="L130">                result.add((currentVersion(execId) as StartedExec).also(CurrentExecProjection::apply))</span>
+<span class="fc" id="L131">            }</span>
+<span class="fc" id="L132">            result</span>
+        }
     }
 
     override fun clear() {
-<span class="fc" id="L143">        super.clear()</span>
-<span class="fc" id="L144">        CurrentExecProjection.clear()</span>
-<span class="fc" id="L145">        QueueProjection.clear()</span>
-<span class="fc" id="L146">    }</span>
+<span class="fc" id="L137">        super.clear()</span>
+<span class="fc" id="L138">        CurrentExecProjection.clear()</span>
+<span class="fc" id="L139">        QueueProjection.clear()</span>
+<span class="fc" id="L140">    }</span>
 
 
     override fun complete(cmd: CompleteCmd): CompletedExec {
-<span class="fc" id="L150">        val execId = cmd.execId</span>
-<span class="fc" id="L151">        val cmdId = cmd.id</span>
+<span class="fc" id="L144">        return lock.withLock {</span>
+<span class="fc" id="L145">            val execId = cmd.execId</span>
+<span class="fc" id="L146">            val cmdId = cmd.id</span>
 
-<span class="pc bpc" id="L153" title="1 of 2 branches missed.">        if (commandAlreadyApplied(execId, cmdId)) {</span>
-<span class="nc" id="L154">            return versionOf(execId, cmdId) as CompletedExec</span>
+<span class="pc bpc" id="L148" title="1 of 2 branches missed.">            if (commandAlreadyApplied(execId, cmdId)) {</span>
+<span class="nc" id="L149">                versionOf(execId, cmdId) as CompletedExec</span>
+            } else {
+<span class="pc bpc" id="L151" title="1 of 2 branches missed.">                check(currentVersion(execId) is StartedExec) { &quot;current version of $execId is not started&quot; }</span>
+
+<span class="fc" id="L153">                addRecord(ExecCompletedRecord(execId, cmdId))</span>
+
+<span class="fc" id="L155">                (versionOf(execId, cmdId) as CompletedExec)</span>
+<span class="fc" id="L156">                    .also(CurrentExecProjection::apply)</span>
+            }
         }
-
-<span class="pc bpc" id="L157" title="1 of 2 branches missed.">        check(currentVersion(execId) is StartedExec) { &quot;current version of $execId is not started&quot; }</span>
-
-<span class="fc" id="L159">        addRecord(</span>
-<span class="fc" id="L160">            ExecCompletedRecord(</span>
-<span class="fc" id="L161">                entityId = execId,</span>
-<span class="fc" id="L162">                cmdId = cmdId</span>
-            )
-        )
-
-<span class="fc" id="L166">        return (versionOf(execId, cmdId) as CompletedExec)</span>
-<span class="fc" id="L167">            .also(CurrentExecProjection::apply)</span>
     }
 
     override fun fail(cmd: FailCmd): FailedExec {
-<span class="fc" id="L171">        val execId = cmd.execId</span>
-<span class="fc" id="L172">        val cmdId = cmd.id</span>
+<span class="fc" id="L162">        return lock.withLock {</span>
+<span class="fc" id="L163">            val execId = cmd.execId</span>
+<span class="fc" id="L164">            val cmdId = cmd.id</span>
 
-<span class="pc bpc" id="L174" title="1 of 2 branches missed.">        if (commandAlreadyApplied(execId, cmdId)) {</span>
-<span class="nc" id="L175">            return versionOf(execId, cmdId) as FailedExec</span>
+<span class="pc bpc" id="L166" title="1 of 2 branches missed.">            if (commandAlreadyApplied(execId, cmdId)) {</span>
+<span class="nc" id="L167">                versionOf(execId, cmdId) as FailedExec</span>
+            } else {
+<span class="pc bpc" id="L169" title="1 of 2 branches missed.">                check(currentVersion(execId) is StartedExec) { &quot;current version of $execId is not started&quot; }</span>
+
+<span class="fc" id="L171">                addRecord(ExecFailedRecord(execId, cmdId))</span>
+
+<span class="fc" id="L173">                (versionOf(execId, cmdId) as FailedExec).also(CurrentExecProjection::apply)</span>
+            }
         }
-
-<span class="pc bpc" id="L178" title="1 of 2 branches missed.">        check(currentVersion(execId) is StartedExec) { &quot;current version of $execId is not started&quot; }</span>
-
-<span class="fc" id="L180">        addRecord(</span>
-<span class="fc" id="L181">            ExecFailedRecord(</span>
-<span class="fc" id="L182">                entityId = execId,</span>
-<span class="fc" id="L183">                cmdId = cmdId</span>
-            )
-        )
-
-<span class="fc" id="L187">        return (versionOf(execId, cmdId) as FailedExec)</span>
-<span class="fc" id="L188">            .also(CurrentExecProjection::apply)</span>
     }
 
 
     override fun find(execId: ExecId): Exec? {
-<span class="fc" id="L193">        return CurrentExecProjection.find(execId)</span>
+<span class="fc" id="L180">        return CurrentExecProjection.find(execId)</span>
     }
 
     override fun list(block: ExecQuery.() -&gt; Unit): List&lt;Exec&gt; {
-<span class="fc" id="L197">        val query = ExecQuery().also(block)</span>
-<span class="fc" id="L198">        return CurrentExecProjection.list(query.afterId, query.limit)</span>
+<span class="fc" id="L184">        val query = ExecQuery().also(block)</span>
+<span class="fc" id="L185">        return CurrentExecProjection.list(query.afterId, query.limit)</span>
     }
 
     private fun MemoryExecRepository.currentVersion(id: ExecId): Exec {
-<span class="fc" id="L202">        return listRecords(id)</span>
-<span class="fc" id="L203">            .createEntity()</span>
-<span class="fc" id="L204">            .toDomainObject()</span>
+<span class="fc" id="L189">        return listRecords(id)</span>
+<span class="fc" id="L190">            .createEntity()</span>
+<span class="fc" id="L191">            .toDomainObject()</span>
     }
 
     private fun MemoryExecRepository.commandAlreadyApplied(id: ExecId, cmdId: CmdId) =
-<span class="fc" id="L208">        listRecords(id).any { it.cmdId == cmdId }</span>
+<span class="fc" id="L195">        listRecords(id).any { it.cmdId == cmdId }</span>
 
     private fun MemoryExecRepository.versionOf(id: ExecId, cmdId: CmdId): Exec {
-<span class="fc bfc" id="L211" title="All 2 branches covered.">        return listRecords(id).takeWhileInclusive { it.cmdId != cmdId }</span>
-<span class="fc" id="L212">            .createEntity()</span>
-<span class="fc" id="L213">            .toDomainObject()</span>
+<span class="fc bfc" id="L198" title="All 2 branches covered.">        return listRecords(id).takeWhileInclusive { it.cmdId != cmdId }</span>
+<span class="fc" id="L199">            .createEntity()</span>
+<span class="fc" id="L200">            .toDomainObject()</span>
     }
 }
-
 
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

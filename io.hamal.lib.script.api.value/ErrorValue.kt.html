@@ -6,14 +6,30 @@ import kotlinx.serialization.Transient
 
 <span class="pc bnc" id="L7" title="All 7 branches missed.">@Serializable</span>
 @SerialName(&quot;ErrorValue&quot;)
-<span class="nc" id="L9">data class ErrorValue(val message: String) : Value {</span>
-    @Transient
-<span class="nc" id="L11">    override val metaTable = DefaultErrorValueMetaTable</span>
-<span class="fc" id="L12">}</span>
+<span class="fc" id="L9">data class ErrorValue(</span>
+<span class="fc" id="L10">    val message: String</span>
+) : Value {
 
-object DefaultErrorValueMetaTable : MetaTable {
-<span class="nc" id="L15">    override val type = &quot;error&quot;</span>
-<span class="nc" id="L16">    override val operators: List&lt;ValueOperator&gt; = listOf()</span>
+    @Transient
+<span class="fc" id="L14">    override val metaTable = DefaultErrorValueMetaTable</span>
+    operator fun get(key: IdentValue): Value {
+<span class="pc bpc" id="L16" title="1 of 2 branches missed.">        return metaTable.props[key]</span>
+<span class="pc bpc" id="L17" title="1 of 2 branches missed.">            ?.let { it(this) }</span>
+<span class="nc" id="L18">            ?: NilValue</span>
+    }
+<span class="fc" id="L20">}</span>
+
+object DefaultErrorValueMetaTable : MetaTable&lt;ErrorValue&gt; {
+<span class="pc" id="L23">    override val type = &quot;error&quot;</span>
+<span class="pc" id="L24">    override val operators: List&lt;ValueOperator&gt; = listOf()</span>
+<span class="fc" id="L25">    override val props: Map&lt;IdentValue, ValueProp&lt;ErrorValue&gt;&gt; = mapOf(</span>
+<span class="fc" id="L26">        IdentValue(&quot;message&quot;) to ErrorMessageProp</span>
+    )
 }
 
+object ErrorMessageProp : ValueProp&lt;ErrorValue&gt; {
+    override fun invoke(self: ErrorValue): Value {
+<span class="fc" id="L32">        return StringValue(self.message)</span>
+    }
+}
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

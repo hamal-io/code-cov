@@ -3,9 +3,9 @@
 import io.hamal.lib.script.api.value.*
 import io.hamal.lib.script.impl.ScriptEvaluationException
 
-object RequireFunction : BuiltinFuncValue() {
-    override fun invoke(ctx: Context): Value {
-<span class="pc bpc" id="L8" title="1 of 2 branches missed.">        val firstParameter = ctx.parameters.firstOrNull()</span>
+object RequireFunction : FuncValue() {
+    override fun invoke(ctx: FuncContext): Value {
+<span class="pc bpc" id="L8" title="1 of 2 branches missed.">        val firstParameter = ctx.params.firstOrNull()</span>
 <span class="nc" id="L9">            ?: throw ScriptEvaluationException(ErrorValue(&quot;require needs one environment ident&quot;))</span>
 
 <span class="fc" id="L11">        val ident = firstParameter.asIdentifier()</span>

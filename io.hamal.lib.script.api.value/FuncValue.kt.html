@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FuncValue.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.script.api.value</a> &gt; <span class="el_source">FuncValue.kt</span></div><h1>FuncValue.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.script.api.value
 
-interface FuncInvocationContext {
-    val parameters: List&lt;Value&gt;
-    val env: EnvValue
+import io.hamal.lib.script.api.ast.Expression
+
+<span class="fc" id="L5">data class FuncContext(</span>
+<span class="fc" id="L6">    val params: List&lt;FuncParam&gt;,</span>
+<span class="fc" id="L7">    val env: EnvValue</span>
+)
+
+<span class="fc" id="L10">data class FuncParam(</span>
+<span class="fc" id="L11">    val value: Value,</span>
+<span class="fc" id="L12">    val expression: Expression</span>
+) {
+    fun asIdentifier(): IdentValue {
+<span class="fc" id="L15">        return when (value) {</span>
+<span class="pc bpc" id="L16" title="1 of 2 branches missed.">            is StringValue -&gt; IdentValue(value = value.value)</span>
+<span class="nc bnc" id="L17" title="All 2 branches missed.">            is IdentValue -&gt; value</span>
+<span class="nc" id="L18">            else -&gt; throw IllegalStateException(&quot;$value can not interpreted as ident&quot;)</span>
+        }
+    }
 }
 
-interface FuncInvocationContextFactory&lt;INVOKE_CTX : FuncInvocationContext&gt; {
-    fun create(parameters: List&lt;Value&gt;, env: EnvValue): INVOKE_CTX
-}
-
-object DefaultFuncInvocationContextFactory : FuncInvocationContextFactory&lt;DefaultFuncInvocationContext&gt; {
-        override fun create(
-        parameters: List&lt;Value&gt;,
-        env: EnvValue
-<span class="nc" id="L16">    ): DefaultFuncInvocationContext = DefaultFuncInvocationContext(parameters, env)</span>
-}
-
-<span class="nc" id="L19">data class DefaultFuncInvocationContext(</span>
-<span class="nc" id="L20">    override val parameters: List&lt;Value&gt;,</span>
-<span class="nc" id="L21">    override val env: EnvValue</span>
-) : FuncInvocationContext
-
-<span class="nc" id="L24">abstract class FuncValue&lt;CTX : FuncInvocationContext&gt; : Value {</span>
-<span class="nc" id="L25">    override val metaTable: MetaTable = DefaultFuncValueMetaTable</span>
-    abstract operator fun invoke(ctx: CTX): Value
+<span class="pc" id="L23">abstract class FuncValue : Value {</span>
+<span class="pc" id="L24">    override val metaTable = DefaultFuncValueMetaTable</span>
+    abstract operator fun invoke(ctx: FuncContext): Value
 
 }
 
-object DefaultFuncValueMetaTable : MetaTable {
-<span class="nc" id="L31">    override val type = &quot;func&quot;</span>
-<span class="nc" id="L32">    override val operators: List&lt;ValueOperator&gt; = listOf()</span>
+object DefaultFuncValueMetaTable : MetaTable&lt;FuncValue&gt; {
+<span class="pc" id="L30">    override val type = &quot;func&quot;</span>
+<span class="pc" id="L31">    override val operators: List&lt;ValueOperator&gt; = listOf()</span>
+<span class="pc" id="L32">    override val props: Map&lt;IdentValue, ValueProp&lt;FuncValue&gt;&gt; = mapOf()</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

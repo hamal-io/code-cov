@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EthOutput.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.web3.eth.abi</a> &gt; <span class="el_source">EthOutput.kt</span></div><h1>EthOutput.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.web3.eth.abi
+
+import io.hamal.lib.web3.eth.abi.type.*
+import io.hamal.lib.web3.eth.abi.type.EthType.Companion.solidityType
+import io.hamal.lib.web3.util.ByteWindow
+import kotlin.reflect.KClass
+
+<span class="nc" id="L8">data class EthOutput&lt;VALUE_TYPE : EthType&lt;*&gt;&gt;(</span>
+<span class="nc" id="L9">    val name: String,</span>
+<span class="nc" id="L10">    val clazz: KClass&lt;VALUE_TYPE&gt;,</span>
+<span class="nc" id="L11">    val decoder: EthTypeDecoder&lt;VALUE_TYPE&gt;,</span>
+) {
+<span class="nc" id="L13">    fun decode(window: ByteWindow) = decoder.decode(window)</span>
+
+    companion object {
+<span class="nc" id="L16">        fun Address(name: String) = EthOutput(name, EthAddress::class, EthTypeDecoder.Address)</span>
+<span class="nc" id="L17">        fun Byte32(name: String) = EthOutput(name, EthBytes32::class, EthTypeDecoder.Byte32)</span>
+<span class="nc" id="L18">        fun Bool(name: String) = EthOutput(name, EthBool::class, EthTypeDecoder.Bool)</span>
+<span class="nc" id="L19">        fun Uint8(name: String) = EthOutput(name, EthUint8::class, EthTypeDecoder.Uint8)</span>
+<span class="nc" id="L20">        fun Uint16(name: String) = EthOutput(name, EthUint16::class, EthTypeDecoder.Uint16)</span>
+<span class="nc" id="L21">        fun Uint32(name: String) = EthOutput(name, EthUint32::class, EthTypeDecoder.Uint32)</span>
+<span class="nc" id="L22">        fun Uint64(name: String) = EthOutput(name, EthUint64::class, EthTypeDecoder.Uint64)</span>
+<span class="nc" id="L23">        fun Uint112(name: String) = EthOutput(name, EthUint112::class, EthTypeDecoder.Uint112)</span>
+<span class="nc" id="L24">        fun Uint128(name: String) = EthOutput(name, EthUint128::class, EthTypeDecoder.Uint128)</span>
+<span class="nc" id="L25">        fun Uint160(name: String) = EthOutput(name, EthUint160::class, EthTypeDecoder.Uint160)</span>
+<span class="nc" id="L26">        fun Uint256(name: String) = EthOutput(name, EthUint256::class, EthTypeDecoder.Uint256)</span>
+<span class="nc" id="L27">        fun String(name: String) = EthOutput(name, EthString::class, EthTypeDecoder.String)</span>
+
+        //@formatter:off
+<span class="nc" id="L30">        fun Tuple0() = EthOutputTuple0</span>
+
+        fun &lt;
+            VALUE_1 : EthType&lt;*&gt;, ARG_1 : EthOutput&lt;VALUE_1&gt;,
+        &gt; Tuple1(_1: ARG_1): EthOutputTuple1&lt;VALUE_1, ARG_1&gt; {
+<span class="nc" id="L35">            return EthOutputTuple1(_1)</span>
+        }
+
+        fun &lt;
+            VALUE_1 : EthType&lt;*&gt;, ARG_1 : EthOutput&lt;VALUE_1&gt;,
+            VALUE_2 : EthType&lt;*&gt;, ARG_2 : EthOutput&lt;VALUE_2&gt;
+        &gt; Tuple2(_1: ARG_1, _2: ARG_2): EthOutputTuple2&lt;VALUE_1, ARG_1, VALUE_2, ARG_2&gt; {
+<span class="nc" id="L42">            return EthOutputTuple2(_1, _2)</span>
+        }
+
+        fun &lt;
+            VALUE_1 : EthType&lt;*&gt;, ARG_1 : EthOutput&lt;VALUE_1&gt;,
+            VALUE_2 : EthType&lt;*&gt;, ARG_2 : EthOutput&lt;VALUE_2&gt;,
+            VALUE_3 : EthType&lt;*&gt;, ARG_3 : EthOutput&lt;VALUE_3&gt;
+        &gt; Tuple3(_1: ARG_1, _2: ARG_2,_3: ARG_3): EthOutputTuple3&lt;VALUE_1, ARG_1, VALUE_2, ARG_2, VALUE_3, ARG_3&gt; {
+<span class="nc" id="L50">            return EthOutputTuple3(_1, _2, _3)</span>
+        }
+
+        //@formatter:on
+    }
+}
+
+
+sealed interface EthOutputTuple {
+    fun decodeToMap(data: EthPrefixedHexString): Map&lt;String, EthType&lt;*&gt;&gt; {
+<span class="nc" id="L60">        return decode(data).associateBy({ it.name }, { it.value })</span>
+    }
+
+    fun decode(data: EthPrefixedHexString): List&lt;DecodedEthType&lt;*&gt;&gt;
+    fun concatenatedTypes(): String
+}
+
+
+object EthOutputTuple0 : EthOutputTuple {
+<span class="nc" id="L69">    override fun decodeToMap(data: EthPrefixedHexString): Map&lt;String, EthType&lt;*&gt;&gt; = mapOf()</span>
+<span class="nc" id="L70">    override fun decode(data: EthPrefixedHexString): List&lt;DecodedEthType&lt;*&gt;&gt; = listOf()</span>
+<span class="nc" id="L71">    override fun concatenatedTypes() = &quot;&quot;</span>
+}
+
+
+<span class="nc" id="L75">data class EthOutputTuple1&lt;VALUE_1 : EthType&lt;*&gt;, ARG_1 : EthOutput&lt;VALUE_1&gt;&gt;(</span>
+<span class="nc" id="L76">    val _1: ARG_1</span>
+) : EthOutputTuple {
+    override fun decode(data: EthPrefixedHexString): List&lt;DecodedEthType&lt;*&gt;&gt; {
+<span class="nc" id="L79">        val window = data.toByteWindow()</span>
+<span class="nc" id="L80">        return listOf(DecodedEthType(_1.name, _1.decode(window)))</span>
+    }
+
+    override fun concatenatedTypes(): String {
+<span class="nc" id="L84">        return solidityType(_1.clazz)</span>
+    }
+}
+
+
+<span class="nc" id="L89">data class EthOutputTuple2&lt;</span>
+        VALUE_1 : EthType&lt;*&gt;, ARG_1 : EthOutput&lt;VALUE_1&gt;,
+        VALUE_2 : EthType&lt;*&gt;, ARG_2 : EthOutput&lt;VALUE_2&gt;
+        &gt;(
+<span class="nc" id="L93">    val _1: ARG_1,</span>
+<span class="nc" id="L94">    val _2: ARG_2</span>
+) : EthOutputTuple {
+
+    override fun decode(data: EthPrefixedHexString): List&lt;DecodedEthType&lt;*&gt;&gt; {
+<span class="nc" id="L98">        val window = data.toByteWindow()</span>
+<span class="nc" id="L99">        return listOf(</span>
+<span class="nc" id="L100">            DecodedEthType(_1.name, _1.decode(window)),</span>
+<span class="nc" id="L101">            DecodedEthType(_2.name, _2.decode(window))</span>
+        )
+    }
+
+<span class="nc" id="L105">    override fun concatenatedTypes() = &quot;${solidityType(_1.clazz)},${solidityType(_2.clazz)}&quot;</span>
+}
+
+
+<span class="nc" id="L109">data class EthOutputTuple3&lt;</span>
+        VALUE_1 : EthType&lt;*&gt;, ARG_1 : EthOutput&lt;VALUE_1&gt;,
+        VALUE_2 : EthType&lt;*&gt;, ARG_2 : EthOutput&lt;VALUE_2&gt;,
+        VALUE_3 : EthType&lt;*&gt;, ARG_3 : EthOutput&lt;VALUE_3&gt;
+        &gt;(
+<span class="nc" id="L114">    val _1: ARG_1,</span>
+<span class="nc" id="L115">    val _2: ARG_2,</span>
+<span class="nc" id="L116">    val _3: ARG_3,</span>
+) : EthOutputTuple {
+    override fun decode(data: EthPrefixedHexString): List&lt;DecodedEthType&lt;*&gt;&gt; {
+<span class="nc" id="L119">        val window = data.toByteWindow()</span>
+<span class="nc" id="L120">        return listOf(</span>
+<span class="nc" id="L121">            DecodedEthType(_1.name, _1.decode(window)),</span>
+<span class="nc" id="L122">            DecodedEthType(_2.name, _2.decode(window)),</span>
+<span class="nc" id="L123">            DecodedEthType(_3.name, _3.decode(window))</span>
+        )
+    }
+
+<span class="nc" id="L127">    override fun concatenatedTypes() = &quot;${solidityType(_1.clazz)},${solidityType(_2.clazz)},${solidityType(_3.clazz)}&quot;</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

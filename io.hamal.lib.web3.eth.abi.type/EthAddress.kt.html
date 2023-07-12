@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EthAddress.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.web3.eth.abi.type</a> &gt; <span class="el_source">EthAddress.kt</span></div><h1>EthAddress.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.web3.eth.abi.type
+
+import io.hamal.lib.web3.util.ByteWindow
+import io.hamal.lib.web3.util.Web3Formatter
+import io.hamal.lib.web3.util.Web3HashUtils
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import java.lang.Character.isLowerCase
+import java.lang.Character.isUpperCase
+import java.math.BigInteger
+import java.util.*
+
+<span class="nc" id="L17">@Serializable(with = EthAddress.Serializer::class)</span>
+<span class="nc" id="L18">data class EthAddress(</span>
+<span class="nc" id="L19">    override val value: EthUint160</span>
+) : EthType&lt;EthUint160&gt; {
+<span class="nc" id="L21">    constructor(value: BigInteger) : this(EthUint160(value))</span>
+<span class="nc" id="L22">    constructor(hexString: EthPrefixedHexString) : this(hexString.toHexString())</span>
+<span class="nc" id="L23">    constructor(hexString: EthHexString) : this(BigInteger(hexString.value, 16))</span>
+
+<span class="nc" id="L25">    companion object {</span>
+        @JvmStatic
+<span class="nc" id="L27">        val Zero: EthAddress = EthAddress(BigInteger.ZERO)</span>
+
+        @JvmStatic
+<span class="nc" id="L30">        val Null: EthAddress = EthAddress(BigInteger(&quot;1158896792795502070752211396329834747757200325310&quot;))</span>
+
+        @JvmStatic
+        fun of(hexString: EthHexString): EthAddress {
+<span class="nc" id="L34">            ValidateAddress(hexString)</span>
+<span class="nc" id="L35">            return EthAddress(BigInteger(hexString.value, 16))</span>
+        }
+
+        @JvmStatic
+<span class="nc" id="L39">        fun of(prefixedHexString: EthPrefixedHexString) = of(prefixedHexString.toHexString())</span>
+    }
+
+    fun toPrefixedHexString(): EthPrefixedHexString {
+<span class="nc bnc" id="L43" title="All 4 branches missed.">        return if (this == Null || this == Zero) {</span>
+<span class="nc" id="L44">            EthPrefixedHexString(&quot;0x0000000000000000000000000000000000000000&quot;)</span>
+        } else {
+<span class="nc" id="L46">            EthPrefixedHexString(</span>
+<span class="nc" id="L47">                &quot;0x&quot; + encodeChecksum(Web3Formatter.formatFixLength(value.toByteArray(), 40))</span>
+            )
+        }
+    }
+
+<span class="nc" id="L52">    override fun toByteArray(): ByteArray = toPrefixedHexString().toByteArray()</span>
+
+<span class="nc" id="L54">    override fun toByteWindow(): ByteWindow = toPrefixedHexString().toByteWindow()</span>
+
+<span class="nc" id="L56">    override fun toString() = toPrefixedHexString().toString()</span>
+
+    object Serializer : KSerializer&lt;EthAddress&gt; {
+<span class="nc" id="L59">        override val descriptor = PrimitiveSerialDescriptor(&quot;EthAddress&quot;, PrimitiveKind.STRING)</span>
+
+        override fun deserialize(decoder: Decoder): EthAddress {
+<span class="nc" id="L62">            return EthAddress(EthPrefixedHexString(decoder.decodeString()))</span>
+        }
+
+        override fun serialize(encoder: Encoder, value: EthAddress) {
+<span class="nc" id="L66">            encoder.encodeString(value.toPrefixedHexString().value)</span>
+<span class="nc" id="L67">        }</span>
+    }
+}
+
+internal object ValidateAddress {
+    operator fun invoke(addressCandidate: EthHexString) {
+<span class="nc bnc" id="L73" title="All 4 branches missed.">        require(addressPattern.find(addressCandidate.value) != null) { &quot;$addressCandidate does not match address pattern&quot; }</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">        require(matchesChecksum(addressCandidate)) { &quot;$addressCandidate does not match checksum encoding&quot; }</span>
+<span class="nc" id="L75">    }</span>
+
+    private fun matchesChecksum(addressCandidate: EthHexString): Boolean {
+<span class="nc" id="L78">        val allLowercase = addressCandidate.all {</span>
+<span class="nc" id="L79">            when (it.isLetter()) {</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">                true -&gt; it.isLowerCase()</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">                false -&gt; true</span>
+            }
+        }
+<span class="nc" id="L84">        val allUppercase = addressCandidate.all {</span>
+<span class="nc" id="L85">            when (it.isLetter()) {</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">                true -&gt; it.isUpperCase()</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">                false -&gt; true</span>
+            }
+        }
+
+
+<span class="nc bnc" id="L92" title="All 4 branches missed.">        if (allUppercase || allLowercase) {</span>
+            // there is no checksum encoded - therefore we must assume it is valid
+<span class="nc" id="L94">            return true</span>
+        }
+
+<span class="nc" id="L97">        val addressHash = Web3Formatter.formatToHex(</span>
+<span class="nc" id="L98">            Web3HashUtils.keccak256(addressCandidate.lowercase().toByteArray())</span>
+        )
+
+<span class="nc bnc" id="L101" title="All 2 branches missed.">        for (idx in 0..39) {</span>
+<span class="nc" id="L102">            val currentAddressChar: Char = addressCandidate[idx]</span>
+<span class="nc" id="L103">            val currentAddressHashChar: String = addressHash[idx].toString()</span>
+<span class="nc" id="L104">            val addressHashDigit = currentAddressHashChar.toInt(16)</span>
+<span class="nc bnc" id="L105" title="All 4 branches missed.">            if (addressHashDigit &gt; 7 &amp;&amp; isLowerCase(currentAddressChar)) {</span>
+<span class="nc" id="L106">                return false</span>
+            }
+<span class="nc bnc" id="L108" title="All 4 branches missed.">            if (addressHashDigit &lt;= 7 &amp;&amp; isUpperCase(currentAddressChar)) {</span>
+<span class="nc" id="L109">                return false</span>
+            }
+        }
+<span class="nc" id="L112">        return true</span>
+    }
+
+<span class="nc" id="L115">    private val addressPattern = Regex(&quot;&quot;&quot;^[0-9a-fA-F]{40}$&quot;&quot;&quot;)</span>
+}
+
+
+private fun encodeChecksum(address: String): String {
+<span class="nc" id="L120">    val builder = StringBuilder()</span>
+<span class="nc" id="L121">    val hash = Web3Formatter.formatToHex(</span>
+<span class="nc" id="L122">        Web3HashUtils.keccak256(address.lowercase(Locale.getDefault()).toByteArray())</span>
+    )
+<span class="nc bnc" id="L124" title="All 2 branches missed.">    for (idx in 0..39) {</span>
+<span class="nc" id="L125">        val currentAddressChar = address[idx]</span>
+<span class="nc bnc" id="L126" title="All 2 branches missed.">        if (Character.isDigit(currentAddressChar)) {</span>
+<span class="nc" id="L127">            builder.append(currentAddressChar)</span>
+        } else {
+<span class="nc" id="L129">            val currentAddressHashChar: String = hash[idx].toString()</span>
+<span class="nc" id="L130">            val addressHashDigit = currentAddressHashChar.toInt(16)</span>
+<span class="nc bnc" id="L131" title="All 4 branches missed.">            if (addressHashDigit &gt; 7 &amp;&amp; isLowerCase(currentAddressChar)) {</span>
+<span class="nc" id="L132">                builder.append(currentAddressChar.uppercaseChar())</span>
+            } else {
+<span class="nc" id="L134">                builder.append(currentAddressChar.lowercaseChar())</span>
+            }
+        }
+    }
+<span class="nc" id="L138">    return builder.toString()</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NamedResultSet.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.sqlite</a> &gt; <span class="el_source">NamedResultSet.kt</span></div><h1>NamedResultSet.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.sqlite
+
+import io.hamal.lib.common.SnowflakeId
+import io.hamal.lib.common.domain.CmdId
+import io.hamal.lib.common.domain.DomainId
+import java.sql.ResultSet
+import java.time.Instant
+
+interface NamedResultSet : AutoCloseable {
+    fun getBoolean(parameter: String): Boolean
+    fun getInt(parameter: String): Int
+    fun getLong(parameter: String): Long
+    fun getString(parameter: String): String
+    fun getInstant(parameter: String): Instant
+    fun getSnowflakeId(parameter: String): SnowflakeId
+    fun &lt;DOMAIN_ID : DomainId&gt; getDomainId(parameter: String, ctor: (SnowflakeId) -&gt; DOMAIN_ID): DOMAIN_ID
+    fun getCommandId(parameter: String): CmdId
+    fun getBytes(parameter: String): ByteArray
+    fun &lt;T : Any&gt; map(mapper: (NamedResultSet) -&gt; T): List&lt;T&gt;
+}
+
+
+<span class="fc" id="L23">class DefaultNamedResultSet(</span>
+<span class="pc" id="L24">    internal val delegate: ResultSet</span>
+) : NamedResultSet {
+    override fun getBoolean(parameter: String): Boolean {
+<span class="fc" id="L27">        ensureParameterExists(parameter)</span>
+<span class="fc" id="L28">        return delegate.getBoolean(parameter)</span>
+    }
+
+    override fun getInt(parameter: String): Int {
+<span class="fc" id="L32">        ensureParameterExists(parameter)</span>
+<span class="fc" id="L33">        return delegate.getInt(parameter)</span>
+    }
+
+    override fun getLong(parameter: String): Long {
+<span class="fc" id="L37">        ensureParameterExists(parameter)</span>
+<span class="fc" id="L38">        return delegate.getLong(parameter)</span>
+    }
+
+    override fun getString(parameter: String): String {
+<span class="fc" id="L42">        ensureParameterExists(parameter)</span>
+<span class="fc" id="L43">        return delegate.getString(parameter)</span>
+    }
+
+    override fun getInstant(parameter: String): Instant {
+<span class="fc" id="L47">        ensureParameterExists(parameter)</span>
+<span class="fc" id="L48">        return delegate.getTimestamp(parameter).toInstant()</span>
+    }
+
+    override fun getSnowflakeId(parameter: String): SnowflakeId {
+<span class="fc" id="L52">        ensureParameterExists(parameter)</span>
+<span class="fc" id="L53">        return SnowflakeId(delegate.getLong(parameter))</span>
+    }
+
+    override fun &lt;DOMAIN_ID : DomainId&gt; getDomainId(parameter: String, ctor: (SnowflakeId) -&gt; DOMAIN_ID): DOMAIN_ID {
+<span class="fc" id="L57">        ensureParameterExists(parameter)</span>
+<span class="fc" id="L58">        return ctor(getSnowflakeId(parameter))</span>
+    }
+
+    override fun getCommandId(parameter: String): CmdId {
+<span class="fc" id="L62">        ensureParameterExists(parameter)</span>
+<span class="fc" id="L63">        return CmdId(delegate.getBigDecimal(parameter).toBigInteger())</span>
+    }
+
+    override fun getBytes(parameter: String): ByteArray {
+<span class="fc" id="L67">        ensureParameterExists(parameter)</span>
+<span class="fc" id="L68">        return delegate.getBytes(parameter)</span>
+    }
+
+    private fun ensureParameterExists(parameter: String) {
+<span class="fc" id="L72">        val meta = delegate.metaData</span>
+<span class="pc bpc" id="L73" title="1 of 4 branches missed.">        for (colIdx in 1..meta.columnCount) {</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">            if (meta.getColumnName(colIdx) == parameter) {</span>
+<span class="fc" id="L75">                return</span>
+            }
+        }
+<span class="fc" id="L78">        throw IllegalArgumentException(&quot;Parameter '$parameter' does not exist in result set&quot;)</span>
+    }
+
+    override fun &lt;T : Any&gt; map(mapper: (NamedResultSet) -&gt; T): List&lt;T&gt; {
+<span class="fc" id="L82">        val result = mutableListOf&lt;T&gt;()</span>
+<span class="fc bfc" id="L83" title="All 2 branches covered.">        while (delegate.next()) {</span>
+<span class="fc" id="L84">            result.add(mapper(this))</span>
+        }
+<span class="fc" id="L86">        return result</span>
+    }
+
+    override fun close() {
+<span class="fc" id="L90">        delegate.close()</span>
+<span class="fc" id="L91">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -6,8 +6,9 @@ import kotlinx.serialization.Serializable
 
 <span class="nc" id="L7">@Serializable</span>
 @SerialName(&quot;MetaTable&quot;)
-sealed interface MetaTable {
+sealed interface MetaTable&lt;VALUE : Value&gt; {
     val type: String
     val operators: List&lt;ValueOperator&gt;
+    val props: Map&lt;IdentValue, ValueProp&lt;VALUE&gt;&gt;
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

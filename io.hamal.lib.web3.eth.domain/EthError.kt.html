@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EthError.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.web3.eth.domain</a> &gt; <span class="el_source">EthError.kt</span></div><h1>EthError.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.web3.eth.domain
+
+<span class="nc" id="L3">data class EthError(</span>
+<span class="nc" id="L4">    val code: ErrorCode,</span>
+<span class="nc" id="L5">    val message: String</span>
+) {
+    override fun toString(): String {
+<span class="nc" id="L8">        return &quot;EthError($code,'$message')&quot;</span>
+    }
+
+<span class="nc" id="L11">    enum class ErrorCode(</span>
+<span class="nc" id="L12">        val code: Int</span>
+    ) {
+<span class="nc" id="L14">        ExecutionReverted(-32000),</span>
+<span class="nc" id="L15">        ParseError(-32700),</span>
+<span class="nc" id="L16">        InvalidRequest(-32600),</span>
+<span class="nc" id="L17">        MethodNotFound(-32601),</span>
+<span class="nc" id="L18">        InvalidParams(-32602),</span>
+<span class="nc" id="L19">        InternalError(-32603);</span>
+
+        companion object {
+            fun fromCode(code: Int): ErrorCode {
+<span class="nc bnc" id="L23" title="All 8 branches missed.">                return values().find { ec -&gt; ec.code == code }</span>
+<span class="nc" id="L24">                    ?: throw NoSuchElementException(&quot;Error code not found&quot;)</span>
+
+            }
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

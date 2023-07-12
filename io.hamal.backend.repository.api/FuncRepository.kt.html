@@ -1,30 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FuncRepository.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.repository.api</a> &gt; <span class="el_source">FuncRepository.kt</span></div><h1>FuncRepository.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.repository.api
 
-import io.hamal.lib.domain.CmdId
+import io.hamal.lib.common.SnowflakeId
+import io.hamal.lib.common.domain.CmdId
+import io.hamal.lib.common.domain.Limit
 import io.hamal.lib.domain.Func
-import io.hamal.lib.domain.vo.*
+import io.hamal.lib.domain.vo.FuncId
+import io.hamal.lib.domain.vo.FuncInputs
+import io.hamal.lib.domain.vo.FuncName
+import io.hamal.lib.script.api.value.CodeValue
 
 
 interface FuncCmdRepository {
     fun create(cmd: CreateCmd): Func
     fun clear()
-<span class="fc" id="L11">    data class CreateCmd(</span>
-<span class="fc" id="L12">        val id: CmdId,</span>
-<span class="fc" id="L13">        val funcId: FuncId,</span>
-<span class="fc" id="L14">        val name: FuncName,</span>
-<span class="fc" id="L15">        val inputs: FuncInputs,</span>
-<span class="fc" id="L16">        val secrets: FuncSecrets,</span>
-<span class="fc" id="L17">        val code: Code,</span>
+<span class="fc" id="L16">    data class CreateCmd(</span>
+<span class="fc" id="L17">        val id: CmdId,</span>
+<span class="fc" id="L18">        val funcId: FuncId,</span>
+<span class="fc" id="L19">        val name: FuncName,</span>
+<span class="fc" id="L20">        val inputs: FuncInputs,</span>
+<span class="fc" id="L21">        val code: CodeValue,</span>
     )
 }
 
 interface FuncQueryRepository {
+<span class="fc bfc" id="L26" title="All 2 branches covered.">    fun get(funcId: FuncId) = find(funcId) ?: throw NoSuchElementException(&quot;Func not found&quot;)</span>
     fun find(funcId: FuncId): Func?
-
     fun list(block: FuncQuery.() -&gt; Unit): List&lt;Func&gt;
-<span class="fc" id="L25">    data class FuncQuery(</span>
-<span class="fc" id="L26">        var afterId: FuncId = FuncId(0),</span>
-<span class="fc" id="L27">        var limit: Limit = Limit(1)</span>
-<span class="fc" id="L28">    )</span>
+<span class="fc" id="L29">    data class FuncQuery(</span>
+<span class="fc" id="L30">        var afterId: FuncId = FuncId(SnowflakeId(Long.MAX_VALUE)),</span>
+<span class="fc" id="L31">        var limit: Limit = Limit(1)</span>
+<span class="fc" id="L32">    )</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

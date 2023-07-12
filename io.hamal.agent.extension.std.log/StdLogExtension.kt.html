@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StdLogExtension.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.agent.extension.std.log</a> &gt; <span class="el_source">StdLogExtension.kt</span></div><h1>StdLogExtension.kt</h1><pre class="source lang-java linenums">package io.hamal.agent.extension.std.log
 
 import io.hamal.agent.extension.api.Extension
-import io.hamal.agent.extension.api.ExtensionFunc
-import io.hamal.agent.extension.api.ExtensionFuncInvocationContext
 import io.hamal.lib.script.api.value.*
 
 //object ConsoleFormat : DepFunctionValue {
@@ -32,19 +30,19 @@ import io.hamal.lib.script.api.value.*
  */
 
 
-<span class="nc" id="L35">class StdLogExtension : Extension {</span>
+<span class="fc" id="L33">class StdLogExtension : Extension {</span>
     override fun create(): EnvValue {
-<span class="nc" id="L37">        return EnvValue(</span>
-<span class="nc" id="L38">            ident = IdentValue(&quot;log&quot;),</span>
-<span class="nc" id="L39">            values = mapOf(</span>
-<span class="nc" id="L40">                IdentValue(&quot;_cfg&quot;) to TableValue(</span>
-<span class="nc" id="L41">                    IdentValue(&quot;console&quot;) to TableValue(</span>
-<span class="nc" id="L42">                        IdentValue(&quot;level&quot;) to StringValue(&quot;TRACE&quot;),</span>
+<span class="fc" id="L35">        return EnvValue(</span>
+<span class="fc" id="L36">            ident = IdentValue(&quot;log&quot;),</span>
+<span class="fc" id="L37">            values = TableValue(</span>
+<span class="fc" id="L38">                &quot;_cfg&quot; to TableValue(</span>
+<span class="fc" id="L39">                    &quot;console&quot; to TableValue(</span>
+<span class="fc" id="L40">                        &quot;level&quot; to StringValue(&quot;TRACE&quot;),</span>
                     ),
-<span class="nc" id="L44">                    IdentValue(&quot;backend&quot;) to StringValue(&quot;INFO&quot;)</span>
+<span class="fc" id="L42">                    &quot;backend&quot; to StringValue(&quot;INFO&quot;)</span>
                 ),
-<span class="nc" id="L46">                IdentValue(&quot;debug&quot;) to LogDebug(),</span>
-<span class="nc" id="L47">                IdentValue(&quot;info&quot;) to LogInfo()</span>
+<span class="fc" id="L44">                IdentValue(&quot;debug&quot;) to LogDebug(),</span>
+<span class="fc" id="L45">                IdentValue(&quot;info&quot;) to LogInfo()</span>
             )
         )
     }
@@ -52,27 +50,27 @@ import io.hamal.lib.script.api.value.*
 }
 
 
-<span class="nc" id="L55">class LogDebug : ExtensionFunc() {</span>
-    override fun invoke(ctx: ExtensionFuncInvocationContext): Value {
-<span class="nc" id="L57">        println(&quot;DEBUG: ${ctx.parameters.first()}&quot;)</span>
-<span class="nc" id="L58">        return NilValue</span>
+<span class="fc" id="L53">class LogDebug : FuncValue() {</span>
+    override fun invoke(ctx: FuncContext): Value {
+<span class="nc" id="L55">        println(&quot;DEBUG: ${ctx.params.first()}&quot;)</span>
+<span class="nc" id="L56">        return NilValue</span>
     }
 
 }
 
 
-<span class="nc" id="L64">class LogInfo : ExtensionFunc() {</span>
-    override fun invoke(ctx: ExtensionFuncInvocationContext): Value {
-<span class="nc" id="L66">        val first = ctx.parameters.first()</span>
-<span class="nc bnc" id="L67" title="All 2 branches missed.">        if (first is IdentValue) {</span>
-<span class="nc" id="L68">            println(&quot;INFO: ${ctx.env[first]}&quot;)</span>
+<span class="fc" id="L62">class LogInfo : FuncValue() {</span>
+    override fun invoke(ctx: FuncContext): Value {
+<span class="fc" id="L64">        val first = ctx.params.first().value</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        if (first is IdentValue) {</span>
+<span class="fc" id="L66">            println(&quot;INFO: ${ctx.env[first]}&quot;)</span>
         } else {
-<span class="nc" id="L70">            println(&quot;INFO: ${first}&quot;)</span>
+<span class="fc" id="L68">            println(&quot;INFO: ${first}&quot;)</span>
         }
 
 
 //        println(&quot;INFO: ${ctx.parameters.first().value}&quot;)
-<span class="nc" id="L75">        return NilValue</span>
+<span class="fc" id="L73">        return NilValue</span>
     }
 
 }

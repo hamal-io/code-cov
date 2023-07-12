@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InvokeEventHandler.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.instance.req.handler.exec</a> &gt; <span class="el_source">InvokeEventHandler.kt</span></div><h1>InvokeEventHandler.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.instance.req.handler.exec
+
+import io.hamal.backend.instance.event.ExecPlannedEvent
+import io.hamal.backend.instance.event.SystemEventEmitter
+import io.hamal.backend.instance.req.ReqHandler
+import io.hamal.backend.instance.req.handler.cmdId
+import io.hamal.backend.repository.api.ExecCmdRepository
+import io.hamal.backend.repository.api.FuncQueryRepository
+import io.hamal.lib.common.domain.CmdId
+import io.hamal.lib.domain.Correlation
+import io.hamal.lib.domain.PlannedExec
+import io.hamal.lib.domain.req.SubmittedInvokeEventReq
+import org.springframework.stereotype.Component
+
+@Component
+<span class="fc" id="L16">class InvokeEventHandler(</span>
+<span class="fc" id="L17">    private val execCmdRepository: ExecCmdRepository,</span>
+<span class="fc" id="L18">    private val eventEmitter: SystemEventEmitter&lt;*&gt;,</span>
+<span class="fc" id="L19">    private val funcQueryRepository: FuncQueryRepository</span>
+<span class="fc" id="L20">) : ReqHandler&lt;SubmittedInvokeEventReq&gt;(SubmittedInvokeEventReq::class) {</span>
+    override fun invoke(req: SubmittedInvokeEventReq) {
+<span class="fc" id="L22">        planExec(req).also { emitEvent(req.cmdId(), it) }</span>
+<span class="fc" id="L23">    }</span>
+
+    private fun planExec(req: SubmittedInvokeEventReq): PlannedExec {
+<span class="fc" id="L26">        val func = funcQueryRepository.get(req.funcId)</span>
+<span class="fc" id="L27">        return execCmdRepository.plan(</span>
+<span class="fc" id="L28">            ExecCmdRepository.PlanCmd(</span>
+<span class="fc" id="L29">                id = req.cmdId(),</span>
+<span class="fc" id="L30">                execId = req.execId,</span>
+<span class="fc" id="L31">                correlation = Correlation(</span>
+<span class="fc" id="L32">                    correlationId = req.correlationId,</span>
+<span class="fc" id="L33">                    funcId = func.id</span>
+                ),
+<span class="fc" id="L35">                inputs = merge(func.inputs, req.inputs),</span>
+<span class="fc" id="L36">                code = func.code,</span>
+            )
+        )
+    }
+
+    private fun emitEvent(cmdId: CmdId, exec: PlannedExec) {
+<span class="fc" id="L42">        eventEmitter.emit(cmdId, ExecPlannedEvent(exec))</span>
+<span class="fc" id="L43">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

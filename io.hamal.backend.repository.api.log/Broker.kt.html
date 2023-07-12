@@ -1,16 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Broker.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.repository.api.log</a> &gt; <span class="el_source">Broker.kt</span></div><h1>Broker.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.repository.api.log
 
-import io.hamal.lib.domain.CmdId
+import io.hamal.lib.common.SnowflakeId
+import io.hamal.lib.common.domain.CmdId
+import io.hamal.lib.common.domain.Limit
+import io.hamal.lib.domain.Event
+import io.hamal.lib.domain.EventWithId
+import io.hamal.lib.domain.vo.EventId
 import io.hamal.lib.domain.vo.TopicId
 import io.hamal.lib.domain.vo.TopicName
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.protobuf.ProtoBuf
 import java.io.Closeable
 
 interface CreateTopic&lt;TOPIC : LogTopic&gt; {
     fun create(cmdId: CmdId, topicToCreate: TopicToCreate): TOPIC
 
-<span class="fc" id="L11">    data class TopicToCreate(</span>
-<span class="fc" id="L12">        val id: TopicId,</span>
-<span class="fc" id="L13">        val name: TopicName</span>
+<span class="fc" id="L18">    data class TopicToCreate(</span>
+<span class="fc" id="L19">        val id: TopicId,</span>
+<span class="fc" id="L20">        val name: TopicName</span>
     )
 }
 
@@ -28,26 +35,43 @@ interface ReadFromTopic&lt;TOPIC : LogTopic&gt; {
     fun read(firstId: LogChunkId, topic: TOPIC, limit: Int): List&lt;LogChunk&gt;
 }
 
-interface GetTopics&lt;TOPIC : LogTopic&gt; {
-    fun queryTopics(): List&lt;TOPIC&gt;
-}
-
 interface FindTopic&lt;TOPIC : LogTopic&gt; {
-<span class="pc bpc" id="L36" title="1 of 2 branches missed.">    fun get(topicId: TopicId): TOPIC = requireNotNull(find(topicId)) { &quot;Topic with id $topicId not found&quot; }</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">    fun getTopic(topicId: TopicId): TOPIC = findTopic(topicId) ?: throw NoSuchElementException(&quot;Topic not found&quot;)</span>
 
-    fun find(topicId: TopicId): TOPIC?
+    fun findTopic(topicId: TopicId): TOPIC?
 
-    fun find(topicName: TopicName): TOPIC?
+    fun findTopic(topicName: TopicName): TOPIC?
 }
 
-<span class="fc" id="L43">interface LogBrokerRepository&lt;TOPIC : LogTopic&gt; :</span>
+<span class="fc" id="L46">interface LogBrokerRepository&lt;TOPIC : LogTopic&gt; :</span>
     CreateTopic&lt;TOPIC&gt;,
     AppendToTopic&lt;TOPIC&gt;,
     ConsumeFromTopic&lt;TOPIC&gt;,
     FindTopic&lt;TOPIC&gt;,
-    GetTopics&lt;TOPIC&gt;,
     ReadFromTopic&lt;TOPIC&gt;,
     Closeable {
+    fun listTopics(): List&lt;TOPIC&gt;
+
+    @OptIn(ExperimentalSerializationApi::class)
+    fun listEvents(topic: TOPIC, block: EventQuery.() -&gt; Unit): List&lt;EventWithId&gt; {
+<span class="fc" id="L57">        val query = EventQuery().also(block)</span>
+<span class="fc" id="L58">        val firstId = LogChunkId(SnowflakeId(query.afterId.value.value + 1))</span>
+<span class="fc" id="L59">        return read(firstId, topic, query.limit.value)</span>
+<span class="fc" id="L60">            .map { chunk -&gt;</span>
+<span class="fc" id="L61">                val evt = ProtoBuf.decodeFromByteArray(Event.serializer(), chunk.bytes)</span>
+<span class="fc" id="L62">                EventWithId(</span>
+<span class="fc" id="L63">                    id = EventId(chunk.id.value),</span>
+<span class="fc" id="L64">                    contentType = evt.contentType,</span>
+<span class="fc" id="L65">                    content = evt.content</span>
+                )
+            }
+    }
+
     fun clear()
-<span class="fc" id="L52">}</span>
+
+<span class="fc" id="L72">    data class EventQuery(</span>
+<span class="fc" id="L73">        var afterId: EventId = EventId(0),</span>
+<span class="fc" id="L74">        var limit: Limit = Limit(1)</span>
+<span class="fc" id="L75">    )</span>
+<span class="fc" id="L76">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -41,7 +41,7 @@ interface KeyedOnce&lt;KEY : Any, VALUE : Any&gt; {
 <span class="nc" id="L41">        private val onceStore: LruCache&lt;KEY, Once&lt;VALUE&gt;&gt; = DefaultLruCache(maxCapacity)</span>
 
         override fun invoke(key: KEY, fn: (key: KEY) -&gt; VALUE): VALUE {
-<span class="nc" id="L44">            onceStore.putIfAbsent(key, Once.default())</span>
+<span class="nc" id="L44">            onceStore.setIfAbsent(key, Once.default())</span>
 <span class="nc" id="L45">            return onceStore[key]{ fn(key) }</span>
         }
 

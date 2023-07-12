@@ -6,9 +6,9 @@ import kotlin.concurrent.withLock
 
 interface LruCache&lt;KEY : Any, VALUE : Any&gt; {
 
-    fun put(key: KEY, value: VALUE)
+    operator fun set(key: KEY, value: VALUE)
 
-    fun putIfAbsent(key: KEY, value: VALUE)
+    fun setIfAbsent(key: KEY, value: VALUE)
 
     fun find(key: KEY): VALUE?
 
@@ -37,13 +37,13 @@ interface LruCache&lt;KEY : Any, VALUE : Any&gt; {
         }
 <span class="nc" id="L38">    }</span>
 
-    override fun put(key: KEY, value: VALUE) {
+    override fun set(key: KEY, value: VALUE) {
 <span class="nc" id="L41">        lock.writeLock().withLock {</span>
 <span class="nc" id="L42">            store[key] = value</span>
 <span class="nc" id="L43">        }</span>
 <span class="nc" id="L44">    }</span>
 
-    override fun putIfAbsent(key: KEY, value: VALUE) {
+    override fun setIfAbsent(key: KEY, value: VALUE) {
 <span class="nc" id="L47">        lock.writeLock().withLock {</span>
 <span class="nc" id="L48">            store.putIfAbsent(key, value)</span>
         }

@@ -2,10 +2,10 @@
 
 import io.hamal.backend.repository.record.CreateDomainObject
 import io.hamal.backend.repository.record.Record
-import io.hamal.backend.repository.sqlite.BaseRepository
-import io.hamal.backend.repository.sqlite.internal.Connection
-import io.hamal.lib.domain.DomainObject
-import io.hamal.lib.domain.vo.base.DomainId
+import io.hamal.lib.common.domain.DomainId
+import io.hamal.lib.common.domain.DomainObject
+import io.hamal.lib.sqlite.BaseSqliteRepository
+import io.hamal.lib.sqlite.Connection
 import kotlin.reflect.KClass
 
 
@@ -17,7 +17,7 @@ import kotlin.reflect.KClass
 <span class="nc" id="L17">        RecordLoader(recordClass)</span>
     ),
 <span class="nc" id="L19">    private val projections: List&lt;Projection&lt;ID, RECORD, OBJ&gt;&gt;</span>
-<span class="nc" id="L20">) : BaseRepository(object : Config {</span>
+<span class="nc" id="L20">) : BaseSqliteRepository(object : Config {</span>
 <span class="nc" id="L21">    override val path = config.path</span>
 <span class="nc" id="L22">    override val filename = config.filename</span>
 }) {

@@ -5,22 +5,23 @@
 }
 
 
-internal object TestMetaTable : MetaTable {
+internal object TestMetaTable : MetaTable&lt;TestValue&gt; {
 <span class="nc" id="L9">    override val type = &quot;test-type&quot;</span>
 <span class="nc" id="L10">    override val operators = listOf(TestPrefixOperator, TestInfixOperator)</span>
+<span class="nc" id="L11">    override val props: Map&lt;IdentValue, ValueProp&lt;TestValue&gt;&gt; = mapOf()</span>
 }
 
 internal object TestPrefixOperator : PrefixValueOperator {
-<span class="nc" id="L14">    override val selfType = &quot;test-type&quot;</span>
-<span class="nc" id="L15">    override val operatorType = ValueOperator.Type.Add</span>
-<span class="nc" id="L16">    override fun invoke(self: Value) = TODO(&quot;Not yet implemented&quot;)</span>
+<span class="nc" id="L15">    override val selfType = &quot;test-type&quot;</span>
+<span class="nc" id="L16">    override val operatorType = ValueOperator.Type.Add</span>
+<span class="nc" id="L17">    override fun invoke(self: Value) = TODO(&quot;Not yet implemented&quot;)</span>
 }
 
 internal object TestInfixOperator : InfixValueOperator {
-<span class="nc" id="L20">    override val selfType = &quot;test-type&quot;</span>
-<span class="nc" id="L21">    override val otherType = &quot;test-type&quot;</span>
-<span class="nc" id="L22">    override val operatorType = ValueOperator.Type.Add</span>
+<span class="nc" id="L21">    override val selfType = &quot;test-type&quot;</span>
+<span class="nc" id="L22">    override val otherType = &quot;test-type&quot;</span>
+<span class="nc" id="L23">    override val operatorType = ValueOperator.Type.Add</span>
 
-<span class="nc" id="L24">    override fun invoke(self: Value, other: Value) = TODO(&quot;Not yet implemented&quot;)</span>
+<span class="nc" id="L25">    override fun invoke(self: Value, other: Value) = TODO(&quot;Not yet implemented&quot;)</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

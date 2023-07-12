@@ -2,28 +2,27 @@
 
 import io.hamal.lib.script.api.Sandbox
 import io.hamal.lib.script.api.value.EnvValue
-import io.hamal.lib.script.api.value.FuncInvocationContext
-import io.hamal.lib.script.api.value.FuncInvocationContextFactory
 import io.hamal.lib.script.api.value.Value
 import io.hamal.lib.script.impl.ast.parse
 import io.hamal.lib.script.impl.token.tokenize
 
-<span class="fc" id="L11">class DefaultSandbox&lt;INVOKE_CTX : FuncInvocationContext&gt;(</span>
-<span class="fc" id="L12">    private val env: EnvValue,</span>
-    funcInvocationContextFactory: FuncInvocationContextFactory&lt;INVOKE_CTX&gt;
+<span class="fc" id="L9">class DefaultSandbox(</span>
+<span class="fc" id="L10">    private val env: EnvValue</span>
 ) : Sandbox {
 
-<span class="fc" id="L16">    private val interpreter = DefaultInterpreter&lt;INVOKE_CTX&gt;(funcInvocationContextFactory)</span>
+<span class="fc" id="L13">    private val interpreter = DefaultInterpreter()</span>
 
     override fun eval(code: String): Value {
-<span class="fc" id="L19">        val tokens = tokenize(code)</span>
-<span class="fc" id="L20">        val statements = parse(tokens)</span>
-<span class="fc" id="L21">        return try {</span>
-<span class="fc" id="L22">            interpreter.run(statements, env)</span>
-<span class="nc" id="L23">        } catch (e: ScriptEvaluationException) {</span>
-<span class="nc" id="L24">            e.error</span>
-<span class="nc" id="L25">        } catch (t: Throwable) {</span>
-<span class="pc" id="L26">            throw t</span>
+<span class="fc" id="L16">        val tokens = tokenize(code)</span>
+<span class="fc" id="L17">        val statements = parse(tokens)</span>
+<span class="fc" id="L18">        return try {</span>
+<span class="fc" id="L19">            interpreter.run(statements, env)</span>
+<span class="fc" id="L20">        } catch (e: ExitException) {</span>
+<span class="fc" id="L21">            e.status</span>
+<span class="nc" id="L22">        } catch (e: ScriptEvaluationException) {</span>
+<span class="nc" id="L23">            e.error</span>
+<span class="nc" id="L24">        } catch (t: Throwable) {</span>
+<span class="pc" id="L25">            throw t</span>
         }
     }
 

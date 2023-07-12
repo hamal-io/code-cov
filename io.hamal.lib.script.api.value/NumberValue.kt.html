@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NumberValue.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.script.api.value</a> &gt; <span class="el_source">NumberValue.kt</span></div><h1>NumberValue.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.script.api.value
 
+import io.hamal.lib.common.SnowflakeId
 import io.hamal.lib.script.api.value.ValueOperator.Type.*
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
@@ -13,197 +14,200 @@ import java.math.BigDecimal
 import java.math.MathContext
 import java.math.RoundingMode
 
-<span class="pc bnc" id="L16" title="All 7 branches missed.">@Serializable</span>
+<span class="pc bnc" id="L17" title="All 7 branches missed.">@Serializable</span>
 @SerialName(&quot;NumberValue&quot;)
-<span class="fc" id="L18">data class NumberValue(</span>
-<span class="fc" id="L19">    @Serializable(with = BigDecimalSerializer::class)</span>
-<span class="nc" id="L20">    val value: BigDecimal,</span>
-<span class="fc" id="L21">    @Transient</span>
-<span class="fc" id="L22">    override val metaTable: MetaTable = DefaultNumberValueMetaTable</span>
-<span class="fc" id="L23">) : Number(), Value, Comparable&lt;NumberValue&gt;, KeyValue {</span>
-<span class="nc" id="L24">    companion object {</span>
-<span class="fc" id="L25">        val Zero = NumberValue(0)</span>
-<span class="pc" id="L26">        val One = NumberValue(1)</span>
-<span class="fc" id="L27">        val mathContext = MathContext.DECIMAL128</span>
+<span class="fc" id="L19">data class NumberValue(</span>
+<span class="fc" id="L20">    @Serializable(with = BigDecimalSerializer::class)</span>
+<span class="fc" id="L21">    val value: BigDecimal,</span>
+<span class="fc" id="L22">    @Transient</span>
+<span class="fc" id="L23">    override val metaTable: MetaTable&lt;NumberValue&gt; = DefaultNumberValueMetaTable</span>
+<span class="fc" id="L24">) : Number(), Value, Comparable&lt;NumberValue&gt; {</span>
+<span class="nc" id="L25">    companion object {</span>
+<span class="fc" id="L26">        val Zero = NumberValue(0)</span>
+<span class="pc" id="L27">        val One = NumberValue(1)</span>
+<span class="fc" id="L28">        val mathContext = MathContext.DECIMAL128</span>
 
-<span class="nc" id="L29">        operator fun invoke(value: Byte): NumberValue = NumberValue(BigDecimal.valueOf(value.toLong()))</span>
-<span class="nc" id="L30">        operator fun invoke(value: Short): NumberValue = NumberValue(BigDecimal.valueOf(value.toLong()))</span>
-<span class="fc" id="L31">        operator fun invoke(value: Int): NumberValue = NumberValue(BigDecimal.valueOf(value.toLong()))</span>
-<span class="nc" id="L32">        operator fun invoke(value: Long): NumberValue = NumberValue(BigDecimal.valueOf(value))</span>
+<span class="nc" id="L30">        operator fun invoke(value: Byte): NumberValue = NumberValue(BigDecimal.valueOf(value.toLong()))</span>
+<span class="nc" id="L31">        operator fun invoke(value: Short): NumberValue = NumberValue(BigDecimal.valueOf(value.toLong()))</span>
+<span class="fc" id="L32">        operator fun invoke(value: Int): NumberValue = NumberValue(BigDecimal.valueOf(value.toLong()))</span>
+<span class="nc" id="L33">        operator fun invoke(value: Long): NumberValue = NumberValue(BigDecimal.valueOf(value))</span>
+<span class="nc" id="L34">        operator fun invoke(value: Number): NumberValue = NumberValue(BigDecimal.valueOf(value.toDouble()))</span>
+<span class="nc" id="L35">        operator fun invoke(value: SnowflakeId): NumberValue = NumberValue(BigDecimal.valueOf(value.value))</span>
 
         operator fun invoke(value: Float): NumberValue {
-<span class="nc bnc" id="L35" title="All 4 branches missed.">            require(!value.isNaN()) { IllegalArgumentException(&quot;NaN&quot;) }</span>
-<span class="nc bnc" id="L36" title="All 4 branches missed.">            require(!value.isInfinite()) { IllegalArgumentException(&quot;Infinity&quot;) }</span>
-<span class="nc" id="L37">            return NumberValue(BigDecimal.valueOf(value.toDouble()))</span>
+<span class="nc bnc" id="L38" title="All 4 branches missed.">            require(!value.isNaN()) { IllegalArgumentException(&quot;NaN&quot;) }</span>
+<span class="nc bnc" id="L39" title="All 4 branches missed.">            require(!value.isInfinite()) { IllegalArgumentException(&quot;Infinity&quot;) }</span>
+<span class="nc" id="L40">            return NumberValue(BigDecimal.valueOf(value.toDouble()))</span>
         }
 
         operator fun invoke(value: Double): NumberValue {
-<span class="nc bnc" id="L41" title="All 4 branches missed.">            require(!value.isNaN()) { IllegalArgumentException(&quot;NaN&quot;) }</span>
-<span class="nc bnc" id="L42" title="All 4 branches missed.">            require(!value.isInfinite()) { IllegalArgumentException(&quot;Infinity&quot;) }</span>
-<span class="nc" id="L43">            return NumberValue(BigDecimal.valueOf(value))</span>
+<span class="nc bnc" id="L44" title="All 4 branches missed.">            require(!value.isNaN()) { IllegalArgumentException(&quot;NaN&quot;) }</span>
+<span class="nc bnc" id="L45" title="All 4 branches missed.">            require(!value.isInfinite()) { IllegalArgumentException(&quot;Infinity&quot;) }</span>
+<span class="nc" id="L46">            return NumberValue(BigDecimal.valueOf(value))</span>
         }
 
         operator fun invoke(value: String): NumberValue {
-<span class="pc bpc" id="L47" title="1 of 2 branches missed.">            require(value.isNumber()) { IllegalArgumentException(&quot;NaN&quot;) }</span>
-<span class="fc" id="L48">            return NumberValue(BigDecimal(value.trim(), mathContext))</span>
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">            require(value.isNumber()) { IllegalArgumentException(&quot;NaN&quot;) }</span>
+<span class="fc" id="L51">            return NumberValue(BigDecimal(value.trim(), mathContext))</span>
         }
 
         private fun String.isNumber(): Boolean {
-<span class="fc" id="L52">            val regex = &quot;-?[0-9]+(\\.[0-9]+)?&quot;.toRegex()</span>
-<span class="fc" id="L53">            return matches(regex)</span>
+<span class="fc" id="L55">            val regex = &quot;-?[0-9]+(\\.[0-9]+)?&quot;.toRegex()</span>
+<span class="fc" id="L56">            return matches(regex)</span>
         }
     }
 
     fun plus(other: NumberValue) =
-<span class="fc" id="L58">        NumberValue(value.add(other.value, mathContext), metaTable)</span>
+<span class="fc" id="L61">        NumberValue(value.add(other.value, mathContext), metaTable)</span>
 
     fun minus(other: NumberValue) =
-<span class="nc" id="L61">        NumberValue(value.subtract(other.value, mathContext), metaTable)</span>
+<span class="nc" id="L64">        NumberValue(value.subtract(other.value, mathContext), metaTable)</span>
 
     fun multiply(other: NumberValue) =
-<span class="fc" id="L64">        NumberValue(value.multiply(other.value, mathContext), metaTable)</span>
+<span class="fc" id="L67">        NumberValue(value.multiply(other.value, mathContext), metaTable)</span>
 
     fun divide(other: NumberValue) =
-<span class="nc" id="L67">        NumberValue(value.divide(other.value, mathContext), metaTable)</span>
+<span class="nc" id="L70">        NumberValue(value.divide(other.value, mathContext), metaTable)</span>
 
     fun pow(other: NumberValue) =
-<span class="fc" id="L70">        NumberValue(value.pow(other.value.toInt(), mathContext), metaTable)</span>
+<span class="fc" id="L73">        NumberValue(value.pow(other.value.toInt(), mathContext), metaTable)</span>
 
     fun remainder(other: NumberValue) =
-<span class="nc" id="L73">        NumberValue(value.remainder(other.value, mathContext), metaTable)</span>
+<span class="nc" id="L76">        NumberValue(value.remainder(other.value, mathContext), metaTable)</span>
 
-<span class="nc" id="L75">    fun floor() = NumberValue(value.setScale(0, RoundingMode.FLOOR), metaTable)</span>
+<span class="nc" id="L78">    fun floor() = NumberValue(value.setScale(0, RoundingMode.FLOOR), metaTable)</span>
 
-<span class="nc" id="L77">    fun ceil() = NumberValue(value.setScale(0, RoundingMode.CEILING), metaTable)</span>
+<span class="nc" id="L80">    fun ceil() = NumberValue(value.setScale(0, RoundingMode.CEILING), metaTable)</span>
 
     fun ln(): NumberValue {
         // Algorithm: http://functions.wolfram.com/ElementaryFunctions/Log/10/
         // https://stackoverjob.com/a/6169691/6444586
         val result: NumberValue
-<span class="nc bnc" id="L83" title="All 2 branches missed.">        require(isPositive()) { IllegalStateException(&quot;Value must &gt;= 1&quot;) }</span>
-<span class="nc bnc" id="L84" title="All 2 branches missed.">        if (value == BigDecimal.ONE) {</span>
-<span class="nc" id="L85">            return NumberValue(BigDecimal.ZERO, metaTable)</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">        require(isPositive()) { IllegalStateException(&quot;Value must &gt;= 1&quot;) }</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">        if (value == BigDecimal.ONE) {</span>
+<span class="nc" id="L88">            return NumberValue(BigDecimal.ZERO, metaTable)</span>
         } else {
-<span class="nc" id="L87">            val iterations = 25000L</span>
-<span class="nc" id="L88">            val x = value.subtract(BigDecimal.ONE)</span>
-<span class="nc" id="L89">            var ret = BigDecimal(iterations + 1)</span>
-<span class="nc bnc" id="L90" title="All 2 branches missed.">            for (i in iterations downTo 0) {</span>
-<span class="nc" id="L91">                var N = BigDecimal(i / 2 + 1).pow(2)</span>
-<span class="nc" id="L92">                N = N.multiply(x, mathContext)</span>
-<span class="nc" id="L93">                ret = N.divide(ret, mathContext)</span>
-<span class="nc" id="L94">                N = BigDecimal(i + 1)</span>
-<span class="nc" id="L95">                ret = ret.add(N, mathContext)</span>
+<span class="nc" id="L90">            val iterations = 25000L</span>
+<span class="nc" id="L91">            val x = value.subtract(BigDecimal.ONE)</span>
+<span class="nc" id="L92">            var ret = BigDecimal(iterations + 1)</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">            for (i in iterations downTo 0) {</span>
+<span class="nc" id="L94">                var N = BigDecimal(i / 2 + 1).pow(2)</span>
+<span class="nc" id="L95">                N = N.multiply(x, mathContext)</span>
+<span class="nc" id="L96">                ret = N.divide(ret, mathContext)</span>
+<span class="nc" id="L97">                N = BigDecimal(i + 1)</span>
+<span class="nc" id="L98">                ret = ret.add(N, mathContext)</span>
             }
-<span class="nc" id="L97">            ret = x.divide(ret, mathContext)</span>
-<span class="nc" id="L98">            result = NumberValue(ret, metaTable)</span>
+<span class="nc" id="L100">            ret = x.divide(ret, mathContext)</span>
+<span class="nc" id="L101">            result = NumberValue(ret, metaTable)</span>
         }
-<span class="nc" id="L100">        return result</span>
+<span class="nc" id="L103">        return result</span>
     }
 
     fun sqrt(): NumberValue {
-<span class="nc bnc" id="L104" title="All 4 branches missed.">        require(!isNegative()) { throw IllegalStateException(&quot;Value must &gt;= 0&quot;) }</span>
-<span class="nc" id="L105">        return NumberValue(value.sqrt(mathContext), metaTable)</span>
+<span class="nc bnc" id="L107" title="All 4 branches missed.">        require(!isNegative()) { throw IllegalStateException(&quot;Value must &gt;= 0&quot;) }</span>
+<span class="nc" id="L108">        return NumberValue(value.sqrt(mathContext), metaTable)</span>
     }
 
-<span class="nc" id="L108">    fun abs() = NumberValue(value.abs(mathContext), metaTable)</span>
+<span class="nc" id="L111">    fun abs() = NumberValue(value.abs(mathContext), metaTable)</span>
 
-<span class="nc" id="L110">    fun negate() = NumberValue(value.negate(mathContext), metaTable)</span>
+<span class="nc" id="L113">    fun negate() = NumberValue(value.negate(mathContext), metaTable)</span>
 
 
-<span class="fc" id="L113">    override fun toString() = value.toString()</span>
+<span class="fc" id="L116">    override fun toString() = value.toString()</span>
 
-<span class="fc" id="L115">    override operator fun compareTo(other: NumberValue) = value.compareTo(other.value)</span>
+<span class="fc" id="L118">    override operator fun compareTo(other: NumberValue) = value.compareTo(other.value)</span>
 
-<span class="pc bpc" id="L117" title="1 of 2 branches missed.">    fun isLessThan(other: NumberValue) = compareTo(other) &lt; 0</span>
+<span class="pc bpc" id="L120" title="1 of 2 branches missed.">    fun isLessThan(other: NumberValue) = compareTo(other) &lt; 0</span>
 
-<span class="fc bfc" id="L119" title="All 2 branches covered.">    fun isLessThanEqual(other: NumberValue) = compareTo(other) &lt;= 0</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">    fun isLessThanEqual(other: NumberValue) = compareTo(other) &lt;= 0</span>
 
-<span class="nc bnc" id="L121" title="All 2 branches missed.">    fun isGreaterThan(other: NumberValue) = compareTo(other) &gt; 0</span>
+<span class="nc bnc" id="L124" title="All 2 branches missed.">    fun isGreaterThan(other: NumberValue) = compareTo(other) &gt; 0</span>
 
-<span class="pc bpc" id="L123" title="1 of 2 branches missed.">    fun isGreaterThanEqual(other: NumberValue) = compareTo(other) &gt;= 0</span>
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">    fun isGreaterThanEqual(other: NumberValue) = compareTo(other) &gt;= 0</span>
 
-<span class="nc bnc" id="L125" title="All 2 branches missed.">    fun isNegative() = value.signum() &lt; 0</span>
+<span class="nc bnc" id="L128" title="All 2 branches missed.">    fun isNegative() = value.signum() &lt; 0</span>
 
-<span class="nc bnc" id="L127" title="All 2 branches missed.">    fun isPositive() = value.signum() &gt; 0</span>
+<span class="nc bnc" id="L130" title="All 2 branches missed.">    fun isPositive() = value.signum() &gt; 0</span>
 
-<span class="nc bnc" id="L129" title="All 2 branches missed.">    fun isZero() = value.signum() == 0</span>
+<span class="nc bnc" id="L132" title="All 2 branches missed.">    fun isZero() = value.signum() == 0</span>
 
-<span class="nc" id="L131">    override fun toByte() = value.toByte()</span>
+<span class="nc" id="L134">    override fun toByte() = value.toByte()</span>
 
-<span class="nc" id="L133">    override fun toShort() = value.toShort()</span>
+<span class="nc" id="L136">    override fun toShort() = value.toShort()</span>
 
-<span class="nc" id="L135">    override fun toInt() = value.toInt()</span>
+<span class="nc" id="L138">    override fun toInt() = value.toInt()</span>
 
-<span class="nc" id="L137">    override fun toLong() = value.toLong()</span>
+<span class="nc" id="L140">    override fun toLong() = value.toLong()</span>
 
-<span class="nc" id="L139">    override fun toFloat() = value.toFloat()</span>
+<span class="nc" id="L142">    override fun toFloat() = value.toFloat()</span>
 
-<span class="nc" id="L141">    override fun toChar() = value.toChar()</span>
+<span class="nc" id="L144">    override fun toChar() = value.toChar()</span>
 
-<span class="nc" id="L143">    override fun toDouble() = value.toDouble()</span>
+<span class="nc" id="L146">    override fun toDouble() = value.toDouble()</span>
 
-<span class="nc" id="L145">    fun toBigDecimal() = value</span>
+<span class="nc" id="L148">    fun toBigDecimal() = value</span>
 
 
     object BigDecimalSerializer : KSerializer&lt;BigDecimal&gt; {
         override fun deserialize(decoder: Decoder): BigDecimal {
-<span class="nc" id="L150">            return decoder.decodeString().toBigDecimal()</span>
+<span class="nc" id="L153">            return decoder.decodeString().toBigDecimal()</span>
         }
 
         override fun serialize(encoder: Encoder, value: BigDecimal) {
-<span class="nc" id="L154">            encoder.encodeString(value.toEngineeringString())</span>
-<span class="nc" id="L155">        }</span>
+<span class="nc" id="L157">            encoder.encodeString(value.toEngineeringString())</span>
+<span class="nc" id="L158">        }</span>
 
-<span class="nc" id="L157">        override val descriptor = PrimitiveSerialDescriptor(&quot;BigDecimal&quot;, PrimitiveKind.STRING)</span>
+<span class="nc" id="L160">        override val descriptor = PrimitiveSerialDescriptor(&quot;BigDecimal&quot;, PrimitiveKind.STRING)</span>
     }
-<span class="fc" id="L159">}</span>
+<span class="fc" id="L162">}</span>
 
 
-object DefaultNumberValueMetaTable : MetaTable {
-<span class="fc" id="L163">    override val type = &quot;number&quot;</span>
+object DefaultNumberValueMetaTable : MetaTable&lt;NumberValue&gt; {
+<span class="fc" id="L166">    override val type = &quot;number&quot;</span>
 
-<span class="fc" id="L165">    override val operators = listOf(</span>
-<span class="pc" id="L166">        numberInfix(Add) { self, other -&gt; self.plus(other) },</span>
-<span class="pc" id="L167">        numberInfix(Div) { self, other -&gt; self.divide(other) },</span>
-<span class="fc" id="L168">        numberInfix(Eq) { self, other -&gt; booleanOf(self == other) },</span>
-<span class="pc" id="L169">        numberInfix(Gt) { self, other -&gt; booleanOf(self.isGreaterThan(other)) },</span>
-<span class="pc" id="L170">        numberInfix(Gte) { self, other -&gt; booleanOf(self.isGreaterThanEqual(other)) },</span>
-<span class="fc" id="L171">        numberInfix(Lt) { self, other -&gt; booleanOf(self.isLessThan(other)) },</span>
-<span class="fc" id="L172">        numberInfix(Lte) { self, other -&gt; booleanOf(self.isLessThanEqual(other)) },</span>
-<span class="pc" id="L173">        numberInfix(Mod) { self, other -&gt; self.remainder(other) },</span>
-<span class="fc" id="L174">        numberInfix(Mul) { self, other -&gt; self.multiply(other) },</span>
-<span class="pc" id="L175">        numberPrefix(Negate) { self -&gt; self.negate() },</span>
-<span class="fc" id="L176">        numberInfix(Pow) { self, other -&gt; self.pow(other) },</span>
-<span class="pc" id="L177">        numberInfix(Sub) { self, other -&gt; self.minus(other) },</span>
+<span class="fc" id="L168">    override val operators = listOf(</span>
+<span class="fc" id="L169">        numberInfix(Add) { self, other -&gt; self.plus(other) },</span>
+<span class="pc" id="L170">        numberInfix(Div) { self, other -&gt; self.divide(other) },</span>
+<span class="fc" id="L171">        numberInfix(Eq) { self, other -&gt; booleanOf(self == other) },</span>
+<span class="pc" id="L172">        numberInfix(Gt) { self, other -&gt; booleanOf(self.isGreaterThan(other)) },</span>
+<span class="pc" id="L173">        numberInfix(Gte) { self, other -&gt; booleanOf(self.isGreaterThanEqual(other)) },</span>
+<span class="fc" id="L174">        numberInfix(Lt) { self, other -&gt; booleanOf(self.isLessThan(other)) },</span>
+<span class="fc" id="L175">        numberInfix(Lte) { self, other -&gt; booleanOf(self.isLessThanEqual(other)) },</span>
+<span class="pc" id="L176">        numberInfix(Mod) { self, other -&gt; self.remainder(other) },</span>
+<span class="fc" id="L177">        numberInfix(Mul) { self, other -&gt; self.multiply(other) },</span>
+<span class="pc" id="L178">        numberPrefix(Negate) { self -&gt; self.negate() },</span>
+<span class="fc" id="L179">        numberInfix(Pow) { self, other -&gt; self.pow(other) },</span>
+<span class="pc" id="L180">        numberInfix(Sub) { self, other -&gt; self.minus(other) },</span>
 
 
-<span class="fc" id="L180">        object : InfixValueOperator {</span>
-<span class="pc" id="L181">            override val selfType = type</span>
-<span class="pc" id="L182">            override val otherType = &quot;nil&quot;</span>
-<span class="fc" id="L183">            override val operatorType = Eq</span>
-<span class="nc" id="L184">            override fun invoke(self: Value, other: Value) = FalseValue</span>
+<span class="fc" id="L183">        object : InfixValueOperator {</span>
+<span class="pc" id="L184">            override val selfType = type</span>
+<span class="pc" id="L185">            override val otherType = &quot;nil&quot;</span>
+<span class="fc" id="L186">            override val operatorType = Eq</span>
+<span class="nc" id="L187">            override fun invoke(self: Value, other: Value) = FalseValue</span>
         },
 
-<span class="fc" id="L187">        object : InfixValueOperator {</span>
-<span class="pc" id="L188">            override val selfType = type</span>
-<span class="fc" id="L189">            override val otherType = &quot;nil&quot;</span>
-<span class="fc" id="L190">            override val operatorType = Neq</span>
-<span class="fc" id="L191">            override fun invoke(self: Value, other: Value) = TrueValue</span>
+<span class="fc" id="L190">        object : InfixValueOperator {</span>
+<span class="pc" id="L191">            override val selfType = type</span>
+<span class="fc" id="L192">            override val otherType = &quot;nil&quot;</span>
+<span class="fc" id="L193">            override val operatorType = Neq</span>
+<span class="fc" id="L194">            override fun invoke(self: Value, other: Value) = TrueValue</span>
         })
+<span class="pc" id="L196">    override val props: Map&lt;IdentValue, ValueProp&lt;NumberValue&gt;&gt; = mapOf()</span>
 }
 
 private fun numberInfix(
     operatorType: ValueOperator.Type,
     fn: (self: NumberValue, other: NumberValue) -&gt; Value
 ): InfixValueOperator {
-<span class="fc" id="L199">    return object : InfixValueOperator {</span>
-<span class="fc" id="L200">        override val operatorType = operatorType</span>
-<span class="pc" id="L201">        override val selfType = &quot;number&quot;</span>
-<span class="fc" id="L202">        override val otherType = &quot;number&quot;</span>
+<span class="fc" id="L203">    return object : InfixValueOperator {</span>
+<span class="fc" id="L204">        override val operatorType = operatorType</span>
+<span class="pc" id="L205">        override val selfType = &quot;number&quot;</span>
+<span class="fc" id="L206">        override val otherType = &quot;number&quot;</span>
         override operator fun invoke(self: Value, other: Value): Value {
-<span class="pc bpc" id="L204" title="1 of 2 branches missed.">            require(self is NumberValue)</span>
-<span class="pc bpc" id="L205" title="1 of 2 branches missed.">            require(other is NumberValue)</span>
-<span class="fc" id="L206">            return fn(self, other)</span>
+<span class="pc bpc" id="L208" title="1 of 2 branches missed.">            require(self is NumberValue)</span>
+<span class="pc bpc" id="L209" title="1 of 2 branches missed.">            require(other is NumberValue)</span>
+<span class="fc" id="L210">            return fn(self, other)</span>
         }
     }
 }
@@ -212,12 +216,12 @@ private fun numberPrefix(
     operatorType: ValueOperator.Type,
     fn: (self: NumberValue) -&gt; Value
 ): PrefixValueOperator {
-<span class="fc" id="L215">    return object : PrefixValueOperator {</span>
-<span class="pc" id="L216">        override val operatorType = operatorType</span>
-<span class="pc" id="L217">        override val selfType = &quot;number&quot;</span>
+<span class="fc" id="L219">    return object : PrefixValueOperator {</span>
+<span class="pc" id="L220">        override val operatorType = operatorType</span>
+<span class="pc" id="L221">        override val selfType = &quot;number&quot;</span>
         override operator fun invoke(self: Value): Value {
-<span class="nc bnc" id="L219" title="All 2 branches missed.">            require(self is NumberValue)</span>
-<span class="nc" id="L220">            return fn(self)</span>
+<span class="nc bnc" id="L223" title="All 2 branches missed.">            require(self is NumberValue)</span>
+<span class="nc" id="L224">            return fn(self)</span>
         }
     }
 }

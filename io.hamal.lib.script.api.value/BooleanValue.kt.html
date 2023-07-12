@@ -2,27 +2,39 @@
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
-<span class="pc bpc" id="L6" title="1 of 2 branches missed.">fun booleanOf(value: Boolean) = if (value) TrueValue else FalseValue</span>
+<span class="pc bpc" id="L7" title="1 of 2 branches missed.">fun booleanOf(value: Boolean) = if (value) TrueValue else FalseValue</span>
 
-<span class="pc" id="L8">@Serializable</span>
+<span class="pc" id="L9">@Serializable</span>
+@SerialName(&quot;BooleanValue&quot;)
+<span class="pc" id="L11">sealed class BooleanValue(</span>
+<span class="pc" id="L12">    val boolean: Boolean,</span>
+<span class="fc" id="L13">    @Transient</span>
+<span class="nc" id="L14">    override val metaTable: MetaTable&lt;*&gt; = DefaultTableValueMetaTable</span>
+<span class="nc" id="L15">) : Value</span>
+
+<span class="pc" id="L17">@Serializable</span>
 @SerialName(&quot;TrueValue&quot;)
-object TrueValue : Value {
-    @Transient
-<span class="pc" id="L12">    override val metaTable = DefaultBooleanMetaTable</span>
-<span class="nc" id="L13">    override fun toString() = &quot;true&quot;</span>
+<span class="fc" id="L19">object TrueValue : BooleanValue(</span>
+<span class="fc" id="L20">    true,</span>
+<span class="fc" id="L21">    DefaultBooleanMetaTable</span>
+) {
+<span class="fc" id="L23">    override fun toString() = &quot;true&quot;</span>
 }
 
-<span class="pc" id="L16">@Serializable</span>
+<span class="pc" id="L26">@Serializable</span>
 @SerialName(&quot;FalseValue&quot;)
-object FalseValue : Value {
-    @Transient
-<span class="pc" id="L20">    override val metaTable = DefaultBooleanMetaTable</span>
-<span class="nc" id="L21">    override fun toString() = &quot;false&quot;</span>
+<span class="fc" id="L28">object FalseValue : BooleanValue(</span>
+<span class="fc" id="L29">    false,</span>
+<span class="fc" id="L30">    DefaultTableValueMetaTable</span>
+) {
+<span class="nc" id="L32">    override fun toString() = &quot;false&quot;</span>
 }
 
-object DefaultBooleanMetaTable : MetaTable {
-<span class="pc" id="L25">    override val type = &quot;boolean&quot;</span>
-<span class="pc" id="L26">    override val operators = listOf&lt;ValueOperator&gt;()</span>
+object DefaultBooleanMetaTable : MetaTable&lt;BooleanValue&gt; {
+<span class="pc" id="L36">    override val type = &quot;boolean&quot;</span>
+<span class="pc" id="L37">    override val operators = listOf&lt;ValueOperator&gt;()</span>
+<span class="pc" id="L38">    override val props: Map&lt;IdentValue, ValueProp&lt;BooleanValue&gt;&gt; = mapOf()</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

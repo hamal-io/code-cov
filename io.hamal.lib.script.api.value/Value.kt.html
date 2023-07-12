@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 <span class="fc" id="L5">@Serializable</span>
 sealed interface Value {
-    val metaTable: MetaTable
+    val metaTable: MetaTable&lt;*&gt;
 <span class="fc" id="L8">    fun type(): String = metaTable.type</span>
 
     fun findInfixOperation(type: ValueOperator.Type, otherType: String): InfixValueOperator? {

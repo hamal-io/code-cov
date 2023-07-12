@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Statement.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.script.impl.ast.stmt</a> &gt; <span class="el_source">Statement.kt</span></div><h1>Statement.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.script.impl.ast.stmt
 
 import io.hamal.lib.script.api.ast.Expression
+import io.hamal.lib.script.api.ast.Node.Position
 import io.hamal.lib.script.api.ast.Statement
 import io.hamal.lib.script.impl.ast.Parser.Context
 
@@ -9,23 +10,54 @@ internal interface ParseStatement&lt;out STATEMENT : Statement&gt; {
 }
 
 
-<span class="fc" id="L12">data class ExpressionStatement(val expression: Expression) : Statement</span>
-
-
-<span class="pc" id="L15">data class Block(val statements: List&lt;Statement&gt;, override val size: Int) : Statement, Collection&lt;Statement&gt; {</span>
-<span class="nc" id="L16">    constructor(vararg statements: Statement) : this(statements.toList())</span>
-<span class="fc" id="L17">    constructor(statements: List&lt;Statement&gt;) : this(statements, statements.size)</span>
-
-    companion object {
-<span class="fc" id="L20">        val empty = Block(listOf())</span>
+<span class="fc" id="L13">class ExpressionStatement(</span>
+<span class="pc" id="L14">    override val position: Position,</span>
+<span class="fc" id="L15">    val expression: Expression</span>
+) : Statement {
+    override fun equals(other: Any?): Boolean {
+<span class="nc bnc" id="L18" title="All 2 branches missed.">        if (this === other) return true</span>
+<span class="nc bnc" id="L19" title="All 4 branches missed.">        if (javaClass != other?.javaClass) return false</span>
+<span class="nc" id="L20">        other as ExpressionStatement</span>
+<span class="nc" id="L21">        return expression == other.expression</span>
     }
 
-<span class="nc" id="L23">    override fun contains(element: Statement) = statements.contains(element)</span>
+    override fun hashCode(): Int {
+<span class="nc" id="L25">        return expression.hashCode()</span>
+    }
+}
 
-<span class="nc" id="L25">    override fun containsAll(elements: Collection&lt;Statement&gt;) = statements.containsAll(elements)</span>
 
-<span class="nc" id="L27">    override fun isEmpty() = statements.isEmpty()</span>
+<span class="fc" id="L30">class Block(</span>
+<span class="pc" id="L31">    override val position: Position,</span>
+<span class="fc" id="L32">    val statements: List&lt;Statement&gt;,</span>
+<span class="pc" id="L33">    override val size: Int</span>
+) : Statement, Collection&lt;Statement&gt; {
+<span class="nc" id="L35">    constructor(position: Position, vararg statements: Statement) : this(position, statements.toList())</span>
+<span class="fc" id="L36">    constructor(position: Position, statements: List&lt;Statement&gt;) : this(position, statements, statements.size)</span>
 
-<span class="nc" id="L29">    override fun iterator(): Iterator&lt;Statement&gt; = statements.iterator()</span>
+    companion object {
+<span class="fc" id="L39">        fun empty(position: Position) = Block(position, listOf())</span>
+    }
+
+<span class="nc" id="L42">    override fun contains(element: Statement) = statements.contains(element)</span>
+
+<span class="nc" id="L44">    override fun containsAll(elements: Collection&lt;Statement&gt;) = statements.containsAll(elements)</span>
+
+<span class="nc" id="L46">    override fun isEmpty() = statements.isEmpty()</span>
+
+<span class="nc" id="L48">    override fun iterator(): Iterator&lt;Statement&gt; = statements.iterator()</span>
+    override fun equals(other: Any?): Boolean {
+<span class="nc bnc" id="L50" title="All 2 branches missed.">        if (this === other) return true</span>
+<span class="nc bnc" id="L51" title="All 4 branches missed.">        if (javaClass != other?.javaClass) return false</span>
+<span class="nc" id="L52">        other as Block</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">        if (statements != other.statements) return false</span>
+<span class="nc bnc" id="L54" title="All 2 branches missed.">        return size == other.size</span>
+    }
+
+    override fun hashCode(): Int {
+<span class="nc" id="L58">        var result = statements.hashCode()</span>
+<span class="nc" id="L59">        result = 31 * result + size</span>
+<span class="nc" id="L60">        return result</span>
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -11,7 +11,7 @@ import kotlinx.serialization.protobuf.ProtoBuf
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-object MemoryReqRepository : ReqCmdRepository, ReqQueryRepository {
+<span class="fc" id="L14">object MemoryReqRepository : ReqCmdRepository, ReqQueryRepository {</span>
 
 <span class="pc" id="L16">    val queue = mutableListOf&lt;ReqId&gt;()</span>
 <span class="pc" id="L17">    val store = mutableMapOf&lt;ReqId, ByteArray&gt;()</span>

@@ -8,10 +8,10 @@ import io.hamal.backend.repository.record.CreateDomainObject
 import io.hamal.backend.repository.record.func.Entity
 import io.hamal.backend.repository.record.func.FuncCreationRecord
 import io.hamal.backend.repository.record.func.FuncRecord
-import io.hamal.backend.repository.sqlite.BaseRepository
 import io.hamal.backend.repository.sqlite.record.SqliteRecordRepository
 import io.hamal.lib.domain.Func
 import io.hamal.lib.domain.vo.FuncId
+import io.hamal.lib.sqlite.BaseSqliteRepository
 import java.nio.file.Path
 
 internal object CreateFunc : CreateDomainObject&lt;FuncId, FuncRecord, Func&gt; {
@@ -47,7 +47,7 @@ internal object CreateFunc : CreateDomainObject&lt;FuncId, FuncRecord, Func&gt; 
 
 <span class="nc" id="L48">    data class Config(</span>
 <span class="nc" id="L49">        override val path: Path</span>
-    ) : BaseRepository.Config {
+    ) : BaseSqliteRepository.Config {
 <span class="nc" id="L51">        override val filename = &quot;func&quot;</span>
     }
 
@@ -64,24 +64,23 @@ internal object CreateFunc : CreateDomainObject&lt;FuncId, FuncRecord, Func&gt; 
 <span class="nc" id="L64">                        cmdId = cmdId,</span>
 <span class="nc" id="L65">                        name = cmd.name,</span>
 <span class="nc" id="L66">                        inputs = cmd.inputs,</span>
-<span class="nc" id="L67">                        secrets = cmd.secrets,</span>
-<span class="nc" id="L68">                        code = cmd.code,</span>
+<span class="nc" id="L67">                        code = cmd.code,</span>
                     )
                 )
 
-<span class="nc" id="L72">                currentVersion(funcId)</span>
-<span class="nc" id="L73">                    .also { ProjectionCurrent.update(this, it) }</span>
+<span class="nc" id="L71">                currentVersion(funcId)</span>
+<span class="nc" id="L72">                    .also { ProjectionCurrent.update(this, it) }</span>
             }
         }
     }
 
     override fun find(funcId: FuncId): Func? {
-<span class="nc" id="L79">        return ProjectionCurrent.find(connection, funcId)</span>
+<span class="nc" id="L78">        return ProjectionCurrent.find(connection, funcId)</span>
     }
 
     override fun list(block: FuncQuery.() -&gt; Unit): List&lt;Func&gt; {
-<span class="nc" id="L83">        val query = FuncQuery().also(block)</span>
-<span class="nc" id="L84">        return ProjectionCurrent.list(connection, query.afterId, query.limit)</span>
+<span class="nc" id="L82">        val query = FuncQuery().also(block)</span>
+<span class="nc" id="L83">        return ProjectionCurrent.list(connection, query.afterId, query.limit)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

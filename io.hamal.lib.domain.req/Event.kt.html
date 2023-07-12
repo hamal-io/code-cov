@@ -1,39 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Event.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.domain.req</a> &gt; <span class="el_source">Event.kt</span></div><h1>Event.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.domain.req
 
+import io.hamal.lib.domain.Event
 import io.hamal.lib.domain.ReqId
-import io.hamal.lib.domain.vo.Content
-import io.hamal.lib.domain.vo.ContentType
 import io.hamal.lib.domain.vo.TopicId
 import io.hamal.lib.domain.vo.TopicName
 import kotlinx.serialization.Serializable
 
-<span class="pc bpc" id="L10" title="2 of 7 branches missed.">@Serializable</span>
-<span class="fc" id="L11">data class CreateTopicReq(</span>
-<span class="fc" id="L12">    val name: TopicName</span>
-<span class="fc" id="L13">)</span>
+<span class="pc bpc" id="L9" title="2 of 7 branches missed.">@Serializable</span>
+<span class="fc" id="L10">data class CreateTopicReq(</span>
+<span class="fc" id="L11">    val name: TopicName</span>
+<span class="fc" id="L12">)</span>
 
-<span class="pc bpc" id="L15" title="2 of 10 branches missed.">@Serializable</span>
-<span class="fc" id="L16">data class SubmittedCreateTopicReq(</span>
-<span class="fc" id="L17">    override val id: ReqId,</span>
-<span class="fc" id="L18">    override var status: ReqStatus,</span>
-<span class="fc" id="L19">    val topicId: TopicId,</span>
-<span class="fc" id="L20">    val name: TopicName</span>
-<span class="fc" id="L21">) : SubmittedReq</span>
+<span class="pc bpc" id="L14" title="2 of 10 branches missed.">@Serializable</span>
+<span class="fc" id="L15">data class SubmittedCreateTopicReq(</span>
+<span class="fc" id="L16">    override val id: ReqId,</span>
+<span class="fc" id="L17">    override var status: ReqStatus,</span>
+<span class="fc" id="L18">    val topicId: TopicId,</span>
+<span class="fc" id="L19">    val name: TopicName</span>
+<span class="fc" id="L20">) : SubmittedReq</span>
 
 
-<span class="pc bnc" id="L24" title="All 9 branches missed.">@Serializable</span>
-<span class="fc" id="L25">data class AppendEventReq(</span>
-<span class="fc" id="L26">    val topicId: TopicId,</span>
-<span class="fc" id="L27">    val contentType: ContentType,</span>
-<span class="fc" id="L28">    val bytes: Content</span>
-<span class="nc" id="L29">)</span>
+<span class="pc bnc" id="L23" title="All 8 branches missed.">@Serializable</span>
+<span class="fc" id="L24">data class AppendEventReq(</span>
+<span class="fc" id="L25">    val topicId: TopicId,</span>
+<span class="fc" id="L26">    val event: Event</span>
+<span class="nc" id="L27">)</span>
 
-<span class="pc bpc" id="L31" title="2 of 11 branches missed.">@Serializable</span>
-<span class="fc" id="L32">data class SubmittedAppendEventReq(</span>
-<span class="fc" id="L33">    override val id: ReqId,</span>
-<span class="fc" id="L34">    override var status: ReqStatus,</span>
-<span class="fc" id="L35">    val topicId: TopicId,</span>
-<span class="fc" id="L36">    val contentType: ContentType,</span>
-<span class="fc" id="L37">    val bytes: Content</span>
-<span class="fc" id="L38">) : SubmittedReq</span>
+<span class="pc bpc" id="L29" title="2 of 10 branches missed.">@Serializable</span>
+<span class="fc" id="L30">data class SubmittedAppendEventReq(</span>
+<span class="fc" id="L31">    override val id: ReqId,</span>
+<span class="fc" id="L32">    override var status: ReqStatus,</span>
+<span class="fc" id="L33">    val topicId: TopicId,</span>
+<span class="fc" id="L34">    val event: Event</span>
+<span class="fc" id="L35">) : SubmittedReq</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

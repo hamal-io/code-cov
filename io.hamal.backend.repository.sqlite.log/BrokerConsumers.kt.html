@@ -3,9 +3,9 @@
 import io.hamal.backend.repository.api.log.GroupId
 import io.hamal.backend.repository.api.log.LogBrokerConsumersRepository
 import io.hamal.backend.repository.api.log.LogChunkId
-import io.hamal.backend.repository.sqlite.BaseRepository
-import io.hamal.backend.repository.sqlite.internal.Connection
 import io.hamal.lib.domain.vo.TopicId
+import io.hamal.lib.sqlite.BaseSqliteRepository
+import io.hamal.lib.sqlite.Connection
 import java.nio.file.Path
 
 <span class="fc" id="L11">data class SqliteBrokerConsumers(</span>
@@ -14,7 +14,7 @@ import java.nio.file.Path
 
 <span class="fc" id="L15">class SqliteLogBrokerConsumersRepository(</span>
 <span class="pc" id="L16">    internal val brokerConsumers: SqliteBrokerConsumers,</span>
-<span class="fc" id="L17">) : BaseRepository(</span>
+<span class="fc" id="L17">) : BaseSqliteRepository(</span>
 <span class="fc" id="L18">    object : Config {</span>
 <span class="fc" id="L19">        override val path: Path get() = brokerConsumers.path</span>
 <span class="fc" id="L20">        override val filename: String get() = &quot;consumers.db&quot;</span>

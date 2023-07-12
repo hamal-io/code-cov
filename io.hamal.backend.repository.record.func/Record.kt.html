@@ -2,27 +2,29 @@
 
 import io.hamal.backend.repository.record.Record
 import io.hamal.backend.repository.record.RecordSequence
-import io.hamal.lib.domain.CmdId
-import io.hamal.lib.domain.vo.*
+import io.hamal.lib.common.domain.CmdId
+import io.hamal.lib.domain.vo.FuncId
+import io.hamal.lib.domain.vo.FuncInputs
+import io.hamal.lib.domain.vo.FuncName
+import io.hamal.lib.script.api.value.CodeValue
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
 
-<span class="pc" id="L12">@Serializable</span>
-<span class="fc" id="L13">sealed class FuncRecord(</span>
-<span class="fc" id="L14">    @Transient</span>
-<span class="fc" id="L15">    override var sequence: RecordSequence? = null</span>
-<span class="fc" id="L16">) : Record&lt;FuncId&gt;()</span>
+<span class="pc" id="L15">@Serializable</span>
+<span class="fc" id="L16">sealed class FuncRecord(</span>
+<span class="fc" id="L17">    @Transient</span>
+<span class="fc" id="L18">    override var sequence: RecordSequence? = null</span>
+<span class="fc" id="L19">) : Record&lt;FuncId&gt;()</span>
 
-<span class="nc bnc" id="L18" title="All 12 branches missed.">@Serializable</span>
+<span class="nc bnc" id="L21" title="All 11 branches missed.">@Serializable</span>
 @SerialName(&quot;FCR&quot;)
-<span class="fc" id="L20">data class FuncCreationRecord(</span>
-<span class="fc" id="L21">    override val entityId: FuncId,</span>
-<span class="fc" id="L22">    override val cmdId: CmdId,</span>
-<span class="fc" id="L23">    val name: FuncName,</span>
-<span class="fc" id="L24">    val inputs: FuncInputs,</span>
-<span class="fc" id="L25">    val secrets: FuncSecrets,</span>
-<span class="fc" id="L26">    val code: Code</span>
-<span class="pc" id="L27">) : FuncRecord()</span>
+<span class="fc" id="L23">data class FuncCreationRecord(</span>
+<span class="fc" id="L24">    override val entityId: FuncId,</span>
+<span class="fc" id="L25">    override val cmdId: CmdId,</span>
+<span class="fc" id="L26">    val name: FuncName,</span>
+<span class="fc" id="L27">    val inputs: FuncInputs,</span>
+<span class="fc" id="L28">    val code: CodeValue</span>
+<span class="pc" id="L29">) : FuncRecord()</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

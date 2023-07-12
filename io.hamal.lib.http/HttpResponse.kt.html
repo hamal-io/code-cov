@@ -49,23 +49,27 @@ sealed interface HttpResponse {
     fun &lt;RESULT : Any&gt; result(clazz: KClass&lt;RESULT&gt;): RESULT {
 <span class="fc" id="L50">        return contentDeserializer.deserialize(inputStream, clazz)</span>
     }
+
+    fun &lt;RESULT : Any&gt; resultList(clazz: KClass&lt;RESULT&gt;): List&lt;RESULT&gt; {
+<span class="nc" id="L54">        return contentDeserializer.deserializeList(inputStream, clazz)</span>
+    }
 }
 
-<span class="fc" id="L54">data class NoContentHttpResponse(</span>
-<span class="fc" id="L55">    override val statusCode: HttpStatusCode,</span>
-<span class="fc" id="L56">    override val headers: HttpHeaders</span>
+<span class="fc" id="L58">data class NoContentHttpResponse(</span>
+<span class="fc" id="L59">    override val statusCode: HttpStatusCode,</span>
+<span class="fc" id="L60">    override val headers: HttpHeaders</span>
 ) : HttpResponse
 
 
-<span class="fc" id="L60">data class ErrorHttpResponse(</span>
-<span class="fc" id="L61">    override val statusCode: HttpStatusCode,</span>
-<span class="pc" id="L62">    override val headers: HttpHeaders,</span>
-<span class="pc" id="L63">    val inputStream: InputStream,</span>
-<span class="pc" id="L64">    val errorDeserializer: HttpErrorDeserializer</span>
+<span class="fc" id="L64">data class ErrorHttpResponse(</span>
+<span class="fc" id="L65">    override val statusCode: HttpStatusCode,</span>
+<span class="pc" id="L66">    override val headers: HttpHeaders,</span>
+<span class="pc" id="L67">    val inputStream: InputStream,</span>
+<span class="pc" id="L68">    val errorDeserializer: HttpErrorDeserializer</span>
 ) : HttpResponse {
 
     fun &lt;ERROR : Any&gt; error(clazz: KClass&lt;ERROR&gt;): ERROR {
-<span class="fc" id="L68">        return errorDeserializer.deserialize(inputStream, clazz)</span>
+<span class="fc" id="L72">        return errorDeserializer.deserialize(inputStream, clazz)</span>
     }
 
 }

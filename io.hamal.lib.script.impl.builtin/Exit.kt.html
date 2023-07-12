@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Exit.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.script.impl.builtin</a> &gt; <span class="el_source">Exit.kt</span></div><h1>Exit.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.script.impl.builtin
+
+import io.hamal.lib.script.api.value.FuncContext
+import io.hamal.lib.script.api.value.FuncValue
+import io.hamal.lib.script.api.value.NumberValue
+import io.hamal.lib.script.api.value.Value
+import io.hamal.lib.script.impl.ExitException
+
+object ExitFunction : FuncValue() {
+
+    override fun invoke(ctx: FuncContext): Value {
+<span class="nc bnc" id="L12" title="All 2 branches missed.">        val status = ctx.params.firstOrNull()</span>
+<span class="nc bnc" id="L13" title="All 2 branches missed.">            ?.value</span>
+<span class="nc bnc" id="L14" title="All 4 branches missed.">            ?.let { value -&gt; if (value is NumberValue) value else null }</span>
+<span class="nc" id="L15">            ?: NumberValue(0)</span>
+
+<span class="nc" id="L17">        throw ExitException(status)</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

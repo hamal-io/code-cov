@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EthHash.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.web3.eth.abi.type</a> &gt; <span class="el_source">EthHash.kt</span></div><h1>EthHash.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.web3.eth.abi.type
+
+import io.hamal.lib.web3.util.Web3Formatter
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+
+<span class="nc" id="L11">@Serializable(with = EthHash.Serializer::class)</span>
+<span class="nc" id="L12">data class EthHash(</span>
+<span class="nc" id="L13">    override val value: EthBytes32</span>
+) : EthType&lt;EthBytes32&gt; {
+<span class="nc" id="L15">    constructor(byteArray: ByteArray) : this(EthBytes32(byteArray))</span>
+<span class="nc" id="L16">    constructor(prefixedHexString: EthPrefixedHexString) : this(EthBytes32(prefixedHexString))</span>
+
+<span class="nc" id="L18">    override fun toByteArray() = value.toByteArray()</span>
+
+<span class="nc" id="L20">    override fun toByteWindow() = value.toByteWindow()</span>
+
+    fun toHexString(): EthHexString {
+<span class="nc" id="L23">        return EthHexString(Web3Formatter.formatToHex(value.value))</span>
+    }
+
+    fun toPrefixedHexString(): EthPrefixedHexString {
+<span class="nc" id="L27">        return EthPrefixedHexString(&quot;0x${Web3Formatter.formatToHex(value.value)}&quot;)</span>
+    }
+
+<span class="nc" id="L30">    override fun toString() = toPrefixedHexString().value</span>
+
+    object Serializer : KSerializer&lt;EthHash&gt; {
+<span class="nc" id="L33">        override val descriptor = PrimitiveSerialDescriptor(&quot;EthHash&quot;, PrimitiveKind.STRING)</span>
+
+        override fun deserialize(decoder: Decoder): EthHash {
+<span class="nc" id="L36">            return EthHash(EthPrefixedHexString(decoder.decodeString()))</span>
+        }
+
+        override fun serialize(encoder: Encoder, value: EthHash) {
+<span class="nc" id="L40">            encoder.encodeString(value.toPrefixedHexString().value)</span>
+<span class="nc" id="L41">        }</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

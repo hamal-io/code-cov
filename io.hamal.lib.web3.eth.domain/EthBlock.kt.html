@@ -1,15 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EthBlock.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.web3.eth.domain</a> &gt; <span class="el_source">EthBlock.kt</span></div><h1>EthBlock.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.web3.eth.domain
 
-import io.hamal.lib.web3.eth.abi.EthAddress
-import io.hamal.lib.web3.eth.abi.EthHash
-import io.hamal.lib.web3.eth.abi.EthUint64
+import io.hamal.lib.web3.eth.abi.type.*
+import kotlinx.serialization.Serializable
 
 
+<span class="nc bnc" id="L7" title="All 19 branches missed.">@Serializable</span>
 <span class="nc" id="L8">data class EthBlock(</span>
 <span class="nc" id="L9">    val number: EthUint64,</span>
 <span class="nc" id="L10">    val hash: EthHash,</span>
 <span class="nc" id="L11">    val parentHash: EthHash,</span>
-<span class="nc" id="L12">    val miner: EthAddress,</span>
-<span class="nc" id="L13">    val timestamp: EthUint64</span>
-)
+<span class="nc" id="L12">    val sha3Uncles: EthHash,</span>
+<span class="nc" id="L13">    val miner: EthAddress,</span>
+<span class="nc" id="L14">    val stateRoot: EthHash,</span>
+<span class="nc" id="L15">    val transactionsRoot: EthHash,</span>
+<span class="nc" id="L16">    val receiptsRoot: EthHash,</span>
+<span class="nc" id="L17">    val gasLimit: EthUint64,</span>
+<span class="nc" id="L18">    val gasUsed: EthUint64,</span>
+<span class="nc" id="L19">    val timestamp: EthUint64,</span>
+<span class="nc" id="L20">    val extraData: EthBytes32,</span>
+<span class="nc" id="L21">    val transactions: List&lt;Transaction&gt;</span>
+) {
+<span class="nc bnc" id="L23" title="All 14 branches missed.">    @Serializable</span>
+<span class="nc" id="L24">    data class Transaction(</span>
+<span class="nc" id="L25">        val type: EthUint8,</span>
+<span class="nc" id="L26">        val hash: EthHash,</span>
+<span class="nc" id="L27">        val from: EthAddress,</span>
+<span class="nc" id="L28">        val to: EthAddress?,</span>
+<span class="nc" id="L29">        val input: EthPrefixedHexString,</span>
+<span class="nc" id="L30">        val value: EthUint256,</span>
+<span class="nc" id="L31">        val gas: EthUint64,</span>
+<span class="nc" id="L32">        val gasPrice: EthUint64,</span>
+<span class="nc" id="L33">    )</span>
+<span class="nc" id="L34">}</span>
+
+<span class="nc bnc" id="L36" title="All 11 branches missed.">@Serializable</span>
+<span class="nc" id="L37">data class EthLiteBlock(</span>
+<span class="nc" id="L38">    val number: EthUint64,</span>
+<span class="nc" id="L39">    val hash: EthHash,</span>
+<span class="nc" id="L40">    val parentHash: EthHash,</span>
+<span class="nc" id="L41">    val miner: EthAddress,</span>
+<span class="nc" id="L42">    val timestamp: EthUint64</span>
+<span class="nc" id="L43">)</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,33 +1,151 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EthHttpBatchService.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.web3.eth.http</a> &gt; <span class="el_source">EthHttpBatchService.kt</span></div><h1>EthHttpBatchService.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.web3.eth.http
 
+import io.hamal.lib.http.HttpTemplate
+import io.hamal.lib.http.body
 import io.hamal.lib.web3.eth.EthBatchService
-import io.hamal.lib.web3.eth.EthBlockResponse
-import io.hamal.lib.web3.eth.EthResponse
-import io.hamal.lib.web3.eth.abi.EthAddress
-import io.hamal.lib.web3.eth.abi.EthBytes32
-import io.hamal.lib.web3.eth.abi.EthHash
-import io.hamal.lib.web3.eth.abi.EthUint64
-import io.hamal.lib.web3.eth.domain.EthBlock
-import java.math.BigInteger
+import io.hamal.lib.web3.eth.abi.type.EthHash
+import io.hamal.lib.web3.eth.abi.type.EthUint64
+import io.hamal.lib.web3.eth.domain.*
+import kotlinx.serialization.InternalSerializationApi
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.serializer
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
+import kotlin.reflect.KClass
 
-<span class="nc" id="L13">class EthHttpBatchService : EthBatchService&lt;EthHttpBatchService&gt; {</span>
-    override fun execute(): List&lt;EthResponse&gt; {
-<span class="nc" id="L15">        return listOf(</span>
-<span class="nc" id="L16">            EthBlockResponse(</span>
-<span class="nc" id="L17">                EthBlock(</span>
-<span class="nc" id="L18">                    number = EthUint64(BigInteger.ONE),</span>
-<span class="nc" id="L19">                    hash = EthHash(EthBytes32(ByteArray(32))),</span>
-<span class="nc" id="L20">                    parentHash = EthHash(EthBytes32(ByteArray(32))),</span>
-<span class="nc" id="L21">                    miner = EthAddress(BigInteger.ZERO),</span>
-<span class="nc" id="L22">                    timestamp = EthUint64(BigInteger.ZERO)</span>
-                )
+<span class="nc" id="L19">class EthHttpBatchService(</span>
+<span class="nc" id="L20">    private val httpTemplate: HttpTemplate</span>
+) : EthBatchService&lt;EthHttpBatchService&gt; {
+
+<span class="nc" id="L23">    private val lock = ReentrantLock()</span>
+<span class="nc" id="L24">    private val resultClasses = mutableListOf&lt;KClass&lt;*&gt;&gt;()</span>
+<span class="nc" id="L25">    private val requests = mutableListOf&lt;JsonObject&gt;()</span>
+
+<span class="nc" id="L27">    override fun getBlockNumber() = request(</span>
+<span class="nc" id="L28">        method = &quot;eth_blockNumber&quot;,</span>
+<span class="nc" id="L29">        params = JsonArray(listOf()),</span>
+        resultClass = EthGetBlockNumberResp::class
+<span class="nc" id="L31">    )</span>
+
+<span class="nc" id="L33">    override fun getBlock(hash: EthHash) = request(</span>
+<span class="nc" id="L34">        method = &quot;eth_getBlockByHash&quot;,</span>
+<span class="nc" id="L35">        params = JsonArray(</span>
+<span class="nc" id="L36">            listOf(</span>
+<span class="nc" id="L37">                JsonPrimitive(hash.toPrefixedHexString().value),</span>
+<span class="nc" id="L38">                JsonPrimitive(true)</span>
             )
+        ),
+        resultClass = EthGetBlockResp::class
+<span class="nc" id="L42">    )</span>
+
+<span class="nc" id="L44">    override fun getBlock(number: EthUint64) = request(</span>
+<span class="nc" id="L45">        method = &quot;eth_getBlockByNumber&quot;,</span>
+<span class="nc" id="L46">        params = JsonArray(</span>
+<span class="nc" id="L47">            listOf(</span>
+<span class="nc" id="L48">                JsonPrimitive(number.toPrefixedHexString().value),</span>
+<span class="nc" id="L49">                JsonPrimitive(true)</span>
+            )
+        ),
+        resultClass = EthGetBlockResp::class
+<span class="nc" id="L53">    )</span>
+
+<span class="nc" id="L55">    override fun getTransaction(hash: EthHash) = request(</span>
+<span class="nc" id="L56">        method = &quot;eth_getTransactionByHash&quot;,</span>
+<span class="nc" id="L57">        params = JsonArray(</span>
+<span class="nc" id="L58">            listOf(</span>
+<span class="nc" id="L59">                JsonPrimitive(hash.toPrefixedHexString().value)</span>
+            )
+        ),
+        resultClass = EthGetTransactionResp::class
+<span class="nc" id="L63">    )</span>
+
+<span class="nc" id="L65">    override fun getTransactionReceipt(hash: EthHash) = request(</span>
+<span class="nc" id="L66">        method = &quot;eth_getTransactionReceipt&quot;,</span>
+<span class="nc" id="L67">        params = JsonArray(</span>
+<span class="nc" id="L68">            listOf(</span>
+<span class="nc" id="L69">                JsonPrimitive(hash.toPrefixedHexString().value)</span>
+            )
+        ),
+        resultClass = EthGetReceiptResp::class
+<span class="nc" id="L73">    )</span>
+
+<span class="nc" id="L75">    override fun getLiteBlock(hash: EthHash) = request(</span>
+<span class="nc" id="L76">        method = &quot;eth_getBlockByHash&quot;,</span>
+<span class="nc" id="L77">        params = JsonArray(</span>
+<span class="nc" id="L78">            listOf(</span>
+<span class="nc" id="L79">                JsonPrimitive(hash.toPrefixedHexString().value),</span>
+<span class="nc" id="L80">                JsonPrimitive(false)</span>
+            )
+        ),
+        resultClass = EthGetLiteBlockResp::class
+<span class="nc" id="L84">    )</span>
+
+<span class="nc" id="L86">    override fun getLiteBlock(number: EthUint64) = request(</span>
+<span class="nc" id="L87">        method = &quot;eth_getBlockByNumber&quot;,</span>
+<span class="nc" id="L88">        params = JsonArray(</span>
+<span class="nc" id="L89">            listOf(</span>
+<span class="nc" id="L90">                JsonPrimitive(number.toPrefixedHexString().value),</span>
+<span class="nc" id="L91">                JsonPrimitive(false)</span>
+            )
+        ),
+        resultClass = EthGetLiteBlockResp::class
+<span class="nc" id="L95">    )</span>
+
+    @OptIn(InternalSerializationApi::class)
+    override fun execute(): List&lt;EthResp&gt; {
+<span class="nc" id="L99">        return lock.withLock {</span>
+
+<span class="nc bnc" id="L101" title="All 2 branches missed.">            if (requests.isEmpty()) {</span>
+<span class="nc" id="L102">                return listOf()</span>
+            }
+
+<span class="nc" id="L105">            val response = httpTemplate</span>
+<span class="nc" id="L106">                .post(&quot;/&quot;)</span>
+<span class="nc" id="L107">                .body(JsonArray(requests))</span>
+<span class="nc" id="L108">                .execute(JsonArray::class)</span>
+
+<span class="nc" id="L110">            response.zip(resultClasses)</span>
+<span class="nc" id="L111">                .map { (response, resultClass) -&gt; json.decodeFromJsonElement(resultClass.serializer(), response) }</span>
+<span class="nc" id="L112">                .filterIsInstance&lt;EthResp&gt;()</span>
+<span class="nc" id="L113">                .also {</span>
+<span class="nc" id="L114">                    requests.clear()</span>
+<span class="nc" id="L115">                    resultClasses.clear()</span>
+<span class="nc" id="L116">                }</span>
+        }
+    }
+
+    private fun &lt;RESPONSE : EthResp&gt; request(
+        method: String,
+        params: JsonArray,
+        resultClass: KClass&lt;RESPONSE&gt;
+    ): EthHttpBatchService {
+<span class="nc" id="L125">        addRequest(</span>
+            createReq = { id -&gt;
+<span class="nc" id="L127">                JsonObject(</span>
+<span class="nc" id="L128">                    mapOf(</span>
+<span class="nc" id="L129">                        &quot;jsonrpc&quot; to JsonPrimitive(&quot;2.0&quot;),</span>
+<span class="nc" id="L130">                        &quot;id&quot; to JsonPrimitive(id),</span>
+<span class="nc" id="L131">                        &quot;method&quot; to JsonPrimitive(method),</span>
+<span class="nc" id="L132">                        &quot;params&quot; to params,</span>
+                    )
+                )
+            },
+<span class="nc" id="L136">            resultClass = resultClass</span>
         )
+<span class="nc" id="L138">        return this</span>
     }
 
-    override fun getBlock(req: EthBatchService.GetBlockRequest): EthHttpBatchService {
-<span class="nc" id="L29">        return this</span>
-    }
+    private fun &lt;RESPONSE : EthResp&gt; addRequest(createReq: (Int) -&gt; JsonObject, resultClass: KClass&lt;RESPONSE&gt;) {
+<span class="nc" id="L142">        lock.withLock {</span>
+<span class="nc" id="L143">            val reqId = requests.size + 1</span>
+<span class="nc" id="L144">            resultClasses.add(resultClass)</span>
+<span class="nc" id="L145">            requests.add(createReq(reqId))</span>
+        }
+<span class="nc" id="L147">    }</span>
 
+<span class="nc" id="L149">    private val json = Json { ignoreUnknownKeys = true }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
