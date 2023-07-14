@@ -50,19 +50,19 @@ interface FindTopic&lt;TOPIC : LogTopic&gt; {
     FindTopic&lt;TOPIC&gt;,
     ReadFromTopic&lt;TOPIC&gt;,
     Closeable {
+
     fun listTopics(): List&lt;TOPIC&gt;
 
     @OptIn(ExperimentalSerializationApi::class)
     fun listEvents(topic: TOPIC, block: EventQuery.() -&gt; Unit): List&lt;EventWithId&gt; {
-<span class="fc" id="L57">        val query = EventQuery().also(block)</span>
-<span class="fc" id="L58">        val firstId = LogChunkId(SnowflakeId(query.afterId.value.value + 1))</span>
-<span class="fc" id="L59">        return read(firstId, topic, query.limit.value)</span>
-<span class="fc" id="L60">            .map { chunk -&gt;</span>
-<span class="fc" id="L61">                val evt = ProtoBuf.decodeFromByteArray(Event.serializer(), chunk.bytes)</span>
-<span class="fc" id="L62">                EventWithId(</span>
-<span class="fc" id="L63">                    id = EventId(chunk.id.value),</span>
-<span class="fc" id="L64">                    contentType = evt.contentType,</span>
-<span class="fc" id="L65">                    content = evt.content</span>
+<span class="fc" id="L58">        val query = EventQuery().also(block)</span>
+<span class="fc" id="L59">        val firstId = LogChunkId(SnowflakeId(query.afterId.value.value + 1))</span>
+<span class="fc" id="L60">        return read(firstId, topic, query.limit.value)</span>
+<span class="fc" id="L61">            .map { chunk -&gt;</span>
+<span class="fc" id="L62">                val evt = ProtoBuf.decodeFromByteArray(Event.serializer(), chunk.bytes)</span>
+<span class="fc" id="L63">                EventWithId(</span>
+<span class="fc" id="L64">                    id = EventId(chunk.id.value),</span>
+<span class="fc" id="L65">                    value = evt.value</span>
                 )
             }
     }

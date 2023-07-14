@@ -14,7 +14,7 @@ import java.math.BigDecimal
 import java.math.MathContext
 import java.math.RoundingMode
 
-<span class="pc bnc" id="L17" title="All 7 branches missed.">@Serializable</span>
+<span class="pc bpc" id="L17" title="2 of 7 branches missed.">@Serializable</span>
 @SerialName(&quot;NumberValue&quot;)
 <span class="fc" id="L19">data class NumberValue(</span>
 <span class="fc" id="L20">    @Serializable(with = BigDecimalSerializer::class)</span>
@@ -150,14 +150,14 @@ import java.math.RoundingMode
 
     object BigDecimalSerializer : KSerializer&lt;BigDecimal&gt; {
         override fun deserialize(decoder: Decoder): BigDecimal {
-<span class="nc" id="L153">            return decoder.decodeString().toBigDecimal()</span>
+<span class="fc" id="L153">            return decoder.decodeString().toBigDecimal()</span>
         }
 
         override fun serialize(encoder: Encoder, value: BigDecimal) {
-<span class="nc" id="L157">            encoder.encodeString(value.toEngineeringString())</span>
-<span class="nc" id="L158">        }</span>
+<span class="fc" id="L157">            encoder.encodeString(value.toEngineeringString())</span>
+<span class="fc" id="L158">        }</span>
 
-<span class="nc" id="L160">        override val descriptor = PrimitiveSerialDescriptor(&quot;BigDecimal&quot;, PrimitiveKind.STRING)</span>
+<span class="fc" id="L160">        override val descriptor = PrimitiveSerialDescriptor(&quot;BigDecimal&quot;, PrimitiveKind.STRING)</span>
     }
 <span class="fc" id="L162">}</span>
 

@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 <span class="fc" id="L13">@RestController</span>
-<span class="fc" id="L14">open class ListEventsRoute&lt;TOPIC : LogTopic&gt;(</span>
+<span class="fc" id="L14">class ListEventsRoute&lt;TOPIC : LogTopic&gt;(</span>
 <span class="fc" id="L15">    private val eventBrokerRepository: LogBrokerRepository&lt;TOPIC&gt;</span>
 ) {
     @GetMapping(&quot;/v1/topics/{topicId}/events&quot;)

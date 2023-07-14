@@ -5,37 +5,32 @@ import io.hamal.backend.repository.api.log.LogBrokerRepository
 import io.hamal.lib.domain.Event
 import io.hamal.lib.domain.req.AppendEventReq
 import io.hamal.lib.domain.req.SubmittedAppendEventReq
-import io.hamal.lib.domain.vo.Content
-import io.hamal.lib.domain.vo.ContentType
 import io.hamal.lib.domain.vo.TopicId
+import io.hamal.lib.script.api.value.TableValue
 import io.hamal.lib.sdk.domain.*
 import io.hamal.lib.sdk.domain.ListTopicsResponse.*
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
-<span class="fc" id="L17">@RestController</span>
-<span class="fc" id="L18">open class AppendEventRoute(</span>
-<span class="fc" id="L19">    private val submitRequest: SubmitRequest,</span>
-<span class="fc" id="L20">    private val eventBrokerRepository: LogBrokerRepository&lt;*&gt;</span>
+<span class="fc" id="L16">@RestController</span>
+<span class="fc" id="L17">class AppendEventRoute(</span>
+<span class="fc" id="L18">    private val submitRequest: SubmitRequest,</span>
+<span class="fc" id="L19">    private val eventBrokerRepository: LogBrokerRepository&lt;*&gt;</span>
 ) {
     @PostMapping(&quot;/v1/topics/{topicId}/events&quot;)
     fun appendEvent(
         @PathVariable(&quot;topicId&quot;) topicId: TopicId,
-        @RequestHeader(&quot;Content-Type&quot;) contentType: ContentType,
-        @RequestBody body: ByteArray
+        @RequestBody value: TableValue
     ): ResponseEntity&lt;SubmittedAppendEventReq&gt; {
-<span class="fc" id="L28">        val topic = eventBrokerRepository.getTopic(topicId)</span>
-<span class="fc" id="L29">        val result = submitRequest(</span>
-<span class="fc" id="L30">            AppendEventReq(</span>
-<span class="fc" id="L31">                topicId = topic.id,</span>
-<span class="fc" id="L32">                event = Event(</span>
-<span class="fc" id="L33">                    contentType = contentType,</span>
-<span class="fc" id="L34">                    content = Content(body)</span>
-                )
+<span class="fc" id="L26">        val topic = eventBrokerRepository.getTopic(topicId)</span>
+<span class="fc" id="L27">        val result = submitRequest(</span>
+<span class="fc" id="L28">            AppendEventReq(</span>
+<span class="fc" id="L29">                topicId = topic.id,</span>
+<span class="fc" id="L30">                event = Event(value)</span>
             )
         )
-<span class="fc" id="L38">        return ResponseEntity(result, HttpStatus.ACCEPTED)</span>
+<span class="fc" id="L33">        return ResponseEntity(result, HttpStatus.ACCEPTED)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

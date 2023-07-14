@@ -14,7 +14,7 @@ object LimitConverter : Converter&lt;String, Limit&gt; {
 }
 
 object CorrelationIdConverter : Converter&lt;String, CorrelationId&gt; {
-<span class="nc" id="L17">    override fun convert(source: String) = CorrelationId(source)</span>
+<span class="fc" id="L17">    override fun convert(source: String) = CorrelationId(source)</span>
 }
 
 <span class="fc" id="L20">object EventIdConverter : DomainIdConverter&lt;EventId&gt;(EventId::class, ::EventId)</span>

@@ -128,7 +128,7 @@ sealed class Exec : DomainObject&lt;ExecId&gt; {
 <span class="pc" id="L128">    val failedAt: FailedAt</span>
 <span class="fc" id="L129">) : Exec() {</span>
 <span class="pc bnc" id="L130" title="All 4 branches missed.">    override val status = ExecStatus.Failed</span>
-<span class="nc" id="L131">    override val correlation get() = startedExec.correlation</span>
+<span class="fc" id="L131">    override val correlation get() = startedExec.correlation</span>
 <span class="nc" id="L132">    override val inputs get() = startedExec.inputs</span>
 <span class="nc" id="L133">    override val code get() = startedExec.code</span>
     override fun toString(): String {

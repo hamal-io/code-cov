@@ -7,8 +7,7 @@ import io.hamal.backend.repository.api.ExecCmdRepository.*
 import io.hamal.lib.common.domain.CmdId
 import io.hamal.lib.domain.StartedExec
 import io.hamal.lib.domain.State
-import io.hamal.lib.domain.vo.Content
-import io.hamal.lib.domain.vo.ContentType
+import io.hamal.lib.script.api.value.TableValue
 import io.hamal.lib.sdk.domain.DequeueExecsResponse
 import io.hamal.lib.sdk.domain.DequeueExecsResponse.*
 import org.springframework.http.HttpStatus
@@ -18,38 +17,35 @@ import org.springframework.web.bind.annotation.RestController
 import java.math.BigInteger
 import java.security.SecureRandom
 
-<span class="fc" id="L21">@RestController</span>
-<span class="fc" id="L22">class DequeueRoute(</span>
-<span class="fc" id="L23">    private val execCmdRepository: ExecCmdRepository,</span>
-<span class="fc" id="L24">    private val eventEmitter: SystemEventEmitter&lt;*&gt;</span>
+<span class="fc" id="L20">@RestController</span>
+<span class="fc" id="L21">class DequeueRoute(</span>
+<span class="fc" id="L22">    private val execCmdRepository: ExecCmdRepository,</span>
+<span class="fc" id="L23">    private val eventEmitter: SystemEventEmitter&lt;*&gt;</span>
 ) {
     @PostMapping(&quot;/v1/dequeue&quot;)
     fun dequeue(): ResponseEntity&lt;DequeueExecsResponse&gt; {
-<span class="fc" id="L28">        val cmdId = CmdId(BigInteger(128, rnd))</span>
-<span class="fc" id="L29">        val result = execCmdRepository.start(StartCmd(cmdId)).also {</span>
-<span class="fc" id="L30">            emitEvents(cmdId, it)</span>
-<span class="fc" id="L31">        }</span>
-<span class="fc" id="L32">        return ResponseEntity(</span>
-<span class="fc" id="L33">            DequeueExecsResponse(</span>
-<span class="fc" id="L34">                execs = result.map {</span>
-<span class="fc" id="L35">                    Exec(</span>
-<span class="fc" id="L36">                        id = it.id,</span>
-<span class="fc" id="L37">                        correlation = it.correlation,</span>
-<span class="fc" id="L38">                        inputs = it.inputs,</span>
-<span class="fc" id="L39">                        state = State(</span>
-<span class="fc" id="L40">                            contentType = ContentType(&quot;&quot;),</span>
-<span class="fc" id="L41">                            content = Content(&quot;&quot;)</span>
-                        ),//FIXME
-<span class="fc" id="L43">                        code = it.code</span>
+<span class="fc" id="L27">        val cmdId = CmdId(BigInteger(128, rnd))</span>
+<span class="fc" id="L28">        val result = execCmdRepository.start(StartCmd(cmdId)).also {</span>
+<span class="fc" id="L29">            emitEvents(cmdId, it)</span>
+<span class="fc" id="L30">        }</span>
+<span class="fc" id="L31">        return ResponseEntity(</span>
+<span class="fc" id="L32">            DequeueExecsResponse(</span>
+<span class="fc" id="L33">                execs = result.map {</span>
+<span class="fc" id="L34">                    Exec(</span>
+<span class="fc" id="L35">                        id = it.id,</span>
+<span class="fc" id="L36">                        correlation = it.correlation,</span>
+<span class="fc" id="L37">                        inputs = it.inputs,</span>
+<span class="fc" id="L38">                        state = State(TableValue()),//FIXME</span>
+<span class="fc" id="L39">                        code = it.code</span>
                     )
-<span class="fc" id="L45">                }), HttpStatus.OK</span>
+<span class="fc" id="L41">                }), HttpStatus.OK</span>
         )
     }
 
     private fun emitEvents(cmdId: CmdId, execs: List&lt;StartedExec&gt;) {
-<span class="fc" id="L50">        execs.forEach { eventEmitter.emit(cmdId, ExecutionStartedEvent(it)) }</span>
-<span class="fc" id="L51">    }</span>
+<span class="fc" id="L46">        execs.forEach { eventEmitter.emit(cmdId, ExecutionStartedEvent(it)) }</span>
+<span class="fc" id="L47">    }</span>
 
-<span class="fc" id="L53">    private val rnd = SecureRandom.getInstance(&quot;SHA1PRNG&quot;, &quot;SUN&quot;)</span>
+<span class="fc" id="L49">    private val rnd = SecureRandom.getInstance(&quot;SHA1PRNG&quot;, &quot;SUN&quot;)</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

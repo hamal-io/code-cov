@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Event.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.domain</a> &gt; <span class="el_source">Event.kt</span></div><h1>Event.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.domain
 
-import io.hamal.lib.domain.vo.Content
-import io.hamal.lib.domain.vo.ContentType
 import io.hamal.lib.domain.vo.EventId
+import io.hamal.lib.domain.vo.base.Inputs
+import io.hamal.lib.domain.vo.base.InputsSerializer
+import io.hamal.lib.script.api.value.TableValue
 import kotlinx.serialization.Serializable
 
 
-<span class="pc bpc" id="L9" title="2 of 8 branches missed.">@Serializable</span>
-<span class="fc" id="L10">data class Event(</span>
-<span class="fc" id="L11">    val contentType: ContentType,</span>
-<span class="fc" id="L12">    val content: Content</span>
-<span class="fc" id="L13">)</span>
+<span class="fc" id="L10">@Serializable(with = Event.Serializer::class)</span>
+<span class="pc" id="L11">class Event(override val value: TableValue = TableValue()) : Inputs() {</span>
+<span class="fc" id="L12">    internal object Serializer : InputsSerializer&lt;Event&gt;(::Event)</span>
+<span class="nc" id="L13">}</span>
 
-<span class="pc bpc" id="L15" title="2 of 9 branches missed.">@Serializable</span>
-<span class="fc" id="L16">data class EventWithId(</span>
-<span class="fc" id="L17">    val id: EventId,</span>
-<span class="fc" id="L18">    val contentType: ContentType,</span>
-<span class="fc" id="L19">    val content: Content</span>
+
+<span class="pc bpc" id="L16" title="2 of 8 branches missed.">@Serializable</span>
+<span class="fc" id="L17">data class EventWithId(</span>
+<span class="fc" id="L18">    val id: EventId,</span>
+<span class="fc" id="L19">    val value: TableValue</span>
 <span class="fc" id="L20">)</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

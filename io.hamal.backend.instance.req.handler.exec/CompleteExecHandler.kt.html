@@ -6,45 +6,54 @@ import io.hamal.backend.instance.req.ReqHandler
 import io.hamal.backend.instance.req.handler.cmdId
 import io.hamal.backend.repository.api.ExecCmdRepository
 import io.hamal.backend.repository.api.ExecQueryRepository
+import io.hamal.backend.repository.api.StateCmdRepository
 import io.hamal.lib.common.domain.CmdId
 import io.hamal.lib.domain.CompletedExec
+import io.hamal.lib.domain.CorrelatedState
 import io.hamal.lib.domain.StartedExec
+import io.hamal.lib.domain.State
 import io.hamal.lib.domain.req.SubmittedCompleteExecReq
 import org.springframework.stereotype.Component
 
 @Component
-<span class="fc" id="L16">class CompleteExecHandler(</span>
-<span class="fc" id="L17">    private val execQueryRepository: ExecQueryRepository,</span>
-<span class="fc" id="L18">    private val execCmdRepository: ExecCmdRepository,</span>
-<span class="fc" id="L19">    private val eventEmitter: SystemEventEmitter&lt;*&gt;</span>
-<span class="fc" id="L20">) : ReqHandler&lt;SubmittedCompleteExecReq&gt;(SubmittedCompleteExecReq::class) {</span>
+<span class="fc" id="L19">class CompleteExecHandler(</span>
+<span class="fc" id="L20">    private val execQueryRepository: ExecQueryRepository,</span>
+<span class="fc" id="L21">    private val execCmdRepository: ExecCmdRepository,</span>
+<span class="fc" id="L22">    private val eventEmitter: SystemEventEmitter&lt;*&gt;,</span>
+<span class="fc" id="L23">    private val stateCmdRepository: StateCmdRepository</span>
+<span class="fc" id="L24">) : ReqHandler&lt;SubmittedCompleteExecReq&gt;(SubmittedCompleteExecReq::class) {</span>
 
     override fun invoke(req: SubmittedCompleteExecReq) {
-<span class="fc" id="L23">        val cmdId = req.cmdId()</span>
+<span class="fc" id="L27">        val cmdId = req.cmdId()</span>
 
-<span class="fc" id="L25">        val exec = execQueryRepository.get(req.execId)</span>
-<span class="fc bfc" id="L26" title="All 2 branches covered.">        require(exec is StartedExec) { &quot;Exec not in status Started&quot; }</span>
+<span class="fc" id="L29">        val exec = execQueryRepository.get(req.execId)</span>
+<span class="fc bfc" id="L30" title="All 2 branches covered.">        require(exec is StartedExec) { &quot;Exec not in status Started&quot; }</span>
 
-//        if (exec.correlation != null) {
-//            stateCmdService.set(
-//                cmdId, StateCmdService.StateToSet(
-//                    correlation = exec.correlation!!,
-//                    payload = req.state
-//                )
-//            )
-//        }
 
-<span class="fc" id="L37">        completeExec(req)</span>
-            // FIXME also set state
+<span class="fc" id="L33">        completeExec(req)</span>
             // FIXME also emit events in req
-<span class="fc" id="L40">            .also { emitEvent(cmdId, it) }</span>
-<span class="fc" id="L41">    }</span>
+<span class="fc" id="L35">            .also { emitCompletionEvent(cmdId, it) }</span>
+<span class="fc" id="L36">            .also { setState(cmdId, it, req.state) }</span>
+
+<span class="fc" id="L38">    }</span>
 
     private fun completeExec(req: SubmittedCompleteExecReq) =
-<span class="fc" id="L44">        execCmdRepository.complete(ExecCmdRepository.CompleteCmd(req.cmdId(), req.execId))</span>
+<span class="fc" id="L41">        execCmdRepository.complete(ExecCmdRepository.CompleteCmd(req.cmdId(), req.execId))</span>
 
-    private fun emitEvent(cmdId: CmdId, exec: CompletedExec) {
-<span class="fc" id="L47">        eventEmitter.emit(cmdId, ExecutionCompletedEvent(completedExec = exec))</span>
-<span class="fc" id="L48">    }</span>
+    private fun emitCompletionEvent(cmdId: CmdId, exec: CompletedExec) {
+<span class="fc" id="L44">        eventEmitter.emit(cmdId, ExecutionCompletedEvent(exec))</span>
+<span class="fc" id="L45">    }</span>
+
+    private fun setState(cmdId: CmdId, exec: CompletedExec, state: State) {
+<span class="fc" id="L48">        val correlation = exec.correlation</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        if (correlation != null) {</span>
+<span class="fc" id="L50">            stateCmdRepository.set(</span>
+<span class="fc" id="L51">                cmdId, CorrelatedState(</span>
+<span class="fc" id="L52">                    correlation = correlation,</span>
+<span class="fc" id="L53">                    state = state</span>
+                )
+            )
+        }
+<span class="fc" id="L57">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

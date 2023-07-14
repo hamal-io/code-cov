@@ -6,14 +6,13 @@ import io.hamal.lib.domain.Correlation
 import io.hamal.lib.domain.State
 
 interface StateCmdRepository {
-    fun set(cmdId: CmdId, stateToSet: StateToSet): CorrelatedState
-<span class="nc" id="L10">    data class StateToSet(</span>
-<span class="nc" id="L11">        val correlation: Correlation,</span>
-<span class="nc" id="L12">        val state: State</span>
-    )
+    fun set(cmdId: CmdId, correlatedState: CorrelatedState)
+    fun clear()
 }
 
 interface StateQueryRepository {
     fun find(correlation: Correlation): CorrelatedState?
+<span class="fc bfc" id="L15" title="All 2 branches covered.">    fun get(correlation: Correlation) = find(correlation)</span>
+<span class="fc" id="L16">        ?: CorrelatedState(correlation, State())</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -69,14 +69,14 @@ inline fun &lt;reified BODY_TYPE : Any&gt; HttpRequestWithBody.body(body: BODY_T
     }
 
     override fun body(contentType: String, bytes: ByteArray): HttpRequestWithBody {
-<span class="fc" id="L72">        bodies.add(</span>
-<span class="fc" id="L73">            HttpByteArrayBody(</span>
-<span class="fc" id="L74">                name = &quot;cmd&quot;,</span>
-<span class="fc" id="L75">                content = bytes,</span>
-<span class="fc" id="L76">                contentType = contentType</span>
+<span class="nc" id="L72">        bodies.add(</span>
+<span class="nc" id="L73">            HttpByteArrayBody(</span>
+<span class="nc" id="L74">                name = &quot;cmd&quot;,</span>
+<span class="nc" id="L75">                content = bytes,</span>
+<span class="nc" id="L76">                contentType = contentType</span>
             )
         )
-<span class="fc" id="L79">        return this</span>
+<span class="nc" id="L79">        return this</span>
     }
 
     override fun header(key: String, value: String): DefaultHttpRequest {
