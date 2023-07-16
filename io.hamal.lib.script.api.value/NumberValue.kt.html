@@ -64,13 +64,13 @@ import java.math.RoundingMode
 <span class="nc" id="L64">        NumberValue(value.subtract(other.value, mathContext), metaTable)</span>
 
     fun multiply(other: NumberValue) =
-<span class="fc" id="L67">        NumberValue(value.multiply(other.value, mathContext), metaTable)</span>
+<span class="nc" id="L67">        NumberValue(value.multiply(other.value, mathContext), metaTable)</span>
 
     fun divide(other: NumberValue) =
 <span class="nc" id="L70">        NumberValue(value.divide(other.value, mathContext), metaTable)</span>
 
     fun pow(other: NumberValue) =
-<span class="fc" id="L73">        NumberValue(value.pow(other.value.toInt(), mathContext), metaTable)</span>
+<span class="nc" id="L73">        NumberValue(value.pow(other.value.toInt(), mathContext), metaTable)</span>
 
     fun remainder(other: NumberValue) =
 <span class="nc" id="L76">        NumberValue(value.remainder(other.value, mathContext), metaTable)</span>
@@ -174,9 +174,9 @@ object DefaultNumberValueMetaTable : MetaTable&lt;NumberValue&gt; {
 <span class="fc" id="L174">        numberInfix(Lt) { self, other -&gt; booleanOf(self.isLessThan(other)) },</span>
 <span class="fc" id="L175">        numberInfix(Lte) { self, other -&gt; booleanOf(self.isLessThanEqual(other)) },</span>
 <span class="pc" id="L176">        numberInfix(Mod) { self, other -&gt; self.remainder(other) },</span>
-<span class="fc" id="L177">        numberInfix(Mul) { self, other -&gt; self.multiply(other) },</span>
+<span class="pc" id="L177">        numberInfix(Mul) { self, other -&gt; self.multiply(other) },</span>
 <span class="pc" id="L178">        numberPrefix(Negate) { self -&gt; self.negate() },</span>
-<span class="fc" id="L179">        numberInfix(Pow) { self, other -&gt; self.pow(other) },</span>
+<span class="pc" id="L179">        numberInfix(Pow) { self, other -&gt; self.pow(other) },</span>
 <span class="pc" id="L180">        numberInfix(Sub) { self, other -&gt; self.minus(other) },</span>
 
 

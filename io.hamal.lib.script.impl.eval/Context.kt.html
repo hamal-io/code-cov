@@ -126,14 +126,14 @@ private fun resolveInfixOperationType(operator: Operator): ValueOperator.Type {
 <span class="fc" id="L126">    return when {</span>
 <span class="pc bpc" id="L127" title="1 of 2 branches missed.">        operator == Operator.Divide -&gt; Div</span>
 <span class="fc bfc" id="L128" title="All 2 branches covered.">        operator == Operator.Equals -&gt; Eq</span>
-<span class="fc bfc" id="L129" title="All 2 branches covered.">        operator == Operator.Exponential -&gt; Pow</span>
+<span class="pc bpc" id="L129" title="1 of 2 branches missed.">        operator == Operator.Exponential -&gt; Pow</span>
 <span class="pc bpc" id="L130" title="1 of 2 branches missed.">        operator == Operator.GreaterThan -&gt; Gt</span>
 <span class="pc bpc" id="L131" title="1 of 2 branches missed.">        operator == Operator.GreaterThanEquals -&gt; Gte</span>
 <span class="fc bfc" id="L132" title="All 2 branches covered.">        operator == Operator.LessThan -&gt; Lt</span>
 <span class="fc bfc" id="L133" title="All 2 branches covered.">        operator == Operator.LessThanEquals -&gt; Lte</span>
 <span class="pc bpc" id="L134" title="1 of 2 branches missed.">        operator == Operator.Minus -&gt; Sub</span>
 <span class="pc bpc" id="L135" title="1 of 2 branches missed.">        operator == Operator.Modulo -&gt; Mod</span>
-<span class="fc bfc" id="L136" title="All 2 branches covered.">        operator == Operator.Multiply -&gt; Mul</span>
+<span class="pc bpc" id="L136" title="1 of 2 branches missed.">        operator == Operator.Multiply -&gt; Mul</span>
 <span class="fc bfc" id="L137" title="All 2 branches covered.">        operator == Operator.NotEqual -&gt; Neq</span>
 <span class="pc bpc" id="L138" title="1 of 2 branches missed.">        operator == Operator.Plus -&gt; Add</span>
 <span class="nc" id="L139">        else -&gt; TODO()</span>

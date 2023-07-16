@@ -43,7 +43,7 @@ internal interface ParseInfixExpression {
 <span class="fc" id="L43">    override val position: Position,</span>
 <span class="fc" id="L44">    val lhs: Expression,</span>
 <span class="fc" id="L45">    val operator: Operator,</span>
-<span class="fc" id="L46">    var rhs: Expression</span>
+<span class="pc" id="L46">    var rhs: Expression</span>
 ) : Expression {
     internal object Parse : ParseInfixExpression {
         override fun invoke(ctx: Context, lhs: Expression): Expression {
@@ -52,13 +52,13 @@ internal interface ParseInfixExpression {
 <span class="fc" id="L52">            val operator = Parse(ctx)</span>
 <span class="fc" id="L53">            val rhs = ctx.parseExpression(precedence)</span>
 
-<span class="fc bfc" id="L55" title="All 4 branches covered.">            if (operator.rightAssociative() &amp;&amp; lhs is InfixExpression) {</span>
-<span class="fc" id="L56">                return injectRightAssociativeExpression(ctx, lhs, operator, rhs)</span>
+<span class="pc bpc" id="L55" title="3 of 4 branches missed.">            if (operator.rightAssociative() &amp;&amp; lhs is InfixExpression) {</span>
+<span class="nc" id="L56">                return injectRightAssociativeExpression(ctx, lhs, operator, rhs)</span>
             }
 <span class="fc" id="L58">            return InfixExpression(position = position, lhs = lhs, operator = operator, rhs)</span>
         }
 
-<span class="pc bpc" id="L61" title="1 of 4 branches missed.">        private fun Operator.rightAssociative(): Boolean = this == Exponential || this == Concat</span>
+<span class="pc bpc" id="L61" title="2 of 4 branches missed.">        private fun Operator.rightAssociative(): Boolean = this == Exponential || this == Concat</span>
 
         private fun injectRightAssociativeExpression(
             ctx: Context,
@@ -66,19 +66,19 @@ internal interface ParseInfixExpression {
             operator: Operator,
             rhs: Expression
         ): InfixExpression {
-<span class="fc" id="L69">            val position = ctx.currentPosition()</span>
-<span class="fc" id="L70">            var nodeToInject: InfixExpression = lhs</span>
-<span class="pc bpc" id="L71" title="1 of 2 branches missed.">            while (nodeToInject.rhs is InfixExpression) {</span>
+<span class="nc" id="L69">            val position = ctx.currentPosition()</span>
+<span class="nc" id="L70">            var nodeToInject: InfixExpression = lhs</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">            while (nodeToInject.rhs is InfixExpression) {</span>
 <span class="nc" id="L72">                nodeToInject = nodeToInject.rhs as InfixExpression</span>
             }
-<span class="fc" id="L74">            val newRhs = InfixExpression(</span>
-<span class="fc" id="L75">                position = position,</span>
-<span class="fc" id="L76">                lhs = nodeToInject.rhs,</span>
-<span class="fc" id="L77">                operator = operator,</span>
-<span class="fc" id="L78">                rhs = rhs</span>
+<span class="nc" id="L74">            val newRhs = InfixExpression(</span>
+<span class="nc" id="L75">                position = position,</span>
+<span class="nc" id="L76">                lhs = nodeToInject.rhs,</span>
+<span class="nc" id="L77">                operator = operator,</span>
+<span class="nc" id="L78">                rhs = rhs</span>
             )
-<span class="fc" id="L80">            nodeToInject.rhs = newRhs</span>
-<span class="fc" id="L81">            return lhs</span>
+<span class="nc" id="L80">            nodeToInject.rhs = newRhs</span>
+<span class="nc" id="L81">            return lhs</span>
         }
 
     }
