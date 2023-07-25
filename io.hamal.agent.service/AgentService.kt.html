@@ -1,52 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AgentService.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.agent.service</a> &gt; <span class="el_source">AgentService.kt</span></div><h1>AgentService.kt</h1><pre class="source lang-java linenums">package io.hamal.agent.service
 
+import io.hamal.agent.component.AgentAsync
 import io.hamal.lib.domain.State
-import io.hamal.lib.script.api.Sandbox
-import io.hamal.lib.script.api.value.ErrorValue
-import io.hamal.lib.script.api.value.TableValue
+import io.hamal.lib.kua.ExitError
+import io.hamal.lib.kua.KuaError
+import io.hamal.lib.kua.SandboxFactory
+import io.hamal.lib.kua.value.ErrorValue
+import io.hamal.lib.kua.value.NumberValue
+import io.hamal.lib.kua.value.TableValue
 import io.hamal.lib.sdk.DefaultHamalSdk
 import io.hamal.lib.sdk.HttpTemplateSupplier
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
-import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
+import kotlin.time.Duration.Companion.milliseconds
 
-<span class="fc" id="L14">@Service</span>
-<span class="fc" id="L15">class AgentService(</span>
-<span class="fc" id="L16">    private val httpTemplateSupplier: HttpTemplateSupplier,</span>
-<span class="fc" id="L17">    private val sandbox: Sandbox</span>
+<span class="fc" id="L18">@Service</span>
+<span class="fc" id="L19">class AgentService(</span>
+<span class="fc" id="L20">    private val httpTemplateSupplier: HttpTemplateSupplier,</span>
+<span class="fc" id="L21">    private val sandboxFactory: SandboxFactory,</span>
+<span class="fc" id="L22">    private val async: AgentAsync</span>
 ) {
 
-<span class="fc" id="L20">    private val sdk by lazy { DefaultHamalSdk(httpTemplateSupplier()) }</span>
 
-    @Scheduled(initialDelay = 1, fixedDelay = 1, timeUnit = TimeUnit.MILLISECONDS)
+    @Scheduled(initialDelay = 1, timeUnit = TimeUnit.SECONDS, fixedRate = Int.MAX_VALUE.toLong())
     fun run() {
-<span class="fc" id="L24">        CompletableFuture.runAsync {</span>
-<span class="fc" id="L25">            sdk.execService()</span>
-<span class="fc" id="L26">                .poll()</span>
-<span class="fc" id="L27">                .execs.forEach { request -&gt;</span>
+<span class="fc" id="L28">        var counter = 0</span>
+<span class="fc" id="L29">        val sdk = DefaultHamalSdk(httpTemplateSupplier())</span>
+//        async.atFixedRate(1000.milliseconds) {
+<span class="fc" id="L31">        async.atFixedRate(1.milliseconds) {</span>
+<span class="fc" id="L32">            sdk.execService()</span>
+<span class="fc" id="L33">                .poll()</span>
+<span class="fc" id="L34">                .execs.forEach { request -&gt;</span>
 
-<span class="fc" id="L29">                    try {</span>
+<span class="fc" id="L36">                    try {</span>
+<span class="fc" id="L37">                        println(Thread.currentThread().name)</span>
 
-<span class="fc" id="L31">                        println(&quot;${request.inputs} - ${request.inputs.value}&quot;)</span>
-
-<span class="fc" id="L33">                        val result = sandbox.eval(request.code.value)</span>
-<span class="fc" id="L34">                        println(&quot;RESULT: $result&quot;)</span>
-
-<span class="pc bpc" id="L36" title="1 of 2 branches missed.">                        if (result is ErrorValue) {</span>
-<span class="nc" id="L37">                            sdk.execService().fail(request.id, result)</span>
-                        }
+<span class="pc" id="L39">                        sandboxFactory.create().use {</span>
+<span class="nc" id="L40">                            it.runCode(request.code)</span>
+<span class="nc" id="L41">                        }</span>
+//                        println(&quot;${request.inputs} - ${request.inputs.value}&quot;)
 //
-<span class="fc" id="L40">                        sdk.execService().complete(</span>
-<span class="fc" id="L41">                            request.id, State(TableValue())</span>
-                        )
+//                        val result = sandbox.eval(request.code.value)
+//                        println(&quot;RESULT: $result&quot;)
+//
+//                        if (result is ErrorValue) {
+//                            sdk.execService().fail(request.id, result)
+//                        }
+<span class="nc" id="L50">                        counter++</span>
 
-<span class="nc" id="L44">                    } catch (t: Throwable) {</span>
-<span class="nc" id="L45">                        t.printStackTrace()</span>
+<span class="nc" id="L52">                        println(&quot;Counter: ${counter}&quot;)</span>
+////
+                        //FIXME close sandbox after usage
+
+<span class="nc" id="L56">                        sdk.execService().complete(</span>
+<span class="nc" id="L57">                            request.id, State(TableValue())</span>
+                        )
+<span class="fc" id="L59">                    } catch (kua: KuaError) {</span>
+<span class="fc" id="L60">                        val e = kua.cause</span>
+<span class="pc bpc" id="L61" title="1 of 2 branches missed.">                        if (e is ExitError) {</span>
+<span class="fc" id="L62">                            println(&quot;Exit ${e.status.value}&quot;)</span>
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">                            if (e.status == NumberValue(0.0)) {</span>
+<span class="fc" id="L64">                                sdk.execService().complete(</span>
+<span class="fc" id="L65">                                    request.id, State(TableValue())</span>
+                                )
+                            } else {
+<span class="nc bnc" id="L68" title="All 2 branches missed.">                                sdk.execService().fail(request.id, ErrorValue(e.message ?: &quot;Unknown error&quot;))</span>
+                            }
+                        } else {
+<span class="nc" id="L71">                            throw kua</span>
+                        }
+<span class="nc" id="L73">                    } catch (t: Throwable) {</span>
+<span class="nc" id="L74">                        t.printStackTrace()</span>
+
+<span class="nc bnc" id="L76" title="All 2 branches missed.">                        sdk.execService().fail(request.id, ErrorValue(t.message ?: &quot;Unknown error&quot;))</span>
                     }
-<span class="fc" id="L47">                }</span>
-<span class="fc" id="L48">        }</span>
-<span class="fc" id="L49">    }</span>
+<span class="fc" id="L78">                }</span>
+<span class="fc" id="L79">        }</span>
+<span class="fc" id="L80">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

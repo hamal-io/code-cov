@@ -2,13 +2,13 @@
 
 object TokenizerUtils {
 
-<span class="fc" id="L5">    fun isDigit(c: Char) = c.isDigit()</span>
+<span class="nc" id="L5">    fun isDigit(c: Char) = c.isDigit()</span>
 
-<span class="pc bpc" id="L7" title="1 of 12 branches missed.">    fun isAlpha(c: Char) = (c in 'a'..'z') || (c in 'A'..'Z')</span>
+<span class="nc bnc" id="L7" title="All 12 branches missed.">    fun isAlpha(c: Char) = (c in 'a'..'z') || (c in 'A'..'Z')</span>
 
-<span class="fc bfc" id="L9" title="All 2 branches covered.">    fun isUnderscore(c: Char) = c == '_'</span>
+<span class="nc bnc" id="L9" title="All 2 branches missed.">    fun isUnderscore(c: Char) = c == '_'</span>
 
-<span class="fc bfc" id="L11" title="All 2 branches covered.">    fun isQuote(c: Char) = c == '\''</span>
+<span class="nc bnc" id="L11" title="All 2 branches missed.">    fun isQuote(c: Char) = c == '\''</span>
 
 <span class="pc bpc" id="L13" title="3 of 8 branches missed.">    fun isWhitespace(c: Char) = c == ' ' || c == '\t' || c == '\n' || c == '\r';</span>
 

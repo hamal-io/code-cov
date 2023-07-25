@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DecimalValue.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.kua.value</a> &gt; <span class="el_source">DecimalValue.kt</span></div><h1>DecimalValue.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.kua.value
+
+import io.hamal.lib.common.SnowflakeId
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import java.math.BigDecimal
+import java.math.MathContext
+import java.math.RoundingMode
+
+<span class="pc bnc" id="L15" title="All 7 branches missed.">@Serializable</span>
+@SerialName(&quot;DecimalValue&quot;)
+<span class="nc" id="L17">data class DecimalValue(</span>
+<span class="nc" id="L18">    @Serializable(with = BigDecimalSerializer::class)</span>
+<span class="nc" id="L19">    val value: BigDecimal</span>
+<span class="nc" id="L20">) : Number(), SerializableValue, Comparable&lt;DecimalValue&gt; {</span>
+
+<span class="nc" id="L22">    companion object {</span>
+<span class="nc" id="L23">        val Zero = DecimalValue(0)</span>
+<span class="nc" id="L24">        val One = DecimalValue(1)</span>
+<span class="nc" id="L25">        val mathContext: MathContext = MathContext.DECIMAL128</span>
+
+<span class="nc" id="L27">        operator fun invoke(value: Byte): DecimalValue = DecimalValue(BigDecimal.valueOf(value.toLong()))</span>
+<span class="nc" id="L28">        operator fun invoke(value: Short): DecimalValue = DecimalValue(BigDecimal.valueOf(value.toLong()))</span>
+<span class="nc" id="L29">        operator fun invoke(value: Int): DecimalValue = DecimalValue(BigDecimal.valueOf(value.toLong()))</span>
+<span class="nc" id="L30">        operator fun invoke(value: Long): DecimalValue = DecimalValue(BigDecimal.valueOf(value))</span>
+<span class="nc" id="L31">        operator fun invoke(value: Number): DecimalValue = DecimalValue(BigDecimal.valueOf(value.toDouble()))</span>
+<span class="nc" id="L32">        operator fun invoke(value: SnowflakeId): DecimalValue = DecimalValue(BigDecimal.valueOf(value.value))</span>
+
+        operator fun invoke(value: Float): DecimalValue {
+<span class="nc bnc" id="L35" title="All 4 branches missed.">            require(!value.isNaN()) { IllegalArgumentException(&quot;NaN&quot;) }</span>
+<span class="nc bnc" id="L36" title="All 4 branches missed.">            require(!value.isInfinite()) { IllegalArgumentException(&quot;Infinity&quot;) }</span>
+<span class="nc" id="L37">            return DecimalValue(BigDecimal.valueOf(value.toDouble()))</span>
+        }
+
+        operator fun invoke(value: Double): DecimalValue {
+<span class="nc bnc" id="L41" title="All 4 branches missed.">            require(!value.isNaN()) { IllegalArgumentException(&quot;NaN&quot;) }</span>
+<span class="nc bnc" id="L42" title="All 4 branches missed.">            require(!value.isInfinite()) { IllegalArgumentException(&quot;Infinity&quot;) }</span>
+<span class="nc" id="L43">            return DecimalValue(BigDecimal.valueOf(value))</span>
+        }
+
+        operator fun invoke(value: String): DecimalValue {
+<span class="nc bnc" id="L47" title="All 2 branches missed.">            require(value.isNumber()) { IllegalArgumentException(&quot;NaN&quot;) }</span>
+<span class="nc" id="L48">            return DecimalValue(BigDecimal(value.trim(), mathContext))</span>
+        }
+
+        private fun String.isNumber(): Boolean {
+<span class="nc" id="L52">            val regex = &quot;-?[0-9]+(\\.[0-9]+)?&quot;.toRegex()</span>
+<span class="nc" id="L53">            return matches(regex)</span>
+        }
+    }
+
+    fun plus(other: DecimalValue) =
+<span class="nc" id="L58">        DecimalValue(value.add(other.value, mathContext))</span>
+
+    fun minus(other: DecimalValue) =
+<span class="nc" id="L61">        DecimalValue(value.subtract(other.value, mathContext))</span>
+
+    fun multiply(other: DecimalValue) =
+<span class="nc" id="L64">        DecimalValue(value.multiply(other.value, mathContext))</span>
+
+    fun divide(other: DecimalValue) =
+<span class="nc" id="L67">        DecimalValue(value.divide(other.value, mathContext))</span>
+
+    fun pow(other: DecimalValue) =
+<span class="nc" id="L70">        DecimalValue(value.pow(other.value.toInt(), mathContext))</span>
+
+    fun remainder(other: DecimalValue) =
+<span class="nc" id="L73">        DecimalValue(value.remainder(other.value, mathContext))</span>
+
+<span class="nc" id="L75">    fun floor() = DecimalValue(value.setScale(0, RoundingMode.FLOOR))</span>
+
+<span class="nc" id="L77">    fun ceil() = DecimalValue(value.setScale(0, RoundingMode.CEILING))</span>
+
+    fun ln(): DecimalValue {
+        // Algorithm: http://functions.wolfram.com/ElementaryFunctions/Log/10/
+        // https://stackoverjob.com/a/6169691/6444586
+        val result: DecimalValue
+<span class="nc bnc" id="L83" title="All 2 branches missed.">        require(isPositive()) { IllegalStateException(&quot;Value must &gt;= 1&quot;) }</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">        if (value == BigDecimal.ONE) {</span>
+<span class="nc" id="L85">            return DecimalValue(BigDecimal.ZERO)</span>
+        } else {
+<span class="nc" id="L87">            val iterations = 25000L</span>
+<span class="nc" id="L88">            val x = value.subtract(BigDecimal.ONE)</span>
+<span class="nc" id="L89">            var ret = BigDecimal(iterations + 1)</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">            for (i in iterations downTo 0) {</span>
+<span class="nc" id="L91">                var N = BigDecimal(i / 2 + 1).pow(2)</span>
+<span class="nc" id="L92">                N = N.multiply(x, mathContext)</span>
+<span class="nc" id="L93">                ret = N.divide(ret, mathContext)</span>
+<span class="nc" id="L94">                N = BigDecimal(i + 1)</span>
+<span class="nc" id="L95">                ret = ret.add(N, mathContext)</span>
+            }
+<span class="nc" id="L97">            ret = x.divide(ret, mathContext)</span>
+<span class="nc" id="L98">            result = DecimalValue(ret)</span>
+        }
+<span class="nc" id="L100">        return result</span>
+    }
+
+    fun sqrt(): DecimalValue {
+<span class="nc bnc" id="L104" title="All 4 branches missed.">        require(!isNegative()) { throw IllegalStateException(&quot;Value must &gt;= 0&quot;) }</span>
+<span class="nc" id="L105">        return DecimalValue(value.sqrt(mathContext))</span>
+    }
+
+<span class="nc" id="L108">    fun abs() = DecimalValue(value.abs(mathContext))</span>
+
+<span class="nc" id="L110">    fun negate() = DecimalValue(value.negate(mathContext))</span>
+
+
+<span class="nc" id="L113">    override fun toString() = value.toString()</span>
+
+<span class="nc" id="L115">    override operator fun compareTo(other: DecimalValue) = value.compareTo(other.value)</span>
+
+<span class="nc bnc" id="L117" title="All 2 branches missed.">    fun isLessThan(other: DecimalValue) = compareTo(other) &lt; 0</span>
+
+<span class="nc bnc" id="L119" title="All 2 branches missed.">    fun isLessThanEqual(other: DecimalValue) = compareTo(other) &lt;= 0</span>
+
+<span class="nc bnc" id="L121" title="All 2 branches missed.">    fun isGreaterThan(other: DecimalValue) = compareTo(other) &gt; 0</span>
+
+<span class="nc bnc" id="L123" title="All 2 branches missed.">    fun isGreaterThanEqual(other: DecimalValue) = compareTo(other) &gt;= 0</span>
+
+<span class="nc bnc" id="L125" title="All 2 branches missed.">    fun isNegative() = value.signum() &lt; 0</span>
+
+<span class="nc bnc" id="L127" title="All 2 branches missed.">    fun isPositive() = value.signum() &gt; 0</span>
+
+<span class="nc bnc" id="L129" title="All 2 branches missed.">    fun isZero() = value.signum() == 0</span>
+
+<span class="nc" id="L131">    override fun toByte() = value.toByte()</span>
+
+<span class="nc" id="L133">    override fun toShort() = value.toShort()</span>
+
+<span class="nc" id="L135">    override fun toInt() = value.toInt()</span>
+
+<span class="nc" id="L137">    override fun toLong() = value.toLong()</span>
+
+<span class="nc" id="L139">    override fun toFloat() = value.toFloat()</span>
+
+<span class="nc" id="L141">    override fun toChar() = value.toChar()</span>
+
+<span class="nc" id="L143">    override fun toDouble() = value.toDouble()</span>
+
+    object BigDecimalSerializer : KSerializer&lt;BigDecimal&gt; {
+        override fun deserialize(decoder: Decoder): BigDecimal {
+<span class="nc" id="L147">            return decoder.decodeString().toBigDecimal()</span>
+        }
+
+        override fun serialize(encoder: Encoder, value: BigDecimal) {
+<span class="nc" id="L151">            encoder.encodeString(value.toEngineeringString())</span>
+<span class="nc" id="L152">        }</span>
+
+<span class="nc" id="L154">        override val descriptor = PrimitiveSerialDescriptor(&quot;BigDecimal&quot;, PrimitiveKind.STRING)</span>
+    }
+<span class="fc" id="L156">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

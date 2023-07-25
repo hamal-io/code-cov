@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NumberValue.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.kua.value</a> &gt; <span class="el_source">NumberValue.kt</span></div><h1>NumberValue.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.kua.value
+
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+<span class="pc bpc" id="L6" title="2 of 7 branches missed.">@Serializable</span>
+@SerialName(&quot;NumberValue&quot;)
+<span class="fc" id="L8">data class NumberValue(</span>
+<span class="fc" id="L9">    val value: Double</span>
+) : SerializableValue {
+<span class="fc" id="L11">    constructor(value: Int) : this(value.toDouble())</span>
+
+<span class="nc" id="L13">    companion object {</span>
+<span class="fc" id="L14">        val Zero = NumberValue(0.0)</span>
+<span class="pc" id="L15">        val One = NumberValue(1.0)</span>
+    }
+
+<span class="fc" id="L18">    operator fun times(value: Int) = NumberValue(this.value * value)</span>
+<span class="nc" id="L19">    operator fun times(value: Double) = NumberValue(this.value * value)</span>
+<span class="fc" id="L20">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

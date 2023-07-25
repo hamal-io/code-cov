@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OutputSchema.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.kua.function</a> &gt; <span class="el_source">OutputSchema.kt</span></div><h1>OutputSchema.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.kua.function
+
+import io.hamal.lib.kua.table.TableArrayProxyValue
+import io.hamal.lib.kua.table.TableMapProxyValue
+import io.hamal.lib.kua.value.AnyValue
+import io.hamal.lib.kua.value.NumberValue
+import io.hamal.lib.kua.value.StringValue
+import io.hamal.lib.kua.value.Value
+import kotlin.reflect.KClass
+
+sealed interface FunctionOutputSchema&lt;OUTPUT : FunctionOutput&lt;*, *&gt;&gt; {
+    val size: Int
+    fun pushResult(ctx: FunctionContext, output: OUTPUT)
+}
+
+object FunctionOutput0Schema : FunctionOutputSchema&lt;FunctionOutput0&gt; {
+<span class="nc" id="L17">    override val size = 0</span>
+<span class="fc" id="L18">    override fun pushResult(ctx: FunctionContext, output: FunctionOutput0) {}</span>
+}
+
+<span class="fc" id="L21">data class FunctionOutput1Schema&lt;ARG_1 : Value&gt;(</span>
+<span class="pc" id="L22">    val arg1: KClass&lt;ARG_1&gt;</span>
+) : FunctionOutputSchema&lt;FunctionOutput1&lt;ARG_1&gt;&gt; {
+<span class="pc" id="L24">    override val size = 1</span>
+    override fun pushResult(ctx: FunctionContext, output: FunctionOutput1&lt;ARG_1&gt;) {
+<span class="fc" id="L26">        ctx.push(output.arg1)</span>
+<span class="fc" id="L27">    }</span>
+}
+
+<span class="fc" id="L30">data class FunctionOutput2Schema&lt;ARG_1 : Value, ARG_2 : Value&gt;(</span>
+<span class="pc" id="L31">    val arg1: KClass&lt;ARG_1&gt;,</span>
+<span class="pc" id="L32">    val arg2: KClass&lt;ARG_2&gt;</span>
+) : FunctionOutputSchema&lt;FunctionOutput2&lt;ARG_1, ARG_2&gt;&gt; {
+<span class="pc" id="L34">    override val size = 2</span>
+    override fun pushResult(ctx: FunctionContext, output: FunctionOutput2&lt;ARG_1, ARG_2&gt;) {
+<span class="fc" id="L36">        ctx.push(output.arg1)</span>
+<span class="fc" id="L37">        ctx.push(output.arg2)</span>
+<span class="fc" id="L38">    }</span>
+}
+
+<span class="fc" id="L41">fun &lt;VALUE : Value&gt; FunctionContext.push(value: VALUE) = when (value) {</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">    is NumberValue -&gt; pushNumber(value)</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">    is StringValue -&gt; pushString(value)</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">    is TableArrayProxyValue -&gt; pushTop(value.index)</span>
+<span class="pc bpc" id="L45" title="1 of 2 branches missed.">    is TableMapProxyValue -&gt; pushTop(value.index)</span>
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">    is AnyValue -&gt; pushAny(value)</span>
+<span class="nc" id="L47">    else -&gt; throw NotImplementedError(&quot;${value::class.simpleName} not implemented yet&quot;)</span>
+<span class="fc" id="L48">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

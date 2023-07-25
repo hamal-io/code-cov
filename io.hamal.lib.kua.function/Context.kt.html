@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Context.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.kua.function</a> &gt; <span class="el_source">Context.kt</span></div><h1>Context.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.kua.function
+
+import io.hamal.lib.kua.StackTop
+import io.hamal.lib.kua.State
+import io.hamal.lib.kua.table.TableArrayProxyValue
+import io.hamal.lib.kua.table.TableMapProxyValue
+import io.hamal.lib.kua.value.AnyValue
+import io.hamal.lib.kua.value.TableValue
+import io.hamal.lib.kua.value.ValueType
+
+
+<span class="pc" id="L12">class FunctionContext(</span>
+<span class="fc" id="L13">    val state: State</span>
+) : State {
+<span class="pc" id="L15">    override val bridge = state.bridge</span>
+<span class="nc" id="L16">    override val top: StackTop get() = state.top</span>
+
+<span class="nc" id="L18">    override fun isEmpty() = state.isEmpty()</span>
+<span class="nc" id="L19">    override fun isNotEmpty() = state.isNotEmpty()</span>
+<span class="nc" id="L20">    override fun setTop(idx: Int) = state.setTop(idx)</span>
+<span class="fc" id="L21">    override fun pushTop(idx: Int) = state.pushTop(idx)</span>
+
+<span class="nc" id="L23">    override fun type(idx: Int): ValueType = state.type(idx)</span>
+<span class="fc" id="L24">    override fun pushAny(value: AnyValue) = state.pushAny(value)</span>
+<span class="fc" id="L25">    override fun getAnyValue(idx: Int) = state.getAnyValue(idx)</span>
+<span class="nc" id="L26">    override fun pushBoolean(value: Boolean) = state.pushBoolean(value)</span>
+<span class="nc" id="L27">    override fun getBoolean(idx: Int) = state.getBoolean(idx)</span>
+
+<span class="fc" id="L29">    override fun getNumber(idx: Int) = state.getNumber(idx)</span>
+<span class="fc" id="L30">    override fun pushNumber(value: Double) = state.pushNumber(value)</span>
+<span class="fc" id="L31">    override fun getString(idx: Int) = state.getString(idx)</span>
+<span class="fc" id="L32">    override fun pushString(value: String) = state.pushString(value)</span>
+<span class="nc" id="L33">    override fun pushTable(value: TableValue) = state.pushTable(value)</span>
+<span class="nc" id="L34">    override fun pushTable(proxy: TableMapProxyValue) = state.pushTable(proxy)</span>
+<span class="nc" id="L35">    override fun pushTable(proxy: TableArrayProxyValue) = state.pushTable(proxy)</span>
+<span class="nc" id="L36">    override fun getTable(idx: Int) = state.getTable(idx)</span>
+<span class="nc" id="L37">    override fun getTableMapProxy(idx: Int) = state.getTableMapProxy(idx)</span>
+<span class="nc" id="L38">    override fun getTableArrayProxy(idx: Int) = state.getTableArrayProxy(idx)</span>
+
+<span class="nc" id="L40">    override fun setGlobal(name: String, value: TableMapProxyValue) = state.setGlobal(name, value)</span>
+<span class="nc" id="L41">    override fun setGlobal(name: String, value: TableArrayProxyValue) = state.setGlobal(name, value)</span>
+
+<span class="fc" id="L43">    override fun tableCreateMap(capacity: Int) = state.tableCreateMap(capacity)</span>
+<span class="fc" id="L44">    override fun tableCreateArray(capacity: Int) = state.tableCreateArray(capacity)</span>
+
+<span class="nc" id="L46">    override fun tableInsert(idx: Int) = state.tableInsert(idx)</span>
+<span class="nc" id="L47">    override fun tableSetRaw(idx: Int) = state.tableSetRaw(idx)</span>
+<span class="nc" id="L48">    override fun tableSetRawIdx(stackIdx: Int, tableIdx: Int) = state.tableSetRawIdx(stackIdx, tableIdx)</span>
+<span class="nc" id="L49">    override fun tableGetRaw(idx: Int) = state.tableGetRaw(idx)</span>
+<span class="nc" id="L50">    override fun tableGetRawIdx(stackIdx: Int, tableIdx: Int) = state.tableGetRawIdx(stackIdx, tableIdx)</span>
+}
+
+interface FunctionContextFactory {
+    fun create(state: State): FunctionContext
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NativeUtils.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">cz.adamh.utils</a> &gt; <span class="el_source">NativeUtils.java</span></div><h1>NativeUtils.java</h1><pre class="source lang-java linenums">/*
+ * Class NativeUtils is published under the The MIT License:
+ *
+ * Copyright (c) 2012 Adam Heinrich &lt;adam@adamh.cz&gt;
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the &quot;Software&quot;), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+package cz.adamh.utils;
+
+import java.io.*;
+import java.nio.file.FileSystemNotFoundException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.ProviderNotFoundException;
+import java.nio.file.StandardCopyOption;
+
+/**
+ * A simple library class which helps with loading dynamic libraries stored in the
+ * JAR archive. These libraries usually contain implementation of some methods in
+ * native code (using JNI - Java Native Interface).
+ * 
+ * @see &lt;a href=&quot;http://adamheinrich.com/blog/2012/how-to-load-native-jni-library-from-jar&quot;&gt;http://adamheinrich.com/blog/2012/how-to-load-native-jni-library-from-jar&lt;/a&gt;
+ * @see &lt;a href=&quot;https://github.com/adamheinrich/native-utils&quot;&gt;https://github.com/adamheinrich/native-utils&lt;/a&gt;
+ *
+ */
+public class NativeUtils {
+ 
+    /**
+     * The minimum length a prefix for a file has to have according to {@link File#createTempFile(String, String)}}.
+     */
+    private static final int MIN_PREFIX_LENGTH = 3;
+    public static final String NATIVE_FOLDER_PATH_PREFIX = &quot;nativeutils&quot;;
+
+    /**
+     * Temporary directory which will contain the DLLs.
+     */
+    private static File temporaryDir;
+
+    /**
+     * Private constructor - this class will never be instanced
+     */
+    private NativeUtils() {
+    }
+
+    /**
+     * Loads library from current JAR archive
+     * 
+     * The file from JAR is copied into system temporary directory and then loaded. The temporary file is deleted after
+     * exiting.
+     * Method uses String as filename because the pathname is &quot;abstract&quot;, not system-dependent.
+     * 
+     * @param path The path of file inside JAR as absolute path (beginning with '/'), e.g. /package/File.ext
+     * @throws IOException If temporary file creation or read/write operation fails
+     * @throws IllegalArgumentException If source file (param path) does not exist
+     * @throws IllegalArgumentException If the path is not absolute or if the filename is shorter than three characters
+     * (restriction of {@link File#createTempFile(java.lang.String, java.lang.String)}).
+     * @throws FileNotFoundException If the file could not be found inside the JAR.
+     */
+    public static void loadLibraryFromJar(String path) throws IOException {
+ 
+<span class="nc bnc" id="L77" title="All 4 branches missed.">        if (null == path || !path.startsWith(&quot;/&quot;)) {</span>
+<span class="nc" id="L78">            throw new IllegalArgumentException(&quot;The path has to be absolute (start with '/').&quot;);</span>
+        }
+ 
+        // Obtain filename from path
+<span class="nc" id="L82">        String[] parts = path.split(&quot;/&quot;);</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">        String filename = (parts.length &gt; 1) ? parts[parts.length - 1] : null;</span>
+ 
+        // Check if the filename is okay
+<span class="nc bnc" id="L86" title="All 4 branches missed.">        if (filename == null || filename.length() &lt; MIN_PREFIX_LENGTH) {</span>
+<span class="nc" id="L87">            throw new IllegalArgumentException(&quot;The filename has to be at least 3 characters long.&quot;);</span>
+        }
+ 
+        // Prepare temporary file
+<span class="nc bnc" id="L91" title="All 2 branches missed.">        if (temporaryDir == null) {</span>
+<span class="nc" id="L92">            temporaryDir = createTempDirectory(NATIVE_FOLDER_PATH_PREFIX);</span>
+<span class="nc" id="L93">            temporaryDir.deleteOnExit();</span>
+        }
+
+<span class="nc" id="L96">        File temp = new File(temporaryDir, filename);</span>
+
+<span class="nc" id="L98">        try (InputStream is = NativeUtils.class.getResourceAsStream(path)) {</span>
+<span class="nc" id="L99">            Files.copy(is, temp.toPath(), StandardCopyOption.REPLACE_EXISTING);</span>
+<span class="nc" id="L100">        } catch (IOException e) {</span>
+<span class="nc" id="L101">            temp.delete();</span>
+<span class="nc" id="L102">            throw e;</span>
+<span class="nc" id="L103">        } catch (NullPointerException e) {</span>
+<span class="nc" id="L104">            temp.delete();</span>
+<span class="nc" id="L105">            throw new FileNotFoundException(&quot;File &quot; + path + &quot; was not found inside JAR.&quot;);</span>
+<span class="nc" id="L106">        }</span>
+
+        try {
+<span class="nc" id="L109">            System.load(temp.getAbsolutePath());</span>
+        } finally {
+<span class="nc bnc" id="L111" title="All 2 branches missed.">            if (isPosixCompliant()) {</span>
+                // Assume POSIX compliant file system, can be deleted after loading
+<span class="nc" id="L113">                temp.delete();</span>
+            } else {
+                // Assume non-POSIX, and don't delete until last file descriptor closed
+<span class="nc" id="L116">                temp.deleteOnExit();</span>
+            }
+        }
+<span class="nc" id="L119">    }</span>
+
+    private static boolean isPosixCompliant() {
+        try {
+<span class="nc" id="L123">            return FileSystems.getDefault()</span>
+<span class="nc" id="L124">                    .supportedFileAttributeViews()</span>
+<span class="nc" id="L125">                    .contains(&quot;posix&quot;);</span>
+<span class="nc" id="L126">        } catch (FileSystemNotFoundException</span>
+                | ProviderNotFoundException
+                | SecurityException e) {
+<span class="nc" id="L129">            return false;</span>
+        }
+    }
+
+    private static File createTempDirectory(String prefix) throws IOException {
+<span class="nc" id="L134">        String tempDir = System.getProperty(&quot;java.io.tmpdir&quot;);</span>
+<span class="nc" id="L135">        File generatedDir = new File(tempDir, prefix + System.nanoTime());</span>
+        
+<span class="nc bnc" id="L137" title="All 2 branches missed.">        if (!generatedDir.mkdir())</span>
+<span class="nc" id="L138">            throw new IOException(&quot;Failed to create temp directory &quot; + generatedDir.getName());</span>
+        
+<span class="nc" id="L140">        return generatedDir;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

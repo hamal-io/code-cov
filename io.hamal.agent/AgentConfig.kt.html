@@ -3,11 +3,13 @@
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration
 import org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.scheduling.annotation.EnableScheduling
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler
 
-<span class="fc" id="L10">@Configuration</span>
+<span class="fc" id="L12">@Configuration</span>
 @ComponentScan
 @EnableScheduling
 @EnableAutoConfiguration(
@@ -16,5 +18,15 @@ import org.springframework.scheduling.annotation.EnableScheduling
         JmxAutoConfiguration::class
     ]
 )
-<span class="fc" id="L19">open class AgentConfig</span>
+<span class="fc" id="L21">open class AgentConfig {</span>
+
+    @Bean
+    open fun agentExecutor(): ThreadPoolTaskScheduler {
+<span class="fc" id="L25">        val result = ThreadPoolTaskScheduler()</span>
+<span class="fc" id="L26">        result.threadNamePrefix = &quot;4g3n1-&quot;</span>
+<span class="fc" id="L27">        result.poolSize = 1</span>
+<span class="fc" id="L28">        result.initialize()</span>
+<span class="fc" id="L29">        return result</span>
+    }
+}
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

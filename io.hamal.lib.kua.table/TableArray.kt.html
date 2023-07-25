@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TableArray.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.kua.table</a> &gt; <span class="el_source">TableArray.kt</span></div><h1>TableArray.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.kua.table
+
+import io.hamal.lib.kua.value.*
+
+interface TableArrayProxyValue : BaseTableProxyValue {
+    fun append(value: Boolean): TableLength
+<span class="nc" id="L7">    fun append(value: BooleanValue) = append(value.value)</span>
+
+    fun append(value: Double): TableLength
+<span class="fc" id="L10">    fun append(value: Int) = append(value.toDouble())</span>
+<span class="nc" id="L11">    fun append(value: Long) = append(value.toDouble())</span>
+<span class="nc" id="L12">    fun append(value: Float) = append(value.toDouble())</span>
+<span class="nc" id="L13">    fun append(value: NumberValue) = append(value.value)</span>
+
+    fun append(value: String): TableLength
+<span class="nc" id="L16">    fun append(value: StringValue) = append(value.value)</span>
+
+    fun append(value: TableMapProxyValue): TableLength
+    fun append(value: TableArrayProxyValue): TableLength
+
+    fun get(idx: Int): AnyValue
+<span class="nc" id="L22">    fun getBoolean(idx: Int) = getBooleanValue(idx) == TrueValue</span>
+    fun getBooleanValue(idx: Int): BooleanValue
+    fun getNumberValue(idx: Int): NumberValue
+<span class="fc" id="L25">    fun getInt(idx: Int) = getNumberValue(idx).value.toInt()</span>
+<span class="nc" id="L26">    fun getLong(idx: Int) = getNumberValue(idx).value.toLong()</span>
+<span class="nc" id="L27">    fun getFloat(idx: Int) = getNumberValue(idx).value.toFloat()</span>
+<span class="nc" id="L28">    fun getDouble(idx: Int) = getNumberValue(idx).value.toDouble()</span>
+<span class="fc" id="L29">    fun getString(idx: Int) = getStringValue(idx).value</span>
+    fun getStringValue(idx: Int): StringValue
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
