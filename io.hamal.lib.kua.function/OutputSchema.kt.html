@@ -2,10 +2,7 @@
 
 import io.hamal.lib.kua.table.TableArrayProxyValue
 import io.hamal.lib.kua.table.TableMapProxyValue
-import io.hamal.lib.kua.value.AnyValue
-import io.hamal.lib.kua.value.NumberValue
-import io.hamal.lib.kua.value.StringValue
-import io.hamal.lib.kua.value.Value
+import io.hamal.lib.kua.value.*
 import kotlin.reflect.KClass
 
 sealed interface FunctionOutputSchema&lt;OUTPUT : FunctionOutput&lt;*, *&gt;&gt; {
@@ -14,36 +11,38 @@ sealed interface FunctionOutputSchema&lt;OUTPUT : FunctionOutput&lt;*, *&gt;&gt;
 }
 
 object FunctionOutput0Schema : FunctionOutputSchema&lt;FunctionOutput0&gt; {
-<span class="nc" id="L17">    override val size = 0</span>
-<span class="fc" id="L18">    override fun pushResult(ctx: FunctionContext, output: FunctionOutput0) {}</span>
+<span class="nc" id="L14">    override val size = 0</span>
+<span class="fc" id="L15">    override fun pushResult(ctx: FunctionContext, output: FunctionOutput0) {}</span>
 }
 
-<span class="fc" id="L21">data class FunctionOutput1Schema&lt;ARG_1 : Value&gt;(</span>
-<span class="pc" id="L22">    val arg1: KClass&lt;ARG_1&gt;</span>
+<span class="fc" id="L18">data class FunctionOutput1Schema&lt;ARG_1 : Value&gt;(</span>
+<span class="pc" id="L19">    val arg1: KClass&lt;ARG_1&gt;</span>
 ) : FunctionOutputSchema&lt;FunctionOutput1&lt;ARG_1&gt;&gt; {
-<span class="pc" id="L24">    override val size = 1</span>
+<span class="pc" id="L21">    override val size = 1</span>
     override fun pushResult(ctx: FunctionContext, output: FunctionOutput1&lt;ARG_1&gt;) {
-<span class="fc" id="L26">        ctx.push(output.arg1)</span>
-<span class="fc" id="L27">    }</span>
+<span class="pc bpc" id="L23" title="1 of 2 branches missed.">        ctx.push(output.arg1 ?: NilValue)</span>
+<span class="fc" id="L24">    }</span>
 }
 
-<span class="fc" id="L30">data class FunctionOutput2Schema&lt;ARG_1 : Value, ARG_2 : Value&gt;(</span>
-<span class="pc" id="L31">    val arg1: KClass&lt;ARG_1&gt;,</span>
-<span class="pc" id="L32">    val arg2: KClass&lt;ARG_2&gt;</span>
+<span class="fc" id="L27">data class FunctionOutput2Schema&lt;ARG_1 : Value, ARG_2 : Value&gt;(</span>
+<span class="pc" id="L28">    val arg1: KClass&lt;ARG_1&gt;,</span>
+<span class="pc" id="L29">    val arg2: KClass&lt;ARG_2&gt;</span>
 ) : FunctionOutputSchema&lt;FunctionOutput2&lt;ARG_1, ARG_2&gt;&gt; {
-<span class="pc" id="L34">    override val size = 2</span>
+<span class="pc" id="L31">    override val size = 2</span>
     override fun pushResult(ctx: FunctionContext, output: FunctionOutput2&lt;ARG_1, ARG_2&gt;) {
-<span class="fc" id="L36">        ctx.push(output.arg1)</span>
-<span class="fc" id="L37">        ctx.push(output.arg2)</span>
-<span class="fc" id="L38">    }</span>
+<span class="pc bpc" id="L33" title="1 of 2 branches missed.">        ctx.push(output.arg1 ?: NilValue)</span>
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">        ctx.push(output.arg2 ?: NilValue)</span>
+<span class="fc" id="L35">    }</span>
 }
 
-<span class="fc" id="L41">fun &lt;VALUE : Value&gt; FunctionContext.push(value: VALUE) = when (value) {</span>
-<span class="fc bfc" id="L42" title="All 2 branches covered.">    is NumberValue -&gt; pushNumber(value)</span>
-<span class="fc bfc" id="L43" title="All 2 branches covered.">    is StringValue -&gt; pushString(value)</span>
-<span class="fc bfc" id="L44" title="All 2 branches covered.">    is TableArrayProxyValue -&gt; pushTop(value.index)</span>
-<span class="pc bpc" id="L45" title="1 of 2 branches missed.">    is TableMapProxyValue -&gt; pushTop(value.index)</span>
-<span class="pc bpc" id="L46" title="1 of 2 branches missed.">    is AnyValue -&gt; pushAny(value)</span>
-<span class="nc" id="L47">    else -&gt; throw NotImplementedError(&quot;${value::class.simpleName} not implemented yet&quot;)</span>
-<span class="fc" id="L48">}</span>
+<span class="fc" id="L38">fun &lt;VALUE : Value&gt; FunctionContext.push(value: VALUE) = when (value) {</span>
+<span class="pc bpc" id="L39" title="1 of 2 branches missed.">    is NilValue -&gt; pushNil()</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">    is NumberValue -&gt; pushNumber(value)</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">    is StringValue -&gt; pushString(value)</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">    is TableArrayProxyValue -&gt; pushTop(value.index)</span>
+<span class="pc bpc" id="L43" title="1 of 2 branches missed.">    is TableMapProxyValue -&gt; pushTop(value.index)</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">    is AnyValue -&gt; pushAny(value)</span>
+<span class="pc bpc" id="L45" title="1 of 2 branches missed.">    is ErrorValue -&gt; pushError(value)</span>
+<span class="nc" id="L46">    else -&gt; throw NotImplementedError(&quot;${value::class.simpleName} not implemented yet&quot;)</span>
+<span class="fc" id="L47">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

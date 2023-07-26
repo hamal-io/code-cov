@@ -37,7 +37,7 @@ interface TableMapProxyValue : BaseTableProxyValue {
 
     fun getNumberValue(key: String): NumberValue
 <span class="nc" id="L39">    fun getNumberValue(key: StringValue): NumberValue = getNumberValue(key.value)</span>
-<span class="nc" id="L40">    fun getInt(key: String): Int = getNumberValue(key).value.toInt()</span>
+<span class="fc" id="L40">    fun getInt(key: String): Int = getNumberValue(key).value.toInt()</span>
 <span class="nc" id="L41">    fun getInt(key: StringValue) = getInt(key.value)</span>
 <span class="nc" id="L42">    fun getLong(key: String): Long = getNumberValue(key).value.toLong()</span>
 <span class="nc" id="L43">    fun getLong(key: StringValue): Long = getLong(key.value)</span>

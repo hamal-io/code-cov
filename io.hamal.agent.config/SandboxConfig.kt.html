@@ -2,6 +2,7 @@
 
 import io.hamal.agent.extension.std.log.LogExtensionFactory
 import io.hamal.agent.extension.std.sys.SysExtensionFactory
+import io.hamal.agent.extension.web3.Web3ExtensionFactory
 import io.hamal.lib.http.HttpTemplate
 import io.hamal.lib.kua.NativeLoader
 import io.hamal.lib.kua.NativeLoader.Preference.Jar
@@ -11,19 +12,20 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 
-<span class="nc" id="L14">@Configuration</span>
+<span class="nc" id="L15">@Configuration</span>
 @Profile(&quot;!test&quot;)
-<span class="nc" id="L16">open class SandboxConfig {</span>
+<span class="nc" id="L17">open class SandboxConfig {</span>
     @Bean
-<span class="nc" id="L18">    open fun sandboxFactory(): SandboxFactory = object : SandboxFactory {</span>
+<span class="nc" id="L19">    open fun sandboxFactory(): SandboxFactory = object : SandboxFactory {</span>
         override fun create(): Sandbox {
-<span class="nc" id="L20">            NativeLoader.load(Jar)</span>
-<span class="nc" id="L21">            val template = HttpTemplate(&quot;http://localhost:8084&quot;)</span>
-<span class="nc" id="L22">            return Sandbox().also {</span>
-<span class="nc" id="L23">                it.register(LogExtensionFactory().create())</span>
-<span class="nc" id="L24">                it.register(SysExtensionFactory { template }.create())</span>
-<span class="nc" id="L25">            }</span>
+<span class="nc" id="L21">            NativeLoader.load(Jar)</span>
+<span class="nc" id="L22">            val template = HttpTemplate(&quot;http://localhost:8084&quot;)</span>
+<span class="nc" id="L23">            return Sandbox().also {</span>
+<span class="nc" id="L24">                it.register(LogExtensionFactory().create())</span>
+<span class="nc" id="L25">                it.register(SysExtensionFactory { template }.create())</span>
+<span class="nc" id="L26">                it.register(Web3ExtensionFactory().create())</span>
+<span class="nc" id="L27">            }</span>
         }
-<span class="nc" id="L27">    }</span>
+<span class="nc" id="L29">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

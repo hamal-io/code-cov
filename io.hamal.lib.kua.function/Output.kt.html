@@ -11,14 +11,14 @@ object FunctionOutput0 : FunctionOutput&lt;FunctionOutput0Schema, FunctionOutput
 }
 
 <span class="fc" id="L13">data class FunctionOutput1&lt;ARG_1 : Value&gt;(</span>
-<span class="fc" id="L14">    val arg1: ARG_1</span>
+<span class="fc" id="L14">    val arg1: ARG_1?</span>
 ) : FunctionOutput&lt;FunctionOutput1Schema&lt;ARG_1&gt;, FunctionOutput1&lt;ARG_1&gt;&gt; {
 <span class="fc" id="L16">    override val size = 1</span>
 }
 
 <span class="fc" id="L19">data class FunctionOutput2&lt;ARG_1 : Value, ARG_2 : Value&gt;(</span>
-<span class="fc" id="L20">    val arg1: ARG_1,</span>
-<span class="fc" id="L21">    val arg2: ARG_2</span>
+<span class="fc" id="L20">    val arg1: ARG_1?,</span>
+<span class="fc" id="L21">    val arg2: ARG_2?</span>
 ) : FunctionOutput&lt;FunctionOutput2Schema&lt;ARG_1, ARG_2&gt;, FunctionOutput2&lt;ARG_1, ARG_2&gt;&gt; {
 <span class="fc" id="L23">    override val size = 2</span>
 }

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GetBlockFunction.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.agent.extension.web3.eth</a> &gt; <span class="el_source">GetBlockFunction.kt</span></div><h1>GetBlockFunction.kt</h1><pre class="source lang-java linenums">package io.hamal.agent.extension.web3.eth
+
+import io.hamal.lib.http.HttpTemplate
+import io.hamal.lib.kua.function.Function1In2Out
+import io.hamal.lib.kua.function.FunctionContext
+import io.hamal.lib.kua.function.FunctionInput1Schema
+import io.hamal.lib.kua.function.FunctionOutput2Schema
+import io.hamal.lib.kua.table.TableMapProxyValue
+import io.hamal.lib.kua.value.ErrorValue
+import io.hamal.lib.kua.value.NumberValue
+import io.hamal.lib.web3.eth.abi.type.EthUint64
+import io.hamal.lib.web3.eth.http.EthHttpBatchService
+
+//class GetBlockFunction : Function1In2Out&lt;NumberValue, TableMapProxyValue, ErrorValue&gt;(
+//    FunctionInput1Schema(NumberValue::class),
+//    FunctionOutput2Schema(TableMapProxyValue::class, ErrorValue::class)
+//) {
+//    override fun invoke(ctx: FunctionContext, arg1: NumberValue): Pair&lt;TableMapProxyValue, ErrorValue&gt; {
+//        println(&quot;get block&quot;)
+//        return Pair(ctx.tableCreateMap(0), ErrorValue(&quot;some error message&quot;))
+//    }
+//}
+
+<span class="nc" id="L24">class GetBlockFunction : Function1In2Out&lt;NumberValue, TableMapProxyValue, ErrorValue&gt;(</span>
+<span class="nc" id="L25">    FunctionInput1Schema(NumberValue::class),</span>
+<span class="nc" id="L26">    FunctionOutput2Schema(TableMapProxyValue::class, ErrorValue::class)</span>
+) {
+    override fun invoke(ctx: FunctionContext, arg1: NumberValue): Pair&lt;TableMapProxyValue?, ErrorValue?&gt; {
+<span class="nc" id="L29">        println(&quot;get block&quot;)</span>
+<span class="nc" id="L30">        val b = EthHttpBatchService(</span>
+<span class="nc" id="L31">            HttpTemplate(&quot;http://localhost:8081&quot;)</span>
+<span class="nc" id="L32">        ).getBlock(EthUint64(12345678)).execute().first()</span>
+
+<span class="nc" id="L34">        println(b)</span>
+
+//        return ctx.tableCreateMap(0) to null
+<span class="nc" id="L37">        return null to null</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -65,10 +65,10 @@ enum class TableType {
     }
 
     override fun getNumberValue(key: String): NumberValue {
-<span class="nc" id="L68">        state.pushString(key)</span>
-<span class="nc" id="L69">        val type = state.tableGetRaw(index)</span>
-<span class="nc" id="L70">        type.checkExpectedType(ValueType.Number)</span>
-<span class="nc" id="L71">        return NumberValue(bridge.toNumber(-1)).also { bridge.pop(1) }</span>
+<span class="fc" id="L68">        state.pushString(key)</span>
+<span class="fc" id="L69">        val type = state.tableGetRaw(index)</span>
+<span class="fc" id="L70">        type.checkExpectedType(ValueType.Number)</span>
+<span class="fc" id="L71">        return NumberValue(bridge.toNumber(-1)).also { bridge.pop(1) }</span>
     }
 
     override fun getStringValue(key: String): StringValue {
