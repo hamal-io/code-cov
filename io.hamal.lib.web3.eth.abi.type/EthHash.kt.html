@@ -14,32 +14,35 @@ import kotlinx.serialization.encoding.Encoder
 ) : EthType&lt;EthBytes32&gt; {
 <span class="nc" id="L15">    constructor(byteArray: ByteArray) : this(EthBytes32(byteArray))</span>
 <span class="nc" id="L16">    constructor(prefixedHexString: EthPrefixedHexString) : this(EthBytes32(prefixedHexString))</span>
+<span class="nc" id="L17">    constructor(prefixedHexString: String) : this(EthBytes32(EthPrefixedHexString(prefixedHexString)))</span>
 
-<span class="nc" id="L18">    override fun toByteArray() = value.toByteArray()</span>
+<span class="nc" id="L19">    override fun toByteArray() = value.toByteArray()</span>
 
-<span class="nc" id="L20">    override fun toByteWindow() = value.toByteWindow()</span>
+<span class="nc" id="L21">    override fun toByteWindow() = value.toByteWindow()</span>
 
     fun toHexString(): EthHexString {
-<span class="nc" id="L23">        return EthHexString(Web3Formatter.formatToHex(value.value))</span>
+<span class="nc" id="L24">        return EthHexString(Web3Formatter.formatToHex(value.value))</span>
     }
 
     fun toPrefixedHexString(): EthPrefixedHexString {
-<span class="nc" id="L27">        return EthPrefixedHexString(&quot;0x${Web3Formatter.formatToHex(value.value)}&quot;)</span>
+<span class="nc" id="L28">        return EthPrefixedHexString(&quot;0x${Web3Formatter.formatToHex(value.value)}&quot;)</span>
     }
 
-<span class="nc" id="L30">    override fun toString() = toPrefixedHexString().value</span>
+<span class="nc" id="L31">    override fun toString() = toPrefixedHexString().value</span>
 
     object Serializer : KSerializer&lt;EthHash&gt; {
-<span class="nc" id="L33">        override val descriptor = PrimitiveSerialDescriptor(&quot;EthHash&quot;, PrimitiveKind.STRING)</span>
+<span class="nc" id="L34">        override val descriptor = PrimitiveSerialDescriptor(&quot;EthHash&quot;, PrimitiveKind.STRING)</span>
 
         override fun deserialize(decoder: Decoder): EthHash {
-<span class="nc" id="L36">            return EthHash(EthPrefixedHexString(decoder.decodeString()))</span>
+<span class="nc" id="L37">            return EthHash(EthPrefixedHexString(decoder.decodeString()))</span>
         }
 
         override fun serialize(encoder: Encoder, value: EthHash) {
-<span class="nc" id="L40">            encoder.encodeString(value.toPrefixedHexString().value)</span>
-<span class="nc" id="L41">        }</span>
+<span class="nc" id="L41">            encoder.encodeString(value.toPrefixedHexString().value)</span>
+<span class="nc" id="L42">        }</span>
     }
+
+
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

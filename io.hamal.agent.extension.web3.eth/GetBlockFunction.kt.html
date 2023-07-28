@@ -9,6 +9,7 @@ import io.hamal.lib.kua.table.TableMapProxyValue
 import io.hamal.lib.kua.value.ErrorValue
 import io.hamal.lib.kua.value.NumberValue
 import io.hamal.lib.web3.eth.abi.type.EthUint64
+import io.hamal.lib.web3.eth.domain.EthGetBlockResp
 import io.hamal.lib.web3.eth.http.EthHttpBatchService
 
 //class GetBlockFunction : Function1In2Out&lt;NumberValue, TableMapProxyValue, ErrorValue&gt;(
@@ -21,20 +22,27 @@ import io.hamal.lib.web3.eth.http.EthHttpBatchService
 //    }
 //}
 
-<span class="nc" id="L24">class GetBlockFunction : Function1In2Out&lt;NumberValue, TableMapProxyValue, ErrorValue&gt;(</span>
-<span class="nc" id="L25">    FunctionInput1Schema(NumberValue::class),</span>
-<span class="nc" id="L26">    FunctionOutput2Schema(TableMapProxyValue::class, ErrorValue::class)</span>
+<span class="nc" id="L25">class GetBlockFunction : Function1In2Out&lt;NumberValue, ErrorValue, TableMapProxyValue&gt;(</span>
+<span class="nc" id="L26">    FunctionInput1Schema(NumberValue::class),</span>
+<span class="nc" id="L27">    FunctionOutput2Schema(ErrorValue::class, TableMapProxyValue::class)</span>
 ) {
-    override fun invoke(ctx: FunctionContext, arg1: NumberValue): Pair&lt;TableMapProxyValue?, ErrorValue?&gt; {
-<span class="nc" id="L29">        println(&quot;get block&quot;)</span>
-<span class="nc" id="L30">        val b = EthHttpBatchService(</span>
-<span class="nc" id="L31">            HttpTemplate(&quot;http://localhost:8081&quot;)</span>
-<span class="nc" id="L32">        ).getBlock(EthUint64(12345678)).execute().first()</span>
+    override fun invoke(ctx: FunctionContext, arg1: NumberValue): Pair&lt;ErrorValue?, TableMapProxyValue?&gt; {
+<span class="nc" id="L30">        println(&quot;get block&quot;)</span>
+<span class="nc" id="L31">        val b = EthHttpBatchService(</span>
+<span class="nc" id="L32">            HttpTemplate(&quot;http://proxy:8000&quot;)</span>
+<span class="nc" id="L33">        ).getBlock(EthUint64(arg1.value.toLong())).execute().first() as EthGetBlockResp</span>
 
-<span class="nc" id="L34">        println(b)</span>
+//        println(b)
 
-//        return ctx.tableCreateMap(0) to null
-<span class="nc" id="L37">        return null to null</span>
+<span class="nc" id="L37">        return null to ctx.tableCreateMap(0).also { table -&gt;</span>
+<span class="nc" id="L38">            table[&quot;id&quot;] = b.result.number.value.toLong()</span>
+<span class="nc" id="L39">            table[&quot;hash&quot;] = b.result.hash.toPrefixedHexString().value</span>
+<span class="nc" id="L40">            table[&quot;parent_hash&quot;] = b.result.parentHash.toPrefixedHexString().value</span>
+<span class="nc" id="L41">            table[&quot;transaction_count&quot;] = b.result.transactions.size</span>
+<span class="nc" id="L42">            table[&quot;gas_used&quot;] = b.result.gasUsed.value.toLong()</span>
+<span class="nc" id="L43">            table[&quot;gas_limit&quot;] = b.result.gasLimit.value.toLong()</span>
+<span class="nc" id="L44">        }</span>
+//        return null to null
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

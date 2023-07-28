@@ -7,26 +7,28 @@ import io.hamal.lib.domain.Correlation
 import io.hamal.lib.domain.vo.CorrelationId
 import io.hamal.lib.domain.vo.FuncId
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RestController
 
-<span class="fc" id="L12">@RestController</span>
-<span class="fc" id="L13">class GetStateRoute(</span>
-<span class="fc" id="L14">    private val funcQueryRepository: FuncQueryRepository,</span>
-<span class="fc" id="L15">    private val stateQueryRepository: StateQueryRepository</span>
+<span class="fc" id="L14">@RestController</span>
+<span class="fc" id="L15">class GetStateRoute(</span>
+<span class="fc" id="L16">    private val funcQueryRepository: FuncQueryRepository,</span>
+<span class="fc" id="L17">    private val stateQueryRepository: StateQueryRepository</span>
 ) {
-    @GetMapping(&quot;/v1/funcs/{funcId}/state/{correlationId}&quot;)
+    @GetMapping(&quot;/v1/funcs/{funcId}/states/{correlationId}&quot;)
     fun getState(
         @PathVariable(&quot;funcId&quot;) funcId: FuncId,
         @PathVariable(&quot;correlationId&quot;) correlationId: CorrelationId,
     ): ResponseEntity&lt;CorrelatedState&gt; {
-<span class="fc" id="L22">        ensureFuncExists(funcId)</span>
+<span class="fc" id="L24">        ensureFuncExists(funcId)</span>
 
-<span class="fc" id="L24">        val result = stateQueryRepository.get(Correlation(correlationId, funcId))</span>
-<span class="fc" id="L25">        return ResponseEntity.ok(result)</span>
+<span class="fc" id="L26">        val result = stateQueryRepository.get(Correlation(correlationId, funcId))</span>
+<span class="fc" id="L27">        return ResponseEntity.ok(result)</span>
     }
 
     private fun ensureFuncExists(funcId: FuncId) {
-<span class="fc" id="L29">        funcQueryRepository.get(funcId)</span>
-<span class="fc" id="L30">    }</span>
+<span class="fc" id="L31">        funcQueryRepository.get(funcId)</span>
+<span class="fc" id="L32">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

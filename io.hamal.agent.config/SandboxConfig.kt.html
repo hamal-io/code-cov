@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Profile
 <span class="nc" id="L19">    open fun sandboxFactory(): SandboxFactory = object : SandboxFactory {</span>
         override fun create(): Sandbox {
 <span class="nc" id="L21">            NativeLoader.load(Jar)</span>
-<span class="nc" id="L22">            val template = HttpTemplate(&quot;http://localhost:8084&quot;)</span>
+<span class="nc" id="L22">            val template = HttpTemplate(&quot;http://localhost:8008&quot;)</span>
 <span class="nc" id="L23">            return Sandbox().also {</span>
 <span class="nc" id="L24">                it.register(LogExtensionFactory().create())</span>
 <span class="nc" id="L25">                it.register(SysExtensionFactory { template }.create())</span>

@@ -46,7 +46,7 @@ import kotlinx.serialization.encoding.Encoder
 <span class="nc" id="L46">    }</span>
 
 <span class="nc" id="L48">    operator fun get(key: Int): Value = get(StringValue(key.toString()))</span>
-<span class="nc" id="L49">    operator fun get(key: String): Value = get(StringValue(key))</span>
+<span class="fc" id="L49">    operator fun get(key: String): Value = get(StringValue(key))</span>
 <span class="nc" id="L50">    operator fun get(key: Value): Value = when (key) {</span>
 <span class="nc bnc" id="L51" title="All 2 branches missed.">        is StringValue -&gt; get(key)</span>
 <span class="nc bnc" id="L52" title="All 2 branches missed.">        is DecimalValue -&gt; get(StringValue(key.value.toString()))</span>
@@ -54,7 +54,7 @@ import kotlinx.serialization.encoding.Encoder
 <span class="nc" id="L54">    }</span>
 
     operator fun get(key: StringValue): Value {
-<span class="nc" id="L57">        return entries[key]!!</span>
+<span class="fc" id="L57">        return entries[key]!!</span>
     }
 
 

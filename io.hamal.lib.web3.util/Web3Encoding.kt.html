@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Web3Encoding.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.web3.util</a> &gt; <span class="el_source">Web3Encoding.kt</span></div><h1>Web3Encoding.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.web3.util
+
+object Web3Encoding{
+
+    fun encodeRunLength(binary: ByteArray): ByteArray {
+<span class="nc" id="L6">        val compressed = ArrayList&lt;Byte&gt;()</span>
+<span class="nc" id="L7">        var counter = 1</span>
+<span class="nc" id="L8">        var i = 0</span>
+<span class="nc bnc" id="L9" title="All 2 branches missed.">        while (i &lt; binary.size) {</span>
+<span class="nc bnc" id="L10" title="All 4 branches missed.">            while (i + 1 &lt; binary.size &amp;&amp; binary[i] == binary[i + 1]) {</span>
+<span class="nc" id="L11">                counter++</span>
+<span class="nc bnc" id="L12" title="All 2 branches missed.">                if (counter == 256) {</span>
+<span class="nc" id="L13">                    compressed.add(0.toByte())</span>
+<span class="nc" id="L14">                    counter = 1</span>
+                }
+<span class="nc" id="L16">                i++</span>
+            }
+<span class="nc" id="L18">            compressed.add(counter.toByte())</span>
+<span class="nc" id="L19">            compressed.add(binary[i])</span>
+<span class="nc" id="L20">            counter = 1</span>
+<span class="nc" id="L21">            i++</span>
+        }
+<span class="nc" id="L23">        return toPrimitives(compressed.toTypedArray())</span>
+    }
+
+    fun decodeRunLength(compressed: ByteArray): ByteArray {
+<span class="nc" id="L27">        val decompressed = ArrayList&lt;Byte&gt;()</span>
+        var tmp: Byte
+<span class="nc" id="L29">        var count = 0</span>
+<span class="nc" id="L30">        var i = 0</span>
+<span class="nc bnc" id="L31" title="All 2 branches missed.">        while (i &lt; compressed.size) {</span>
+<span class="nc" id="L32">            tmp = compressed[i]</span>
+<span class="nc bnc" id="L33" title="All 2 branches missed.">            if (tmp.toInt() == 0) {</span>
+<span class="nc" id="L34">                count += 255</span>
+<span class="nc" id="L35">                i++</span>
+<span class="nc" id="L36">                continue</span>
+            }
+<span class="nc" id="L38">            count += tmp.toInt()</span>
+<span class="nc bnc" id="L39" title="All 2 branches missed.">            for (j in 0 until count) {</span>
+<span class="nc" id="L40">                decompressed.add(compressed[i + 1])</span>
+            }
+<span class="nc" id="L42">            i++</span>
+<span class="nc" id="L43">            count = 0</span>
+<span class="nc" id="L44">            i++</span>
+        }
+<span class="nc" id="L46">        return toPrimitives(decompressed.toTypedArray())</span>
+    }
+
+    private fun toPrimitives(oBytes: Array&lt;Any&gt;): ByteArray {
+<span class="nc" id="L50">        val bytes = ByteArray(oBytes.size)</span>
+<span class="nc bnc" id="L51" title="All 2 branches missed.">        for (i in oBytes.indices) {</span>
+<span class="nc" id="L52">            bytes[i] = oBytes[i] as Byte</span>
+        }
+<span class="nc" id="L54">        return bytes</span>
+    }
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

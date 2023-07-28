@@ -10,33 +10,35 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
 <span class="nc" id="L12">@Serializable(with = CorrelationId.Serializer::class)</span>
-<span class="fc" id="L13">class CorrelationId(override val value: String) : ValueObject.ComparableImpl&lt;String&gt;() {</span>
-<span class="fc" id="L14">    init {</span>
-<span class="fc" id="L15">        CorrelationIdValidator.validate(value)</span>
-<span class="fc" id="L16">    }</span>
+<span class="fc" id="L13">class CorrelationId(</span>
+<span class="fc" id="L14">    override val value: String</span>
+<span class="fc" id="L15">) : ValueObject.ComparableImpl&lt;String&gt;() {</span>
+<span class="fc" id="L16">    init {</span>
+<span class="fc" id="L17">        CorrelationIdValidator.validate(value)</span>
+<span class="fc" id="L18">    }</span>
 
     object Serializer : KSerializer&lt;CorrelationId&gt; {
         override val descriptor: SerialDescriptor
-<span class="fc" id="L20">            get() = PrimitiveSerialDescriptor(&quot;CorrelationId&quot;, PrimitiveKind.STRING)</span>
+<span class="fc" id="L22">            get() = PrimitiveSerialDescriptor(&quot;CorrelationId&quot;, PrimitiveKind.STRING)</span>
 
         override fun deserialize(decoder: Decoder): CorrelationId {
-<span class="fc" id="L23">            return CorrelationId(decoder.decodeString())</span>
+<span class="fc" id="L25">            return CorrelationId(decoder.decodeString())</span>
         }
 
         override fun serialize(encoder: Encoder, value: CorrelationId) {
-<span class="fc" id="L27">            encoder.encodeString(value.value)</span>
-<span class="fc" id="L28">        }</span>
+<span class="fc" id="L29">            encoder.encodeString(value.value)</span>
+<span class="fc" id="L30">        }</span>
     }
 
     override fun toString(): String {
-<span class="fc" id="L32">        return &quot;${this::class.simpleName}(${value})&quot;</span>
+<span class="fc" id="L34">        return &quot;${this::class.simpleName}(${value})&quot;</span>
     }
 }
 
 internal object CorrelationIdValidator {
-<span class="fc" id="L37">    private val regex = Regex(&quot;^([A-Za-z0-9-_@:.]{1,255})$&quot;)</span>
+<span class="fc" id="L39">    private val regex = Regex(&quot;^([A-Za-z0-9-_@:.]{1,255})$&quot;)</span>
     fun validate(value: String) {
-<span class="pc bpc" id="L39" title="1 of 2 branches missed.">        require(regex.matches(value)) { IllegalArgumentException(&quot;DomainName('$value') is illegal&quot;) }</span>
-<span class="fc" id="L40">    }</span>
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">        require(regex.matches(value)) { IllegalArgumentException(&quot;DomainName('$value') is illegal&quot;) }</span>
+<span class="fc" id="L42">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

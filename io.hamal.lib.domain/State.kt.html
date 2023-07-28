@@ -5,7 +5,7 @@ import io.hamal.lib.domain.vo.base.InputsSerializer
 import io.hamal.lib.kua.value.TableValue
 import kotlinx.serialization.Serializable
 
-<span class="nc" id="L8">@Serializable(with = State.Serializer::class)</span>
+<span class="fc" id="L8">@Serializable(with = State.Serializer::class)</span>
 <span class="fc" id="L9">class State(override val value: TableValue = TableValue()) : Inputs() {</span>
 <span class="fc" id="L10">    internal object Serializer : InputsSerializer&lt;State&gt;(::State)</span>
 <span class="fc" id="L11">}</span>
@@ -13,6 +13,10 @@ import kotlinx.serialization.Serializable
 <span class="pc bpc" id="L13" title="2 of 8 branches missed.">@Serializable</span>
 <span class="fc" id="L14">data class CorrelatedState(</span>
 <span class="fc" id="L15">    val correlation: Correlation,</span>
-<span class="fc" id="L16">    val state: State</span>
-<span class="fc" id="L17">)</span>
+<span class="fc" id="L16">    val value: State</span>
+) {
+
+<span class="fc" id="L19">    operator fun get(key: String) = value.value[key]</span>
+
+<span class="fc" id="L21">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

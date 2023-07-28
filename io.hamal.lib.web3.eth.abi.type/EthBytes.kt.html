@@ -23,19 +23,32 @@ sealed interface EthBytes : EthType&lt;ByteArray&gt; {
 }
 
 <span class="nc" id="L25">@Serializable(with = EthBytes32.Serializer::class)</span>
-<span class="nc" id="L26">data class EthBytes32(</span>
+<span class="nc" id="L26">class EthBytes32(</span>
 <span class="nc" id="L27">    override val value: ByteArray</span>
 ) : EthBytes {
 <span class="nc" id="L29">    constructor(prefixedHexString: EthPrefixedHexString) : this(prefixedHexString.toByteWindow().next())</span>
-
-<span class="nc" id="L31">    override val numberOfBytes = 32</span>
+<span class="nc" id="L30">    override val numberOfBytes = 32</span>
 
     object Serializer : KSerializer&lt;EthBytes32&gt; {
-<span class="nc" id="L34">        override val descriptor = PrimitiveSerialDescriptor(&quot;EthBytes32&quot;, PrimitiveKind.STRING)</span>
-<span class="nc" id="L35">        override fun deserialize(decoder: Decoder) = EthBytes32(decoder.decodeString().toByteArray())</span>
+<span class="nc" id="L33">        override val descriptor = PrimitiveSerialDescriptor(&quot;EthBytes32&quot;, PrimitiveKind.STRING)</span>
+<span class="nc" id="L34">        override fun deserialize(decoder: Decoder) = EthBytes32(decoder.decodeString().toByteArray())</span>
         override fun serialize(encoder: Encoder, value: EthBytes32) {
-<span class="nc" id="L37">            encoder.encodeString(String(value.value))</span>
-<span class="nc" id="L38">        }</span>
+<span class="nc" id="L36">            encoder.encodeString(String(value.value))</span>
+<span class="nc" id="L37">        }</span>
+    }
+
+    override fun equals(other: Any?): Boolean {
+<span class="nc bnc" id="L41" title="All 2 branches missed.">        if (this === other) return true</span>
+<span class="nc bnc" id="L42" title="All 4 branches missed.">        if (javaClass != other?.javaClass) return false</span>
+<span class="nc" id="L43">        other as EthBytes32</span>
+<span class="nc bnc" id="L44" title="All 2 branches missed.">        if (!value.contentEquals(other.value)) return false</span>
+<span class="nc bnc" id="L45" title="All 2 branches missed.">        return numberOfBytes == other.numberOfBytes</span>
+    }
+
+    override fun hashCode(): Int {
+<span class="nc" id="L49">        var result = value.contentHashCode()</span>
+<span class="nc" id="L50">        result = 31 * result + numberOfBytes</span>
+<span class="nc" id="L51">        return result</span>
     }
 }
 
@@ -43,8 +56,8 @@ sealed interface EthBytes : EthType&lt;ByteArray&gt; {
 /**
  * Intended to be used in unit tests only
  */
-<span class="nc" id="L46">internal data class TestEthBytes(</span>
-<span class="nc" id="L47">    override val value: ByteArray,</span>
-<span class="nc" id="L48">    override val numberOfBytes: Int</span>
+<span class="nc" id="L59">internal data class TestEthBytes(</span>
+<span class="nc" id="L60">    override val value: ByteArray,</span>
+<span class="nc" id="L61">    override val numberOfBytes: Int</span>
 ) : EthBytes
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
