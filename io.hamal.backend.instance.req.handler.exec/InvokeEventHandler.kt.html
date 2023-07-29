@@ -34,12 +34,13 @@ import org.springframework.stereotype.Component
                 ),
 <span class="fc" id="L35">                inputs = merge(func.inputs, req.inputs),</span>
 <span class="fc" id="L36">                code = func.code,</span>
+<span class="fc" id="L37">                invocation = req.invocation</span>
             )
         )
     }
 
     private fun emitEvent(cmdId: CmdId, exec: PlannedExec) {
-<span class="fc" id="L42">        eventEmitter.emit(cmdId, ExecPlannedEvent(exec))</span>
-<span class="fc" id="L43">    }</span>
+<span class="fc" id="L43">        eventEmitter.emit(cmdId, ExecPlannedEvent(exec))</span>
+<span class="fc" id="L44">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

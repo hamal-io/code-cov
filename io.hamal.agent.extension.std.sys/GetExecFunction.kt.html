@@ -8,16 +8,16 @@ import io.hamal.lib.kua.function.Function1In1Out
 import io.hamal.lib.kua.function.FunctionContext
 import io.hamal.lib.kua.function.FunctionInput1Schema
 import io.hamal.lib.kua.function.FunctionOutput1Schema
-import io.hamal.lib.kua.table.TableMapProxyValue
+import io.hamal.lib.kua.table.TableMapValue
 import io.hamal.lib.kua.value.StringValue
 
 <span class="fc" id="L14">class GetExecFunction(</span>
 <span class="fc" id="L15">    private val templateSupplier: () -&gt; HttpTemplate</span>
-<span class="fc" id="L16">) : Function1In1Out&lt;StringValue, TableMapProxyValue&gt;(</span>
+<span class="fc" id="L16">) : Function1In1Out&lt;StringValue, TableMapValue&gt;(</span>
 <span class="fc" id="L17">    FunctionInput1Schema(StringValue::class),</span>
-<span class="fc" id="L18">    FunctionOutput1Schema(TableMapProxyValue::class)</span>
+<span class="fc" id="L18">    FunctionOutput1Schema(TableMapValue::class)</span>
 ) {
-    override fun invoke(ctx: FunctionContext, arg1: StringValue): TableMapProxyValue {
+    override fun invoke(ctx: FunctionContext, arg1: StringValue): TableMapValue {
 <span class="nc" id="L21">        val response = templateSupplier()</span>
 <span class="nc" id="L22">            .get(&quot;/v1/execs/${arg1.value}&quot;)</span>
 <span class="nc" id="L23">            .execute()</span>

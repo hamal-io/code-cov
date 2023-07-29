@@ -22,41 +22,42 @@ interface ExecCmdRepository {
 <span class="fc" id="L22">        val execId: ExecId,</span>
 <span class="fc" id="L23">        val correlation: Correlation?,</span>
 <span class="fc" id="L24">        val inputs: ExecInputs,</span>
-<span class="fc" id="L25">        val code: CodeValue</span>
+<span class="fc" id="L25">        val code: CodeValue,</span>
+<span class="fc" id="L26">        val invocation: Invocation</span>
     )
 
-<span class="fc" id="L28">    data class ScheduleCmd(</span>
-<span class="fc" id="L29">        val id: CmdId,</span>
-<span class="fc" id="L30">        val execId: ExecId</span>
+<span class="fc" id="L29">    data class ScheduleCmd(</span>
+<span class="fc" id="L30">        val id: CmdId,</span>
+<span class="fc" id="L31">        val execId: ExecId</span>
     )
 
-<span class="fc" id="L33">    data class QueueCmd(</span>
-<span class="fc" id="L34">        val id: CmdId,</span>
-<span class="fc" id="L35">        val execId: ExecId</span>
+<span class="fc" id="L34">    data class QueueCmd(</span>
+<span class="fc" id="L35">        val id: CmdId,</span>
+<span class="fc" id="L36">        val execId: ExecId</span>
     )
 
-<span class="fc" id="L38">    data class StartCmd(</span>
-<span class="fc" id="L39">        val id: CmdId,</span>
+<span class="fc" id="L39">    data class StartCmd(</span>
+<span class="fc" id="L40">        val id: CmdId,</span>
     )
 
-<span class="fc" id="L42">    data class CompleteCmd(</span>
-<span class="fc" id="L43">        val id: CmdId,</span>
-<span class="fc" id="L44">        val execId: ExecId</span>
+<span class="fc" id="L43">    data class CompleteCmd(</span>
+<span class="fc" id="L44">        val id: CmdId,</span>
+<span class="fc" id="L45">        val execId: ExecId</span>
     )
 
-<span class="fc" id="L47">    data class FailCmd(</span>
-<span class="fc" id="L48">        val id: CmdId,</span>
-<span class="fc" id="L49">        val execId: ExecId</span>
+<span class="fc" id="L48">    data class FailCmd(</span>
+<span class="fc" id="L49">        val id: CmdId,</span>
+<span class="fc" id="L50">        val execId: ExecId</span>
     )
 }
 
 interface ExecQueryRepository {
-<span class="fc bfc" id="L54" title="All 2 branches covered.">    fun get(execId: ExecId) = find(execId) ?: throw NoSuchElementException(&quot;Exec not found&quot;)</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">    fun get(execId: ExecId) = find(execId) ?: throw NoSuchElementException(&quot;Exec not found&quot;)</span>
     fun find(execId: ExecId): Exec?
     fun list(block: ExecQuery.() -&gt; Unit): List&lt;Exec&gt;
-<span class="fc" id="L57">    data class ExecQuery(</span>
-<span class="fc" id="L58">        var afterId: ExecId = ExecId(SnowflakeId(Long.MAX_VALUE)),</span>
-<span class="fc" id="L59">        var limit: Limit = Limit(1)</span>
-<span class="fc" id="L60">    )</span>
+<span class="fc" id="L58">    data class ExecQuery(</span>
+<span class="fc" id="L59">        var afterId: ExecId = ExecId(SnowflakeId(Long.MAX_VALUE)),</span>
+<span class="fc" id="L60">        var limit: Limit = Limit(1)</span>
+<span class="fc" id="L61">    )</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

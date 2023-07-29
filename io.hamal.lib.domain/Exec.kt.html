@@ -15,125 +15,132 @@ sealed class Exec : DomainObject&lt;ExecId&gt; {
     abstract val correlation: Correlation?
     abstract val inputs: ExecInputs
     abstract val code: CodeValue
+    abstract val invocation: Invocation
 
     override fun equals(other: Any?): Boolean {
-<span class="nc bnc" id="L20" title="All 2 branches missed.">        if (this === other) return true</span>
-<span class="nc bnc" id="L21" title="All 4 branches missed.">        if (javaClass != other?.javaClass) return false</span>
+<span class="nc bnc" id="L21" title="All 2 branches missed.">        if (this === other) return true</span>
+<span class="nc bnc" id="L22" title="All 4 branches missed.">        if (javaClass != other?.javaClass) return false</span>
 
-<span class="nc" id="L23">        other as Exec</span>
+<span class="nc" id="L24">        other as Exec</span>
 
-<span class="nc bnc" id="L25" title="All 2 branches missed.">        if (id != other.id) return false</span>
-<span class="nc bnc" id="L26" title="All 2 branches missed.">        if (cmdId != other.cmdId) return false</span>
-<span class="nc bnc" id="L27" title="All 2 branches missed.">        return status == other.status</span>
+<span class="nc bnc" id="L26" title="All 2 branches missed.">        if (id != other.id) return false</span>
+<span class="nc bnc" id="L27" title="All 2 branches missed.">        if (cmdId != other.cmdId) return false</span>
+<span class="nc bnc" id="L28" title="All 2 branches missed.">        return status == other.status</span>
     }
 
     override fun hashCode(): Int {
-<span class="nc" id="L31">        var result = id.hashCode()</span>
-<span class="nc" id="L32">        result = 31 * result + cmdId.hashCode()</span>
-<span class="nc" id="L33">        result = 31 * result + status.hashCode()</span>
-<span class="nc" id="L34">        return result</span>
+<span class="nc" id="L32">        var result = id.hashCode()</span>
+<span class="nc" id="L33">        result = 31 * result + cmdId.hashCode()</span>
+<span class="nc" id="L34">        result = 31 * result + status.hashCode()</span>
+<span class="nc" id="L35">        return result</span>
     }
 }
 
-<span class="pc bpc" id="L38" title="4 of 14 branches missed.">@Serializable</span>
-<span class="fc" id="L39">class PlannedExec(</span>
-<span class="fc" id="L40">    override val cmdId: CmdId,</span>
-<span class="fc" id="L41">    override val id: ExecId,</span>
-<span class="fc" id="L42">    override val correlation: Correlation?,</span>
-<span class="fc" id="L43">    override val inputs: ExecInputs,</span>
-<span class="fc" id="L44">    override val code: CodeValue,</span>
+<span class="pc bpc" id="L39" title="4 of 15 branches missed.">@Serializable</span>
+<span class="fc" id="L40">class PlannedExec(</span>
+<span class="fc" id="L41">    override val cmdId: CmdId,</span>
+<span class="fc" id="L42">    override val id: ExecId,</span>
+<span class="fc" id="L43">    override val correlation: Correlation?,</span>
+<span class="fc" id="L44">    override val inputs: ExecInputs,</span>
+<span class="fc" id="L45">    override val code: CodeValue,</span>
+<span class="fc" id="L46">    override val invocation: Invocation</span>
 // FIXME    val plannedAt: PlannedAt
-<span class="fc" id="L46">) : Exec() {</span>
-<span class="pc bpc" id="L47" title="2 of 4 branches missed.">    override val status = ExecStatus.Planned</span>
+<span class="fc" id="L48">) : Exec() {</span>
+<span class="pc bpc" id="L49" title="2 of 4 branches missed.">    override val status = ExecStatus.Planned</span>
 
     override fun toString(): String {
-<span class="fc" id="L50">        return &quot;PlannedExec($id)&quot;</span>
+<span class="fc" id="L52">        return &quot;PlannedExec($id)&quot;</span>
     }
 
-<span class="fc" id="L53">}</span>
+<span class="fc" id="L55">}</span>
 
-<span class="pc bpc" id="L55" title="4 of 13 branches missed.">@Serializable</span>
-<span class="fc" id="L56">class ScheduledExec(</span>
-<span class="fc" id="L57">    override val cmdId: CmdId,</span>
-<span class="fc" id="L58">    override val id: ExecId,</span>
-<span class="pc" id="L59">    val plannedExec: PlannedExec,</span>
-<span class="pc" id="L60">    val scheduledAt: ScheduledAt</span>
-<span class="fc" id="L61">) : Exec() {</span>
-<span class="pc bpc" id="L62" title="2 of 4 branches missed.">    override val status = ExecStatus.Scheduled</span>
-<span class="fc" id="L63">    override val correlation get() = plannedExec.correlation</span>
-<span class="fc" id="L64">    override val inputs get() = plannedExec.inputs</span>
-<span class="fc" id="L65">    override val code get() = plannedExec.code</span>
+<span class="pc bpc" id="L57" title="4 of 13 branches missed.">@Serializable</span>
+<span class="fc" id="L58">class ScheduledExec(</span>
+<span class="fc" id="L59">    override val cmdId: CmdId,</span>
+<span class="fc" id="L60">    override val id: ExecId,</span>
+<span class="pc" id="L61">    val plannedExec: PlannedExec,</span>
+<span class="pc" id="L62">    val scheduledAt: ScheduledAt</span>
+<span class="fc" id="L63">) : Exec() {</span>
+<span class="pc bpc" id="L64" title="2 of 4 branches missed.">    override val status = ExecStatus.Scheduled</span>
+<span class="fc" id="L65">    override val correlation get() = plannedExec.correlation</span>
+<span class="fc" id="L66">    override val inputs get() = plannedExec.inputs</span>
+<span class="fc" id="L67">    override val code get() = plannedExec.code</span>
+<span class="fc" id="L68">    override val invocation get() = plannedExec.invocation</span>
     override fun toString(): String {
-<span class="nc" id="L67">        return &quot;ScheduledExec($id)&quot;</span>
+<span class="nc" id="L70">        return &quot;ScheduledExec($id)&quot;</span>
     }
 
-<span class="fc" id="L70">}</span>
+<span class="fc" id="L73">}</span>
 
-<span class="pc bpc" id="L72" title="4 of 13 branches missed.">@Serializable</span>
-<span class="fc" id="L73">class QueuedExec(</span>
-<span class="fc" id="L74">    override val cmdId: CmdId,</span>
-<span class="fc" id="L75">    override val id: ExecId,</span>
-<span class="pc" id="L76">    val scheduledExec: ScheduledExec,</span>
-<span class="pc" id="L77">    val queuedAt: QueuedAt</span>
-<span class="fc" id="L78">) : Exec() {</span>
-<span class="pc bpc" id="L79" title="2 of 4 branches missed.">    override val status = ExecStatus.Queued</span>
-<span class="fc" id="L80">    override val correlation get() = scheduledExec.correlation</span>
-<span class="fc" id="L81">    override val inputs get() = scheduledExec.inputs</span>
-<span class="fc" id="L82">    override val code get() = scheduledExec.code</span>
+<span class="pc bpc" id="L75" title="4 of 13 branches missed.">@Serializable</span>
+<span class="fc" id="L76">class QueuedExec(</span>
+<span class="fc" id="L77">    override val cmdId: CmdId,</span>
+<span class="fc" id="L78">    override val id: ExecId,</span>
+<span class="pc" id="L79">    val scheduledExec: ScheduledExec,</span>
+<span class="pc" id="L80">    val queuedAt: QueuedAt</span>
+<span class="fc" id="L81">) : Exec() {</span>
+<span class="pc bpc" id="L82" title="2 of 4 branches missed.">    override val status = ExecStatus.Queued</span>
+<span class="fc" id="L83">    override val correlation get() = scheduledExec.correlation</span>
+<span class="fc" id="L84">    override val inputs get() = scheduledExec.inputs</span>
+<span class="fc" id="L85">    override val code get() = scheduledExec.code</span>
+<span class="fc" id="L86">    override val invocation get() = scheduledExec.invocation</span>
     override fun toString(): String {
-<span class="fc" id="L84">        return &quot;QueuedExec($id)&quot;</span>
+<span class="fc" id="L88">        return &quot;QueuedExec($id)&quot;</span>
     }
-<span class="fc" id="L86">}</span>
+<span class="fc" id="L90">}</span>
 
 
-<span class="pc bpc" id="L89" title="4 of 12 branches missed.">@Serializable</span>
-<span class="fc" id="L90">class StartedExec(</span>
-<span class="fc" id="L91">    override val cmdId: CmdId,</span>
-<span class="fc" id="L92">    override val id: ExecId,</span>
-<span class="pc" id="L93">    val queuedExec: QueuedExec</span>
-<span class="fc" id="L94">) : Exec() {</span>
-<span class="pc bpc" id="L95" title="2 of 4 branches missed.">    override val status = ExecStatus.Started</span>
-<span class="fc" id="L96">    override val correlation get() = queuedExec.correlation</span>
-<span class="fc" id="L97">    override val inputs get() = queuedExec.inputs</span>
-<span class="fc" id="L98">    override val code get() = queuedExec.code</span>
+<span class="pc bpc" id="L93" title="4 of 12 branches missed.">@Serializable</span>
+<span class="fc" id="L94">class StartedExec(</span>
+<span class="fc" id="L95">    override val cmdId: CmdId,</span>
+<span class="fc" id="L96">    override val id: ExecId,</span>
+<span class="pc" id="L97">    val queuedExec: QueuedExec</span>
+<span class="fc" id="L98">) : Exec() {</span>
+<span class="pc bpc" id="L99" title="2 of 4 branches missed.">    override val status = ExecStatus.Started</span>
+<span class="fc" id="L100">    override val correlation get() = queuedExec.correlation</span>
+<span class="fc" id="L101">    override val inputs get() = queuedExec.inputs</span>
+<span class="fc" id="L102">    override val code get() = queuedExec.code</span>
+<span class="fc" id="L103">    override val invocation get() = queuedExec.invocation</span>
     override fun toString(): String {
-<span class="nc" id="L100">        return &quot;StartedExec($id)&quot;</span>
+<span class="nc" id="L105">        return &quot;StartedExec($id)&quot;</span>
     }
-<span class="fc" id="L102">}</span>
+<span class="fc" id="L107">}</span>
 
-<span class="pc bpc" id="L104" title="4 of 13 branches missed.">@Serializable</span>
-<span class="fc" id="L105">class CompletedExec(</span>
-<span class="fc" id="L106">    override val cmdId: CmdId,</span>
+<span class="pc bpc" id="L109" title="4 of 13 branches missed.">@Serializable</span>
+<span class="fc" id="L110">class CompletedExec(</span>
+<span class="fc" id="L111">    override val cmdId: CmdId,</span>
 
-<span class="fc" id="L108">    override val id: ExecId,</span>
-<span class="pc" id="L109">    val startedExec: StartedExec,</span>
-<span class="pc" id="L110">    val completedAt: CompletedAt</span>
-<span class="fc" id="L111">) : Exec() {</span>
-<span class="pc bpc" id="L112" title="2 of 4 branches missed.">    override val status = ExecStatus.Completed</span>
-<span class="fc" id="L113">    override val correlation get() = startedExec.correlation</span>
-<span class="nc" id="L114">    override val inputs get() = startedExec.inputs</span>
-<span class="nc" id="L115">    override val code get() = startedExec.code</span>
+<span class="fc" id="L113">    override val id: ExecId,</span>
+<span class="pc" id="L114">    val startedExec: StartedExec,</span>
+<span class="pc" id="L115">    val completedAt: CompletedAt</span>
+<span class="fc" id="L116">) : Exec() {</span>
+<span class="pc bpc" id="L117" title="2 of 4 branches missed.">    override val status = ExecStatus.Completed</span>
+<span class="fc" id="L118">    override val correlation get() = startedExec.correlation</span>
+<span class="nc" id="L119">    override val inputs get() = startedExec.inputs</span>
+<span class="nc" id="L120">    override val code get() = startedExec.code</span>
+<span class="nc" id="L121">    override val invocation get() = startedExec.invocation</span>
 
     override fun toString(): String {
-<span class="fc" id="L118">        return &quot;CompletedExec($id)&quot;</span>
+<span class="fc" id="L124">        return &quot;CompletedExec($id)&quot;</span>
     }
-<span class="fc" id="L120">}</span>
+<span class="fc" id="L126">}</span>
 
-<span class="pc bnc" id="L122" title="All 13 branches missed.">@Serializable</span>
-<span class="fc" id="L123">class FailedExec(</span>
-<span class="pc" id="L124">    override val cmdId: CmdId,</span>
-<span class="fc" id="L125">    override val id: ExecId,</span>
-<span class="pc" id="L126">    val startedExec: StartedExec,</span>
+<span class="pc bnc" id="L128" title="All 13 branches missed.">@Serializable</span>
+<span class="fc" id="L129">class FailedExec(</span>
+<span class="pc" id="L130">    override val cmdId: CmdId,</span>
+<span class="fc" id="L131">    override val id: ExecId,</span>
+<span class="pc" id="L132">    val startedExec: StartedExec,</span>
     //FIXME failedAt
-<span class="pc" id="L128">    val failedAt: FailedAt</span>
-<span class="fc" id="L129">) : Exec() {</span>
-<span class="pc bnc" id="L130" title="All 4 branches missed.">    override val status = ExecStatus.Failed</span>
-<span class="fc" id="L131">    override val correlation get() = startedExec.correlation</span>
-<span class="nc" id="L132">    override val inputs get() = startedExec.inputs</span>
-<span class="nc" id="L133">    override val code get() = startedExec.code</span>
+<span class="pc" id="L134">    val failedAt: FailedAt</span>
+<span class="fc" id="L135">) : Exec() {</span>
+<span class="pc bnc" id="L136" title="All 4 branches missed.">    override val status = ExecStatus.Failed</span>
+<span class="fc" id="L137">    override val correlation get() = startedExec.correlation</span>
+<span class="nc" id="L138">    override val inputs get() = startedExec.inputs</span>
+<span class="nc" id="L139">    override val code get() = startedExec.code</span>
+<span class="nc" id="L140">    override val invocation get() = startedExec.invocation</span>
     override fun toString(): String {
-<span class="nc" id="L135">        return &quot;FailedExec($id)&quot;</span>
+<span class="nc" id="L142">        return &quot;FailedExec($id)&quot;</span>
     }
 
-<span class="fc" id="L138">}</span>
+<span class="fc" id="L145">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

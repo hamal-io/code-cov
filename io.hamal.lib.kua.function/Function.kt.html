@@ -9,10 +9,9 @@ import io.hamal.lib.kua.value.Value
         INPUT : FunctionInput&lt;INPUT_SCHEMA, INPUT&gt;,
         OUTPUT_SCHEMA : FunctionOutputSchema&lt;OUTPUT&gt;,
         OUTPUT : FunctionOutput&lt;OUTPUT_SCHEMA, OUTPUT&gt;
-        &gt;
-    (
-<span class="fc" id="L14">    val name: String,</span>
-<span class="fc" id="L15">    val function: FunctionValue&lt;INPUT_SCHEMA, INPUT, OUTPUT_SCHEMA, OUTPUT&gt;</span>
+        &gt;(
+<span class="fc" id="L13">    val name: String,</span>
+<span class="fc" id="L14">    val function: FunctionValue&lt;*, *, *, *&gt;</span>
 )
 
 interface FunctionValue&lt;
@@ -28,61 +27,61 @@ interface FunctionValue&lt;
     operator fun invoke(ctx: FunctionContext, input: INPUT): OUTPUT
 
     fun invokedByLua(bridge: Bridge): Int {
-<span class="fc" id="L31">        val ctx = FunctionContext(</span>
-<span class="fc" id="L32">            ClosableState(bridge)</span>
+<span class="fc" id="L30">        val ctx = FunctionContext(</span>
+<span class="fc" id="L31">            ClosableState(bridge)</span>
         )
 
-<span class="fc" id="L35">        val input = inputSchema.createInput(ctx)</span>
-<span class="fc" id="L36">        val output = invoke(ctx, input)</span>
-<span class="fc" id="L37">        outputSchema.pushResult(ctx, output)</span>
-<span class="fc" id="L38">        return output.size</span>
+<span class="fc" id="L34">        val input = inputSchema.createInput(ctx)</span>
+<span class="fc" id="L35">        val output = invoke(ctx, input)</span>
+<span class="fc" id="L36">        outputSchema.pushResult(ctx, output)</span>
+<span class="fc" id="L37">        return output.size</span>
     }
 }
 
-<span class="fc" id="L42">abstract class Function0In0Out : FunctionValue&lt;</span>
+<span class="fc" id="L41">abstract class Function0In0Out : FunctionValue&lt;</span>
         FunctionInput0Schema,
         FunctionInput0,
         FunctionOutput0Schema,
         FunctionOutput0
         &gt; {
 
-<span class="fc" id="L49">    override val inputSchema: FunctionInput0Schema = FunctionInput0Schema</span>
-<span class="fc" id="L50">    override val outputSchema: FunctionOutput0Schema = FunctionOutput0Schema</span>
+<span class="fc" id="L48">    override val inputSchema: FunctionInput0Schema = FunctionInput0Schema</span>
+<span class="fc" id="L49">    override val outputSchema: FunctionOutput0Schema = FunctionOutput0Schema</span>
 
     abstract fun invoke(ctx: FunctionContext)
 
     override fun invoke(ctx: FunctionContext, input: FunctionInput0): FunctionOutput0 {
-<span class="fc" id="L55">        this.invoke(ctx)</span>
-<span class="fc" id="L56">        return FunctionOutput0</span>
+<span class="fc" id="L54">        this.invoke(ctx)</span>
+<span class="fc" id="L55">        return FunctionOutput0</span>
     }
 
 }
 
-<span class="fc" id="L61">abstract class Function1In0Out&lt;</span>
+<span class="fc" id="L60">abstract class Function1In0Out&lt;</span>
         INPUT_ARG_1 : Value
         &gt;(
-<span class="fc" id="L64">    override val inputSchema: FunctionInput1Schema&lt;INPUT_ARG_1&gt;</span>
+<span class="fc" id="L63">    override val inputSchema: FunctionInput1Schema&lt;INPUT_ARG_1&gt;</span>
 ) : FunctionValue&lt;
         FunctionInput1Schema&lt;INPUT_ARG_1&gt;,
         FunctionInput1&lt;INPUT_ARG_1&gt;,
         FunctionOutput0Schema,
         FunctionOutput0
         &gt; {
-<span class="fc" id="L71">    override val outputSchema: FunctionOutput0Schema = FunctionOutput0Schema</span>
+<span class="fc" id="L70">    override val outputSchema: FunctionOutput0Schema = FunctionOutput0Schema</span>
 
     abstract fun invoke(ctx: FunctionContext, arg1: INPUT_ARG_1)
 
     override fun invoke(ctx: FunctionContext, input: FunctionInput1&lt;INPUT_ARG_1&gt;): FunctionOutput0 {
-<span class="fc" id="L76">        invoke(ctx, input.arg1)</span>
-<span class="fc" id="L77">        return FunctionOutput0</span>
+<span class="fc" id="L75">        invoke(ctx, input.arg1)</span>
+<span class="fc" id="L76">        return FunctionOutput0</span>
     }
 }
 
 
-<span class="fc" id="L82">abstract class Function0In1Out&lt;</span>
+<span class="fc" id="L81">abstract class Function0In1Out&lt;</span>
         OUTPUT_ARG_1 : Value
         &gt;(
-<span class="fc" id="L85">    override val outputSchema: FunctionOutput1Schema&lt;OUTPUT_ARG_1&gt;,</span>
+<span class="fc" id="L84">    override val outputSchema: FunctionOutput1Schema&lt;OUTPUT_ARG_1&gt;,</span>
 
     ) : FunctionValue&lt;
         FunctionInput0Schema,
@@ -90,42 +89,42 @@ interface FunctionValue&lt;
         FunctionOutput1Schema&lt;OUTPUT_ARG_1&gt;,
         FunctionOutput1&lt;OUTPUT_ARG_1&gt;
         &gt; {
-<span class="fc" id="L93">    override val inputSchema: FunctionInput0Schema = FunctionInput0Schema</span>
+<span class="fc" id="L92">    override val inputSchema: FunctionInput0Schema = FunctionInput0Schema</span>
 
     abstract fun invoke(ctx: FunctionContext): OUTPUT_ARG_1
 
     override fun invoke(ctx: FunctionContext, input: FunctionInput0): FunctionOutput1&lt;OUTPUT_ARG_1&gt; {
-<span class="fc" id="L98">        return FunctionOutput1(invoke(ctx))</span>
+<span class="fc" id="L97">        return FunctionOutput1(invoke(ctx))</span>
     }
 }
 
-<span class="fc" id="L102">abstract class Function0In2Out&lt;</span>
+<span class="fc" id="L101">abstract class Function0In2Out&lt;</span>
         OUTPUT_ARG_1 : Value,
         OUTPUT_ARG_2 : Value
         &gt;(
-<span class="fc" id="L106">    override val outputSchema: FunctionOutput2Schema&lt;OUTPUT_ARG_1, OUTPUT_ARG_2&gt;,</span>
+<span class="fc" id="L105">    override val outputSchema: FunctionOutput2Schema&lt;OUTPUT_ARG_1, OUTPUT_ARG_2&gt;,</span>
 ) : FunctionValue&lt;
         FunctionInput0Schema,
         FunctionInput0,
         FunctionOutput2Schema&lt;OUTPUT_ARG_1, OUTPUT_ARG_2&gt;,
         FunctionOutput2&lt;OUTPUT_ARG_1, OUTPUT_ARG_2&gt;
         &gt; {
-<span class="fc" id="L113">    override val inputSchema: FunctionInput0Schema = FunctionInput0Schema</span>
+<span class="fc" id="L112">    override val inputSchema: FunctionInput0Schema = FunctionInput0Schema</span>
 
     abstract fun invoke(ctx: FunctionContext): Pair&lt;OUTPUT_ARG_1, OUTPUT_ARG_2&gt;
 
     override fun invoke(ctx: FunctionContext, input: FunctionInput0): FunctionOutput2&lt;OUTPUT_ARG_1, OUTPUT_ARG_2&gt; {
-<span class="fc" id="L118">        val result = invoke(ctx)</span>
-<span class="fc" id="L119">        return FunctionOutput2(result.first, result.second)</span>
+<span class="fc" id="L117">        val result = invoke(ctx)</span>
+<span class="fc" id="L118">        return FunctionOutput2(result.first, result.second)</span>
     }
 }
 
-<span class="fc" id="L123">abstract class Function1In1Out&lt;</span>
+<span class="fc" id="L122">abstract class Function1In1Out&lt;</span>
         INPUT_ARG_1 : Value,
         OUTPUT_ARG_1 : Value
         &gt;(
-<span class="fc" id="L127">    override val inputSchema: FunctionInput1Schema&lt;INPUT_ARG_1&gt;,</span>
-<span class="fc" id="L128">    override val outputSchema: FunctionOutput1Schema&lt;OUTPUT_ARG_1&gt;</span>
+<span class="fc" id="L126">    override val inputSchema: FunctionInput1Schema&lt;INPUT_ARG_1&gt;,</span>
+<span class="fc" id="L127">    override val outputSchema: FunctionOutput1Schema&lt;OUTPUT_ARG_1&gt;</span>
 ) : FunctionValue&lt;
         FunctionInput1Schema&lt;INPUT_ARG_1&gt;,
         FunctionInput1&lt;INPUT_ARG_1&gt;,
@@ -136,18 +135,18 @@ interface FunctionValue&lt;
     abstract fun invoke(ctx: FunctionContext, arg1: INPUT_ARG_1): OUTPUT_ARG_1
 
     override fun invoke(ctx: FunctionContext, input: FunctionInput1&lt;INPUT_ARG_1&gt;): FunctionOutput1&lt;OUTPUT_ARG_1&gt; {
-<span class="fc" id="L139">        val result = invoke(ctx, input.arg1)</span>
-<span class="fc" id="L140">        return FunctionOutput1(result)</span>
+<span class="fc" id="L138">        val result = invoke(ctx, input.arg1)</span>
+<span class="fc" id="L139">        return FunctionOutput1(result)</span>
     }
 }
 
-<span class="fc" id="L144">abstract class Function1In2Out&lt;</span>
+<span class="fc" id="L143">abstract class Function1In2Out&lt;</span>
         INPUT_ARG_1 : Value,
         OUTPUT_ARG_1 : Value,
         OUTPUT_ARG_2 : Value
         &gt;(
-<span class="fc" id="L149">    override val inputSchema: FunctionInput1Schema&lt;INPUT_ARG_1&gt;,</span>
-<span class="fc" id="L150">    override val outputSchema: FunctionOutput2Schema&lt;OUTPUT_ARG_1, OUTPUT_ARG_2&gt;</span>
+<span class="fc" id="L148">    override val inputSchema: FunctionInput1Schema&lt;INPUT_ARG_1&gt;,</span>
+<span class="fc" id="L149">    override val outputSchema: FunctionOutput2Schema&lt;OUTPUT_ARG_1, OUTPUT_ARG_2&gt;</span>
 ) : FunctionValue&lt;
         FunctionInput1Schema&lt;INPUT_ARG_1&gt;,
         FunctionInput1&lt;INPUT_ARG_1&gt;,
@@ -161,40 +160,40 @@ interface FunctionValue&lt;
         ctx: FunctionContext,
         input: FunctionInput1&lt;INPUT_ARG_1&gt;
     ): FunctionOutput2&lt;OUTPUT_ARG_1, OUTPUT_ARG_2&gt; {
-<span class="fc" id="L164">        val result = invoke(ctx, input.arg1)</span>
-<span class="fc" id="L165">        return FunctionOutput2(result.first, result.second)</span>
+<span class="fc" id="L163">        val result = invoke(ctx, input.arg1)</span>
+<span class="fc" id="L164">        return FunctionOutput2(result.first, result.second)</span>
     }
 }
 
-<span class="fc" id="L169">abstract class Function2In0Out&lt;</span>
+<span class="fc" id="L168">abstract class Function2In0Out&lt;</span>
         INPUT_ARG_1 : Value,
         INPUT_ARG_2 : Value
         &gt;(
-<span class="fc" id="L173">    override val inputSchema: FunctionInput2Schema&lt;INPUT_ARG_1, INPUT_ARG_2&gt;</span>
+<span class="fc" id="L172">    override val inputSchema: FunctionInput2Schema&lt;INPUT_ARG_1, INPUT_ARG_2&gt;</span>
 ) : FunctionValue&lt;
         FunctionInput2Schema&lt;INPUT_ARG_1, INPUT_ARG_2&gt;,
         FunctionInput2&lt;INPUT_ARG_1, INPUT_ARG_2&gt;,
         FunctionOutput0Schema,
         FunctionOutput0
         &gt; {
-<span class="fc" id="L180">    override val outputSchema = FunctionOutput0Schema</span>
+<span class="fc" id="L179">    override val outputSchema = FunctionOutput0Schema</span>
 
     abstract fun invoke(ctx: FunctionContext, arg1: INPUT_ARG_1, arg2: INPUT_ARG_2)
 
     override fun invoke(ctx: FunctionContext, input: FunctionInput2&lt;INPUT_ARG_1, INPUT_ARG_2&gt;): FunctionOutput0 {
-<span class="fc" id="L185">        invoke(ctx, input.arg1, input.arg2)</span>
-<span class="fc" id="L186">        return FunctionOutput0</span>
+<span class="fc" id="L184">        invoke(ctx, input.arg1, input.arg2)</span>
+<span class="fc" id="L185">        return FunctionOutput0</span>
     }
 }
 
-<span class="fc" id="L190">abstract class Function2In2Out&lt;</span>
+<span class="fc" id="L189">abstract class Function2In2Out&lt;</span>
         INPUT_ARG_1 : Value,
         INPUT_ARG_2 : Value,
         OUTPUT_ARG_1 : Value,
         OUTPUT_ARG_2 : Value
         &gt;(
-<span class="fc" id="L196">    override val inputSchema: FunctionInput2Schema&lt;INPUT_ARG_1, INPUT_ARG_2&gt;,</span>
-<span class="fc" id="L197">    override val outputSchema: FunctionOutput2Schema&lt;OUTPUT_ARG_1, OUTPUT_ARG_2&gt;</span>
+<span class="fc" id="L195">    override val inputSchema: FunctionInput2Schema&lt;INPUT_ARG_1, INPUT_ARG_2&gt;,</span>
+<span class="fc" id="L196">    override val outputSchema: FunctionOutput2Schema&lt;OUTPUT_ARG_1, OUTPUT_ARG_2&gt;</span>
 
 ) : FunctionValue&lt;
         FunctionInput2Schema&lt;INPUT_ARG_1, INPUT_ARG_2&gt;,
@@ -209,8 +208,8 @@ interface FunctionValue&lt;
         ctx: FunctionContext,
         input: FunctionInput2&lt;INPUT_ARG_1, INPUT_ARG_2&gt;
     ): FunctionOutput2&lt;OUTPUT_ARG_1, OUTPUT_ARG_2&gt; {
-<span class="fc" id="L212">        val result = invoke(ctx, input.arg1, input.arg2)</span>
-<span class="fc" id="L213">        return FunctionOutput2(result.first, result.second)</span>
+<span class="fc" id="L211">        val result = invoke(ctx, input.arg1, input.arg2)</span>
+<span class="fc" id="L212">        return FunctionOutput2(result.first, result.second)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

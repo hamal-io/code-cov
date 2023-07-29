@@ -8,38 +8,40 @@ import io.hamal.backend.repository.api.ExecCmdRepository
 import io.hamal.backend.repository.api.FuncQueryRepository
 import io.hamal.lib.common.domain.CmdId
 import io.hamal.lib.domain.Correlation
+import io.hamal.lib.domain.FixedRateInvocation
 import io.hamal.lib.domain.PlannedExec
 import io.hamal.lib.domain.req.SubmittedInvokeFixedRateReq
 import org.springframework.stereotype.Component
 
 @Component
-<span class="fc" id="L16">class InvokeFixedRateHandler(</span>
-<span class="fc" id="L17">    private val execCmdRepository: ExecCmdRepository,</span>
-<span class="fc" id="L18">    private val eventEmitter: SystemEventEmitter&lt;*&gt;,</span>
-<span class="fc" id="L19">    private val funcQueryRepository: FuncQueryRepository</span>
-<span class="fc" id="L20">) : ReqHandler&lt;SubmittedInvokeFixedRateReq&gt;(SubmittedInvokeFixedRateReq::class) {</span>
+<span class="fc" id="L17">class InvokeFixedRateHandler(</span>
+<span class="fc" id="L18">    private val execCmdRepository: ExecCmdRepository,</span>
+<span class="fc" id="L19">    private val eventEmitter: SystemEventEmitter&lt;*&gt;,</span>
+<span class="fc" id="L20">    private val funcQueryRepository: FuncQueryRepository</span>
+<span class="fc" id="L21">) : ReqHandler&lt;SubmittedInvokeFixedRateReq&gt;(SubmittedInvokeFixedRateReq::class) {</span>
     override fun invoke(req: SubmittedInvokeFixedRateReq) {
-<span class="fc" id="L22">        planExec(req).also { emitEvent(req.cmdId(), it) }</span>
-<span class="fc" id="L23">    }</span>
+<span class="fc" id="L23">        planExec(req).also { emitEvent(req.cmdId(), it) }</span>
+<span class="fc" id="L24">    }</span>
 
     private fun planExec(req: SubmittedInvokeFixedRateReq): PlannedExec {
-<span class="fc" id="L26">        val func = funcQueryRepository.get(req.funcId)</span>
-<span class="fc" id="L27">        return execCmdRepository.plan(</span>
-<span class="fc" id="L28">            ExecCmdRepository.PlanCmd(</span>
-<span class="fc" id="L29">                id = req.cmdId(),</span>
-<span class="fc" id="L30">                execId = req.execId,</span>
-<span class="fc" id="L31">                correlation = Correlation(</span>
-<span class="fc" id="L32">                    correlationId = req.correlationId,</span>
-<span class="fc" id="L33">                    funcId = func.id</span>
+<span class="fc" id="L27">        val func = funcQueryRepository.get(req.funcId)</span>
+<span class="fc" id="L28">        return execCmdRepository.plan(</span>
+<span class="fc" id="L29">            ExecCmdRepository.PlanCmd(</span>
+<span class="fc" id="L30">                id = req.cmdId(),</span>
+<span class="fc" id="L31">                execId = req.execId,</span>
+<span class="fc" id="L32">                correlation = Correlation(</span>
+<span class="fc" id="L33">                    correlationId = req.correlationId,</span>
+<span class="fc" id="L34">                    funcId = func.id</span>
                 ),
-<span class="fc" id="L35">                inputs = merge(func.inputs, req.inputs),</span>
-<span class="fc" id="L36">                code = func.code,</span>
+<span class="fc" id="L36">                inputs = merge(func.inputs, req.inputs),</span>
+<span class="fc" id="L37">                code = func.code,</span>
+<span class="fc" id="L38">                invocation = FixedRateInvocation()</span>
             )
         )
     }
 
     private fun emitEvent(cmdId: CmdId, exec: PlannedExec) {
-<span class="fc" id="L42">        eventEmitter.emit(cmdId, ExecPlannedEvent(exec))</span>
-<span class="fc" id="L43">    }</span>
+<span class="fc" id="L44">        eventEmitter.emit(cmdId, ExecPlannedEvent(exec))</span>
+<span class="fc" id="L45">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

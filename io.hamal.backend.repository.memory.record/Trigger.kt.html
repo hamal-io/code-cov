@@ -7,9 +7,9 @@ import io.hamal.backend.repository.record.trigger.EventTriggerCreationRecord
 import io.hamal.backend.repository.record.trigger.FixedRateTriggerCreationRecord
 import io.hamal.backend.repository.record.trigger.TriggerRecord
 import io.hamal.backend.repository.record.trigger.createEntity
-import io.hamal.lib.common.util.CollectionUtils.takeWhileInclusive
 import io.hamal.lib.common.domain.CmdId
 import io.hamal.lib.common.domain.Limit
+import io.hamal.lib.common.util.CollectionUtils.takeWhileInclusive
 import io.hamal.lib.domain.EventTrigger
 import io.hamal.lib.domain.FixedRateTrigger
 import io.hamal.lib.domain.Trigger
@@ -55,59 +55,61 @@ internal object CurrentTriggerProjection {
 <span class="fc" id="L55">                    funcId = cmd.funcId,</span>
 <span class="fc" id="L56">                    name = cmd.name,</span>
 <span class="fc" id="L57">                    inputs = cmd.inputs,</span>
-<span class="fc" id="L58">                    duration = cmd.duration</span>
+<span class="fc" id="L58">                    duration = cmd.duration,</span>
+<span class="fc" id="L59">                    correlationId = cmd.correlationId</span>
                 )
             )
-<span class="fc" id="L61">            (currentVersion(triggerId) as FixedRateTrigger).also(CurrentTriggerProjection::apply)</span>
+<span class="fc" id="L62">            (currentVersion(triggerId) as FixedRateTrigger).also(CurrentTriggerProjection::apply)</span>
         }
     }
 
     override fun create(cmd: TriggerCmdRepository.CreateEventCmd): EventTrigger {
-<span class="fc" id="L66">        return lock.withLock {</span>
-<span class="fc" id="L67">            val triggerId = cmd.triggerId</span>
-<span class="pc bpc" id="L68" title="1 of 2 branches missed.">            if (contains(triggerId)) {</span>
-<span class="nc" id="L69">                versionOf(triggerId, cmd.id) as EventTrigger</span>
+<span class="fc" id="L67">        return lock.withLock {</span>
+<span class="fc" id="L68">            val triggerId = cmd.triggerId</span>
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">            if (contains(triggerId)) {</span>
+<span class="nc" id="L70">                versionOf(triggerId, cmd.id) as EventTrigger</span>
             } else {
-<span class="fc" id="L71">                MemoryTriggerRepository.addRecord(</span>
-<span class="fc" id="L72">                    EventTriggerCreationRecord(</span>
-<span class="fc" id="L73">                        entityId = triggerId,</span>
-<span class="fc" id="L74">                        cmdId = cmd.id,</span>
-<span class="fc" id="L75">                        funcId = cmd.funcId,</span>
-<span class="fc" id="L76">                        name = cmd.name,</span>
-<span class="fc" id="L77">                        inputs = cmd.inputs,</span>
-<span class="fc" id="L78">                        topicId = cmd.topicId</span>
+<span class="fc" id="L72">                MemoryTriggerRepository.addRecord(</span>
+<span class="fc" id="L73">                    EventTriggerCreationRecord(</span>
+<span class="fc" id="L74">                        entityId = triggerId,</span>
+<span class="fc" id="L75">                        cmdId = cmd.id,</span>
+<span class="fc" id="L76">                        funcId = cmd.funcId,</span>
+<span class="fc" id="L77">                        name = cmd.name,</span>
+<span class="fc" id="L78">                        inputs = cmd.inputs,</span>
+<span class="fc" id="L79">                        topicId = cmd.topicId,</span>
+<span class="fc" id="L80">                        correlationId = cmd.correlationId</span>
                     )
                 )
-<span class="fc" id="L81">                (currentVersion(triggerId) as EventTrigger).also(CurrentTriggerProjection::apply)</span>
+<span class="fc" id="L83">                (currentVersion(triggerId) as EventTrigger).also(CurrentTriggerProjection::apply)</span>
             }
         }
     }
 
-<span class="fc" id="L86">    override fun find(triggerId: TriggerId) = CurrentTriggerProjection.find(triggerId)</span>
+<span class="fc" id="L88">    override fun find(triggerId: TriggerId) = CurrentTriggerProjection.find(triggerId)</span>
 
     override fun list(block: TriggerQuery.() -&gt; Unit): List&lt;Trigger&gt; {
-<span class="fc" id="L89">        val query = TriggerQuery().also(block)</span>
-<span class="fc" id="L90">        return CurrentTriggerProjection.list(query.afterId, query.limit)</span>
+<span class="fc" id="L91">        val query = TriggerQuery().also(block)</span>
+<span class="fc" id="L92">        return CurrentTriggerProjection.list(query.afterId, query.limit)</span>
     }
 
     override fun clear() {
-<span class="fc" id="L94">        super.clear()</span>
-<span class="fc" id="L95">        CurrentTriggerProjection.clear()</span>
-<span class="fc" id="L96">    }</span>
+<span class="fc" id="L96">        super.clear()</span>
+<span class="fc" id="L97">        CurrentTriggerProjection.clear()</span>
+<span class="fc" id="L98">    }</span>
 }
 
 private fun MemoryTriggerRepository.currentVersion(id: TriggerId): Trigger {
-<span class="fc" id="L100">    return listRecords(id)</span>
-<span class="fc" id="L101">        .createEntity()</span>
-<span class="fc" id="L102">        .toDomainObject()</span>
+<span class="fc" id="L102">    return listRecords(id)</span>
+<span class="fc" id="L103">        .createEntity()</span>
+<span class="fc" id="L104">        .toDomainObject()</span>
 }
 
 private fun MemoryTriggerRepository.commandAlreadyApplied(id: TriggerId, cmdId: CmdId) =
-<span class="nc" id="L106">    listRecords(id).any { it.cmdId == cmdId }</span>
+<span class="nc" id="L108">    listRecords(id).any { it.cmdId == cmdId }</span>
 
 private fun MemoryTriggerRepository.versionOf(id: TriggerId, cmdId: CmdId): Trigger {
-<span class="nc bnc" id="L109" title="All 2 branches missed.">    return listRecords(id).takeWhileInclusive { it.cmdId != cmdId }</span>
-<span class="nc" id="L110">        .createEntity()</span>
-<span class="nc" id="L111">        .toDomainObject()</span>
+<span class="nc bnc" id="L111" title="All 2 branches missed.">    return listRecords(id).takeWhileInclusive { it.cmdId != cmdId }</span>
+<span class="nc" id="L112">        .createEntity()</span>
+<span class="nc" id="L113">        .toDomainObject()</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

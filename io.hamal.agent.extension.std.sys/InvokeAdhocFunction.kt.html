@@ -8,18 +8,18 @@ import io.hamal.lib.kua.function.Function1In1Out
 import io.hamal.lib.kua.function.FunctionContext
 import io.hamal.lib.kua.function.FunctionInput1Schema
 import io.hamal.lib.kua.function.FunctionOutput1Schema
-import io.hamal.lib.kua.table.TableMapProxyValue
+import io.hamal.lib.kua.table.TableMapValue
 import io.hamal.lib.kua.value.CodeValue
 import io.hamal.lib.kua.value.StringValue
 import io.hamal.lib.sdk.HttpTemplateSupplier
 
 <span class="fc" id="L16">class InvokeAdhocFunction(</span>
 <span class="fc" id="L17">    private val templateSupplier: HttpTemplateSupplier</span>
-<span class="fc" id="L18">) : Function1In1Out&lt;TableMapProxyValue, StringValue&gt;(</span>
-<span class="fc" id="L19">    FunctionInput1Schema(TableMapProxyValue::class),</span>
+<span class="fc" id="L18">) : Function1In1Out&lt;TableMapValue, StringValue&gt;(</span>
+<span class="fc" id="L19">    FunctionInput1Schema(TableMapValue::class),</span>
 <span class="fc" id="L20">    FunctionOutput1Schema(StringValue::class)</span>
 ) {
-    override fun invoke(ctx: FunctionContext, arg1: TableMapProxyValue): StringValue {
+    override fun invoke(ctx: FunctionContext, arg1: TableMapValue): StringValue {
 
 <span class="fc" id="L24">        val r = InvokeAdhocReq(</span>
 <span class="fc" id="L25">            inputs = InvocationInputs(),</span>

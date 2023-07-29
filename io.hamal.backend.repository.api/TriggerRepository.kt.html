@@ -14,36 +14,38 @@ interface TriggerCmdRepository {
     fun create(cmd: CreateFixedRateCmd): FixedRateTrigger
     fun create(cmd: CreateEventCmd): EventTrigger
     fun clear()
-<span class="fc" id="L17">    data class CreateFixedRateCmd(</span>
+<span class="pc" id="L17">    data class CreateFixedRateCmd(</span>
 <span class="fc" id="L18">        val id: CmdId,</span>
 <span class="fc" id="L19">        val triggerId: TriggerId,</span>
 <span class="fc" id="L20">        val name: TriggerName,</span>
 <span class="fc" id="L21">        val funcId: FuncId,</span>
 <span class="fc" id="L22">        val inputs: TriggerInputs,</span>
-<span class="fc" id="L23">        val duration: Duration</span>
-    )
+<span class="fc" id="L23">        val duration: Duration,</span>
+<span class="pc" id="L24">        val correlationId: CorrelationId? = null</span>
+<span class="nc" id="L25">    )</span>
 
-<span class="fc" id="L26">    data class CreateEventCmd(</span>
-<span class="fc" id="L27">        val id: CmdId,</span>
-<span class="fc" id="L28">        val triggerId: TriggerId,</span>
-<span class="fc" id="L29">        val name: TriggerName,</span>
-<span class="fc" id="L30">        val funcId: FuncId,</span>
-<span class="fc" id="L31">        val inputs: TriggerInputs,</span>
-<span class="fc" id="L32">        val topicId: TopicId</span>
-    )
+<span class="pc" id="L27">    data class CreateEventCmd(</span>
+<span class="fc" id="L28">        val id: CmdId,</span>
+<span class="fc" id="L29">        val triggerId: TriggerId,</span>
+<span class="fc" id="L30">        val name: TriggerName,</span>
+<span class="fc" id="L31">        val funcId: FuncId,</span>
+<span class="fc" id="L32">        val inputs: TriggerInputs,</span>
+<span class="fc" id="L33">        val topicId: TopicId,</span>
+<span class="pc" id="L34">        val correlationId: CorrelationId? = null</span>
+<span class="nc" id="L35">    )</span>
 }
 
 interface TriggerQueryRepository {
-<span class="pc bpc" id="L37" title="1 of 2 branches missed.">    fun get(triggerId: TriggerId) = find(triggerId) ?: throw NoSuchElementException(&quot;Trigger not found&quot;)</span>
+<span class="pc bpc" id="L39" title="1 of 2 branches missed.">    fun get(triggerId: TriggerId) = find(triggerId) ?: throw NoSuchElementException(&quot;Trigger not found&quot;)</span>
     fun find(triggerId: TriggerId): Trigger?
 
     fun list(block: TriggerQuery.() -&gt; Unit): List&lt;Trigger&gt;
 
-<span class="fc" id="L42">    data class TriggerQuery(</span>
-<span class="fc" id="L43">        var afterId: TriggerId = TriggerId(0),</span>
-<span class="pc" id="L44">        var types: Set&lt;TriggerType&gt; = TriggerType.values().toSet(),</span>
-<span class="fc" id="L45">        var limit: Limit = Limit(1)</span>
-<span class="fc" id="L46">    )</span>
+<span class="fc" id="L44">    data class TriggerQuery(</span>
+<span class="fc" id="L45">        var afterId: TriggerId = TriggerId(0),</span>
+<span class="pc" id="L46">        var types: Set&lt;TriggerType&gt; = TriggerType.values().toSet(),</span>
+<span class="fc" id="L47">        var limit: Limit = Limit(1)</span>
+<span class="fc" id="L48">    )</span>
 
 }
 

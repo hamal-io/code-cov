@@ -70,47 +70,49 @@ internal object CreateTrigger : CreateDomainObject&lt;TriggerId, TriggerRecord, 
 <span class="nc" id="L70">                        funcId = cmd.funcId,</span>
 <span class="nc" id="L71">                        name = cmd.name,</span>
 <span class="nc" id="L72">                        inputs = cmd.inputs,</span>
-<span class="nc" id="L73">                        duration = cmd.duration</span>
+<span class="nc" id="L73">                        duration = cmd.duration,</span>
+<span class="nc" id="L74">                        correlationId = cmd.correlationId</span>
                     )
                 )
 
-<span class="nc" id="L77">                (currentVersion(triggerId) as FixedRateTrigger)</span>
-<span class="nc" id="L78">                    .also { ProjectionCurrent.update(this, it) }</span>
+<span class="nc" id="L78">                (currentVersion(triggerId) as FixedRateTrigger)</span>
+<span class="nc" id="L79">                    .also { ProjectionCurrent.update(this, it) }</span>
             }
         }
     }
 
     override fun create(cmd: TriggerCmdRepository.CreateEventCmd): EventTrigger {
-<span class="nc" id="L84">        val triggerId = cmd.triggerId</span>
-<span class="nc" id="L85">        val cmdId = cmd.id</span>
-<span class="nc" id="L86">        return tx {</span>
-<span class="nc bnc" id="L87" title="All 2 branches missed.">            if (commandAlreadyApplied(triggerId, cmdId)) {</span>
-<span class="nc" id="L88">                versionOf(triggerId, cmdId) as EventTrigger</span>
+<span class="nc" id="L85">        val triggerId = cmd.triggerId</span>
+<span class="nc" id="L86">        val cmdId = cmd.id</span>
+<span class="nc" id="L87">        return tx {</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">            if (commandAlreadyApplied(triggerId, cmdId)) {</span>
+<span class="nc" id="L89">                versionOf(triggerId, cmdId) as EventTrigger</span>
             } else {
-<span class="nc" id="L90">                storeRecord(</span>
-<span class="nc" id="L91">                    EventTriggerCreationRecord(</span>
-<span class="nc" id="L92">                        entityId = triggerId,</span>
-<span class="nc" id="L93">                        cmdId = cmdId,</span>
-<span class="nc" id="L94">                        funcId = cmd.funcId,</span>
-<span class="nc" id="L95">                        name = cmd.name,</span>
-<span class="nc" id="L96">                        inputs = cmd.inputs,</span>
-<span class="nc" id="L97">                        topicId = cmd.topicId</span>
+<span class="nc" id="L91">                storeRecord(</span>
+<span class="nc" id="L92">                    EventTriggerCreationRecord(</span>
+<span class="nc" id="L93">                        entityId = triggerId,</span>
+<span class="nc" id="L94">                        cmdId = cmdId,</span>
+<span class="nc" id="L95">                        funcId = cmd.funcId,</span>
+<span class="nc" id="L96">                        name = cmd.name,</span>
+<span class="nc" id="L97">                        inputs = cmd.inputs,</span>
+<span class="nc" id="L98">                        topicId = cmd.topicId,</span>
+<span class="nc" id="L99">                        correlationId = cmd.correlationId</span>
                     )
                 )
 
-<span class="nc" id="L101">                (currentVersion(triggerId) as EventTrigger)</span>
-<span class="nc" id="L102">                    .also { ProjectionCurrent.update(this, it) }</span>
+<span class="nc" id="L103">                (currentVersion(triggerId) as EventTrigger)</span>
+<span class="nc" id="L104">                    .also { ProjectionCurrent.update(this, it) }</span>
             }
         }
     }
 
     override fun find(triggerId: TriggerId): Trigger? {
-<span class="nc" id="L108">        return ProjectionCurrent.find(connection, triggerId)</span>
+<span class="nc" id="L110">        return ProjectionCurrent.find(connection, triggerId)</span>
     }
 
     override fun list(block: TriggerQuery.() -&gt; Unit): List&lt;Trigger&gt; {
-<span class="nc" id="L112">        val query = TriggerQuery().also(block)</span>
-<span class="nc" id="L113">        return ProjectionCurrent.list(connection, query)</span>
+<span class="nc" id="L114">        val query = TriggerQuery().also(block)</span>
+<span class="nc" id="L115">        return ProjectionCurrent.list(connection, query)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

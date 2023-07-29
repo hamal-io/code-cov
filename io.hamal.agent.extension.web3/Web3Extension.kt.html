@@ -1,91 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Web3Extension.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.agent.extension.web3</a> &gt; <span class="el_source">Web3Extension.kt</span></div><h1>Web3Extension.kt</h1><pre class="source lang-java linenums">package io.hamal.agent.extension.web3
 
 import io.hamal.agent.extension.api.ExtensionFactory
-import io.hamal.agent.extension.web3.eth.GetBlockFunction
+import io.hamal.agent.extension.web3.eth.EthExtensionFactory
 import io.hamal.lib.kua.Extension
-import io.hamal.lib.kua.function.NamedFunctionValue
 
-<span class="nc" id="L8">class Web3ExtensionFactory : ExtensionFactory {</span>
+<span class="nc" id="L7">class Web3ExtensionFactory : ExtensionFactory {</span>
 
     override fun create(): Extension {
-<span class="nc" id="L11">        return Extension(</span>
-<span class="nc" id="L12">            &quot;web3&quot;, functions = listOf(</span>
-<span class="nc" id="L13">                NamedFunctionValue(&quot;get_block&quot;, GetBlockFunction())</span>
+<span class="nc" id="L10">        return Extension(</span>
+<span class="nc" id="L11">            name = &quot;web3&quot;,</span>
+<span class="nc" id="L12">            functions = listOf(),</span>
+<span class="nc" id="L13">            extensions = listOf(</span>
+<span class="nc" id="L14">                EthExtensionFactory().create()</span>
             )
         )
     }
 
 }
-
-//import io.hamal.lib.kua.value.*
-//
-//class Web3Extension : Extension {
-//    override fun create(): EnvValue {
-//        val ethEnvironment = EnvValue(
-//            ident = IdentValue(&quot;eth&quot;),
-//            values = TableValue(
-//                &quot;get_block&quot; to fn
-//            )
-//        )
-//
-//        return EnvValue(
-//            ident = IdentValue(&quot;web3&quot;),
-//            values = TableValue(
-//                &quot;eth&quot; to ethEnvironment
-//            )
-//        )
-//    }
-//
-//    val fn = object : FuncValue() {
-//        override fun invoke(ctx: FuncContext): Value {
-//            println(&quot;Getting block&quot;)
-////                    val bs = EthHttpBatchService()
-////                    bs.getBlock(req = EthBatchService.GetBlockByHashRequest(EthHash(EthBytes32(ByteArray(32)))))
-////                    val result = bs.execute()
-////                    println(result)
-////
-////                    Thread.sleep(1000)
-////
-////                    val block = (result.first() as EthBlockResponse).result
-////                    //FIXME it would be cool if application can extend type system -
-////                    // so that web3 entities are accessible in script as well
-////                    return TableValue(
-////                        StringValue(&quot;number&quot;) to NumberValue(block.number.value),
-////                        StringValue(&quot;miner&quot;) to StringValue(block.miner.toPrefixedHexString().toString()),
-////                        StringValue(&quot;hash&quot;) to StringValue(block.hash.toString()),
-////                        StringValue(&quot;parentHash&quot;) to StringValue(block.parentHash.toString())
-////                    )
-//
-//            val blockNumber = ctx.params.first().let { param -&gt;
-//                when (val value = param.value) {
-//                    is NumberValue -&gt; EthUint64(value.value.toLong())
-//                    else -&gt; TODO()
-//                }
-//            }
-//
-//
-//            val response = EthHttpBatchService(HttpTemplate(&quot;http://localhost:8081&quot;))
-//                .getBlock(blockNumber)
-//                .execute()
-//                .filterIsInstance&lt;EthGetBlockResp&gt;()
-//                .first()
-//
-//            return TableValue(
-//                &quot;parent_hash&quot; to StringValue(response.result.parentHash.toPrefixedHexString().value),
-//                &quot;hash&quot; to StringValue(
-//                    response.result.hash.toPrefixedHexString().value
-//                ),
-//                &quot;transactions&quot; to TableValue(
-//                    *response.result.transactions.mapIndexed { idx, tx -&gt;
-//                        NumberValue(idx + 1) to TableValue(
-//                            &quot;hash&quot; to StringValue(tx.hash.toPrefixedHexString().value)
-//                        )
-//                    }.toTypedArray()
-//                )
-//            )
-//        }
-//
-//    }
-//
-//}
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

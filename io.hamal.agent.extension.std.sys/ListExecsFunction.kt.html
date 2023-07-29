@@ -4,15 +4,15 @@ import io.hamal.lib.http.HttpTemplate
 import io.hamal.lib.kua.function.Function0In1Out
 import io.hamal.lib.kua.function.FunctionContext
 import io.hamal.lib.kua.function.FunctionOutput1Schema
-import io.hamal.lib.kua.table.TableArrayProxyValue
+import io.hamal.lib.kua.table.TableArrayValue
 import io.hamal.lib.sdk.domain.ListExecsResponse
 
 <span class="fc" id="L10">class ListExecsFunction(</span>
 <span class="fc" id="L11">    private val templateSupplier: () -&gt; HttpTemplate</span>
-<span class="fc" id="L12">) : Function0In1Out&lt;TableArrayProxyValue&gt;(</span>
-<span class="fc" id="L13">    FunctionOutput1Schema(TableArrayProxyValue::class)</span>
+<span class="fc" id="L12">) : Function0In1Out&lt;TableArrayValue&gt;(</span>
+<span class="fc" id="L13">    FunctionOutput1Schema(TableArrayValue::class)</span>
 ) {
-    override fun invoke(ctx: FunctionContext): TableArrayProxyValue {
+    override fun invoke(ctx: FunctionContext): TableArrayValue {
 
 
 <span class="fc" id="L18">        val execs = try {</span>

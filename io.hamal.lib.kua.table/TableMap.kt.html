@@ -3,7 +3,7 @@
 import io.hamal.lib.kua.value.*
 
 
-interface TableMapProxyValue : BaseTableProxyValue {
+interface TableMapValue : BaseTableProxyValue {
     fun unset(key: String): TableLength
 <span class="nc" id="L8">    fun unset(key: StringValue) = unset(key.value)</span>
 <span class="nc" id="L9">    operator fun set(key: String, value: NilValue) = unset(key)</span>
@@ -27,28 +27,33 @@ interface TableMapProxyValue : BaseTableProxyValue {
 <span class="nc" id="L27">    operator fun set(key: String, value: StringValue) = set(key, value.value)</span>
 <span class="nc" id="L28">    operator fun set(key: StringValue, value: StringValue) = set(key.value, value.value)</span>
 
+    operator fun set(key: String, value: TableMapValue): TableLength
+    operator fun set(key: String, value: TableArrayValue): TableLength
+
     fun getBooleanValue(key: String): BooleanValue
-<span class="nc" id="L31">    fun getBooleanValue(key: StringValue): BooleanValue = getBooleanValue(key.value)</span>
-<span class="nc" id="L32">    fun getBoolean(key: String): Boolean = getBooleanValue(key).value</span>
-<span class="nc" id="L33">    fun getBoolean(key: StringValue): Boolean = getBoolean(key.value)</span>
+<span class="nc" id="L34">    fun getBooleanValue(key: StringValue): BooleanValue = getBooleanValue(key.value)</span>
+<span class="nc" id="L35">    fun getBoolean(key: String): Boolean = getBooleanValue(key).value</span>
+<span class="nc" id="L36">    fun getBoolean(key: StringValue): Boolean = getBoolean(key.value)</span>
 
     fun getCodeValue(key: String): CodeValue
-<span class="nc" id="L36">    fun getCodeValue(key: StringValue): CodeValue = getCodeValue(key.value)</span>
+<span class="nc" id="L39">    fun getCodeValue(key: StringValue): CodeValue = getCodeValue(key.value)</span>
 
     fun getNumberValue(key: String): NumberValue
-<span class="nc" id="L39">    fun getNumberValue(key: StringValue): NumberValue = getNumberValue(key.value)</span>
-<span class="fc" id="L40">    fun getInt(key: String): Int = getNumberValue(key).value.toInt()</span>
-<span class="nc" id="L41">    fun getInt(key: StringValue) = getInt(key.value)</span>
-<span class="nc" id="L42">    fun getLong(key: String): Long = getNumberValue(key).value.toLong()</span>
-<span class="nc" id="L43">    fun getLong(key: StringValue): Long = getLong(key.value)</span>
-<span class="nc" id="L44">    fun getFloat(key: String): Float = getNumberValue(key).value.toFloat()</span>
-<span class="nc" id="L45">    fun getFloat(key: StringValue): Float = getFloat(key.value)</span>
-<span class="nc" id="L46">    fun getDouble(key: String): Double = getNumberValue(key).value</span>
-<span class="nc" id="L47">    fun getDouble(key: StringValue): Double = getDouble(key.value)</span>
+<span class="nc" id="L42">    fun getNumberValue(key: StringValue): NumberValue = getNumberValue(key.value)</span>
+<span class="fc" id="L43">    fun getInt(key: String): Int = getNumberValue(key).value.toInt()</span>
+<span class="nc" id="L44">    fun getInt(key: StringValue) = getInt(key.value)</span>
+<span class="nc" id="L45">    fun getLong(key: String): Long = getNumberValue(key).value.toLong()</span>
+<span class="nc" id="L46">    fun getLong(key: StringValue): Long = getLong(key.value)</span>
+<span class="nc" id="L47">    fun getFloat(key: String): Float = getNumberValue(key).value.toFloat()</span>
+<span class="nc" id="L48">    fun getFloat(key: StringValue): Float = getFloat(key.value)</span>
+<span class="nc" id="L49">    fun getDouble(key: String): Double = getNumberValue(key).value</span>
+<span class="nc" id="L50">    fun getDouble(key: StringValue): Double = getDouble(key.value)</span>
 
     fun getStringValue(key: String): StringValue
-<span class="nc" id="L50">    fun getStringValue(key: StringValue): StringValue = getStringValue(key.value)</span>
-<span class="fc" id="L51">    fun getString(key: String): String = getStringValue(key).value</span>
-<span class="nc" id="L52">    fun getString(key: StringValue): String = getString(key.value)</span>
+<span class="nc" id="L53">    fun getStringValue(key: StringValue): StringValue = getStringValue(key.value)</span>
+<span class="fc" id="L54">    fun getString(key: String): String = getStringValue(key).value</span>
+<span class="nc" id="L55">    fun getString(key: StringValue): String = getString(key.value)</span>
+
+    fun getTableMap(key: String): TableMapValue
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

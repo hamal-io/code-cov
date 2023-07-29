@@ -8,13 +8,13 @@ import java.time.Instant
 
 
 @Serializable(with = InvokedAt.Serializer::class)
-<span class="nc" id="L11">class InvokedAt(override val value: Instant) : DomainAt() {</span>
+<span class="fc" id="L11">class InvokedAt(override val value: Instant) : DomainAt() {</span>
 <span class="nc" id="L12">    companion object {</span>
         @JvmStatic
-<span class="nc" id="L14">        fun now(): InvokedAt = InvokedAt(TimeUtils.now())</span>
+<span class="fc" id="L14">        fun now(): InvokedAt = InvokedAt(TimeUtils.now())</span>
     }
 
-<span class="nc" id="L17">    internal object Serializer : DomainAtSerializer&lt;InvokedAt&gt;(::InvokedAt)</span>
+<span class="fc" id="L17">    internal object Serializer : DomainAtSerializer&lt;InvokedAt&gt;(::InvokedAt)</span>
 }
 
 @Serializable(with = ScheduledAt.Serializer::class)

@@ -14,31 +14,34 @@ sealed class Trigger : DomainObject&lt;TriggerId&gt; {
     abstract val cmdId: CmdId
     abstract val name: TriggerName
     abstract val funcId: FuncId
+    abstract val correlationId: CorrelationId?
     abstract val type: TriggerType
     abstract val inputs: TriggerInputs
 }
 
-<span class="pc bpc" id="L21" title="6 of 19 branches missed.">@Serializable</span>
-<span class="fc" id="L22">class FixedRateTrigger(</span>
-<span class="fc" id="L23">    override val cmdId: CmdId,</span>
-<span class="fc" id="L24">    override val id: TriggerId,</span>
-<span class="fc" id="L25">    override val name: TriggerName,</span>
-<span class="fc" id="L26">    override val funcId: FuncId,</span>
-<span class="fc" id="L27">    override val inputs: TriggerInputs,</span>
-<span class="fc" id="L28">    val duration: Duration</span>
-<span class="fc" id="L29">) : Trigger() {</span>
-<span class="pc bpc" id="L30" title="2 of 4 branches missed.">    override val type = FixedRate</span>
-<span class="fc" id="L31">}</span>
+<span class="pc bpc" id="L22" title="11 of 28 branches missed.">@Serializable</span>
+<span class="pc" id="L23">class FixedRateTrigger(</span>
+<span class="fc" id="L24">    override val cmdId: CmdId,</span>
+<span class="fc" id="L25">    override val id: TriggerId,</span>
+<span class="fc" id="L26">    override val name: TriggerName,</span>
+<span class="fc" id="L27">    override val funcId: FuncId,</span>
+<span class="fc" id="L28">    override val inputs: TriggerInputs,</span>
+<span class="fc" id="L29">    val duration: Duration,</span>
+<span class="pc" id="L30">    override val correlationId: CorrelationId? = null</span>
+<span class="fc" id="L31">) : Trigger() {</span>
+<span class="pc bpc" id="L32" title="2 of 4 branches missed.">    override val type = FixedRate</span>
+<span class="pc" id="L33">}</span>
 
-<span class="pc bpc" id="L33" title="4 of 15 branches missed.">@Serializable</span>
-<span class="fc" id="L34">class EventTrigger(</span>
-<span class="fc" id="L35">    override val cmdId: CmdId,</span>
-<span class="fc" id="L36">    override val id: TriggerId,</span>
-<span class="fc" id="L37">    override val name: TriggerName,</span>
-<span class="fc" id="L38">    override val funcId: FuncId,</span>
-<span class="fc" id="L39">    override val inputs: TriggerInputs,</span>
-<span class="fc" id="L40">    val topicId: TopicId</span>
-<span class="fc" id="L41">) : Trigger() {</span>
-<span class="pc bpc" id="L42" title="2 of 4 branches missed.">    override val type = Event</span>
-<span class="fc" id="L43">}</span>
+<span class="pc bpc" id="L35" title="8 of 22 branches missed.">@Serializable</span>
+<span class="pc" id="L36">class EventTrigger(</span>
+<span class="fc" id="L37">    override val cmdId: CmdId,</span>
+<span class="fc" id="L38">    override val id: TriggerId,</span>
+<span class="fc" id="L39">    override val name: TriggerName,</span>
+<span class="fc" id="L40">    override val funcId: FuncId,</span>
+<span class="fc" id="L41">    override val inputs: TriggerInputs,</span>
+<span class="fc" id="L42">    val topicId: TopicId,</span>
+<span class="pc" id="L43">    override val correlationId: CorrelationId? = null</span>
+<span class="fc" id="L44">) : Trigger() {</span>
+<span class="pc bpc" id="L45" title="2 of 4 branches missed.">    override val type = Event</span>
+<span class="pc" id="L46">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
