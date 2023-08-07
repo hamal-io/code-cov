@@ -48,7 +48,7 @@ import java.time.Instant
 }
 
 @Serializable(with = FailedAt.Serializer::class)
-<span class="pc" id="L51">class FailedAt(override val value: Instant) : DomainAt() {</span>
+<span class="fc" id="L51">class FailedAt(override val value: Instant) : DomainAt() {</span>
 <span class="nc" id="L52">    companion object {</span>
         @JvmStatic
 <span class="fc" id="L54">        fun now(): FailedAt = FailedAt(TimeUtils.now())</span>

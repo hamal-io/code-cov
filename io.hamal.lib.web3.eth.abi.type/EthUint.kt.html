@@ -9,7 +9,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import java.math.BigInteger
 
-<span class="nc" id="L12">@Serializable</span>
+<span class="pc" id="L12">@Serializable</span>
 sealed class EthUnsigned : EthType&lt;BigInteger&gt; {
     abstract val numberOfBits: Int
 
@@ -22,10 +22,10 @@ sealed class EthUnsigned : EthType&lt;BigInteger&gt; {
 <span class="nc" id="L22">    )</span>
 
     protected fun ensureValidValue() {
-<span class="nc bnc" id="L25" title="All 4 branches missed.">        require(value &gt;= BigInteger.ZERO) { &quot;Value must be positive&quot; }</span>
-<span class="nc" id="L26">        val maxValue = BigInteger.ONE.shiftLeft(numberOfBits).subtract(BigInteger.ONE)</span>
-<span class="nc bnc" id="L27" title="All 4 branches missed.">        require(value &lt;= maxValue) { &quot;Value must be &lt;= $maxValue&quot; }</span>
-<span class="nc" id="L28">    }</span>
+<span class="pc bpc" id="L25" title="2 of 4 branches missed.">        require(value &gt;= BigInteger.ZERO) { &quot;Value must be positive&quot; }</span>
+<span class="fc" id="L26">        val maxValue = BigInteger.ONE.shiftLeft(numberOfBits).subtract(BigInteger.ONE)</span>
+<span class="pc bpc" id="L27" title="2 of 4 branches missed.">        require(value &lt;= maxValue) { &quot;Value must be &lt;= $maxValue&quot; }</span>
+<span class="fc" id="L28">    }</span>
 }
 
 <span class="nc" id="L31">internal abstract class EthUnsignedSerializer&lt;UNSIGNED : EthUnsigned&gt;(</span>
@@ -124,12 +124,12 @@ sealed class EthUnsigned : EthType&lt;BigInteger&gt; {
 }
 
 <span class="nc" id="L126">@Serializable(with = EthUint256.Serializer::class)</span>
-<span class="nc" id="L127">data class EthUint256(override val value: BigInteger) : EthUnsigned() {</span>
-<span class="nc" id="L128">    override val numberOfBits = 256</span>
+<span class="fc" id="L127">data class EthUint256(override val value: BigInteger) : EthUnsigned() {</span>
+<span class="fc" id="L128">    override val numberOfBits = 256</span>
 
-<span class="nc" id="L130">    init {</span>
-<span class="nc" id="L131">        ensureValidValue()</span>
-<span class="nc" id="L132">    }</span>
+<span class="fc" id="L130">    init {</span>
+<span class="fc" id="L131">        ensureValidValue()</span>
+<span class="fc" id="L132">    }</span>
 
 <span class="nc" id="L134">    internal object Serializer : EthUnsignedSerializer&lt;EthUint256&gt;(::EthUint256)</span>
 }

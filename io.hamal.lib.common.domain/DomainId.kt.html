@@ -22,14 +22,14 @@ import kotlinx.serialization.encoding.Encoder
 <span class="fc" id="L22">abstract class DomainIdSerializer&lt;ID : DomainId&gt;(</span>
 <span class="pc" id="L23">    val fn: (SnowflakeId) -&gt; ID</span>
 ) : KSerializer&lt;ID&gt; {
-<span class="fc" id="L25">    override val descriptor = PrimitiveSerialDescriptor(&quot;Id&quot;, PrimitiveKind.LONG)</span>
+<span class="fc" id="L25">    override val descriptor = PrimitiveSerialDescriptor(&quot;Id&quot;, PrimitiveKind.STRING)</span>
 
     override fun deserialize(decoder: Decoder): ID {
-<span class="fc" id="L28">        return fn(SnowflakeId(decoder.decodeLong()))</span>
+<span class="fc" id="L28">        return fn(SnowflakeId(decoder.decodeString().toLong()))</span>
     }
 
     override fun serialize(encoder: Encoder, value: ID) {
-<span class="fc" id="L32">        encoder.encodeLong(value.value.value)</span>
+<span class="fc" id="L32">        encoder.encodeString(value.value.value.toString())</span>
 <span class="fc" id="L33">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

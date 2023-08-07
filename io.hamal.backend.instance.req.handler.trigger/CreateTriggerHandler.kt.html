@@ -27,8 +27,8 @@ import org.springframework.stereotype.Component
 <span class="fc" id="L27">            TriggerType.FixedRate -&gt; triggerCmdRepository.create(</span>
 <span class="fc" id="L28">                TriggerCmdRepository.CreateFixedRateCmd(</span>
 <span class="fc" id="L29">                    id = req.cmdId(),</span>
-<span class="fc" id="L30">                    triggerId = req.triggerId,</span>
-<span class="fc" id="L31">                    name = req.triggerName,</span>
+<span class="fc" id="L30">                    triggerId = req.id,</span>
+<span class="fc" id="L31">                    name = req.name,</span>
 <span class="fc" id="L32">                    correlationId = req.correlationId,</span>
 <span class="fc" id="L33">                    funcId = req.funcId,</span>
 <span class="fc" id="L34">                    inputs = req.inputs,</span>
@@ -42,8 +42,8 @@ import org.springframework.stereotype.Component
 <span class="fc" id="L42">                triggerCmdRepository.create(</span>
 <span class="fc" id="L43">                    TriggerCmdRepository.CreateEventCmd(</span>
 <span class="fc" id="L44">                        id = req.cmdId(),</span>
-<span class="fc" id="L45">                        triggerId = req.triggerId,</span>
-<span class="fc" id="L46">                        name = req.triggerName,</span>
+<span class="fc" id="L45">                        triggerId = req.id,</span>
+<span class="fc" id="L46">                        name = req.name,</span>
 <span class="fc" id="L47">                        correlationId = req.correlationId,</span>
 <span class="fc" id="L48">                        funcId = req.funcId,</span>
 <span class="fc" id="L49">                        inputs = req.inputs,</span>

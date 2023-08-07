@@ -4,6 +4,7 @@ import java.util.concurrent.locks.ReadWriteLock
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.withLock
 
+// FIXME needs a complete overhaul
 interface LruCache&lt;KEY : Any, VALUE : Any&gt; {
 
     operator fun set(key: KEY, value: VALUE)
@@ -13,7 +14,7 @@ interface LruCache&lt;KEY : Any, VALUE : Any&gt; {
     fun find(key: KEY): VALUE?
 
     operator fun get(key: KEY): VALUE {
-<span class="nc bnc" id="L16" title="All 2 branches missed.">        return find(key) ?: throw IllegalArgumentException(&quot;$key&quot;)</span>
+<span class="nc bnc" id="L17" title="All 2 branches missed.">        return find(key) ?: throw IllegalArgumentException(&quot;$key&quot;)</span>
     }
 
     fun computeIfAbsent(key: KEY, mapper: (KEY) -&gt; VALUE?): VALUE?
@@ -25,63 +26,63 @@ interface LruCache&lt;KEY : Any, VALUE : Any&gt; {
     fun clear()
 }
 
-<span class="nc" id="L28">class DefaultLruCache&lt;KEY : Any, VALUE : Any&gt;(capacity: Int) : LruCache&lt;KEY, VALUE&gt; {</span>
+<span class="nc" id="L29">class DefaultLruCache&lt;KEY : Any, VALUE : Any&gt;(capacity: Int) : LruCache&lt;KEY, VALUE&gt; {</span>
     private var store: LinkedHashMap&lt;KEY, VALUE&gt;
-<span class="nc" id="L30">    private val lock: ReadWriteLock = ReentrantReadWriteLock()</span>
+<span class="nc" id="L31">    private val lock: ReadWriteLock = ReentrantReadWriteLock()</span>
 
-<span class="nc" id="L32">    init {</span>
-<span class="nc" id="L33">        store = object : LinkedHashMap&lt;KEY, VALUE&gt;(capacity, 0.75f, true) {</span>
+<span class="nc" id="L33">    init {</span>
+<span class="nc" id="L34">        store = object : LinkedHashMap&lt;KEY, VALUE&gt;(capacity, 0.75f, true) {</span>
             override fun removeEldestEntry(eldest: Map.Entry&lt;KEY, VALUE&gt;): Boolean {
-<span class="nc bnc" id="L35" title="All 2 branches missed.">                return size &gt; capacity</span>
+<span class="nc bnc" id="L36" title="All 2 branches missed.">                return size &gt; capacity</span>
             }
         }
-<span class="nc" id="L38">    }</span>
+<span class="nc" id="L39">    }</span>
 
     override fun set(key: KEY, value: VALUE) {
-<span class="nc" id="L41">        lock.writeLock().withLock {</span>
-<span class="nc" id="L42">            store[key] = value</span>
-<span class="nc" id="L43">        }</span>
-<span class="nc" id="L44">    }</span>
+<span class="nc" id="L42">        lock.writeLock().withLock {</span>
+<span class="nc" id="L43">            store[key] = value</span>
+<span class="nc" id="L44">        }</span>
+<span class="nc" id="L45">    }</span>
 
     override fun setIfAbsent(key: KEY, value: VALUE) {
-<span class="nc" id="L47">        lock.writeLock().withLock {</span>
-<span class="nc" id="L48">            store.putIfAbsent(key, value)</span>
+<span class="nc" id="L48">        lock.writeLock().withLock {</span>
+<span class="nc" id="L49">            store.putIfAbsent(key, value)</span>
         }
-<span class="nc" id="L50">    }</span>
+<span class="nc" id="L51">    }</span>
 
     override fun find(key: KEY): VALUE? {
-<span class="nc" id="L53">        return lock.readLock().withLock {</span>
-<span class="nc" id="L54">            store[key]</span>
+<span class="nc" id="L54">        return lock.readLock().withLock {</span>
+<span class="nc" id="L55">            store[key]</span>
         }
     }
 
     override fun computeIfAbsent(key: KEY, mapper: (KEY) -&gt; VALUE?): VALUE? {
-<span class="nc" id="L59">        return lock.writeLock().withLock {</span>
-<span class="nc bnc" id="L60" title="All 2 branches missed.">            if (!store.containsKey(key)) {</span>
-<span class="nc bnc" id="L61" title="All 2 branches missed.">                mapper(key)?.also { store[key] = it }</span>
+<span class="nc" id="L60">        return lock.writeLock().withLock {</span>
+<span class="nc bnc" id="L61" title="All 2 branches missed.">            if (!store.containsKey(key)) {</span>
+<span class="nc bnc" id="L62" title="All 2 branches missed.">                mapper(key)?.also { store[key] = it }</span>
             } else {
-<span class="nc" id="L63">                store[key]</span>
+<span class="nc" id="L64">                store[key]</span>
             }
         }
     }
 
 
     override fun size(): Int {
-<span class="nc" id="L70">        return lock.readLock()</span>
-<span class="nc" id="L71">            .withLock {</span>
-<span class="nc" id="L72">                store.size</span>
+<span class="nc" id="L71">        return lock.readLock()</span>
+<span class="nc" id="L72">            .withLock {</span>
+<span class="nc" id="L73">                store.size</span>
             }
     }
 
     override fun keys(): Set&lt;KEY&gt; {
-<span class="nc" id="L77">        return lock.readLock().withLock { store.keys }</span>
+<span class="nc" id="L78">        return lock.readLock().withLock { store.keys }</span>
     }
 
     override fun clear() {
-<span class="nc" id="L81">        lock.writeLock()</span>
-<span class="nc" id="L82">            .withLock {</span>
-<span class="nc" id="L83">                store.clear()</span>
-<span class="nc" id="L84">            }</span>
-<span class="nc" id="L85">    }</span>
+<span class="nc" id="L82">        lock.writeLock()</span>
+<span class="nc" id="L83">            .withLock {</span>
+<span class="nc" id="L84">                store.clear()</span>
+<span class="nc" id="L85">            }</span>
+<span class="nc" id="L86">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

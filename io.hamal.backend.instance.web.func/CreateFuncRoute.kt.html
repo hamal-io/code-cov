@@ -3,21 +3,22 @@
 import io.hamal.backend.instance.req.SubmitRequest
 import io.hamal.lib.domain.req.CreateFuncReq
 import io.hamal.lib.domain.req.SubmittedCreateFuncReq
-import io.hamal.lib.domain.vo.*
-import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.ACCEPTED
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RestController
 
-<span class="fc" id="L11">@RestController</span>
-<span class="fc" id="L12">class CreateFuncRoute(</span>
-<span class="fc" id="L13">    private val request: SubmitRequest,</span>
+<span class="fc" id="L12">@RestController</span>
+<span class="fc" id="L13">class CreateFuncRoute(</span>
+<span class="fc" id="L14">    private val request: SubmitRequest,</span>
 ) {
     @PostMapping(&quot;/v1/funcs&quot;)
     fun createFunc(
         @RequestBody createFunc: CreateFuncReq
     ): ResponseEntity&lt;SubmittedCreateFuncReq&gt; {
-<span class="fc" id="L19">        val result = request(createFunc)</span>
-<span class="fc" id="L20">        return ResponseEntity(result, HttpStatus.ACCEPTED)</span>
+<span class="fc" id="L20">        val result = request(createFunc)</span>
+<span class="fc" id="L21">        return ResponseEntity(result, ACCEPTED)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

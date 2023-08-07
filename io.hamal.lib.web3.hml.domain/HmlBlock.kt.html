@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HmlBlock.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.web3.hml.domain</a> &gt; <span class="el_source">HmlBlock.kt</span></div><h1>HmlBlock.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.web3.hml.domain
+
+import io.hamal.lib.web3.eth.abi.type.*
+import kotlinx.serialization.Serializable
+
+<span class="nc bnc" id="L6" title="All 14 branches missed.">@Serializable</span>
+<span class="nc" id="L7">data class HmlBlock(</span>
+<span class="nc" id="L8">    val number: EthUint64,</span>
+<span class="nc" id="L9">    val hash: EthHash,</span>
+<span class="nc" id="L10">    val miner: EthAddress,</span>
+<span class="nc" id="L11">    val minerId: EthUint64,</span>
+<span class="nc" id="L12">    val gasLimit: EthUint64,</span>
+<span class="nc" id="L13">    val gasUsed: EthUint64,</span>
+<span class="nc" id="L14">    val timestamp: EthUint64,</span>
+<span class="nc" id="L15">    val transactions: List&lt;Transaction&gt;</span>
+) {
+<span class="nc bnc" id="L17" title="All 15 branches missed.">    @Serializable</span>
+<span class="nc" id="L18">    data class Transaction(</span>
+<span class="nc" id="L19">        val blockIndex: EthUint32,</span>
+<span class="nc" id="L20">        val type: EthUint8,</span>
+<span class="nc" id="L21">        val from: EthAddress,</span>
+<span class="nc" id="L22">        val fromId: EthUint64,</span>
+<span class="nc" id="L23">        val to: EthAddress?,</span>
+<span class="nc" id="L24">        val toId: EthUint64,</span>
+<span class="nc" id="L25">        val input: EthPrefixedHexString,</span>
+<span class="nc" id="L26">        val value: EthUint256,</span>
+<span class="nc" id="L27">        val gas: EthUint64,</span>
+<span class="nc" id="L28">    )</span>
+<span class="nc" id="L29">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

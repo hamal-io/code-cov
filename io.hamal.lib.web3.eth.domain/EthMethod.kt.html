@@ -9,22 +9,21 @@ import kotlinx.serialization.encoding.Encoder
 
 <span class="nc" id="L10">@Serializable(with = EthMethod.Serializer::class)</span>
 <span class="nc" id="L11">enum class EthMethod(val value: String) {</span>
-<span class="nc" id="L12">    GetBlockByHash(&quot;eth_getBlockByHash&quot;),</span>
-<span class="nc" id="L13">    GetBlockByNumber(&quot;eth_getBlockByNumber&quot;),</span>
-<span class="nc" id="L14">    GetTransactionReceipt(&quot;eth_getTransactionReceipt&quot;);</span>
+<span class="nc" id="L12">    Call(&quot;eth_call&quot;),</span>
+<span class="nc" id="L13">    GetBlockByNumber(&quot;eth_getBlockByNumber&quot;);</span>
 
     object Serializer : KSerializer&lt;EthMethod&gt; {
-<span class="nc" id="L17">        override val descriptor = PrimitiveSerialDescriptor(&quot;EthMethod&quot;, STRING)</span>
+<span class="nc" id="L16">        override val descriptor = PrimitiveSerialDescriptor(&quot;EthMethod&quot;, STRING)</span>
 
         override fun deserialize(decoder: Decoder): EthMethod {
-<span class="nc" id="L20">            val method = decoder.decodeString()</span>
-<span class="nc bnc" id="L21" title="All 6 branches missed.">            return EthMethod.values().find { it.value == method }</span>
-<span class="nc" id="L22">                ?: throw NoSuchElementException(&quot;EthMethod not found&quot;)</span>
+<span class="nc" id="L19">            val method = decoder.decodeString()</span>
+<span class="nc bnc" id="L20" title="All 6 branches missed.">            return EthMethod.values().find { it.value == method }</span>
+<span class="nc" id="L21">                ?: throw NoSuchElementException(&quot;EthMethod not found&quot;)</span>
         }
 
         override fun serialize(encoder: Encoder, value: EthMethod) {
-<span class="nc" id="L26">            encoder.encodeString(value.value)</span>
-<span class="nc" id="L27">        }</span>
+<span class="nc" id="L25">            encoder.encodeString(value.value)</span>
+<span class="nc" id="L26">        }</span>
 
     }
 }

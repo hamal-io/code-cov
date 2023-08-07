@@ -27,7 +27,7 @@ import java.nio.file.Path
 
     override fun append(cmdId: CmdId, bytes: ByteArray) {
 <span class="fc" id="L29">        connection.tx {</span>
-<span class="fc" id="L30">            execute(&quot;INSERT OR IGNORE INTO chunks (req_id,bytes,instant) VALUES (:cmdId, :bytes,:now)&quot;) {</span>
+<span class="fc" id="L30">            execute(&quot;INSERT OR IGNORE INTO chunks (cmd_id,bytes,instant) VALUES (:cmdId, :bytes,:now)&quot;) {</span>
 <span class="fc" id="L31">                set(&quot;cmdId&quot;, cmdId)</span>
 <span class="fc" id="L32">                set(&quot;bytes&quot;, bytes)</span>
 <span class="fc" id="L33">                set(&quot;now&quot;, TimeUtils.now())</span>
@@ -71,7 +71,7 @@ import java.nio.file.Path
                 &quot;&quot;&quot;
              CREATE TABLE IF NOT EXISTS chunks (
                 id INTEGER PRIMARY KEY AUTOINCREMENT ,
-                req_id INTEGER NOT NULL UNIQUE,
+                cmd_id VARCHAR(255) NOT NULL UNIQUE,
                 bytes BLOB NOT NULL ,
                 instant DATETIME NOT NULL
             );

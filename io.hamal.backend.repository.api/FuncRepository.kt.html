@@ -12,23 +12,35 @@ import io.hamal.lib.kua.value.CodeValue
 
 interface FuncCmdRepository {
     fun create(cmd: CreateCmd): Func
+
+    fun update(cmd: UpdateCmd): Func
+
     fun clear()
-<span class="fc" id="L16">    data class CreateCmd(</span>
-<span class="fc" id="L17">        val id: CmdId,</span>
-<span class="fc" id="L18">        val funcId: FuncId,</span>
-<span class="fc" id="L19">        val name: FuncName,</span>
-<span class="fc" id="L20">        val inputs: FuncInputs,</span>
-<span class="fc" id="L21">        val code: CodeValue,</span>
+
+<span class="fc" id="L20">    data class CreateCmd(</span>
+<span class="fc" id="L21">        val id: CmdId,</span>
+<span class="fc" id="L22">        val funcId: FuncId,</span>
+<span class="fc" id="L23">        val name: FuncName,</span>
+<span class="fc" id="L24">        val inputs: FuncInputs,</span>
+<span class="fc" id="L25">        val code: CodeValue,</span>
+    )
+
+<span class="fc" id="L28">    data class UpdateCmd(</span>
+<span class="fc" id="L29">        val id: CmdId,</span>
+<span class="fc" id="L30">        val funcId: FuncId,</span>
+<span class="fc" id="L31">        val name: FuncName,</span>
+<span class="fc" id="L32">        val inputs: FuncInputs,</span>
+<span class="fc" id="L33">        val code: CodeValue,</span>
     )
 }
 
 interface FuncQueryRepository {
-<span class="fc bfc" id="L26" title="All 2 branches covered.">    fun get(funcId: FuncId) = find(funcId) ?: throw NoSuchElementException(&quot;Func not found&quot;)</span>
+<span class="fc bfc" id="L38" title="All 2 branches covered.">    fun get(funcId: FuncId) = find(funcId) ?: throw NoSuchElementException(&quot;Func not found&quot;)</span>
     fun find(funcId: FuncId): Func?
     fun list(block: FuncQuery.() -&gt; Unit): List&lt;Func&gt;
-<span class="fc" id="L29">    data class FuncQuery(</span>
-<span class="fc" id="L30">        var afterId: FuncId = FuncId(SnowflakeId(Long.MAX_VALUE)),</span>
-<span class="fc" id="L31">        var limit: Limit = Limit(1)</span>
-<span class="fc" id="L32">    )</span>
+<span class="fc" id="L41">    data class FuncQuery(</span>
+<span class="fc" id="L42">        var afterId: FuncId = FuncId(SnowflakeId(Long.MAX_VALUE)),</span>
+<span class="fc" id="L43">        var limit: Limit = Limit(1)</span>
+<span class="fc" id="L44">    )</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

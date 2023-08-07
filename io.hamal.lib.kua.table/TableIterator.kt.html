@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TableIterator.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.kua.table</a> &gt; <span class="el_source">TableIterator.kt</span></div><h1>TableIterator.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.kua.table
+
+import io.hamal.lib.kua.State
+import io.hamal.lib.kua.value.Value
+
+<span class="fc" id="L6">data class TableEntry&lt;KEY : Value, VALUE : Value&gt;(val key: KEY, val value: VALUE)</span>
+
+<span class="fc" id="L8">class TableEntryIterator&lt;KEY : Value, VALUE : Value&gt;(</span>
+    index: Int,
+<span class="pc" id="L10">    val state: State,</span>
+<span class="pc" id="L11">    val keyExtractor: (State, Int) -&gt; KEY,</span>
+<span class="pc" id="L12">    val valueExtractor: (State, Int) -&gt; VALUE</span>
+) : Iterator&lt;TableEntry&lt;KEY, VALUE&gt;&gt; {
+
+<span class="fc" id="L15">    private val index = state.absIndex(index)</span>
+<span class="fc" id="L16">    private var hasNext: Boolean = true</span>
+    private var nextTableEntry: TableEntry&lt;KEY, VALUE&gt;? = null
+
+<span class="fc" id="L19">    init {</span>
+<span class="fc" id="L20">        state.pushNil()</span>
+<span class="fc" id="L21">    }</span>
+
+    override fun hasNext(): Boolean {
+<span class="fc" id="L24">        hasNext = state.bridge.tableNext(index)</span>
+<span class="fc bfc" id="L25" title="All 2 branches covered.">        return if (hasNext) {</span>
+<span class="fc" id="L26">            val k = keyExtractor(state, -2)</span>
+<span class="fc" id="L27">            val v = valueExtractor(state, -1)</span>
+<span class="fc" id="L28">            state.bridge.pop(1)</span>
+<span class="fc" id="L29">            nextTableEntry = TableEntry(k, v)</span>
+<span class="fc" id="L30">            true</span>
+        } else {
+<span class="fc" id="L32">            nextTableEntry = null</span>
+<span class="fc" id="L33">            false</span>
+        }
+    }
+
+    override fun next(): TableEntry&lt;KEY, VALUE&gt; {
+<span class="pc bpc" id="L38" title="1 of 2 branches missed.">        return nextTableEntry ?: throw NoSuchElementException(&quot;Iterator exhausted&quot;)</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

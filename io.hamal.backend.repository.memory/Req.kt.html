@@ -19,8 +19,8 @@ import kotlin.concurrent.withLock
 
     override fun queue(req: SubmittedReq) {
 <span class="fc" id="L21">        return lock.withLock {</span>
-<span class="fc" id="L22">            store[req.id] = ProtoBuf { }.encodeToByteArray(SubmittedReq.serializer(), req)</span>
-<span class="fc" id="L23">            queue.add(req.id)</span>
+<span class="fc" id="L22">            store[req.reqId] = ProtoBuf { }.encodeToByteArray(SubmittedReq.serializer(), req)</span>
+<span class="fc" id="L23">            queue.add(req.reqId)</span>
 <span class="fc" id="L24">        }</span>
     }
 
@@ -40,7 +40,7 @@ import kotlin.concurrent.withLock
     override fun complete(reqId: ReqId) {
 <span class="fc bfc" id="L41" title="All 2 branches covered.">        val req = find(reqId) ?: return</span>
 <span class="fc" id="L42">        lock.withLock {</span>
-<span class="fc" id="L43">            store[req.id] =</span>
+<span class="fc" id="L43">            store[req.reqId] =</span>
 <span class="fc" id="L44">                ProtoBuf { }.encodeToByteArray(SubmittedReq.serializer(), req.apply { status = ReqStatus.Completed })</span>
 <span class="fc" id="L45">        }</span>
 <span class="fc" id="L46">    }</span>
@@ -48,7 +48,7 @@ import kotlin.concurrent.withLock
     override fun fail(reqId: ReqId) {
 <span class="pc bpc" id="L49" title="1 of 2 branches missed.">        val req = find(reqId) ?: return</span>
 <span class="fc" id="L50">        lock.withLock {</span>
-<span class="fc" id="L51">            store[req.id] =</span>
+<span class="fc" id="L51">            store[req.reqId] =</span>
 <span class="fc" id="L52">                ProtoBuf { }.encodeToByteArray(SubmittedReq.serializer(), req.apply { status = ReqStatus.Failed })</span>
 <span class="fc" id="L53">        }</span>
 <span class="fc" id="L54">    }</span>

@@ -25,22 +25,21 @@ import io.hamal.lib.web3.eth.abi.type.EthType
 <span class="nc" id="L25">        val result = mutableListOf&lt;DecodedEthType&lt;*&gt;&gt;()</span>
 <span class="nc bnc" id="L26" title="All 2 branches missed.">        if (topics.size &gt; 1) {</span>
 <span class="nc" id="L27">            val remainingTopics = topics.subList(1, topics.size)</span>
-<span class="nc" id="L28">            println()</span>
-<span class="nc" id="L29">            val topicData = EthPrefixedHexString(&quot;0x${</span>
-<span class="nc" id="L30">                remainingTopics.joinToString(&quot;&quot;) {</span>
-<span class="nc" id="L31">                    it.toHexString().toString()</span>
+<span class="nc" id="L28">            val topicData = EthPrefixedHexString(&quot;0x${</span>
+<span class="nc" id="L29">                remainingTopics.joinToString(&quot;&quot;) {</span>
+<span class="nc" id="L30">                    it.toHexString().toString()</span>
                 }
             }&quot;)
-<span class="nc" id="L34">            result.addAll(indexed.decode(topicData))</span>
+<span class="nc" id="L33">            result.addAll(indexed.decode(topicData))</span>
         }
-<span class="nc" id="L36">        result.addAll(notIndexed.decode(data))</span>
-<span class="nc" id="L37">        return result</span>
+<span class="nc" id="L35">        result.addAll(notIndexed.decode(data))</span>
+<span class="nc" id="L36">        return result</span>
     }
 
     fun decodeToMap(topics: List&lt;EthHash&gt;, data: EthPrefixedHexString): Map&lt;String, EthType&lt;*&gt;&gt; {
-<span class="nc" id="L41">        return decode(topics, data).associateBy({ it.name }, { it.value })</span>
+<span class="nc" id="L40">        return decode(topics, data).associateBy({ it.name }, { it.value })</span>
     }
 
-<span class="nc" id="L44">    private fun topicMatchesSignature(topic: EthHash) = signature.encoded == topic</span>
+<span class="nc" id="L43">    private fun topicMatchesSignature(topic: EthHash) = signature.encoded == topic</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

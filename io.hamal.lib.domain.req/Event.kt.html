@@ -13,9 +13,9 @@ import kotlinx.serialization.Serializable
 
 <span class="pc bpc" id="L14" title="2 of 10 branches missed.">@Serializable</span>
 <span class="fc" id="L15">data class SubmittedCreateTopicReq(</span>
-<span class="fc" id="L16">    override val id: ReqId,</span>
+<span class="fc" id="L16">    override val reqId: ReqId,</span>
 <span class="fc" id="L17">    override var status: ReqStatus,</span>
-<span class="fc" id="L18">    val topicId: TopicId,</span>
+<span class="fc" id="L18">    val id: TopicId,</span>
 <span class="fc" id="L19">    val name: TopicName</span>
 <span class="fc" id="L20">) : SubmittedReq</span>
 
@@ -28,9 +28,9 @@ import kotlinx.serialization.Serializable
 
 <span class="pc bpc" id="L29" title="2 of 10 branches missed.">@Serializable</span>
 <span class="fc" id="L30">data class SubmittedAppendEventReq(</span>
-<span class="fc" id="L31">    override val id: ReqId,</span>
+<span class="fc" id="L31">    override val reqId: ReqId,</span>
 <span class="fc" id="L32">    override var status: ReqStatus,</span>
-<span class="fc" id="L33">    val topicId: TopicId,</span>
+<span class="fc" id="L33">    val id: TopicId,</span>
 <span class="fc" id="L34">    val event: Event</span>
 <span class="fc" id="L35">) : SubmittedReq</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

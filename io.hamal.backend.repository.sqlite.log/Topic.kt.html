@@ -28,7 +28,7 @@ import java.nio.file.Path
 <span class="fc" id="L28">) : BaseSqliteRepository(</span>
 <span class="fc" id="L29">    object : Config {</span>
 <span class="nc" id="L30">        override val path: Path get() = topic.path</span>
-<span class="fc" id="L31">        override val filename: String get() = String.format(&quot;topic-%08d&quot;, topic.id.value.value)</span>
+<span class="fc" id="L31">        override val filename: String get() = String.format(&quot;topics/%08d&quot;, topic.id.value.value)</span>
 
     }
 ), LogTopicRepository {

@@ -51,19 +51,19 @@ interface BatchConsumer&lt;VALUE : Any&gt; {
     }
 }
 
-<span class="nc" id="L54">@OptIn(ExperimentalSerializationApi::class, InternalSerializationApi::class)</span>
-<span class="nc" id="L55">class ProtobufBatchConsumer&lt;TOPIC : LogTopic, Value : Any&gt;(</span>
-<span class="nc" id="L56">    override val groupId: GroupId,</span>
-<span class="nc" id="L57">    private val topic: TOPIC,</span>
-<span class="nc" id="L58">    private val repository: LogBrokerRepository&lt;TOPIC&gt;,</span>
-<span class="nc" id="L59">    private val valueClass: KClass&lt;Value&gt;</span>
+<span class="fc" id="L54">@OptIn(ExperimentalSerializationApi::class, InternalSerializationApi::class)</span>
+<span class="fc" id="L55">class ProtobufBatchConsumer&lt;TOPIC : LogTopic, Value : Any&gt;(</span>
+<span class="fc" id="L56">    override val groupId: GroupId,</span>
+<span class="fc" id="L57">    private val topic: TOPIC,</span>
+<span class="fc" id="L58">    private val repository: LogBrokerRepository&lt;TOPIC&gt;,</span>
+<span class="fc" id="L59">    private val valueClass: KClass&lt;Value&gt;</span>
 ) : BatchConsumer&lt;Value&gt; {
 
     override fun consumeBatch(batchSize: Int, block: (List&lt;Value&gt;) -&gt; Unit): Int {
-<span class="nc" id="L63">        val chunksToConsume = repository.consume(groupId, topic, batchSize)</span>
+<span class="fc" id="L63">        val chunksToConsume = repository.consume(groupId, topic, batchSize)</span>
 
-<span class="nc bnc" id="L65" title="All 2 branches missed.">        if (chunksToConsume.isEmpty()) {</span>
-<span class="nc" id="L66">            return 0</span>
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">        if (chunksToConsume.isEmpty()) {</span>
+<span class="fc" id="L66">            return 0</span>
         }
 
 <span class="nc" id="L69">        val batch = chunksToConsume.map { chunk -&gt; ProtoBuf.decodeFromByteArray(valueClass.serializer(), chunk.bytes) }</span>

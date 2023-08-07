@@ -14,68 +14,69 @@ interface EthTypeDecoder&lt;out VALUE_TYPE : EthType&lt;*&gt;&gt; {
 
     companion object {
 
-<span class="nc" id="L17">        val Address: EthTypeDecoder&lt;EthAddress&gt; = object : EthTypeDecoder&lt;EthAddress&gt; {</span>
+<span class="pc" id="L17">        val Address: EthTypeDecoder&lt;EthAddress&gt; = object : EthTypeDecoder&lt;EthAddress&gt; {</span>
 <span class="nc" id="L18">            override fun decode(window: ByteWindow) = EthAddress(BigInteger(window.next()))</span>
         }
 
-<span class="nc" id="L21">        val Byte32: EthTypeDecoder&lt;EthBytes32&gt; = object : EthTypeDecoder&lt;EthBytes32&gt; {</span>
+<span class="pc" id="L21">        val Byte32: EthTypeDecoder&lt;EthBytes32&gt; = object : EthTypeDecoder&lt;EthBytes32&gt; {</span>
 <span class="nc" id="L22">            override fun decode(window: ByteWindow) = EthBytes32(window.next())</span>
         }
 
-<span class="nc" id="L25">        val Bool: EthTypeDecoder&lt;EthBool&gt; = object : EthTypeDecoder&lt;EthBool&gt; {</span>
+<span class="pc" id="L25">        val Bool: EthTypeDecoder&lt;EthBool&gt; = object : EthTypeDecoder&lt;EthBool&gt; {</span>
 <span class="nc" id="L26">            override fun decode(window: ByteWindow) = EthBool(BigInteger(window.next()))</span>
         }
 
-<span class="nc" id="L29">        val Uint8: EthTypeDecoder&lt;EthUint8&gt; = object : EthTypeDecoder&lt;EthUint8&gt; {</span>
+<span class="pc" id="L29">        val Uint8: EthTypeDecoder&lt;EthUint8&gt; = object : EthTypeDecoder&lt;EthUint8&gt; {</span>
 <span class="nc" id="L30">            override fun decode(window: ByteWindow) = EthUint8(BigInteger(window.next()))</span>
         }
 
-<span class="nc" id="L33">        val String: EthTypeDecoder&lt;EthString&gt; = object : EthTypeDecoder&lt;EthString&gt; {</span>
+<span class="pc" id="L33">        val String: EthTypeDecoder&lt;EthString&gt; = object : EthTypeDecoder&lt;EthString&gt; {</span>
             override fun decode(window: ByteWindow): EthString {
-<span class="nc" id="L35">                val length = Uint32.decode(window).value.toInt()</span>
-<span class="nc" id="L36">                val padding = padding(length)</span>
-<span class="nc" id="L37">                val bytes = window.next(length + padding)</span>
+<span class="nc" id="L35">                window.next()</span>
+<span class="nc" id="L36">                val length = Uint32.decode(window).value.toInt()</span>
+<span class="nc" id="L37">                val padding = padding(length)</span>
+<span class="nc" id="L38">                val bytes = window.next(length + padding)</span>
 
-<span class="nc" id="L39">                return EthString(String(bytes).substring(0, length))</span>
+<span class="nc" id="L40">                return EthString(String(bytes).substring(0, length))</span>
             }
         }
 
-<span class="nc" id="L43">        val Uint16: EthTypeDecoder&lt;EthUint16&gt; = object : EthTypeDecoder&lt;EthUint16&gt; {</span>
-<span class="nc" id="L44">            override fun decode(window: ByteWindow) = EthUint16(BigInteger(window.next()))</span>
+<span class="pc" id="L44">        val Uint16: EthTypeDecoder&lt;EthUint16&gt; = object : EthTypeDecoder&lt;EthUint16&gt; {</span>
+<span class="nc" id="L45">            override fun decode(window: ByteWindow) = EthUint16(BigInteger(window.next()))</span>
         }
 
-<span class="nc" id="L47">        val Uint32: EthTypeDecoder&lt;EthUint32&gt; = object : EthTypeDecoder&lt;EthUint32&gt; {</span>
-<span class="nc" id="L48">            override fun decode(window: ByteWindow) = EthUint32(BigInteger(window.next()))</span>
+<span class="pc" id="L48">        val Uint32: EthTypeDecoder&lt;EthUint32&gt; = object : EthTypeDecoder&lt;EthUint32&gt; {</span>
+<span class="nc" id="L49">            override fun decode(window: ByteWindow) = EthUint32(BigInteger(window.next()))</span>
         }
 
-<span class="nc" id="L51">        val Uint64: EthTypeDecoder&lt;EthUint64&gt; = object : EthTypeDecoder&lt;EthUint64&gt; {</span>
-<span class="nc" id="L52">            override fun decode(window: ByteWindow) = EthUint64(BigInteger(window.next()))</span>
+<span class="pc" id="L52">        val Uint64: EthTypeDecoder&lt;EthUint64&gt; = object : EthTypeDecoder&lt;EthUint64&gt; {</span>
+<span class="nc" id="L53">            override fun decode(window: ByteWindow) = EthUint64(BigInteger(window.next()))</span>
         }
 
-<span class="nc" id="L55">        val Uint112: EthTypeDecoder&lt;EthUint112&gt; = object : EthTypeDecoder&lt;EthUint112&gt; {</span>
-<span class="nc" id="L56">            override fun decode(window: ByteWindow) = EthUint112(BigInteger(window.next()))</span>
+<span class="pc" id="L56">        val Uint112: EthTypeDecoder&lt;EthUint112&gt; = object : EthTypeDecoder&lt;EthUint112&gt; {</span>
+<span class="nc" id="L57">            override fun decode(window: ByteWindow) = EthUint112(BigInteger(window.next()))</span>
         }
 
-<span class="nc" id="L59">        val Uint128: EthTypeDecoder&lt;EthUint128&gt; = object : EthTypeDecoder&lt;EthUint128&gt; {</span>
-<span class="nc" id="L60">            override fun decode(window: ByteWindow) = EthUint128(BigInteger(window.next()))</span>
+<span class="pc" id="L60">        val Uint128: EthTypeDecoder&lt;EthUint128&gt; = object : EthTypeDecoder&lt;EthUint128&gt; {</span>
+<span class="nc" id="L61">            override fun decode(window: ByteWindow) = EthUint128(BigInteger(window.next()))</span>
         }
 
-<span class="nc" id="L63">        val Uint160: EthTypeDecoder&lt;EthUint160&gt; = object : EthTypeDecoder&lt;EthUint160&gt; {</span>
-<span class="nc" id="L64">            override fun decode(window: ByteWindow) = EthUint160(BigInteger(window.next()))</span>
+<span class="pc" id="L64">        val Uint160: EthTypeDecoder&lt;EthUint160&gt; = object : EthTypeDecoder&lt;EthUint160&gt; {</span>
+<span class="nc" id="L65">            override fun decode(window: ByteWindow) = EthUint160(BigInteger(window.next()))</span>
         }
 
-<span class="nc" id="L67">        val Uint256: EthTypeDecoder&lt;EthUint256&gt; = object : EthTypeDecoder&lt;EthUint256&gt; {</span>
-<span class="nc" id="L68">            override fun decode(window: ByteWindow) = EthUint256(BigInteger(withLeadingSignBit(window.next())))</span>
+<span class="fc" id="L68">        val Uint256: EthTypeDecoder&lt;EthUint256&gt; = object : EthTypeDecoder&lt;EthUint256&gt; {</span>
+<span class="fc" id="L69">            override fun decode(window: ByteWindow) = EthUint256(BigInteger(withLeadingSignBit(window.next())))</span>
         }
 
         private fun padding(length: Int): Int {
-<span class="nc" id="L72">            val mod = length % 32</span>
-<span class="nc" id="L73">            return 32 - mod</span>
+<span class="nc" id="L73">            val mod = length % 32</span>
+<span class="nc" id="L74">            return 32 - mod</span>
         }
 
         private fun withLeadingSignBit(bs: ByteArray): ByteArray {
             // big integer requires for uint256 - 33 bytes - 1 sign bit and 32 bytes for the value
-<span class="nc" id="L78">            return ByteArray(33).also { System.arraycopy(bs, 0, it, 1, 32) }</span>
+<span class="fc" id="L79">            return ByteArray(33).also { System.arraycopy(bs, 0, it, 1, 32) }</span>
         }
     }
 

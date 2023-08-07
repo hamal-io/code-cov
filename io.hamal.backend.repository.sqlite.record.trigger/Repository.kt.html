@@ -53,7 +53,7 @@ internal object CreateTrigger : CreateDomainObject&lt;TriggerId, TriggerRecord, 
 <span class="nc" id="L53">    data class Config(</span>
 <span class="nc" id="L54">        override val path: Path,</span>
     ) : BaseSqliteRepository.Config {
-<span class="nc" id="L56">        override val filename = &quot;trigger&quot;</span>
+<span class="nc" id="L56">        override val filename = &quot;trigger.db&quot;</span>
     }
 
     override fun create(cmd: CreateFixedRateCmd): FixedRateTrigger {

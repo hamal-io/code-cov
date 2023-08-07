@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component
 <span class="fc" id="L24">        return execCmdRepository.plan(</span>
 <span class="fc" id="L25">            ExecCmdRepository.PlanCmd(</span>
 <span class="fc" id="L26">                id = req.cmdId(),</span>
-<span class="fc" id="L27">                execId = req.execId,</span>
+<span class="fc" id="L27">                execId = req.id,</span>
 <span class="fc" id="L28">                correlation = null,</span>
 <span class="fc" id="L29">                inputs = req.inputs.toExecInputs(),</span>
 <span class="fc" id="L30">                code = req.code,</span>

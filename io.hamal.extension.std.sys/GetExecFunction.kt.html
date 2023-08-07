@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GetExecFunction.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.extension.std.sys</a> &gt; <span class="el_source">GetExecFunction.kt</span></div><h1>GetExecFunction.kt</h1><pre class="source lang-java linenums">package io.hamal.extension.std.sys
+
+import io.hamal.lib.domain.Exec
+import io.hamal.lib.http.ErrorHttpResponse
+import io.hamal.lib.http.HttpTemplate
+import io.hamal.lib.http.SuccessHttpResponse
+import io.hamal.lib.kua.function.Function1In2Out
+import io.hamal.lib.kua.function.FunctionContext
+import io.hamal.lib.kua.function.FunctionInput1Schema
+import io.hamal.lib.kua.function.FunctionOutput2Schema
+import io.hamal.lib.kua.table.TableMapValue
+import io.hamal.lib.kua.value.ErrorValue
+import io.hamal.lib.kua.value.StringValue
+
+<span class="fc" id="L15">class GetExecFunction(</span>
+<span class="fc" id="L16">    private val templateSupplier: () -&gt; HttpTemplate</span>
+<span class="fc" id="L17">) : Function1In2Out&lt;StringValue, ErrorValue, TableMapValue&gt;(</span>
+<span class="fc" id="L18">    FunctionInput1Schema(StringValue::class),</span>
+<span class="fc" id="L19">    FunctionOutput2Schema(ErrorValue::class, TableMapValue::class)</span>
+) {
+    override fun invoke(ctx: FunctionContext, arg1: StringValue): Pair&lt;ErrorValue?, TableMapValue?&gt; {
+<span class="fc" id="L22">        val response = templateSupplier()</span>
+<span class="fc" id="L23">            .get(&quot;/v1/execs/${arg1.value}&quot;)</span>
+<span class="fc" id="L24">            .execute()</span>
+
+<span class="pc bpc" id="L26" title="1 of 2 branches missed.">        if (response is SuccessHttpResponse) {</span>
+<span class="fc" id="L27">            return null to response.result(Exec::class)</span>
+<span class="fc" id="L28">                .let { exec -&gt;</span>
+
+<span class="fc" id="L30">                    val inputs = ctx.tableCreateMap(0)</span>
+
+<span class="fc" id="L32">                    ctx.tableCreateMap(0).also {</span>
+<span class="fc" id="L33">                        it[&quot;id&quot;] = exec.id.value.value.toString()</span>
+<span class="fc" id="L34">                        it[&quot;status&quot;] = StringValue(exec.status.name)</span>
+<span class="fc" id="L35">                        it[&quot;inputs&quot;] = inputs</span>
+<span class="pc bpc" id="L36" title="5 of 6 branches missed.">                        exec.correlation?.correlationId?.value?.let { corId -&gt;</span>
+<span class="nc" id="L37">                            it[&quot;correlationId&quot;] = corId</span>
+<span class="nc" id="L38">                        } // FIXME set nil value to table --&gt; makes the api nicer</span>
+<span class="fc" id="L39">                        it[&quot;code&quot;] = exec.code</span>
+<span class="fc" id="L40">                    }</span>
+
+                }
+        } else {
+<span class="nc bnc" id="L44" title="All 2 branches missed.">            require(response is ErrorHttpResponse)</span>
+//            return response.error(HamalError::class)
+//                .let { error -&gt;
+//                    ErrorValue(error.message ?: &quot;An unknown error occurred&quot;)
+//                }
+
+<span class="nc" id="L50">            TODO()</span>
+        }
+//
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

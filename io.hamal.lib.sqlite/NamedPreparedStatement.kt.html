@@ -97,7 +97,7 @@ interface NamedPreparedStatement&lt;STATEMENT&gt; : AutoCloseable {
 
     override fun set(parameter: String, value: CmdId): DefaultNamedPreparedStatement {
 <span class="fc" id="L99">        parametersSet.add(parameter)</span>
-<span class="fc" id="L100">        parseResult.parameterIndexesOf(parameter).forEach { delegate.setBigDecimal(it, value.value.toBigDecimal()) }</span>
+<span class="fc" id="L100">        parseResult.parameterIndexesOf(parameter).forEach { delegate.setString(it, value.value) }</span>
 <span class="fc" id="L101">        return this</span>
     }
 

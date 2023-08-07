@@ -70,22 +70,37 @@ import kotlin.concurrent.withLock
 <span class="fc" id="L70">    }</span>
 
     fun failed(cmdId: CmdId, failedExec: FailedExec) {
-<span class="nc" id="L73">        lock.withLock {</span>
+<span class="fc" id="L73">        lock.withLock {</span>
             // FIXME retry or permanent fail or maybe do not fail at all...
-<span class="nc" id="L75">            TODO()</span>
-        }
-    }
+            // remove from inflight
+<span class="fc bfc" id="L76" title="All 2 branches covered.">            if (failedExec.correlation != null) {</span>
+<span class="fc" id="L77">                inflight.remove(failedExec.correlation)</span>
+
+                // if backlog - pick next
+<span class="pc" id="L80">                backlog[failedExec.correlation]</span>
+<span class="pc bpc" id="L81" title="1 of 2 branches missed.">                    ?.removeFirstOrNull()</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">                    ?.let { plannedExec -&gt;</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">                        if (plannedExec.correlation != null) {</span>
+<span class="nc" id="L84">                            inflight[plannedExec.correlation!!] = plannedExec.id</span>
+<span class="nc" id="L85">                            scheduleExec(cmdId, plannedExec)</span>
+                        }
+<span class="nc" id="L87">                    }</span>
+            }
+
+<span class="fc" id="L90">            execs[failedExec.id] = failedExec</span>
+<span class="fc" id="L91">        }</span>
+<span class="fc" id="L92">    }</span>
 
     fun scheduleExec(cmdId: CmdId, plannedExec: PlannedExec) {
-<span class="fc" id="L80">        val scheduledExec = execCmdRepository.schedule(ExecCmdRepository.ScheduleCmd(cmdId, plannedExec.id))</span>
-<span class="fc" id="L81">            .also { emitEvent(cmdId, it) }</span>
+<span class="fc" id="L95">        val scheduledExec = execCmdRepository.schedule(ExecCmdRepository.ScheduleCmd(cmdId, plannedExec.id))</span>
+<span class="fc" id="L96">            .also { emitEvent(cmdId, it) }</span>
 
-<span class="fc" id="L83">        execs[scheduledExec.id] = scheduledExec</span>
-<span class="fc" id="L84">    }</span>
+<span class="fc" id="L98">        execs[scheduledExec.id] = scheduledExec</span>
+<span class="fc" id="L99">    }</span>
 
     fun emitEvent(cmdId: CmdId, exec: ScheduledExec) {
-<span class="fc" id="L87">        eventEmitter.emit(cmdId, ExecScheduledEvent(exec))</span>
-<span class="fc" id="L88">    }</span>
+<span class="fc" id="L102">        eventEmitter.emit(cmdId, ExecScheduledEvent(exec))</span>
+<span class="fc" id="L103">    }</span>
 }
 
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

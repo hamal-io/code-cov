@@ -169,7 +169,7 @@ internal object QueueProjection {
             } else {
 <span class="pc bpc" id="L170" title="1 of 2 branches missed.">                check(currentVersion(execId) is StartedExec) { &quot;current version of $execId is not started&quot; }</span>
 
-<span class="fc" id="L172">                addRecord(ExecFailedRecord(execId, cmdId))</span>
+<span class="fc" id="L172">                addRecord(ExecFailedRecord(execId, cmdId, cmd.cause))</span>
 
 <span class="fc" id="L174">                (versionOf(execId, cmdId) as FailedExec).also(CurrentExecProjection::apply)</span>
             }

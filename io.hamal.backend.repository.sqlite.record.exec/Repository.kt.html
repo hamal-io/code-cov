@@ -49,7 +49,7 @@ internal object CreateExec : CreateDomainObject&lt;ExecId, ExecRecord, Exec&gt; 
 <span class="nc" id="L49">    data class Config(</span>
 <span class="nc" id="L50">        override val path: Path</span>
     ) : BaseSqliteRepository.Config {
-<span class="nc" id="L52">        override val filename = &quot;exec&quot;</span>
+<span class="nc" id="L52">        override val filename = &quot;exec.db&quot;</span>
     }
 
     override fun plan(cmd: PlanCmd): PlannedExec {
@@ -176,22 +176,23 @@ internal object CreateExec : CreateDomainObject&lt;ExecId, ExecRecord, Exec&gt; 
 <span class="nc" id="L176">                storeRecord(</span>
 <span class="nc" id="L177">                    ExecFailedRecord(</span>
 <span class="nc" id="L178">                        entityId = execId,</span>
-<span class="nc" id="L179">                        cmdId = cmdId</span>
+<span class="nc" id="L179">                        cmdId = cmdId,</span>
+<span class="nc" id="L180">                        cause = cmd.cause</span>
                     )
                 )
-<span class="nc" id="L182">                (currentVersion(execId) as FailedExec)</span>
-<span class="nc" id="L183">                    .also { ProjectionCurrent.update(this, it) }</span>
+<span class="nc" id="L183">                (currentVersion(execId) as FailedExec)</span>
+<span class="nc" id="L184">                    .also { ProjectionCurrent.update(this, it) }</span>
             }
         }
     }
 
     override fun find(execId: ExecId): Exec? {
-<span class="nc" id="L189">        return ProjectionCurrent.find(connection, execId)</span>
+<span class="nc" id="L190">        return ProjectionCurrent.find(connection, execId)</span>
     }
 
     override fun list(block: ExecQuery.() -&gt; Unit): List&lt;Exec&gt; {
-<span class="nc" id="L193">        val query = ExecQuery().also(block)</span>
-<span class="nc" id="L194">        return ProjectionCurrent.list(connection, query.afterId, query.limit)</span>
+<span class="nc" id="L194">        val query = ExecQuery().also(block)</span>
+<span class="nc" id="L195">        return ProjectionCurrent.list(connection, query.afterId, query.limit)</span>
     }
 
 }

@@ -8,6 +8,7 @@ import io.hamal.backend.repository.api.log.GroupId
 import io.hamal.backend.repository.api.log.LogBrokerRepository
 import io.hamal.backend.repository.api.log.LogTopic
 import io.hamal.backend.repository.api.log.ProtobufBatchConsumer
+import io.hamal.lib.common.SnowflakeId
 import io.hamal.lib.common.domain.Limit
 import io.hamal.lib.domain.Event
 import io.hamal.lib.domain.EventInvocation
@@ -24,42 +25,41 @@ import org.springframework.stereotype.Service
 import java.util.concurrent.ScheduledFuture
 import kotlin.time.Duration.Companion.milliseconds
 
-<span class="fc" id="L27">@Service</span>
-<span class="fc" id="L28">class EventTriggerService&lt;TOPIC : LogTopic&gt;(</span>
-<span class="pc" id="L29">    internal val eventBrokerRepository: LogBrokerRepository&lt;TOPIC&gt;,</span>
-<span class="pc" id="L30">    internal val triggerQueryRepository: TriggerQueryRepository,</span>
-<span class="pc" id="L31">    internal val submitRequest: SubmitRequest,</span>
-<span class="pc" id="L32">    internal val generateDomainId: GenerateDomainId,</span>
-<span class="pc" id="L33">    internal val async: Async</span>
+<span class="fc" id="L28">@Service</span>
+<span class="fc" id="L29">class EventTriggerService&lt;TOPIC : LogTopic&gt;(</span>
+<span class="pc" id="L30">    internal val eventBrokerRepository: LogBrokerRepository&lt;TOPIC&gt;,</span>
+<span class="pc" id="L31">    internal val triggerQueryRepository: TriggerQueryRepository,</span>
+<span class="pc" id="L32">    internal val submitRequest: SubmitRequest,</span>
+<span class="pc" id="L33">    internal val generateDomainId: GenerateDomainId,</span>
+<span class="pc" id="L34">    internal val async: Async</span>
 ) {
 
-<span class="fc" id="L36">    private val scheduledTasks = mutableListOf&lt;ScheduledFuture&lt;*&gt;&gt;()</span>
+<span class="fc" id="L37">    private val scheduledTasks = mutableListOf&lt;ScheduledFuture&lt;*&gt;&gt;()</span>
 
-<span class="pc" id="L38">    val triggerConsumers = mutableMapOf&lt;TriggerId, ProtobufBatchConsumer&lt;TOPIC, Event&gt;&gt;()</span>
-
+<span class="pc" id="L39">    val triggerConsumers = mutableMapOf&lt;TriggerId, ProtobufBatchConsumer&lt;TOPIC, Event&gt;&gt;()</span>
 
     @PostConstruct
     fun setup() {
 <span class="fc" id="L43">        scheduledTasks.add(</span>
-<span class="fc" id="L44">            async.atFixedRate(1000.milliseconds) {</span>
+<span class="fc" id="L44">            async.atFixedRate(1.milliseconds) {</span>
 <span class="fc" id="L45">                triggerQueryRepository.list {</span>
-<span class="fc" id="L46">                    afterId = TriggerId(0)</span>
+<span class="fc" id="L46">                    afterId = TriggerId(SnowflakeId(Long.MAX_VALUE))</span>
 <span class="fc" id="L47">                    types = setOf(TriggerType.Event)</span>
 <span class="fc" id="L48">                    limit = Limit(10)</span>
 <span class="fc" id="L49">                }.forEach { trigger -&gt;</span>
 <span class="pc bpc" id="L50" title="1 of 2 branches missed.">                    require(trigger is EventTrigger)</span>
 
-<span class="nc" id="L52">                    val topic = eventBrokerRepository.getTopic(trigger.topicId)</span>
-<span class="nc" id="L53">                    val consumer = ProtobufBatchConsumer(</span>
-<span class="nc" id="L54">                        groupId = GroupId(trigger.id.value.value.toString(16)),</span>
-<span class="nc" id="L55">                        topic = topic,</span>
-<span class="nc" id="L56">                        repository = eventBrokerRepository,</span>
+<span class="fc" id="L52">                    val topic = eventBrokerRepository.getTopic(trigger.topicId)</span>
+<span class="fc" id="L53">                    val consumer = ProtobufBatchConsumer(</span>
+<span class="fc" id="L54">                        groupId = GroupId(trigger.id.value.value.toString(16)),</span>
+<span class="fc" id="L55">                        topic = topic,</span>
+<span class="fc" id="L56">                        repository = eventBrokerRepository,</span>
                         valueClass = Event::class
                     )
 
-<span class="nc" id="L60">                    triggerConsumers[trigger.id] = consumer</span>
-<span class="nc" id="L61">                    try {</span>
-<span class="nc" id="L62">                        consumer.consumeBatch(1) { evts -&gt;</span>
+<span class="fc" id="L60">                    triggerConsumers[trigger.id] = consumer</span>
+<span class="fc" id="L61">                    try {</span>
+<span class="fc" id="L62">                        consumer.consumeBatch(1) { evts -&gt;</span>
 <span class="nc" id="L63">                            submitRequest(</span>
 <span class="nc" id="L64">                                InvokeEvent(</span>
 <span class="nc" id="L65">                                    execId = generateDomainId(::ExecId),</span>
@@ -73,7 +73,7 @@ import kotlin.time.Duration.Companion.milliseconds
 <span class="nc" id="L73">                    } catch (t: Throwable) {</span>
 <span class="nc" id="L74">                        t.printStackTrace()</span>
                     }
-<span class="nc" id="L76">                }</span>
+<span class="fc" id="L76">                }</span>
 <span class="fc" id="L77">            },</span>
         )
 <span class="fc" id="L79">    }</span>

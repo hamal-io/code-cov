@@ -14,9 +14,9 @@ import kotlinx.serialization.Serializable
 
 <span class="pc bpc" id="L15" title="2 of 11 branches missed.">@Serializable</span>
 <span class="fc" id="L16">data class SubmittedInvokeAdhocReq(</span>
-<span class="fc" id="L17">    override val id: ReqId,</span>
+<span class="fc" id="L17">    override val reqId: ReqId,</span>
 <span class="fc" id="L18">    override var status: ReqStatus,</span>
-<span class="fc" id="L19">    val execId: ExecId,</span>
+<span class="fc" id="L19">    val id: ExecId,</span>
 <span class="fc" id="L20">    val inputs: InvocationInputs,</span>
 <span class="fc" id="L21">    val code: CodeValue</span>
 <span class="fc" id="L22">) : SubmittedReq</span>

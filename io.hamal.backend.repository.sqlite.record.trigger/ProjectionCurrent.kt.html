@@ -5,8 +5,10 @@ import io.hamal.backend.repository.record.trigger.TriggerRecord
 import io.hamal.backend.repository.sqlite.record.Projection
 import io.hamal.backend.repository.sqlite.record.RecordTransaction
 import io.hamal.backend.repository.sqlite.record.protobuf
-import io.hamal.lib.common.DefaultLruCache
+import io.hamal.lib.domain.EventTrigger
+import io.hamal.lib.domain.FixedRateTrigger
 import io.hamal.lib.domain.Trigger
+import io.hamal.lib.domain._enum.TriggerType
 import io.hamal.lib.domain.vo.TriggerId
 import io.hamal.lib.sqlite.Connection
 import io.hamal.lib.sqlite.unsafeInCriteria
@@ -15,11 +17,9 @@ import kotlinx.serialization.ExperimentalSerializationApi
 
 @OptIn(ExperimentalSerializationApi::class)
 internal object ProjectionCurrent : Projection&lt;TriggerId, TriggerRecord, Trigger&gt; {
-<span class="nc" id="L18">    internal val lruCache = DefaultLruCache&lt;TriggerId, Trigger&gt;(10_000)</span>
     fun find(connection: Connection, triggerId: TriggerId): Trigger? {
-<span class="nc" id="L20">        return lruCache.computeIfAbsent(triggerId) {</span>
-<span class="nc" id="L21">            connection.executeQueryOne(</span>
-                &quot;&quot;&quot;
+<span class="nc" id="L21">        return connection.executeQueryOne(</span>
+            &quot;&quot;&quot;
             SELECT 
                 data
              FROM
@@ -27,13 +27,12 @@ internal object ProjectionCurrent : Projection&lt;TriggerId, TriggerRecord, Trig
             WHERE
                 id  = :id
 <span class="nc" id="L29">        &quot;&quot;&quot;.trimIndent()</span>
-            ) {
-<span class="nc" id="L31">                query {</span>
-<span class="nc" id="L32">                    set(&quot;id&quot;, it)</span>
-                }
-<span class="nc" id="L34">                map { rs -&gt;</span>
-<span class="nc" id="L35">                    protobuf.decodeFromByteArray(Trigger.serializer(), rs.getBytes(&quot;data&quot;))</span>
-                }
+        ) {
+<span class="nc" id="L31">            query {</span>
+<span class="nc" id="L32">                set(&quot;id&quot;, triggerId)</span>
+            }
+<span class="nc" id="L34">            map { rs -&gt;</span>
+<span class="nc" id="L35">                protobuf.decodeFromByteArray(Trigger.serializer(), rs.getBytes(&quot;data&quot;))</span>
             }
         }
     }
@@ -42,46 +41,51 @@ internal object ProjectionCurrent : Projection&lt;TriggerId, TriggerRecord, Trig
         connection: Connection,
         query: TriggerQueryRepository.TriggerQuery
     ): List&lt;Trigger&gt; {
-<span class="nc" id="L45">        return connection.executeQuery&lt;Trigger&gt;(</span>
+<span class="nc" id="L44">        return connection.executeQuery&lt;Trigger&gt;(</span>
             &quot;&quot;&quot;
             SELECT 
                 data
              FROM
                 current
             WHERE
-                id &gt; :afterId AND
-<span class="nc" id="L53">                ${unsafeInCriteria(&quot;type&quot;, query.types.map { it.value })}</span>
-            ORDER BY id ASC
+                id &lt; :afterId AND
+<span class="nc" id="L52">                ${unsafeInCriteria(&quot;type&quot;, query.types.map { it.value })}</span>
+            ORDER BY id DESC
             LIMIT :limit
-<span class="nc" id="L56">        &quot;&quot;&quot;.trimIndent()</span>
+<span class="nc" id="L55">        &quot;&quot;&quot;.trimIndent()</span>
         ) {
-<span class="nc" id="L58">            query {</span>
-<span class="nc" id="L59">                set(&quot;afterId&quot;, query.afterId)</span>
-<span class="nc" id="L60">                set(&quot;limit&quot;, query.limit)</span>
+<span class="nc" id="L57">            query {</span>
+<span class="nc" id="L58">                set(&quot;afterId&quot;, query.afterId)</span>
+<span class="nc" id="L59">                set(&quot;limit&quot;, query.limit)</span>
             }
-<span class="nc" id="L62">            map { rs -&gt;</span>
-<span class="nc" id="L63">                protobuf.decodeFromByteArray(Trigger.serializer(), rs.getBytes(&quot;data&quot;))</span>
+<span class="nc" id="L61">            map { rs -&gt;</span>
+<span class="nc" id="L62">                protobuf.decodeFromByteArray(Trigger.serializer(), rs.getBytes(&quot;data&quot;))</span>
             }
         }
     }
 
     override fun update(tx: RecordTransaction&lt;TriggerId, TriggerRecord, Trigger&gt;, obj: Trigger) {
-<span class="nc" id="L69">        tx.execute(</span>
+<span class="nc" id="L68">        tx.execute(</span>
             &quot;&quot;&quot;
                 INSERT OR REPLACE INTO current
                     (id,type, data) 
                 VALUES
                     (:id,:type, :data)
-<span class="nc" id="L75">            &quot;&quot;&quot;.trimIndent()</span>
+<span class="nc" id="L74">            &quot;&quot;&quot;.trimIndent()</span>
         ) {
-<span class="nc" id="L77">            set(&quot;id&quot;, obj.id)</span>
-<span class="nc" id="L78">            set(&quot;type&quot;, obj.type.value)</span>
-<span class="nc" id="L79">            set(&quot;data&quot;, protobuf.encodeToByteArray(Trigger.serializer(), obj))</span>
+<span class="nc" id="L76">            set(&quot;id&quot;, obj.id)</span>
+<span class="nc" id="L77">            set(</span>
+<span class="nc" id="L78">                &quot;type&quot;, when (obj) {</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">                    is FixedRateTrigger -&gt; TriggerType.FixedRate</span>
+<span class="nc" id="L80">                    is EventTrigger -&gt; TriggerType.Event</span>
+<span class="nc" id="L81">                }.value</span>
+            )
+<span class="nc" id="L83">            set(&quot;data&quot;, protobuf.encodeToByteArray(Trigger.serializer(), obj))</span>
         }
-<span class="nc" id="L81">    }</span>
+<span class="nc" id="L85">    }</span>
 
     override fun setupSchema(connection: Connection) {
-<span class="nc" id="L84">        connection.execute(</span>
+<span class="nc" id="L88">        connection.execute(</span>
             &quot;&quot;&quot;
             CREATE TABLE IF NOT EXISTS current (
                  id             INTEGER NOT NULL,
@@ -89,16 +93,16 @@ internal object ProjectionCurrent : Projection&lt;TriggerId, TriggerRecord, Trig
                  data           BLOB NOT NULL,
                  PRIMARY KEY    (id)
             );
-<span class="nc" id="L92">        &quot;&quot;&quot;.trimIndent()</span>
+<span class="nc" id="L96">        &quot;&quot;&quot;.trimIndent()</span>
         )
-<span class="nc" id="L94">    }</span>
-
-    override fun clear(connection: Connection) {
-<span class="nc" id="L97">        connection.execute(&quot;&quot;&quot;DELETE FROM current&quot;&quot;&quot;)</span>
 <span class="nc" id="L98">    }</span>
 
-    override fun invalidate() {
-<span class="nc" id="L101">        lruCache.clear()</span>
+    override fun clear(connection: Connection) {
+<span class="nc" id="L101">        connection.execute(&quot;&quot;&quot;DELETE FROM current&quot;&quot;&quot;)</span>
 <span class="nc" id="L102">    }</span>
+
+    override fun invalidate() {
+<span class="nc" id="L105">    }</span>
+
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

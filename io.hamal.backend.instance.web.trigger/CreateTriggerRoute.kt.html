@@ -6,39 +6,38 @@ import io.hamal.backend.repository.api.log.LogBrokerRepository
 import io.hamal.lib.domain._enum.TriggerType
 import io.hamal.lib.domain.req.CreateTriggerReq
 import io.hamal.lib.domain.req.SubmittedCreateTriggerReq
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
-import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.ACCEPTED
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
-import kotlin.time.*
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RestController
 
-<span class="fc" id="L16">@RestController</span>
-<span class="fc" id="L17">class CreateTriggerRoute(</span>
-<span class="fc" id="L18">    private val funcQueryRepository: FuncQueryRepository,</span>
-<span class="fc" id="L19">    private val eventBrokerRepository: LogBrokerRepository&lt;*&gt;,</span>
-<span class="fc" id="L20">    private val request: SubmitRequest</span>
+<span class="fc" id="L15">@RestController</span>
+<span class="fc" id="L16">class CreateTriggerRoute(</span>
+<span class="fc" id="L17">    private val funcQueryRepository: FuncQueryRepository,</span>
+<span class="fc" id="L18">    private val eventBrokerRepository: LogBrokerRepository&lt;*&gt;,</span>
+<span class="fc" id="L19">    private val request: SubmitRequest</span>
 ) {
     @PostMapping(&quot;/v1/triggers&quot;)
     fun createTrigger(
         @RequestBody createTrigger: CreateTriggerReq
     ): ResponseEntity&lt;SubmittedCreateTriggerReq&gt; {
-<span class="fc" id="L26">        ensureFuncExists(createTrigger)</span>
-<span class="fc" id="L27">        ensureTopicExists(createTrigger)</span>
+<span class="fc" id="L25">        ensureFuncExists(createTrigger)</span>
+<span class="fc" id="L26">        ensureTopicExists(createTrigger)</span>
 
-<span class="fc" id="L29">        val result = request(createTrigger)</span>
-<span class="fc" id="L30">        return ResponseEntity(result, HttpStatus.ACCEPTED)</span>
+<span class="fc" id="L28">        val result = request(createTrigger)</span>
+<span class="fc" id="L29">        return ResponseEntity(result, ACCEPTED)</span>
     }
 
     private fun ensureFuncExists(createTrigger: CreateTriggerReq) {
-<span class="fc" id="L34">        funcQueryRepository.get(createTrigger.funcId)</span>
-<span class="fc" id="L35">    }</span>
+<span class="fc" id="L33">        funcQueryRepository.get(createTrigger.funcId)</span>
+<span class="fc" id="L34">    }</span>
 
     private fun ensureTopicExists(createTrigger: CreateTriggerReq) {
-<span class="fc bfc" id="L38" title="All 2 branches covered.">        if (createTrigger.type == TriggerType.Event) {</span>
-<span class="fc bfc" id="L39" title="All 2 branches covered.">            requireNotNull(createTrigger.topicId) { &quot;topicId is missing&quot; }</span>
-<span class="fc" id="L40">            eventBrokerRepository.getTopic(createTrigger.topicId!!)</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">        if (createTrigger.type == TriggerType.Event) {</span>
+<span class="fc bfc" id="L38" title="All 2 branches covered.">            requireNotNull(createTrigger.topicId) { &quot;topicId is missing&quot; }</span>
+<span class="fc" id="L39">            eventBrokerRepository.getTopic(createTrigger.topicId!!)</span>
         }
-<span class="fc" id="L42">    }</span>
+<span class="fc" id="L41">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

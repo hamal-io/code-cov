@@ -14,7 +14,7 @@ import kotlinx.serialization.Serializable
 
 <span class="pc bpc" id="L15" title="2 of 9 branches missed.">@Serializable</span>
 <span class="fc" id="L16">data class SubmittedSetStateReq(</span>
-<span class="fc" id="L17">    override val id: ReqId,</span>
+<span class="fc" id="L17">    override val reqId: ReqId,</span>
 <span class="fc" id="L18">    override var status: ReqStatus,</span>
 <span class="fc" id="L19">    val state: CorrelatedState</span>
 <span class="fc" id="L20">) : SubmittedReq</span>

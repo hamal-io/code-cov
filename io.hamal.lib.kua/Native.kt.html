@@ -1,104 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Native.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.kua</a> &gt; <span class="el_source">Native.kt</span></div><h1>Native.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.kua
 
-import cz.adamh.utils.NativeUtils
-import io.hamal.lib.domain.Once
+import io.hamal.lib.kua.function.FunctionValue
+import io.hamal.lib.kua.value.ErrorValue
 
-object NativeLoader {
+<span class="fc" id="L6">class Native : AutoCloseable {</span>
 
-    enum class Preference {
-<span class="fc" id="L9">        Jar,</span>
-<span class="fc" id="L10">        Resources,</span>
-<span class="fc" id="L11">        BuildDir</span>
+    external fun luaVersionNumber(): Int
+    external fun luaIntegerWidth(): Int
+    external fun luaRegistryIndex(): Int
+
+    external fun top(): Int
+    external fun setTop(idx: Int)
+    external fun pushTop(idx: Int): Int
+    external fun absIndex(idx: Int): Int
+    external fun type(idx: Int): Int
+    external fun setGlobal(key: String)
+    external fun getGlobal(key: String)
+
+    external fun pushBoolean(value: Boolean): Int
+    external fun pushFunctionValue(value: FunctionValue&lt;*, *, *, *&gt;): Int
+    external fun pushError(message: String): Int
+    external fun pushNil(): Int
+    external fun pushNumber(value: Double): Int
+    external fun pushString(value: String): Int
+
+    external fun pop(total: Int): Int
+
+    external fun toBoolean(idx: Int): Boolean
+    external fun toError(idx: Int): ErrorValue
+    external fun toNumber(idx: Int): Double
+    external fun toString(idx: Int): String
+
+    external fun tableCreate(arrayCount: Int, recordCount: Int): Int
+    external fun tabletSetField(idx: Int, key: String): Int
+    external fun tableGetField(idx: Int, key: String): Int
+    external fun tableGetLength(idx: Int): Int
+
+    external fun tableAppend(idx: Int): Int
+    external fun tableSetRaw(idx: Int): Int
+    external fun tableSetRawIdx(stackIdx: Int, tableIdx: Int): Int
+    external fun tableGetRaw(idx: Int): Int
+    external fun tableGetRawIdx(stackIdx: Int, tableIdx: Int): Int
+    external fun tableNext(idx: Int): Boolean
+    external fun tableGetSub(idx: Int, key: String): Int
+
+    external fun loadString(code: String): Int
+    external fun call(argCount: Int, returnCount: Int)
+
+    private external fun initConnection()
+    private external fun closeConnection()
+
+<span class="fc" id="L53">    init {</span>
+<span class="fc" id="L54">        initConnection()</span>
+<span class="fc" id="L55">    }</span>
+
+    override fun close() {
+<span class="fc" id="L58">        closeConnection()</span>
+<span class="fc" id="L59">    }</span>
+
+    override fun toString(): String {
+<span class="nc" id="L62">        return &quot;State&quot;</span>
     }
-
-    fun load(preference: Preference) {
-<span class="pc bpc" id="L15" title="1 of 2 branches missed.">        if (tryToLoad(preference)) {</span>
-<span class="fc" id="L16">            return</span>
-        }
-
-<span class="nc bnc" id="L19" title="All 4 branches missed.">        while (loaders.isNotEmpty()) {</span>
-<span class="nc" id="L20">            val next = loaders.keys.first()</span>
-<span class="nc bnc" id="L21" title="All 2 branches missed.">            if (tryToLoad(next)) {</span>
-<span class="nc" id="L22">                return</span>
-            }
-<span class="nc" id="L24">            loaders.remove(next)</span>
-        }
-
-<span class="nc" id="L27">        throw IllegalStateException(&quot;Unable to load shared libraries&quot;)</span>
-    }
-
-<span class="fc" id="L30">    private fun tryToLoad(preference: Preference) = loaders[preference]!!.load()</span>
-
-<span class="fc" id="L32">    private val loaders = mutableMapOf(</span>
-<span class="fc" id="L33">        Preference.Jar to JarLoader,</span>
-<span class="fc" id="L34">        Preference.Resources to ResourcesLoader,</span>
-<span class="fc" id="L35">        Preference.BuildDir to BuildDirLoader,</span>
-    )
-}
-
-private interface Loader {
-    fun load(): Boolean
-}
-
-internal object BuildDirLoader : Loader {
-    override fun load(): Boolean {
-<span class="nc" id="L45">        return once {</span>
-<span class="nc" id="L46">            val baseDir = System.getProperty(&quot;user.dir&quot;)</span>
-<span class="nc" id="L47">            try {</span>
-<span class="nc" id="L48">                System.load(&quot;$baseDir/lib/kua/native/cmake-build-debug/lua/liblua.so&quot;)</span>
-<span class="nc" id="L49">                System.load(&quot;$baseDir/lib/kua/native/cmake-build-debug/kua/libkua.so&quot;)</span>
-<span class="nc" id="L50">                true</span>
-<span class="nc" id="L51">            } catch (t: Throwable) {</span>
-<span class="nc" id="L52">                false</span>
-            }
-        }
-    }
-
-    @JvmStatic
-<span class="fc" id="L58">    private val once = Once.default&lt;Boolean&gt;()</span>
-}
-
-
-fun main() {
-<span class="nc" id="L63">    BuildDirLoader.load()</span>
-<span class="nc" id="L64">}</span>
-
-internal object ResourcesLoader : Loader {
-    override fun load(): Boolean {
-<span class="fc" id="L68">        return once {</span>
-<span class="fc" id="L69">            val classloader = Thread.currentThread().contextClassLoader</span>
-<span class="fc" id="L70">            val result = classloader.getResource(&quot;./liblua.so&quot;)</span>
-<span class="pc bpc" id="L71" title="1 of 2 branches missed.">                ?.let { System.load(it.file); true }</span>
-<span class="nc" id="L72">                ?: false</span>
-<span class="pc bpc" id="L73" title="1 of 2 branches missed.">            if (result) {</span>
-<span class="fc" id="L74">                classloader.getResource(&quot;./libkua.so&quot;)</span>
-<span class="pc bpc" id="L75" title="1 of 2 branches missed.">                    ?.let { System.load(it.file); true }</span>
-<span class="nc" id="L76">                    ?: false</span>
-            } else {
-<span class="pc" id="L78">                false</span>
-            }
-        }
-    }
-
-    @JvmStatic
-<span class="fc" id="L84">    private val once = Once.default&lt;Boolean&gt;()</span>
-}
-
-
-internal object JarLoader : Loader {
-    override fun load(): Boolean {
-<span class="nc" id="L90">        return once {</span>
-<span class="nc" id="L91">            try {</span>
-<span class="nc" id="L92">                NativeUtils.loadLibraryFromJar(&quot;/liblua.so&quot;)</span>
-<span class="nc" id="L93">                NativeUtils.loadLibraryFromJar(&quot;/libkua.so&quot;)</span>
-<span class="nc" id="L94">                true</span>
-<span class="nc" id="L95">            } catch (t: Throwable) {</span>
-<span class="nc" id="L96">                false</span>
-            }
-        }
-    }
-
-    @JvmStatic
-<span class="fc" id="L102">    private val once = Once.default&lt;Boolean&gt;()</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Execute.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.extension.web3.eth</a> &gt; <span class="el_source">Execute.kt</span></div><h1>Execute.kt</h1><pre class="source lang-java linenums">package io.hamal.extension.web3.eth
+
+import io.hamal.lib.http.HttpTemplate
+import io.hamal.lib.kua.extension.ExtensionConfig
+import io.hamal.lib.kua.function.Function1In2Out
+import io.hamal.lib.kua.function.FunctionContext
+import io.hamal.lib.kua.function.FunctionInput1Schema
+import io.hamal.lib.kua.function.FunctionOutput2Schema
+import io.hamal.lib.kua.table.TableArrayValue
+import io.hamal.lib.kua.value.ErrorValue
+import io.hamal.lib.kua.value.StringValue
+import io.hamal.lib.web3.eth.abi.type.EthUint64
+import io.hamal.lib.web3.eth.domain.EthCallResponse
+import io.hamal.lib.web3.eth.domain.EthGetBlockNumberResponse
+import io.hamal.lib.web3.eth.domain.EthGetBlockResponse
+import io.hamal.lib.web3.eth.domain.EthGetLiteBlockResponse
+import io.hamal.lib.web3.eth.http.EthHttpBatchService
+
+
+<span class="fc" id="L20">class ExecuteFunction(</span>
+<span class="fc" id="L21">    private val config: ExtensionConfig</span>
+<span class="fc" id="L22">) : Function1In2Out&lt;TableArrayValue, ErrorValue, TableArrayValue&gt;(</span>
+<span class="fc" id="L23">    FunctionInput1Schema(TableArrayValue::class),</span>
+<span class="fc" id="L24">    FunctionOutput2Schema(ErrorValue::class, TableArrayValue::class)</span>
+) {
+    override fun invoke(ctx: FunctionContext, arg1: TableArrayValue): Pair&lt;ErrorValue?, TableArrayValue?&gt; {
+<span class="nc" id="L27">        try {</span>
+<span class="nc" id="L28">            val batchService = EthHttpBatchService(HttpTemplate((config.value[&quot;host&quot;] as StringValue).value))</span>
+<span class="nc" id="L29">            ctx.pushNil()</span>
+<span class="nc bnc" id="L30" title="All 2 branches missed.">            while (ctx.state.bridge.tableNext(arg1.index)) {</span>
+//                val i = ctx.state.getNumber(-2)
+<span class="nc" id="L32">                val v = ctx.state.getTableMap(-1)</span>
+
+<span class="nc" id="L34">                when (v.getString(&quot;type&quot;)) {</span>
+<span class="nc bnc" id="L35" title="All 2 branches missed.">                    &quot;get_block&quot; -&gt; {</span>
+<span class="nc" id="L36">                        batchService.getBlock(</span>
+<span class="nc" id="L37">                            EthUint64(</span>
+<span class="nc" id="L38">                                v.getLong(&quot;block&quot;)</span>
+                            )
+                        )
+                    }
+                }
+<span class="nc" id="L43">                ctx.state.bridge.pop(1)</span>
+            }
+
+<span class="nc" id="L46">            val result = ctx.tableCreateArray(0)</span>
+<span class="nc" id="L47">            batchService.execute().forEach { ethRes -&gt;</span>
+<span class="nc" id="L48">                when (ethRes) {</span>
+<span class="nc bnc" id="L49" title="All 2 branches missed.">                    is EthGetBlockNumberResponse -&gt; TODO()</span>
+<span class="nc bnc" id="L50" title="All 2 branches missed.">                    is EthGetLiteBlockResponse -&gt; TODO()</span>
+<span class="nc bnc" id="L51" title="All 2 branches missed.">                    is EthGetBlockResponse -&gt; {</span>
+<span class="nc" id="L52">                        val res = ctx.tableCreateMap()</span>
+<span class="nc" id="L53">                        res[&quot;id&quot;] = ethRes.result.number.value.toLong()</span>
+<span class="nc" id="L54">                        res[&quot;hash&quot;] = ethRes.result.hash.toPrefixedHexString().value</span>
+<span class="nc" id="L55">                        res[&quot;parent_hash&quot;] = ethRes.result.parentHash.toPrefixedHexString().value</span>
+<span class="nc" id="L56">                        res[&quot;gas_used&quot;] = ethRes.result.gasUsed.value.toLong()</span>
+<span class="nc" id="L57">                        res[&quot;gas_limit&quot;] = ethRes.result.gasLimit.value.toLong()</span>
+<span class="nc" id="L58">                        result.append(res)</span>
+                    }
+
+<span class="nc bnc" id="L61" title="All 2 branches missed.">                    is EthCallResponse -&gt; {</span>
+<span class="nc" id="L62">                        result.append(ethRes.result.value)</span>
+                    }
+                }
+<span class="nc" id="L65">            }</span>
+<span class="nc" id="L66">            return null to result</span>
+<span class="nc" id="L67">        } catch (t: Throwable) {</span>
+<span class="nc" id="L68">            t.printStackTrace()</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">            return ErrorValue(t.message ?: &quot;Unknown error&quot;) to null</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -5,33 +5,32 @@ import io.hamal.lib.common.domain.Limit
 import io.hamal.lib.domain._enum.TriggerType
 import io.hamal.lib.domain.vo.TriggerId
 import io.hamal.lib.sdk.domain.ListTriggersResponse
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
-import kotlin.time.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 
 
-<span class="fc" id="L15">@RestController</span>
-<span class="fc" id="L16">class ListTriggersRoute(</span>
-<span class="fc" id="L17">    private val triggerQueryRepository: TriggerQueryRepository</span>
+<span class="fc" id="L14">@RestController</span>
+<span class="fc" id="L15">class ListTriggersRoute(</span>
+<span class="fc" id="L16">    private val triggerQueryRepository: TriggerQueryRepository</span>
 ) {
     @GetMapping(&quot;/v1/triggers&quot;)
     fun listTrigger(
-        @RequestParam(required = false, name = &quot;after_id&quot;, defaultValue = &quot;0&quot;) triggerId: TriggerId,
+        @RequestParam(required = false, name = &quot;after_id&quot;, defaultValue = &quot;${Long.MAX_VALUE}&quot;) triggerId: TriggerId,
         @RequestParam(required = false, name = &quot;limit&quot;, defaultValue = &quot;100&quot;) limit: Limit
     ): ResponseEntity&lt;ListTriggersResponse&gt; {
-<span class="fc" id="L24">        val result = triggerQueryRepository.list {</span>
-<span class="fc" id="L25">            this.afterId = triggerId</span>
-<span class="fc" id="L26">            this.types = TriggerType.values().toSet()</span>
-<span class="fc" id="L27">            this.limit = limit</span>
-<span class="fc" id="L28">        }</span>
-<span class="fc" id="L29">        return ResponseEntity.ok(</span>
-<span class="fc" id="L30">            ListTriggersResponse(</span>
-<span class="fc" id="L31">                result.map {</span>
-<span class="fc" id="L32">                    ListTriggersResponse.Trigger(</span>
-<span class="fc" id="L33">                        id = it.id,</span>
-<span class="fc" id="L34">                        name = it.name</span>
+<span class="fc" id="L23">        val result = triggerQueryRepository.list {</span>
+<span class="fc" id="L24">            this.afterId = triggerId</span>
+<span class="fc" id="L25">            this.types = TriggerType.values().toSet()</span>
+<span class="fc" id="L26">            this.limit = limit</span>
+<span class="fc" id="L27">        }</span>
+<span class="fc" id="L28">        return ResponseEntity.ok(</span>
+<span class="fc" id="L29">            ListTriggersResponse(</span>
+<span class="fc" id="L30">                result.map {</span>
+<span class="fc" id="L31">                    ListTriggersResponse.Trigger(</span>
+<span class="fc" id="L32">                        id = it.id,</span>
+<span class="fc" id="L33">                        name = it.name</span>
                     )
                 }
             )

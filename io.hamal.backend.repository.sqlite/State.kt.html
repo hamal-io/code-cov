@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>State.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.repository.sqlite</a> &gt; <span class="el_source">State.kt</span></div><h1>State.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.repository.sqlite
+
+import io.hamal.backend.repository.api.StateCmdRepository
+import io.hamal.backend.repository.api.StateQueryRepository
+import io.hamal.backend.repository.sqlite.log.SqliteLogTopic
+import io.hamal.lib.common.domain.CmdId
+import io.hamal.lib.domain.CorrelatedState
+import io.hamal.lib.domain.Correlation
+import io.hamal.lib.domain.State
+import io.hamal.lib.domain.vo.CorrelationId
+import io.hamal.lib.domain.vo.FuncId
+import io.hamal.lib.sqlite.BaseSqliteRepository
+import io.hamal.lib.sqlite.Connection
+import kotlinx.serialization.protobuf.ProtoBuf
+import java.nio.file.Path
+
+<span class="nc" id="L17">class SqliteStateRepository(</span>
+    path: Path
+<span class="nc" id="L19">) : BaseSqliteRepository(</span>
+<span class="nc" id="L20">    config = object : Config {</span>
+<span class="nc" id="L21">        override val path = path</span>
+<span class="nc" id="L22">        override val filename = &quot;correlated-state.db&quot;</span>
+    },
+), StateCmdRepository, StateQueryRepository {
+
+    override fun setupConnection(connection: Connection) {
+<span class="nc" id="L27">        connection.execute(&quot;&quot;&quot;PRAGMA journal_mode = wal;&quot;&quot;&quot;)</span>
+<span class="nc" id="L28">        connection.execute(&quot;&quot;&quot;PRAGMA locking_mode = exclusive;&quot;&quot;&quot;)</span>
+<span class="nc" id="L29">        connection.execute(&quot;&quot;&quot;PRAGMA temp_store = memory;&quot;&quot;&quot;)</span>
+<span class="nc" id="L30">        connection.execute(&quot;&quot;&quot;PRAGMA synchronous = off;&quot;&quot;&quot;)</span>
+<span class="nc" id="L31">    }</span>
+
+    override fun setupSchema(connection: Connection) {
+<span class="nc" id="L34">        connection.tx {</span>
+<span class="nc" id="L35">            execute(</span>
+                &quot;&quot;&quot;
+                CREATE TABLE IF NOT EXISTS correlated_states (
+                    func_id INTEGER NOT NULL ,
+                    correlation_id TEXT NOT NULL ,
+                    value BLOB,
+                    PRIMARY KEY (func_id, correlation_id)
+               )
+<span class="nc" id="L43">            &quot;&quot;&quot;.trimIndent()</span>
+            )
+<span class="nc" id="L45">        }</span>
+<span class="nc" id="L46">    }</span>
+
+    override fun set(cmdId: CmdId, correlatedState: CorrelatedState) {
+<span class="nc" id="L49">        connection.execute&lt;SqliteLogTopic&gt;(</span>
+            &quot;&quot;&quot;
+            INSERT INTO correlated_states (func_id, correlation_id, value)
+                VALUES(:funcId, :correlationId, :value) 
+                ON CONFLICT (func_id, correlation_id) 
+                DO 
+                    UPDATE SET value = EXCLUDED.value;
+<span class="nc" id="L56">        &quot;&quot;&quot;.trimIndent()</span>
+        ) {
+<span class="nc" id="L58">            query {</span>
+<span class="nc" id="L59">                set(&quot;funcId&quot;, correlatedState.correlation.funcId)</span>
+<span class="nc" id="L60">                set(&quot;correlationId&quot;, correlatedState.correlation.correlationId.value)</span>
+<span class="nc" id="L61">                set(&quot;value&quot;, protoBuf.encodeToByteArray(State.serializer(), correlatedState.value))</span>
+            }
+        }
+<span class="nc" id="L64">    }</span>
+
+    override fun clear() {
+<span class="nc" id="L67">        TODO()</span>
+    }
+
+    override fun find(correlation: Correlation): CorrelatedState? {
+<span class="nc" id="L71">        return connection.executeQueryOne(&quot;SELECT func_id, correlation_id, value FROM correlated_states WHERE func_id = :funcId AND correlation_id = :correlationId&quot;) {</span>
+<span class="nc" id="L72">            query {</span>
+<span class="nc" id="L73">                set(&quot;funcId&quot;, correlation.funcId)</span>
+<span class="nc" id="L74">                set(&quot;correlationId&quot;, correlation.correlationId.value)</span>
+            }
+<span class="nc" id="L76">            map { rs -&gt;</span>
+<span class="nc" id="L77">                CorrelatedState(</span>
+<span class="nc" id="L78">                    correlation = Correlation(</span>
+<span class="nc" id="L79">                        funcId = rs.getDomainId(&quot;func_id&quot;, ::FuncId),</span>
+<span class="nc" id="L80">                        correlationId = CorrelationId(rs.getString(&quot;correlation_id&quot;))</span>
+                    ),
+<span class="nc" id="L82">                    value = protoBuf.decodeFromByteArray(State.serializer(), rs.getBytes(&quot;value&quot;))</span>
+                )
+            }
+        }
+    }
+
+<span class="nc" id="L88">    private val protoBuf = ProtoBuf { }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

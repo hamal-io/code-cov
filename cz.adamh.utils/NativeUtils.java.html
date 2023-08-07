@@ -74,55 +74,55 @@ public class NativeUtils {
      */
     public static void loadLibraryFromJar(String path) throws IOException {
  
-<span class="nc bnc" id="L77" title="All 4 branches missed.">        if (null == path || !path.startsWith(&quot;/&quot;)) {</span>
+<span class="pc bpc" id="L77" title="2 of 4 branches missed.">        if (null == path || !path.startsWith(&quot;/&quot;)) {</span>
 <span class="nc" id="L78">            throw new IllegalArgumentException(&quot;The path has to be absolute (start with '/').&quot;);</span>
         }
  
         // Obtain filename from path
-<span class="nc" id="L82">        String[] parts = path.split(&quot;/&quot;);</span>
-<span class="nc bnc" id="L83" title="All 2 branches missed.">        String filename = (parts.length &gt; 1) ? parts[parts.length - 1] : null;</span>
+<span class="fc" id="L82">        String[] parts = path.split(&quot;/&quot;);</span>
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">        String filename = (parts.length &gt; 1) ? parts[parts.length - 1] : null;</span>
  
         // Check if the filename is okay
-<span class="nc bnc" id="L86" title="All 4 branches missed.">        if (filename == null || filename.length() &lt; MIN_PREFIX_LENGTH) {</span>
+<span class="pc bpc" id="L86" title="2 of 4 branches missed.">        if (filename == null || filename.length() &lt; MIN_PREFIX_LENGTH) {</span>
 <span class="nc" id="L87">            throw new IllegalArgumentException(&quot;The filename has to be at least 3 characters long.&quot;);</span>
         }
  
         // Prepare temporary file
-<span class="nc bnc" id="L91" title="All 2 branches missed.">        if (temporaryDir == null) {</span>
-<span class="nc" id="L92">            temporaryDir = createTempDirectory(NATIVE_FOLDER_PATH_PREFIX);</span>
-<span class="nc" id="L93">            temporaryDir.deleteOnExit();</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        if (temporaryDir == null) {</span>
+<span class="fc" id="L92">            temporaryDir = createTempDirectory(NATIVE_FOLDER_PATH_PREFIX);</span>
+<span class="fc" id="L93">            temporaryDir.deleteOnExit();</span>
         }
 
-<span class="nc" id="L96">        File temp = new File(temporaryDir, filename);</span>
+<span class="fc" id="L96">        File temp = new File(temporaryDir, filename);</span>
 
-<span class="nc" id="L98">        try (InputStream is = NativeUtils.class.getResourceAsStream(path)) {</span>
-<span class="nc" id="L99">            Files.copy(is, temp.toPath(), StandardCopyOption.REPLACE_EXISTING);</span>
+<span class="fc" id="L98">        try (InputStream is = NativeUtils.class.getResourceAsStream(path)) {</span>
+<span class="fc" id="L99">            Files.copy(is, temp.toPath(), StandardCopyOption.REPLACE_EXISTING);</span>
 <span class="nc" id="L100">        } catch (IOException e) {</span>
 <span class="nc" id="L101">            temp.delete();</span>
 <span class="nc" id="L102">            throw e;</span>
 <span class="nc" id="L103">        } catch (NullPointerException e) {</span>
 <span class="nc" id="L104">            temp.delete();</span>
 <span class="nc" id="L105">            throw new FileNotFoundException(&quot;File &quot; + path + &quot; was not found inside JAR.&quot;);</span>
-<span class="nc" id="L106">        }</span>
+<span class="fc" id="L106">        }</span>
 
         try {
-<span class="nc" id="L109">            System.load(temp.getAbsolutePath());</span>
+<span class="fc" id="L109">            System.load(temp.getAbsolutePath());</span>
         } finally {
-<span class="nc bnc" id="L111" title="All 2 branches missed.">            if (isPosixCompliant()) {</span>
+<span class="pc bpc" id="L111" title="1 of 2 branches missed.">            if (isPosixCompliant()) {</span>
                 // Assume POSIX compliant file system, can be deleted after loading
-<span class="nc" id="L113">                temp.delete();</span>
+<span class="fc" id="L113">                temp.delete();</span>
             } else {
                 // Assume non-POSIX, and don't delete until last file descriptor closed
 <span class="nc" id="L116">                temp.deleteOnExit();</span>
             }
         }
-<span class="nc" id="L119">    }</span>
+<span class="fc" id="L119">    }</span>
 
     private static boolean isPosixCompliant() {
         try {
-<span class="nc" id="L123">            return FileSystems.getDefault()</span>
-<span class="nc" id="L124">                    .supportedFileAttributeViews()</span>
-<span class="nc" id="L125">                    .contains(&quot;posix&quot;);</span>
+<span class="fc" id="L123">            return FileSystems.getDefault()</span>
+<span class="fc" id="L124">                    .supportedFileAttributeViews()</span>
+<span class="fc" id="L125">                    .contains(&quot;posix&quot;);</span>
 <span class="nc" id="L126">        } catch (FileSystemNotFoundException</span>
                 | ProviderNotFoundException
                 | SecurityException e) {
@@ -131,13 +131,13 @@ public class NativeUtils {
     }
 
     private static File createTempDirectory(String prefix) throws IOException {
-<span class="nc" id="L134">        String tempDir = System.getProperty(&quot;java.io.tmpdir&quot;);</span>
-<span class="nc" id="L135">        File generatedDir = new File(tempDir, prefix + System.nanoTime());</span>
+<span class="fc" id="L134">        String tempDir = System.getProperty(&quot;java.io.tmpdir&quot;);</span>
+<span class="fc" id="L135">        File generatedDir = new File(tempDir, prefix + System.nanoTime());</span>
         
-<span class="nc bnc" id="L137" title="All 2 branches missed.">        if (!generatedDir.mkdir())</span>
+<span class="pc bpc" id="L137" title="1 of 2 branches missed.">        if (!generatedDir.mkdir())</span>
 <span class="nc" id="L138">            throw new IOException(&quot;Failed to create temp directory &quot; + generatedDir.getName());</span>
         
-<span class="nc" id="L140">        return generatedDir;</span>
+<span class="fc" id="L140">        return generatedDir;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LogExtension.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.extension.std.log</a> &gt; <span class="el_source">LogExtension.kt</span></div><h1>LogExtension.kt</h1><pre class="source lang-java linenums">package io.hamal.extension.std.log
+
+import io.hamal.lib.kua.extension.NativeExtension
+import io.hamal.lib.kua.extension.NativeExtensionFactory
+import io.hamal.lib.kua.function.Function1In0Out
+import io.hamal.lib.kua.function.FunctionContext
+import io.hamal.lib.kua.function.FunctionInput1Schema
+import io.hamal.lib.kua.value.AnyValue
+
+<span class="fc" id="L10">class LogExtensionFactory : NativeExtensionFactory {</span>
+    override fun create(): NativeExtension {
+<span class="fc" id="L12">        return NativeExtension(</span>
+<span class="fc" id="L13">            name = &quot;log&quot;,</span>
+<span class="fc" id="L14">            values = mapOf(</span>
+<span class="fc" id="L15">                &quot;info&quot; to InfoFunction()</span>
+            )
+        )
+    }
+}
+
+<span class="fc" id="L21">class InfoFunction : Function1In0Out&lt;AnyValue&gt;(</span>
+<span class="fc" id="L22">    FunctionInput1Schema(AnyValue::class)</span>
+) {
+    override fun invoke(ctx: FunctionContext, arg1: AnyValue) {
+<span class="nc" id="L25">        println(&quot;INFO: ${arg1.value}&quot;)</span>
+<span class="nc" id="L26">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

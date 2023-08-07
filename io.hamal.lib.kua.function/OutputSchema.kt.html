@@ -30,13 +30,13 @@ object FunctionOutput0Schema : FunctionOutputSchema&lt;FunctionOutput0&gt; {
 ) : FunctionOutputSchema&lt;FunctionOutput2&lt;ARG_1, ARG_2&gt;&gt; {
 <span class="pc" id="L31">    override val size = 2</span>
     override fun pushResult(ctx: FunctionContext, output: FunctionOutput2&lt;ARG_1, ARG_2&gt;) {
-<span class="pc bpc" id="L33" title="1 of 2 branches missed.">        ctx.push(output.arg1 ?: NilValue)</span>
-<span class="pc bpc" id="L34" title="1 of 2 branches missed.">        ctx.push(output.arg2 ?: NilValue)</span>
+<span class="fc bfc" id="L33" title="All 2 branches covered.">        ctx.push(output.arg1 ?: NilValue)</span>
+<span class="fc bfc" id="L34" title="All 2 branches covered.">        ctx.push(output.arg2 ?: NilValue)</span>
 <span class="fc" id="L35">    }</span>
 }
 
 <span class="fc" id="L38">fun &lt;VALUE : Value&gt; FunctionContext.push(value: VALUE) = when (value) {</span>
-<span class="pc bpc" id="L39" title="1 of 2 branches missed.">    is NilValue -&gt; pushNil()</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">    is NilValue -&gt; pushNil()</span>
 <span class="fc bfc" id="L40" title="All 2 branches covered.">    is NumberValue -&gt; pushNumber(value)</span>
 <span class="fc bfc" id="L41" title="All 2 branches covered.">    is StringValue -&gt; pushString(value)</span>
 <span class="fc bfc" id="L42" title="All 2 branches covered.">    is TableArrayValue -&gt; pushTop(value.index)</span>

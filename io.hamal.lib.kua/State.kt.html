@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>State.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.kua</a> &gt; <span class="el_source">State.kt</span></div><h1>State.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.kua
 
+import io.hamal.lib.kua.function.FunctionValue
 import io.hamal.lib.kua.table.*
 import io.hamal.lib.kua.value.*
 import io.hamal.lib.kua.value.ValueType.Companion.ValueType
 
 @JvmInline
-<span class="nc" id="L8">value class StackTop(val value: Int)</span>
+<span class="nc" id="L9">value class StackTop(val value: Int)</span>
 
 interface State {
     //FIXME probably not a good idea to expose this internal - only for development / prototyping
-    val bridge: Bridge
+    val bridge: Native
     val top: StackTop
 
     fun isEmpty(): Boolean
     fun isNotEmpty(): Boolean
     fun setTop(idx: Int)
+    fun absIndex(idx: Int): Int
     fun pushTop(idx: Int): StackTop
 
     fun type(idx: Int): ValueType
@@ -22,19 +24,21 @@ interface State {
     fun pushAny(value: AnyValue): StackTop
     fun getAnyValue(idx: Int): AnyValue
     fun pushBoolean(value: Boolean): StackTop
-<span class="fc" id="L25">    fun pushBoolean(value: BooleanValue) = pushBoolean(value.value)</span>
+<span class="fc" id="L27">    fun pushBoolean(value: BooleanValue) = pushBoolean(value.value)</span>
     fun getBoolean(idx: Int): Boolean
-<span class="fc" id="L27">    fun getBooleanValue(idx: Int) = booleanOf(getBoolean(idx))</span>
+<span class="fc" id="L29">    fun getBooleanValue(idx: Int) = booleanOf(getBoolean(idx))</span>
     fun pushError(value: ErrorValue): StackTop
+    fun pushFunction(value: FunctionValue&lt;*, *, *, *&gt;): StackTop
+
     fun getNumber(idx: Int): Double
-<span class="fc" id="L30">    fun getNumberValue(idx: Int) = NumberValue(getNumber(idx))</span>
+<span class="fc" id="L34">    fun getNumberValue(idx: Int) = NumberValue(getNumber(idx))</span>
     fun pushNumber(value: Double): StackTop
-<span class="fc" id="L32">    fun pushNumber(value: NumberValue) = pushNumber(value.value)</span>
+<span class="fc" id="L36">    fun pushNumber(value: NumberValue) = pushNumber(value.value)</span>
 
     fun getString(idx: Int): String
-<span class="fc" id="L35">    fun getStringValue(idx: Int) = StringValue(getString(idx))</span>
+<span class="fc" id="L39">    fun getStringValue(idx: Int) = StringValue(getString(idx))</span>
     fun pushString(value: String): StackTop
-<span class="fc" id="L37">    fun pushString(value: StringValue) = pushString(value.value)</span>
+<span class="fc" id="L41">    fun pushString(value: StringValue) = pushString(value.value)</span>
 
     fun pushTable(value: TableValue): StackTop
     fun pushTable(proxy: TableMapValue): StackTop
@@ -43,121 +47,142 @@ interface State {
     fun getTableMap(idx: Int): TableMapValue
     fun getTableArray(idx: Int): TableArrayValue
 
+    fun setGlobal(name: String, value: FunctionValue&lt;*, *, *, *&gt;)
     fun setGlobal(name: String, value: TableMapValue)
     fun setGlobal(name: String, value: TableArrayValue)
     fun getGlobalTableMap(name: String): TableMapValue
+    fun unsetGlobal(name: String)
 
-<span class="nc" id="L50">    fun tableCreateMap(capacity: Int = 0): TableMapValue</span>
-<span class="fc" id="L51">    fun tableCreateArray(capacity: Int = 0): TableArrayValue</span>
-    fun tableInsert(idx: Int): TableLength
+<span class="nc" id="L56">    fun tableCreateMap(capacity: Int = 0): TableMapValue</span>
+<span class="fc" id="L57">    fun tableCreateArray(capacity: Int = 0): TableArrayValue</span>
+    fun tableAppend(idx: Int): TableLength
     fun tableSetRaw(idx: Int): TableLength
     fun tableSetRawIdx(stackIdx: Int, tableIdx: Int): TableLength
     fun tableGetRaw(idx: Int): ValueType
     fun tableGetRawIdx(stackIdx: Int, tableIdx: Int): ValueType
+
+    fun load(code: String) // FIXME add return value
 }
 
-<span class="fc" id="L59">class ClosableState(</span>
-<span class="fc" id="L60">    override val bridge: Bridge</span>
+<span class="fc" id="L67">class ClosableState(</span>
+<span class="fc" id="L68">    override val bridge: Native</span>
 ) : State, AutoCloseable {
-<span class="fc" id="L62">    override val top: StackTop get() = StackTop(bridge.top())</span>
+<span class="fc" id="L70">    override val top: StackTop get() = StackTop(bridge.top())</span>
 
 
-<span class="nc bnc" id="L65" title="All 2 branches missed.">    override fun isEmpty() = bridge.top() == 0</span>
-<span class="nc bnc" id="L66" title="All 2 branches missed.">    override fun isNotEmpty() = !isEmpty()</span>
-<span class="nc" id="L67">    override fun setTop(idx: Int) = bridge.setTop(idx)</span>
-<span class="fc" id="L68">    override fun pushTop(idx: Int): StackTop = StackTop(bridge.pushTop(idx))</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">    override fun isEmpty() = bridge.top() == 0</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">    override fun isNotEmpty() = !isEmpty()</span>
+<span class="nc" id="L75">    override fun setTop(idx: Int) = bridge.setTop(idx)</span>
+<span class="fc" id="L76">    override fun absIndex(idx: Int) = bridge.absIndex(idx)</span>
 
-<span class="fc" id="L70">    override fun type(idx: Int) = ValueType(bridge.type(idx))</span>
-<span class="nc" id="L71">    override fun pushNil() = StackTop(bridge.pushNil())</span>
+<span class="fc" id="L78">    override fun pushTop(idx: Int): StackTop = StackTop(bridge.pushTop(idx))</span>
+
+<span class="fc" id="L80">    override fun type(idx: Int) = ValueType(bridge.type(idx))</span>
+<span class="fc" id="L81">    override fun pushNil() = StackTop(bridge.pushNil())</span>
 
     override fun pushAny(value: AnyValue): StackTop {
-<span class="fc" id="L74">        return when (val underlying = value.value) {</span>
-<span class="fc bfc" id="L75" title="All 2 branches covered.">            is BooleanValue -&gt; pushBoolean(underlying)</span>
-<span class="fc bfc" id="L76" title="All 2 branches covered.">            is NumberValue -&gt; pushNumber(underlying)</span>
-<span class="fc bfc" id="L77" title="All 2 branches covered.">            is StringValue -&gt; pushString(underlying)</span>
-<span class="pc bpc" id="L78" title="1 of 2 branches missed.">            is TableArrayValue -&gt; pushTable(underlying)</span>
-<span class="nc" id="L79">            else -&gt; TODO(&quot;${underlying.javaClass} not supported yet&quot;)</span>
+<span class="fc" id="L84">        return when (val underlying = value.value) {</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">            is BooleanValue -&gt; pushBoolean(underlying)</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">            is NumberValue -&gt; pushNumber(underlying)</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">            is StringValue -&gt; pushString(underlying)</span>
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">            is TableArrayValue -&gt; pushTable(underlying)</span>
+<span class="nc" id="L89">            else -&gt; TODO(&quot;${underlying.javaClass} not supported yet&quot;)</span>
         }
     }
 
     override fun getAnyValue(idx: Int): AnyValue {
-<span class="pc bpc" id="L84" title="1 of 5 branches missed.">        return when (val type = type(idx)) {</span>
-<span class="fc" id="L85">            ValueType.Boolean -&gt; AnyValue(getBooleanValue(idx))</span>
-<span class="fc" id="L86">            ValueType.Number -&gt; AnyValue(getNumberValue(idx))</span>
-<span class="fc" id="L87">            ValueType.String -&gt; AnyValue(getStringValue(idx))</span>
-<span class="fc" id="L88">            ValueType.Table -&gt; AnyValue(getTableMap(idx)) // FIXME what about table and array ?</span>
-<span class="nc" id="L89">            else -&gt; TODO(&quot;$type not supported yet&quot;)</span>
+<span class="pc bpc" id="L94" title="1 of 5 branches missed.">        return when (val type = type(idx)) {</span>
+<span class="fc" id="L95">            ValueType.Boolean -&gt; AnyValue(getBooleanValue(idx))</span>
+<span class="fc" id="L96">            ValueType.Number -&gt; AnyValue(getNumberValue(idx))</span>
+<span class="fc" id="L97">            ValueType.String -&gt; AnyValue(getStringValue(idx))</span>
+<span class="fc" id="L98">            ValueType.Table -&gt; AnyValue(getTableMap(idx)) // FIXME what about table and array ?</span>
+<span class="nc" id="L99">            else -&gt; TODO(&quot;$type not supported yet&quot;)</span>
         }
     }
 
-<span class="fc" id="L93">    override fun pushBoolean(value: Boolean): StackTop = StackTop(bridge.pushBoolean(value))</span>
-<span class="fc" id="L94">    override fun getBoolean(idx: Int): Boolean = bridge.toBoolean(idx)</span>
-<span class="fc" id="L95">    override fun pushError(value: ErrorValue) = StackTop(bridge.pushError(value.message))</span>
+<span class="fc" id="L103">    override fun pushBoolean(value: Boolean): StackTop = StackTop(bridge.pushBoolean(value))</span>
+<span class="fc" id="L104">    override fun getBoolean(idx: Int): Boolean = bridge.toBoolean(idx)</span>
+<span class="fc" id="L105">    override fun pushError(value: ErrorValue) = StackTop(bridge.pushError(value.message))</span>
+<span class="fc" id="L106">    override fun pushFunction(value: FunctionValue&lt;*, *, *, *&gt;) = StackTop(bridge.pushFunctionValue(value))</span>
 
-<span class="fc" id="L97">    override fun getNumber(idx: Int) = bridge.toNumber(idx)</span>
-<span class="fc" id="L98">    override fun pushNumber(value: Double) = StackTop(bridge.pushNumber(value))</span>
-<span class="fc" id="L99">    override fun getString(idx: Int) = bridge.toString(idx)</span>
-<span class="fc" id="L100">    override fun pushString(value: String) = StackTop(bridge.pushString(value))</span>
+<span class="fc" id="L108">    override fun getNumber(idx: Int) = bridge.toNumber(idx)</span>
+<span class="fc" id="L109">    override fun pushNumber(value: Double) = StackTop(bridge.pushNumber(value))</span>
+<span class="fc" id="L110">    override fun getString(idx: Int) = bridge.toString(idx)</span>
+<span class="fc" id="L111">    override fun pushString(value: String) = StackTop(bridge.pushString(value))</span>
 
     override fun pushTable(value: TableValue): StackTop {
-<span class="nc" id="L103">        TODO(&quot;Not yet implemented&quot;)</span>
+<span class="nc" id="L114">        TODO(&quot;Not yet implemented&quot;)</span>
     }
 
-<span class="fc" id="L106">    override fun pushTable(proxy: TableMapValue) = StackTop(bridge.pushTop(proxy.index))</span>
+<span class="fc" id="L117">    override fun pushTable(proxy: TableMapValue) = StackTop(bridge.pushTop(proxy.index))</span>
 
-<span class="fc" id="L108">    override fun pushTable(proxy: TableArrayValue) = StackTop(bridge.pushTop(proxy.index))</span>
+<span class="fc" id="L119">    override fun pushTable(proxy: TableArrayValue) = StackTop(bridge.pushTop(proxy.index))</span>
 
     override fun getTable(idx: Int): TableValue {
-<span class="nc" id="L111">        TODO(&quot;Not yet implemented&quot;)</span>
+<span class="nc" id="L122">        TODO(&quot;Not yet implemented&quot;)</span>
     }
 
     //FIXME type check
-<span class="fc" id="L115">    override fun getTableMap(idx: Int): TableMapValue = TableProxyValue(idx, this, TableType.Map)</span>
+<span class="fc" id="L126">    override fun getTableMap(idx: Int): TableMapValue = TableProxyValue(absIndex(idx), this, TableType.Map)</span>
 
     //FIXME type check
-<span class="nc" id="L118">    override fun getTableArray(idx: Int): TableArrayValue = TableProxyValue(idx, this, TableType.Array)</span>
+<span class="nc" id="L129">    override fun getTableArray(idx: Int): TableArrayValue = TableProxyValue(absIndex(idx), this, TableType.Array)</span>
+
+    override fun setGlobal(name: String, value: FunctionValue&lt;*, *, *, *&gt;) {
+<span class="fc" id="L132">        bridge.pushFunctionValue(value)</span>
+<span class="fc" id="L133">        bridge.setGlobal(name)</span>
+<span class="fc" id="L134">    }</span>
 
     override fun setGlobal(name: String, value: TableMapValue) {
-<span class="fc" id="L121">        bridge.pushTop(value.index)</span>
-<span class="fc" id="L122">        bridge.setGlobal(name)</span>
-<span class="fc" id="L123">    }</span>
+<span class="fc" id="L137">        bridge.pushTop(value.index)</span>
+<span class="fc" id="L138">        bridge.setGlobal(name)</span>
+<span class="fc" id="L139">    }</span>
 
     override fun setGlobal(name: String, value: TableArrayValue) {
-<span class="fc" id="L126">        bridge.pushTop(value.index)</span>
-<span class="fc" id="L127">        bridge.setGlobal(name)</span>
-<span class="fc" id="L128">    }</span>
+<span class="fc" id="L142">        bridge.pushTop(value.index)</span>
+<span class="fc" id="L143">        bridge.setGlobal(name)</span>
+<span class="fc" id="L144">    }</span>
 
     override fun getGlobalTableMap(name: String): TableMapValue {
-<span class="nc" id="L131">        bridge.getGlobal(name)</span>
-<span class="nc" id="L132">        return getTableMap(top.value)</span>
+<span class="fc" id="L147">        bridge.getGlobal(name)</span>
+<span class="fc" id="L148">        return getTableMap(top.value)</span>
     }
 
+    override fun unsetGlobal(name: String) {
+<span class="fc" id="L152">        bridge.pushNil()</span>
+<span class="fc" id="L153">        bridge.setGlobal(name)</span>
+<span class="fc" id="L154">    }</span>
+
     override fun tableCreateMap(capacity: Int): TableMapValue {
-<span class="fc" id="L136">        return TableProxyValue(</span>
-<span class="fc" id="L137">            index = bridge.tableCreate(0, capacity),</span>
-<span class="fc" id="L138">            state = this,</span>
-<span class="fc" id="L139">            type = TableType.Map</span>
+<span class="fc" id="L157">        return TableProxyValue(</span>
+<span class="fc" id="L158">            index = bridge.tableCreate(0, capacity),</span>
+<span class="fc" id="L159">            state = this,</span>
+<span class="fc" id="L160">            type = TableType.Map</span>
         )
     }
 
     override fun tableCreateArray(capacity: Int): TableArrayValue {
-<span class="fc" id="L144">        return TableProxyValue(</span>
-<span class="fc" id="L145">            index = bridge.tableCreate(capacity, 0),</span>
-<span class="fc" id="L146">            state = this,</span>
-<span class="fc" id="L147">            type = TableType.Array</span>
+<span class="fc" id="L165">        return TableProxyValue(</span>
+<span class="fc" id="L166">            index = bridge.tableCreate(capacity, 0),</span>
+<span class="fc" id="L167">            state = this,</span>
+<span class="fc" id="L168">            type = TableType.Array</span>
         )
     }
 
-<span class="fc" id="L151">    override fun tableInsert(idx: Int) = TableLength(bridge.tableInsert(idx))</span>
-<span class="fc" id="L152">    override fun tableSetRaw(idx: Int) = TableLength(bridge.tableSetRaw(idx))</span>
-<span class="nc" id="L153">    override fun tableSetRawIdx(stackIdx: Int, tableIdx: Int) = TableLength(bridge.tableSetRawIdx(stackIdx, tableIdx))</span>
-<span class="fc" id="L154">    override fun tableGetRaw(idx: Int) = ValueType.ValueType(bridge.tableGetRaw(idx))</span>
+<span class="fc" id="L172">    override fun tableAppend(idx: Int) = TableLength(bridge.tableAppend(idx))</span>
+<span class="fc" id="L173">    override fun tableSetRaw(idx: Int) = TableLength(bridge.tableSetRaw(idx))</span>
+<span class="nc" id="L174">    override fun tableSetRawIdx(stackIdx: Int, tableIdx: Int) = TableLength(bridge.tableSetRawIdx(stackIdx, tableIdx))</span>
+<span class="fc" id="L175">    override fun tableGetRaw(idx: Int) = ValueType.ValueType(bridge.tableGetRaw(idx))</span>
     override fun tableGetRawIdx(stackIdx: Int, tableIdx: Int) =
-<span class="fc" id="L156">        ValueType.ValueType(bridge.tableGetRawIdx(stackIdx, tableIdx))</span>
+<span class="fc" id="L177">        ValueType.ValueType(bridge.tableGetRawIdx(stackIdx, tableIdx))</span>
+
+    override fun load(code: String) {
+<span class="fc" id="L180">        bridge.load(code)</span>
+<span class="fc" id="L181">    }</span>
 
     override fun close() {
-<span class="fc" id="L159">        bridge.close()</span>
-<span class="fc" id="L160">    }</span>
+<span class="fc" id="L184">        bridge.close()</span>
+<span class="fc" id="L185">    }</span>
 }
 
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

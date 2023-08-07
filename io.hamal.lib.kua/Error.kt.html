@@ -2,8 +2,12 @@
 
 import io.hamal.lib.kua.value.NumberValue
 
-<span class="fc" id="L5">data class ExitError(val status: NumberValue) : Exception(status.toString())</span>
+<span class="fc" id="L5">data class ExitError(val status: NumberValue) : Error(status.toString())</span>
 
-<span class="fc" id="L7">class KuaError(message: String, cause: Throwable) : Error(message, cause)</span>
+<span class="fc" id="L7">class AssertionError(message: String) : Error(message)</span>
+
+<span class="fc" id="L9">class ScriptError(message: String) : Error(message)</span>
+
+<span class="fc" id="L11">class ExtensionError(message: String, cause: Throwable) : Error(message, cause)</span>
 
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

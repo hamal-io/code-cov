@@ -51,8 +51,8 @@ fun &lt;ARG : Value&gt; KClass&lt;ARG&gt;.extract(ctx: FunctionContext, idx: Int
 <span class="fc bfc" id="L51" title="All 2 branches covered.">        StringValue::class -&gt; ctx.getStringValue(idx) as ARG</span>
 <span class="pc bpc" id="L52" title="1 of 2 branches missed.">        TableValue::class -&gt; TODO() //FIXME loads the entire table from lua -- maybe some form of readonly table value and table value is interface?!</span>
 //        TableProxyValue::class -&gt; TableProxyValue(TableProxyContext(idx, ctx.state)) as ARG
-<span class="pc bpc" id="L54" title="1 of 2 branches missed.">        TableMapValue::class -&gt; TableProxyValue(idx, ctx.state, TableType.Map) as ARG</span>
-<span class="nc bnc" id="L55" title="All 2 branches missed.">        TableArrayValue::class -&gt; TableProxyValue(idx, ctx.state, TableType.Array) as ARG</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">        TableMapValue::class -&gt; TableProxyValue(idx, ctx.state, TableType.Map) as ARG</span>
+<span class="pc bpc" id="L55" title="1 of 2 branches missed.">        TableArrayValue::class -&gt; TableProxyValue(idx, ctx.state, TableType.Array) as ARG</span>
 <span class="nc" id="L56">        else -&gt; TODO()</span>
     }
 }

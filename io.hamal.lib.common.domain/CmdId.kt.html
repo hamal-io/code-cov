@@ -9,21 +9,24 @@ import kotlinx.serialization.encoding.Encoder
 import java.math.BigInteger
 
 <span class="pc" id="L11">@Serializable(with = CmdId.Serializer::class)</span>
-<span class="fc" id="L12">data class CmdId(val value: BigInteger) : Comparable&lt;CmdId&gt; {</span>
-<span class="nc" id="L13">    constructor(value: ByteArray) : this(BigInteger(value))</span>
-<span class="fc" id="L14">    constructor(value: Int) : this(value.toBigInteger())</span>
-<span class="fc" id="L15">    constructor(value: Long) : this(value.toBigInteger())</span>
-<span class="fc" id="L16">    constructor(value: String) : this(BigInteger(value, 16))</span>
-<span class="fc" id="L17">    constructor(value: DomainId) : this(value.value.value)</span>
+<span class="fc" id="L12">data class CmdId(val value: String) : Comparable&lt;CmdId&gt; {</span>
+
+    // FIXME make sure its max 255 chars
+
+<span class="nc" id="L16">    constructor(value: ByteArray) : this(String(value))</span>
+<span class="fc" id="L17">    constructor(value: Int) : this(value.toString())</span>
+<span class="fc" id="L18">    constructor(value: Long) : this(value.toString())</span>
+<span class="fc" id="L19">    constructor(value: BigInteger) : this(value.toString())</span>
+<span class="fc" id="L20">    constructor(value: DomainId) : this(value.value.value)</span>
 
     object Serializer : KSerializer&lt;CmdId&gt; {
-<span class="fc" id="L20">        override val descriptor = PrimitiveSerialDescriptor(&quot;CommandId&quot;, PrimitiveKind.STRING)</span>
-<span class="fc" id="L21">        override fun deserialize(decoder: Decoder) = CmdId(decoder.decodeString())</span>
+<span class="fc" id="L23">        override val descriptor = PrimitiveSerialDescriptor(&quot;CmdId&quot;, PrimitiveKind.STRING)</span>
+<span class="fc" id="L24">        override fun deserialize(decoder: Decoder) = CmdId(decoder.decodeString())</span>
         override fun serialize(encoder: Encoder, value: CmdId) {
-<span class="fc" id="L23">            encoder.encodeString(value.value.toString(16))</span>
-<span class="fc" id="L24">        }</span>
+<span class="fc" id="L26">            encoder.encodeString(value.value)</span>
+<span class="fc" id="L27">        }</span>
     }
 
-<span class="nc" id="L27">    override fun compareTo(other: CmdId) = value.compareTo(other.value)</span>
+<span class="nc" id="L30">    override fun compareTo(other: CmdId) = value.compareTo(other.value)</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

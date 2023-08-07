@@ -4,6 +4,7 @@ import io.hamal.backend.instance.event.SystemEventEmitter
 import io.hamal.backend.instance.req.InvokeFixedRate
 import io.hamal.backend.instance.req.SubmitRequest
 import io.hamal.backend.repository.api.TriggerQueryRepository
+import io.hamal.lib.common.SnowflakeId
 import io.hamal.lib.common.domain.Limit
 import io.hamal.lib.common.util.TimeUtils.now
 import io.hamal.lib.domain.FixedRateTrigger
@@ -21,53 +22,53 @@ import org.springframework.stereotype.Service
 import java.time.Instant
 import java.util.concurrent.TimeUnit
 
-<span class="fc" id="L24">@Service</span>
+<span class="fc" id="L25">@Service</span>
 class FixedRateTriggerService
-<span class="fc" id="L26">@Autowired constructor(</span>
-<span class="pc" id="L27">    internal val triggerQueryRepository: TriggerQueryRepository,</span>
-<span class="pc" id="L28">    internal val eventEmitter: SystemEventEmitter&lt;*&gt;,</span>
-<span class="pc" id="L29">    internal val submitRequest: SubmitRequest,</span>
-<span class="pc" id="L30">    internal val generateDomainId: GenerateDomainId</span>
+<span class="fc" id="L27">@Autowired constructor(</span>
+<span class="pc" id="L28">    internal val triggerQueryRepository: TriggerQueryRepository,</span>
+<span class="pc" id="L29">    internal val eventEmitter: SystemEventEmitter&lt;*&gt;,</span>
+<span class="pc" id="L30">    internal val submitRequest: SubmitRequest,</span>
+<span class="pc" id="L31">    internal val generateDomainId: GenerateDomainId</span>
 ) {
 
-<span class="fc" id="L33">    private val plannedInvocations = mutableMapOf&lt;Trigger, Instant&gt;()</span>
+<span class="fc" id="L34">    private val plannedInvocations = mutableMapOf&lt;Trigger, Instant&gt;()</span>
 
     @PostConstruct
     fun setup() {
-<span class="fc" id="L37">        triggerQueryRepository.list {</span>
-<span class="fc" id="L38">            afterId = TriggerId(0)</span>
-<span class="fc" id="L39">            limit = Limit(10)</span>
-<span class="fc" id="L40">        }.filterIsInstance&lt;FixedRateTrigger&gt;().forEach {</span>
-<span class="nc" id="L41">            plannedInvocations[it] = now().plusMillis(it.duration.inWholeSeconds)</span>
-<span class="nc" id="L42">        }</span>
-<span class="fc" id="L43">    }</span>
+<span class="fc" id="L38">        triggerQueryRepository.list {</span>
+<span class="fc" id="L39">            afterId = TriggerId(SnowflakeId(Long.MAX_VALUE))</span>
+<span class="fc" id="L40">            limit = Limit(10)</span>
+<span class="fc" id="L41">        }.filterIsInstance&lt;FixedRateTrigger&gt;().forEach {</span>
+<span class="nc" id="L42">            plannedInvocations[it] = now().plusMillis(it.duration.inWholeSeconds)</span>
+<span class="nc" id="L43">        }</span>
+<span class="fc" id="L44">    }</span>
 
     fun triggerAdded(fixedRateTrigger: FixedRateTrigger) {
-<span class="fc" id="L46">        plannedInvocations.putIfAbsent(</span>
-<span class="fc" id="L47">            fixedRateTrigger,</span>
-<span class="fc" id="L48">            now().plusSeconds(fixedRateTrigger.duration.inWholeSeconds)</span>
+<span class="fc" id="L47">        plannedInvocations.putIfAbsent(</span>
+<span class="fc" id="L48">            fixedRateTrigger,</span>
+<span class="fc" id="L49">            now().plusSeconds(fixedRateTrigger.duration.inWholeSeconds)</span>
         )
-<span class="fc" id="L50">    }</span>
+<span class="fc" id="L51">    }</span>
 
 
     @Scheduled(fixedRate = 1, timeUnit = TimeUnit.SECONDS)
     fun run() {
-<span class="pc" id="L55">        plannedInvocations.filter { now().isAfter(it.value) }.forEach { (trigger, _) -&gt;</span>
-<span class="nc bnc" id="L56" title="All 2 branches missed.">            require(trigger is FixedRateTrigger)</span>
-<span class="nc" id="L57">            plannedInvocations[trigger] = now().plusSeconds(trigger.duration.inWholeSeconds)</span>
-<span class="nc" id="L58">            requestInvocation(trigger)</span>
-<span class="nc" id="L59">        }</span>
-<span class="fc" id="L60">    }</span>
+<span class="pc" id="L56">        plannedInvocations.filter { now().isAfter(it.value) }.forEach { (trigger, _) -&gt;</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">            require(trigger is FixedRateTrigger)</span>
+<span class="nc" id="L58">            plannedInvocations[trigger] = now().plusSeconds(trigger.duration.inWholeSeconds)</span>
+<span class="nc" id="L59">            requestInvocation(trigger)</span>
+<span class="nc" id="L60">        }</span>
+<span class="fc" id="L61">    }</span>
 }
 
 internal fun FixedRateTriggerService.requestInvocation(trigger: FixedRateTrigger) {
-<span class="nc" id="L64">    submitRequest(</span>
-<span class="nc" id="L65">        InvokeFixedRate(</span>
-<span class="nc" id="L66">            execId = generateDomainId(::ExecId),</span>
-<span class="nc" id="L67">            funcId = trigger.funcId,</span>
-<span class="nc bnc" id="L68" title="All 2 branches missed.">            correlationId = trigger.correlationId ?: CorrelationId(&quot;__default__&quot;),</span>
-<span class="nc" id="L69">            inputs = InvocationInputs(TableValue()),</span>
+<span class="nc" id="L65">    submitRequest(</span>
+<span class="nc" id="L66">        InvokeFixedRate(</span>
+<span class="nc" id="L67">            execId = generateDomainId(::ExecId),</span>
+<span class="nc" id="L68">            funcId = trigger.funcId,</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">            correlationId = trigger.correlationId ?: CorrelationId(&quot;__default__&quot;),</span>
+<span class="nc" id="L70">            inputs = InvocationInputs(TableValue()),</span>
         )
     )
-<span class="nc" id="L72">}</span>
+<span class="nc" id="L73">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
