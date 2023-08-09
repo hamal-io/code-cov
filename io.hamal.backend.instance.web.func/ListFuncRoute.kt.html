@@ -3,7 +3,7 @@
 import io.hamal.backend.repository.api.FuncQueryRepository
 import io.hamal.lib.common.domain.Limit
 import io.hamal.lib.domain.vo.*
-import io.hamal.lib.sdk.domain.ListFuncsResponse
+import io.hamal.lib.sdk.domain.ApiFuncList
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.*
     fun listFunc(
         @RequestParam(required = false, name = &quot;after_id&quot;, defaultValue = &quot;${Long.MAX_VALUE}&quot;) afterId: FuncId,
         @RequestParam(required = false, name = &quot;limit&quot;, defaultValue = &quot;100&quot;) limit: Limit
-    ): ResponseEntity&lt;ListFuncsResponse&gt; {
+    ): ResponseEntity&lt;ApiFuncList&gt; {
 <span class="fc" id="L19">        val result = funcQueryRepository.list {</span>
 <span class="fc" id="L20">            this.afterId = afterId</span>
 <span class="fc" id="L21">            this.limit = limit</span>
 <span class="fc" id="L22">        }</span>
-<span class="fc" id="L23">        return ResponseEntity.ok(ListFuncsResponse(</span>
+<span class="fc" id="L23">        return ResponseEntity.ok(ApiFuncList(</span>
 <span class="fc" id="L24">            result.map {</span>
-<span class="fc" id="L25">                ListFuncsResponse.Func(</span>
+<span class="fc" id="L25">                ApiFuncList.ApiSimpleFunc(</span>
 <span class="fc" id="L26">                    id = it.id,</span>
 <span class="fc" id="L27">                    name = it.name</span>
                 )

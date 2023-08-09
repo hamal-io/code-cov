@@ -76,8 +76,8 @@ interface SystemEventServiceFactory {
 <span class="fc" id="L76">                                    try {</span>
 <span class="fc" id="L77">                                        val cmdId = CmdId(md5(&quot;${evt.topic}-${chunkId.value.value}&quot;))</span>
 <span class="fc" id="L78">                                        handler.handle(cmdId, evt)</span>
-<span class="nc" id="L79">                                    } catch (t: Throwable) {</span>
-<span class="nc" id="L80">                                        t.printStackTrace()</span>
+<span class="fc" id="L79">                                    } catch (t: Throwable) {</span>
+<span class="fc" id="L80">                                        t.printStackTrace()</span>
 //                                        throw Error(t)
                                     }
 <span class="fc" id="L83">                                }</span>

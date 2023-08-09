@@ -3,7 +3,7 @@
 import io.hamal.backend.repository.api.ExecQueryRepository
 import io.hamal.lib.common.domain.Limit
 import io.hamal.lib.domain.vo.ExecId
-import io.hamal.lib.sdk.domain.ListExecsResponse
+import io.hamal.lib.sdk.domain.ApiExecList
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -17,15 +17,15 @@ import org.springframework.web.bind.annotation.RestController
     fun list(
         @RequestParam(required = false, name = &quot;after_id&quot;, defaultValue = &quot;${Long.MAX_VALUE}&quot;) afterId: ExecId,
         @RequestParam(required = false, name = &quot;limit&quot;, defaultValue = &quot;100&quot;) limit: Limit
-    ): ResponseEntity&lt;ListExecsResponse&gt; {
+    ): ResponseEntity&lt;ApiExecList&gt; {
 <span class="fc" id="L21">        val execs = execQueryRepository.list {</span>
 <span class="fc" id="L22">            this.afterId = afterId</span>
 <span class="fc" id="L23">            this.limit = limit</span>
 <span class="fc" id="L24">        }</span>
 <span class="fc" id="L25">        return ResponseEntity.ok(</span>
-<span class="fc" id="L26">            ListExecsResponse(</span>
+<span class="fc" id="L26">            ApiExecList(</span>
 <span class="fc" id="L27">                execs = execs.map {</span>
-<span class="fc" id="L28">                    ListExecsResponse.Exec(</span>
+<span class="fc" id="L28">                    ApiExecList.SimpleExec(</span>
 <span class="fc" id="L29">                        id = it.id,</span>
 <span class="fc" id="L30">                        status = it.status,</span>
 <span class="fc" id="L31">                        correlation = it.correlation,</span>

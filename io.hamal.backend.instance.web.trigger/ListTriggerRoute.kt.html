@@ -4,7 +4,7 @@ import io.hamal.backend.repository.api.TriggerQueryRepository
 import io.hamal.lib.common.domain.Limit
 import io.hamal.lib.domain._enum.TriggerType
 import io.hamal.lib.domain.vo.TriggerId
-import io.hamal.lib.sdk.domain.ListTriggersResponse
+import io.hamal.lib.sdk.domain.ApiTriggerList
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -19,16 +19,16 @@ import org.springframework.web.bind.annotation.RestController
     fun listTrigger(
         @RequestParam(required = false, name = &quot;after_id&quot;, defaultValue = &quot;${Long.MAX_VALUE}&quot;) triggerId: TriggerId,
         @RequestParam(required = false, name = &quot;limit&quot;, defaultValue = &quot;100&quot;) limit: Limit
-    ): ResponseEntity&lt;ListTriggersResponse&gt; {
+    ): ResponseEntity&lt;ApiTriggerList&gt; {
 <span class="fc" id="L23">        val result = triggerQueryRepository.list {</span>
 <span class="fc" id="L24">            this.afterId = triggerId</span>
 <span class="fc" id="L25">            this.types = TriggerType.values().toSet()</span>
 <span class="fc" id="L26">            this.limit = limit</span>
 <span class="fc" id="L27">        }</span>
 <span class="fc" id="L28">        return ResponseEntity.ok(</span>
-<span class="fc" id="L29">            ListTriggersResponse(</span>
+<span class="fc" id="L29">            ApiTriggerList(</span>
 <span class="fc" id="L30">                result.map {</span>
-<span class="fc" id="L31">                    ListTriggersResponse.Trigger(</span>
+<span class="fc" id="L31">                    ApiTriggerList.ApiSimpleTrigger(</span>
 <span class="fc" id="L32">                        id = it.id,</span>
 <span class="fc" id="L33">                        name = it.name</span>
                     )
