@@ -19,38 +19,40 @@ import org.springframework.stereotype.Component
 
     private fun doFilter(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
 <span class="nc" id="L21">        val path = request.servletPath</span>
-<span class="nc bnc" id="L22" title="All 2 branches missed.">        if (fileExtensions.stream().anyMatch { path.contains(it) }) {</span>
-<span class="nc" id="L23">            resourceToResponse(&quot;static$path&quot;, response)</span>
+<span class="nc bnc" id="L22" title="All 2 branches missed.">        if (path.startsWith(&quot;/v1&quot;)) {</span>
+<span class="nc" id="L23">            chain.doFilter(request, response)</span>
+<span class="nc bnc" id="L24" title="All 2 branches missed.">        } else if (fileExtensions.stream().anyMatch { path.contains(it) }) {</span>
+<span class="nc" id="L25">            resourceToResponse(&quot;static$path&quot;, response)</span>
         } else {
-<span class="nc" id="L25">            resourceToResponse(&quot;static/index.html&quot;, response)</span>
+<span class="nc" id="L27">            resourceToResponse(&quot;static/index.html&quot;, response)</span>
         }
-<span class="nc" id="L27">    }</span>
+<span class="nc" id="L29">    }</span>
 
     private fun resourceToResponse(resourcePath: String, response: HttpServletResponse) {
-<span class="nc" id="L30">        val inputStream = Thread.currentThread().contextClassLoader.getResourceAsStream(resourcePath)</span>
+<span class="nc" id="L32">        val inputStream = Thread.currentThread().contextClassLoader.getResourceAsStream(resourcePath)</span>
 
-<span class="nc bnc" id="L32" title="All 2 branches missed.">        if (inputStream == null) {</span>
-<span class="nc" id="L33">            response.sendError(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.reasonPhrase)</span>
-<span class="nc" id="L34">            return</span>
+<span class="nc bnc" id="L34" title="All 2 branches missed.">        if (inputStream == null) {</span>
+<span class="nc" id="L35">            response.sendError(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.reasonPhrase)</span>
+<span class="nc" id="L36">            return</span>
         }
 
-<span class="nc bnc" id="L37" title="All 2 branches missed.">        if (resourcePath.endsWith(&quot;.html&quot;)) {</span>
-<span class="nc" id="L38">            response.contentType = &quot;text/html&quot;</span>
+<span class="nc bnc" id="L39" title="All 2 branches missed.">        if (resourcePath.endsWith(&quot;.html&quot;)) {</span>
+<span class="nc" id="L40">            response.contentType = &quot;text/html&quot;</span>
         }
-<span class="nc bnc" id="L40" title="All 2 branches missed.">        if (resourcePath.endsWith(&quot;.css&quot;)) {</span>
-<span class="nc" id="L41">            response.contentType = &quot;text/css&quot;</span>
+<span class="nc bnc" id="L42" title="All 2 branches missed.">        if (resourcePath.endsWith(&quot;.css&quot;)) {</span>
+<span class="nc" id="L43">            response.contentType = &quot;text/css&quot;</span>
         }
-<span class="nc bnc" id="L43" title="All 2 branches missed.">        if (resourcePath.endsWith(&quot;.js&quot;)) {</span>
-<span class="nc" id="L44">            response.contentType = &quot;text/javascript&quot;</span>
+<span class="nc bnc" id="L45" title="All 2 branches missed.">        if (resourcePath.endsWith(&quot;.js&quot;)) {</span>
+<span class="nc" id="L46">            response.contentType = &quot;text/javascript&quot;</span>
         }
 
-<span class="nc" id="L47">        inputStream.transferTo(response.outputStream)</span>
-<span class="nc" id="L48">    }</span>
+<span class="nc" id="L49">        inputStream.transferTo(response.outputStream)</span>
+<span class="nc" id="L50">    }</span>
 
-<span class="nc" id="L50">    private val fileExtensions: List&lt;String&gt; = mutableListOf(</span>
-<span class="nc" id="L51">        &quot;html&quot;, &quot;js&quot;, &quot;json&quot;, &quot;csv&quot;, &quot;css&quot;, &quot;png&quot;,</span>
-<span class="nc" id="L52">        &quot;svg&quot;, &quot;eot&quot;, &quot;ttf&quot;, &quot;woff&quot;, &quot;appcache&quot;,</span>
-<span class="nc" id="L53">        &quot;jpg&quot;, &quot;jpeg&quot;, &quot;gif&quot;, &quot;ico&quot;</span>
+<span class="nc" id="L52">    private val fileExtensions: List&lt;String&gt; = mutableListOf(</span>
+<span class="nc" id="L53">        &quot;html&quot;, &quot;js&quot;, &quot;json&quot;, &quot;csv&quot;, &quot;css&quot;, &quot;png&quot;,</span>
+<span class="nc" id="L54">        &quot;svg&quot;, &quot;eot&quot;, &quot;ttf&quot;, &quot;woff&quot;, &quot;appcache&quot;,</span>
+<span class="nc" id="L55">        &quot;jpg&quot;, &quot;jpeg&quot;, &quot;gif&quot;, &quot;ico&quot;</span>
     )
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

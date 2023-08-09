@@ -21,19 +21,18 @@ import kotlinx.serialization.Serializable
 <span class="fc" id="L21">}</span>
 
 <span class="pc" id="L23">enum class ExecStatus(val value: Int) {</span>
-
-<span class="fc" id="L25">    Planned(1),</span>
-<span class="fc" id="L26">    Scheduled(2),</span>
-<span class="fc" id="L27">    Queued(3),</span>
-<span class="fc" id="L28">    Started(4),</span>
-<span class="fc" id="L29">    Completed(5),</span>
-<span class="fc" id="L30">    Failed(6);</span>
+<span class="fc" id="L24">    Planned(1),</span>
+<span class="fc" id="L25">    Scheduled(2),</span>
+<span class="fc" id="L26">    Queued(3),</span>
+<span class="fc" id="L27">    Started(4),</span>
+<span class="fc" id="L28">    Completed(5),</span>
+<span class="fc" id="L29">    Failed(6);</span>
 
     companion object {
-<span class="nc bnc" id="L33" title="All 2 branches missed.">        fun valueOf(value: Int) = requireNotNull(mapped[value]) { &quot;$value is not an exec status&quot; }</span>
+<span class="nc bnc" id="L32" title="All 2 branches missed.">        fun valueOf(value: Int) = requireNotNull(mapped[value]) { &quot;$value is not an exec status&quot; }</span>
 
-<span class="fc" id="L35">        private val mapped = ExecStatus.values()</span>
-<span class="fc" id="L36">            .associateBy { it.value }</span>
+<span class="fc" id="L34">        private val mapped = ExecStatus.values()</span>
+<span class="fc" id="L35">            .associateBy { it.value }</span>
     }
 }
 

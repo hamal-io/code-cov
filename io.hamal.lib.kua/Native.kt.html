@@ -3,7 +3,9 @@
 import io.hamal.lib.kua.function.FunctionValue
 import io.hamal.lib.kua.value.ErrorValue
 
-<span class="fc" id="L6">class Native : AutoCloseable {</span>
+<span class="fc" id="L6">class Native(</span>
+<span class="pc" id="L7">    val sandbox: Sandbox</span>
+) : AutoCloseable {
 
     external fun luaVersionNumber(): Int
     external fun luaIntegerWidth(): Int
@@ -50,16 +52,16 @@ import io.hamal.lib.kua.value.ErrorValue
     private external fun initConnection()
     private external fun closeConnection()
 
-<span class="fc" id="L53">    init {</span>
-<span class="fc" id="L54">        initConnection()</span>
-<span class="fc" id="L55">    }</span>
+<span class="fc" id="L55">    init {</span>
+<span class="fc" id="L56">        initConnection()</span>
+<span class="fc" id="L57">    }</span>
 
     override fun close() {
-<span class="fc" id="L58">        closeConnection()</span>
-<span class="fc" id="L59">    }</span>
+<span class="fc" id="L60">        closeConnection()</span>
+<span class="fc" id="L61">    }</span>
 
     override fun toString(): String {
-<span class="nc" id="L62">        return &quot;State&quot;</span>
+<span class="nc" id="L64">        return &quot;State&quot;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

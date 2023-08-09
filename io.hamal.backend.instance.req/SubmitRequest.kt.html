@@ -1,154 +1,146 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SubmitRequest.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.instance.req</a> &gt; <span class="el_source">SubmitRequest.kt</span></div><h1>SubmitRequest.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.instance.req
 
+import io.hamal.backend.repository.api.FuncQueryRepository
 import io.hamal.backend.repository.api.ReqCmdRepository
-import io.hamal.lib.domain.CorrelatedState
-import io.hamal.lib.domain.EventInvocation
-import io.hamal.lib.domain.ReqId
+import io.hamal.lib.domain.*
 import io.hamal.lib.domain.req.*
 import io.hamal.lib.domain.vo.*
 import io.hamal.lib.domain.vo.port.GenerateDomainId
-import org.springframework.beans.factory.annotation.Autowired
+import io.hamal.lib.kua.value.CodeValue
 import org.springframework.stereotype.Component
 
 
-<span class="nc" id="L14">data class InvokeFixedRate(</span>
-<span class="nc" id="L15">    val execId: ExecId,</span>
-<span class="nc" id="L16">    val funcId: FuncId,</span>
-<span class="nc" id="L17">    val correlationId: CorrelationId,</span>
-<span class="nc" id="L18">    val inputs: InvocationInputs,</span>
+<span class="nc" id="L13">data class InvokeExec(</span>
+<span class="nc" id="L14">    val execId: ExecId,</span>
+<span class="nc" id="L15">    val funcId: FuncId,</span>
+<span class="nc" id="L16">    val correlationId: CorrelationId?,</span>
+<span class="nc" id="L17">    val inputs: InvocationInputs,</span>
+<span class="nc" id="L18">    val invocation: Invocation,</span>
+<span class="nc" id="L19">    val code: CodeValue</span>
 )
 
-<span class="nc" id="L21">data class InvokeEvent(</span>
-<span class="nc" id="L22">    val execId: ExecId,</span>
-<span class="nc" id="L23">    val funcId: FuncId,</span>
-<span class="nc" id="L24">    val correlationId: CorrelationId,</span>
-<span class="nc" id="L25">    val inputs: InvocationInputs,</span>
-<span class="nc" id="L26">    val invocation: EventInvocation</span>
-)
-
-<span class="fc" id="L29">@Component</span>
-<span class="fc" id="L30">class SubmitRequest(</span>
-<span class="fc" id="L31">    @Autowired private val generateDomainId: GenerateDomainId,</span>
-<span class="fc" id="L32">    @Autowired private val reqCmdRepository: ReqCmdRepository,</span>
+<span class="fc" id="L22">@Component</span>
+<span class="fc" id="L23">class SubmitRequest(</span>
+<span class="fc" id="L24">    private val generateDomainId: GenerateDomainId,</span>
+<span class="fc" id="L25">    private val reqCmdRepository: ReqCmdRepository,</span>
+<span class="fc" id="L26">    private val funcQueryRepository: FuncQueryRepository</span>
 ) {
     operator fun invoke(adhoc: InvokeAdhocReq) =
-<span class="fc" id="L35">        SubmittedInvokeAdhocReq(</span>
-<span class="fc" id="L36">            reqId = generateDomainId(::ReqId),</span>
-<span class="fc" id="L37">            status = ReqStatus.Submitted,</span>
-<span class="fc" id="L38">            id = generateDomainId(::ExecId),</span>
-<span class="fc" id="L39">            inputs = adhoc.inputs,</span>
-<span class="fc" id="L40">            code = adhoc.code</span>
-<span class="fc" id="L41">        ).also(reqCmdRepository::queue)</span>
+<span class="fc" id="L29">        SubmittedInvokeExecReq(</span>
+<span class="fc" id="L30">            reqId = generateDomainId(::ReqId),</span>
+<span class="fc" id="L31">            status = ReqStatus.Submitted,</span>
+<span class="fc" id="L32">            id = generateDomainId(::ExecId),</span>
+<span class="fc" id="L33">            inputs = adhoc.inputs,</span>
+<span class="fc" id="L34">            code = adhoc.code,</span>
+<span class="fc" id="L35">            funcId = null,</span>
+<span class="fc" id="L36">            correlationId = null,</span>
+<span class="fc" id="L37">            invocation = AdhocInvocation()</span>
+<span class="fc" id="L38">        ).also(reqCmdRepository::queue)</span>
 
 
-    operator fun invoke(funcId: FuncId, oneshot: InvokeOneshotReq) =
-<span class="fc" id="L45">        SubmittedInvokeOneshotReq(</span>
-<span class="fc" id="L46">            reqId = generateDomainId(::ReqId),</span>
-<span class="fc" id="L47">            status = ReqStatus.Submitted,</span>
-<span class="fc" id="L48">            execId = generateDomainId(::ExecId),</span>
-<span class="fc" id="L49">            funcId = funcId,</span>
-<span class="fc bfc" id="L50" title="All 2 branches covered.">            correlationId = oneshot.correlationId ?: CorrelationId(&quot;__default__&quot;),</span>
-<span class="fc" id="L51">            inputs = oneshot.inputs,</span>
+    operator fun invoke(funcId: FuncId, invokeFunc: InvokeFuncReq): SubmittedInvokeExecReq {
+<span class="fc" id="L42">        val func = funcQueryRepository.get(funcId)</span>
+<span class="fc" id="L43">        return SubmittedInvokeExecReq(</span>
+<span class="fc" id="L44">            reqId = generateDomainId(::ReqId),</span>
+<span class="fc" id="L45">            status = ReqStatus.Submitted,</span>
+<span class="fc" id="L46">            id = generateDomainId(::ExecId),</span>
+<span class="fc" id="L47">            funcId = funcId,</span>
+<span class="fc" id="L48">            correlationId = invokeFunc.correlationId,</span>
+<span class="pc bpc" id="L49" title="1 of 2 branches missed.">            inputs = invokeFunc.inputs ?: InvocationInputs(),</span>
+<span class="fc" id="L50">            invocation = FuncInvocation(),</span>
+<span class="fc" id="L51">            code = func.code</span>
 <span class="fc" id="L52">        ).also(reqCmdRepository::queue)</span>
+    }
 
-    operator fun invoke(fixedRate: InvokeFixedRate) =
-<span class="nc" id="L55">        SubmittedInvokeFixedRateReq(</span>
-<span class="nc" id="L56">            reqId = generateDomainId(::ReqId),</span>
-<span class="nc" id="L57">            status = ReqStatus.Submitted,</span>
-<span class="nc" id="L58">            execId = generateDomainId(::ExecId),</span>
-<span class="nc" id="L59">            funcId = fixedRate.funcId,</span>
-<span class="nc" id="L60">            correlationId = fixedRate.correlationId,</span>
-<span class="nc" id="L61">            inputs = fixedRate.inputs,</span>
-<span class="nc" id="L62">        ).also(reqCmdRepository::queue)</span>
+    operator fun invoke(invokeExec: InvokeExec) =
+<span class="nc" id="L56">        SubmittedInvokeExecReq(</span>
+<span class="nc" id="L57">            reqId = generateDomainId(::ReqId),</span>
+<span class="nc" id="L58">            status = ReqStatus.Submitted,</span>
+<span class="nc" id="L59">            id = generateDomainId(::ExecId),</span>
+<span class="nc" id="L60">            funcId = invokeExec.funcId,</span>
+<span class="nc" id="L61">            correlationId = invokeExec.correlationId,</span>
+<span class="nc" id="L62">            inputs = invokeExec.inputs,</span>
+<span class="nc" id="L63">            invocation = invokeExec.invocation,</span>
+<span class="nc" id="L64">            code = invokeExec.code</span>
+<span class="nc" id="L65">        ).also(reqCmdRepository::queue)</span>
 
-
-    operator fun invoke(invoke: InvokeEvent) =
-<span class="nc" id="L66">        SubmittedInvokeEventReq(</span>
-<span class="nc" id="L67">            reqId = generateDomainId(::ReqId),</span>
-<span class="nc" id="L68">            status = ReqStatus.Submitted,</span>
-<span class="nc" id="L69">            execId = generateDomainId(::ExecId),</span>
-<span class="nc" id="L70">            funcId = invoke.funcId,</span>
-<span class="nc" id="L71">            correlationId = invoke.correlationId,</span>
-<span class="nc" id="L72">            inputs = invoke.inputs,</span>
-<span class="nc" id="L73">            invocation = invoke.invocation</span>
-<span class="nc" id="L74">        ).also(reqCmdRepository::queue)</span>
 
     operator fun invoke(execId: ExecId, complete: CompleteExecReq) =
-<span class="fc" id="L77">        SubmittedCompleteExecReq(</span>
-<span class="fc" id="L78">            reqId = generateDomainId(::ReqId),</span>
-<span class="fc" id="L79">            status = ReqStatus.Submitted,</span>
-<span class="fc" id="L80">            id = execId,</span>
-<span class="fc" id="L81">            state = complete.state,</span>
-<span class="fc" id="L82">            events = complete.events</span>
-<span class="fc" id="L83">        ).also(reqCmdRepository::queue)</span>
+<span class="fc" id="L69">        SubmittedCompleteExecReq(</span>
+<span class="fc" id="L70">            reqId = generateDomainId(::ReqId),</span>
+<span class="fc" id="L71">            status = ReqStatus.Submitted,</span>
+<span class="fc" id="L72">            id = execId,</span>
+<span class="fc" id="L73">            state = complete.state,</span>
+<span class="fc" id="L74">            events = complete.events</span>
+<span class="fc" id="L75">        ).also(reqCmdRepository::queue)</span>
 
     operator fun invoke(execId: ExecId, fail: FailExecReq) =
-<span class="fc" id="L86">        SubmittedFailExecReq(</span>
-<span class="fc" id="L87">            reqId = generateDomainId(::ReqId),</span>
-<span class="fc" id="L88">            status = ReqStatus.Submitted,</span>
-<span class="fc" id="L89">            id = execId,</span>
-<span class="fc" id="L90">            cause = fail.cause</span>
-<span class="fc" id="L91">        ).also(reqCmdRepository::queue)</span>
+<span class="fc" id="L78">        SubmittedFailExecReq(</span>
+<span class="fc" id="L79">            reqId = generateDomainId(::ReqId),</span>
+<span class="fc" id="L80">            status = ReqStatus.Submitted,</span>
+<span class="fc" id="L81">            id = execId,</span>
+<span class="fc" id="L82">            cause = fail.cause</span>
+<span class="fc" id="L83">        ).also(reqCmdRepository::queue)</span>
 
     operator fun invoke(createFuncReq: CreateFuncReq) =
-<span class="fc" id="L94">        SubmittedCreateFuncReq(</span>
-<span class="fc" id="L95">            reqId = generateDomainId(::ReqId),</span>
-<span class="fc" id="L96">            status = ReqStatus.Submitted,</span>
-<span class="fc" id="L97">            id = generateDomainId(::FuncId),</span>
-<span class="fc" id="L98">            name = createFuncReq.name,</span>
-<span class="fc" id="L99">            inputs = createFuncReq.inputs,</span>
-<span class="fc" id="L100">            code = createFuncReq.code</span>
-<span class="fc" id="L101">        ).also(reqCmdRepository::queue)</span>
+<span class="fc" id="L86">        SubmittedCreateFuncReq(</span>
+<span class="fc" id="L87">            reqId = generateDomainId(::ReqId),</span>
+<span class="fc" id="L88">            status = ReqStatus.Submitted,</span>
+<span class="fc" id="L89">            id = generateDomainId(::FuncId),</span>
+<span class="fc" id="L90">            name = createFuncReq.name,</span>
+<span class="fc" id="L91">            inputs = createFuncReq.inputs,</span>
+<span class="fc" id="L92">            code = createFuncReq.code</span>
+<span class="fc" id="L93">        ).also(reqCmdRepository::queue)</span>
 
     operator fun invoke(funcId: FuncId, updateFuncReq: UpdateFuncReq) =
-<span class="fc" id="L104">        SubmittedUpdateFuncReq(</span>
-<span class="fc" id="L105">            reqId = generateDomainId(::ReqId),</span>
-<span class="fc" id="L106">            status = ReqStatus.Submitted,</span>
-<span class="fc" id="L107">            id = funcId,</span>
-<span class="fc" id="L108">            name = updateFuncReq.name,</span>
-<span class="fc" id="L109">            inputs = updateFuncReq.inputs,</span>
-<span class="fc" id="L110">            code = updateFuncReq.code</span>
-<span class="fc" id="L111">        ).also(reqCmdRepository::queue)</span>
+<span class="fc" id="L96">        SubmittedUpdateFuncReq(</span>
+<span class="fc" id="L97">            reqId = generateDomainId(::ReqId),</span>
+<span class="fc" id="L98">            status = ReqStatus.Submitted,</span>
+<span class="fc" id="L99">            id = funcId,</span>
+<span class="fc" id="L100">            name = updateFuncReq.name,</span>
+<span class="fc" id="L101">            inputs = updateFuncReq.inputs,</span>
+<span class="fc" id="L102">            code = updateFuncReq.code</span>
+<span class="fc" id="L103">        ).also(reqCmdRepository::queue)</span>
 
     operator fun invoke(createTriggerReq: CreateTriggerReq) =
-<span class="fc" id="L114">        SubmittedCreateTriggerReq(</span>
-<span class="fc" id="L115">            type = createTriggerReq.type,</span>
-<span class="fc" id="L116">            reqId = generateDomainId(::ReqId),</span>
-<span class="fc" id="L117">            status = ReqStatus.Submitted,</span>
-<span class="fc" id="L118">            id = generateDomainId(::TriggerId),</span>
-<span class="fc" id="L119">            name = createTriggerReq.name,</span>
-<span class="fc" id="L120">            funcId = createTriggerReq.funcId,</span>
-<span class="fc" id="L121">            inputs = createTriggerReq.inputs,</span>
-<span class="fc" id="L122">            correlationId = createTriggerReq.correlationId,</span>
-<span class="fc" id="L123">            duration = createTriggerReq.duration,</span>
-<span class="fc" id="L124">            topicId = createTriggerReq.topicId</span>
-<span class="fc" id="L125">        ).also(reqCmdRepository::queue)</span>
+<span class="fc" id="L106">        SubmittedCreateTriggerReq(</span>
+<span class="fc" id="L107">            type = createTriggerReq.type,</span>
+<span class="fc" id="L108">            reqId = generateDomainId(::ReqId),</span>
+<span class="fc" id="L109">            status = ReqStatus.Submitted,</span>
+<span class="fc" id="L110">            id = generateDomainId(::TriggerId),</span>
+<span class="fc" id="L111">            name = createTriggerReq.name,</span>
+<span class="fc" id="L112">            funcId = createTriggerReq.funcId,</span>
+<span class="fc" id="L113">            inputs = createTriggerReq.inputs,</span>
+<span class="fc" id="L114">            correlationId = createTriggerReq.correlationId,</span>
+<span class="fc" id="L115">            duration = createTriggerReq.duration,</span>
+<span class="fc" id="L116">            topicId = createTriggerReq.topicId</span>
+<span class="fc" id="L117">        ).also(reqCmdRepository::queue)</span>
 
     operator fun invoke(createTopic: CreateTopicReq) =
-<span class="fc" id="L128">        SubmittedCreateTopicReq(</span>
-<span class="fc" id="L129">            reqId = generateDomainId(::ReqId),</span>
-<span class="fc" id="L130">            status = ReqStatus.Submitted,</span>
-<span class="fc" id="L131">            id = generateDomainId(::TopicId),</span>
-<span class="fc" id="L132">            name = createTopic.name</span>
-<span class="fc" id="L133">        ).also(reqCmdRepository::queue)</span>
+<span class="fc" id="L120">        SubmittedCreateTopicReq(</span>
+<span class="fc" id="L121">            reqId = generateDomainId(::ReqId),</span>
+<span class="fc" id="L122">            status = ReqStatus.Submitted,</span>
+<span class="fc" id="L123">            id = generateDomainId(::TopicId),</span>
+<span class="fc" id="L124">            name = createTopic.name</span>
+<span class="fc" id="L125">        ).also(reqCmdRepository::queue)</span>
 
     operator fun invoke(appendEvent: AppendEventReq) =
-<span class="fc" id="L136">        SubmittedAppendEventReq(</span>
-<span class="fc" id="L137">            reqId = generateDomainId(::ReqId),</span>
-<span class="fc" id="L138">            status = ReqStatus.Submitted,</span>
-<span class="fc" id="L139">            id = appendEvent.topicId,</span>
-<span class="fc" id="L140">            event = appendEvent.event</span>
-<span class="fc" id="L141">        ).also(reqCmdRepository::queue)</span>
+<span class="fc" id="L128">        SubmittedAppendToTopicReq(</span>
+<span class="fc" id="L129">            reqId = generateDomainId(::ReqId),</span>
+<span class="fc" id="L130">            status = ReqStatus.Submitted,</span>
+<span class="fc" id="L131">            id = appendEvent.topicId,</span>
+<span class="fc" id="L132">            event = appendEvent.event</span>
+<span class="fc" id="L133">        ).also(reqCmdRepository::queue)</span>
 
     operator fun invoke(setStateReq: SetStateReq) =
-<span class="fc" id="L144">        SubmittedSetStateReq(</span>
-<span class="fc" id="L145">            reqId = generateDomainId(::ReqId),</span>
-<span class="fc" id="L146">            status = ReqStatus.Submitted,</span>
-<span class="fc" id="L147">            state = CorrelatedState(</span>
-<span class="fc" id="L148">                correlation = setStateReq.correlation,</span>
-<span class="fc" id="L149">                value = setStateReq.value</span>
+<span class="fc" id="L136">        SubmittedSetStateReq(</span>
+<span class="fc" id="L137">            reqId = generateDomainId(::ReqId),</span>
+<span class="fc" id="L138">            status = ReqStatus.Submitted,</span>
+<span class="fc" id="L139">            state = CorrelatedState(</span>
+<span class="fc" id="L140">                correlation = setStateReq.correlation,</span>
+<span class="fc" id="L141">                value = setStateReq.value</span>
             )
-<span class="fc" id="L151">        ).also(reqCmdRepository::queue)</span>
+<span class="fc" id="L143">        ).also(reqCmdRepository::queue)</span>
 }
 
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

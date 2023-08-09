@@ -10,7 +10,7 @@ fun Sandbox.registerGlobalFunction(name: String, function: FunctionValue&lt;*, *
 
 fun main() {
 <span class="nc" id="L12">    NativeLoader.load(BuildDir)</span>
-<span class="nc" id="L13">    Sandbox().also { sb -&gt;</span>
+<span class="nc" id="L13">    Sandbox(DefaultSandboxContext()).also { sb -&gt;</span>
 
 <span class="nc" id="L15">//        val registry = ExtensionRegistry(sb)</span>
 //        registry.register(

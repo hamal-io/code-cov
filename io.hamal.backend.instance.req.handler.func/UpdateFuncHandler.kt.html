@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component
 @Component
 <span class="fc" id="L14">class UpdateFuncHandler(</span>
 <span class="fc" id="L15">    val funcCmdRepository: FuncCmdRepository,</span>
-<span class="fc" id="L16">    val eventEmitter: SystemEventEmitter&lt;*&gt;</span>
+<span class="fc" id="L16">    val eventEmitter: SystemEventEmitter</span>
 <span class="fc" id="L17">) : ReqHandler&lt;SubmittedUpdateFuncReq&gt;(SubmittedUpdateFuncReq::class) {</span>
 
     override fun invoke(req: SubmittedUpdateFuncReq) {

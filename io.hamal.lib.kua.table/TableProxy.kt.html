@@ -27,21 +27,21 @@ enum class TableType {
 ) : TableMapValue, TableArrayValue {
 
     override fun unset(key: String): TableLength {
-<span class="nc" id="L30">        bridge.pushString(key)</span>
-<span class="nc" id="L31">        bridge.pushNil()</span>
+<span class="nc" id="L30">        native.pushString(key)</span>
+<span class="nc" id="L31">        native.pushNil()</span>
 <span class="nc" id="L32">        return state.tableSetRaw(index)</span>
     }
 
     override fun set(key: String, value: Boolean): TableLength {
-<span class="nc" id="L36">        bridge.pushString(key)</span>
-<span class="nc" id="L37">        bridge.pushBoolean(value)</span>
+<span class="nc" id="L36">        native.pushString(key)</span>
+<span class="nc" id="L37">        native.pushBoolean(value)</span>
 <span class="nc" id="L38">        return state.tableSetRaw(index)</span>
     }
 
 
     override fun set(key: String, value: Double): TableLength {
-<span class="nc" id="L43">        bridge.pushString(key)</span>
-<span class="nc" id="L44">        bridge.pushNumber(value)</span>
+<span class="nc" id="L43">        native.pushString(key)</span>
+<span class="nc" id="L44">        native.pushNumber(value)</span>
 <span class="nc" id="L45">        return state.tableSetRaw(index)</span>
     }
 
@@ -73,51 +73,51 @@ enum class TableType {
 <span class="nc" id="L73">        state.pushString(key)</span>
 <span class="nc" id="L74">        val type = state.tableGetRaw(index)</span>
 <span class="nc" id="L75">        type.checkExpectedType(ValueType.Boolean)</span>
-<span class="nc" id="L76">        return booleanOf(bridge.toBoolean(state.top.value)).also { bridge.pop(1) }</span>
+<span class="nc" id="L76">        return booleanOf(native.toBoolean(state.top.value)).also { native.pop(1) }</span>
     }
 
     override fun getCodeValue(key: String): CodeValue {
 <span class="fc" id="L80">        state.pushString(key)</span>
 <span class="fc" id="L81">        val type = state.tableGetRaw(index)</span>
 <span class="fc" id="L82">        type.checkExpectedType(ValueType.String)</span>
-<span class="fc" id="L83">        return CodeValue(bridge.toString(state.top.value)).also { bridge.pop(1) }</span>
+<span class="fc" id="L83">        return CodeValue(native.toString(state.top.value)).also { native.pop(1) }</span>
     }
 
     override fun getNumberValue(key: String): NumberValue {
 <span class="fc" id="L87">        state.pushString(key)</span>
 <span class="fc" id="L88">        val type = state.tableGetRaw(index)</span>
 <span class="fc" id="L89">        type.checkExpectedType(ValueType.Number)</span>
-<span class="fc" id="L90">        return NumberValue(bridge.toNumber(state.top.value)).also { bridge.pop(1) }</span>
+<span class="fc" id="L90">        return NumberValue(native.toNumber(state.top.value)).also { native.pop(1) }</span>
     }
 
     override fun getStringValue(key: String): StringValue {
 <span class="fc" id="L94">        state.pushString(key)</span>
 <span class="fc" id="L95">        val type = state.tableGetRaw(index)</span>
 <span class="fc" id="L96">        type.checkExpectedType(ValueType.String)</span>
-<span class="fc" id="L97">        return StringValue(bridge.toString(state.top.value)).also { bridge.pop(1) }</span>
+<span class="fc" id="L97">        return StringValue(native.toString(state.top.value)).also { native.pop(1) }</span>
     }
 
     override fun getTableMap(key: String): TableMapValue {
-<span class="fc" id="L101">        state.pushString(key)</span>
-<span class="fc" id="L102">        val type = state.tableGetRaw(index)</span>
-<span class="fc" id="L103">        type.checkExpectedType(ValueType.Table)</span>
-<span class="fc" id="L104">        return state.getTableMap(state.top.value)</span>
+<span class="nc" id="L101">        state.pushString(key)</span>
+<span class="nc" id="L102">        val type = state.tableGetRaw(index)</span>
+<span class="nc" id="L103">        type.checkExpectedType(ValueType.Table)</span>
+<span class="nc" id="L104">        return state.getTableMap(state.top.value)</span>
     }
 
-<span class="fc" id="L107">    override fun length(): TableLength = TableLength((bridge.tableGetLength(index)))</span>
+<span class="fc" id="L107">    override fun length(): TableLength = TableLength((native.tableGetLength(index)))</span>
 
     override fun append(value: Boolean): TableLength {
-<span class="nc" id="L110">        bridge.pushBoolean(value)</span>
+<span class="nc" id="L110">        native.pushBoolean(value)</span>
 <span class="nc" id="L111">        return state.tableAppend(index)</span>
     }
 
     override fun append(value: Double): TableLength {
-<span class="fc" id="L115">        bridge.pushNumber(value)</span>
+<span class="fc" id="L115">        native.pushNumber(value)</span>
 <span class="fc" id="L116">        return state.tableAppend(index)</span>
     }
 
     override fun append(value: String): TableLength {
-<span class="fc" id="L120">        bridge.pushString(value)</span>
+<span class="fc" id="L120">        native.pushString(value)</span>
 <span class="fc" id="L121">        return state.tableAppend(index)</span>
     }
 
@@ -153,7 +153,7 @@ enum class TableType {
 <span class="fc" id="L153">        return state.getStringValue(-1)</span>
     }
 
-<span class="fc" id="L156">    private val bridge = state.bridge</span>
+<span class="fc" id="L156">    private val native = state.native</span>
 }
 
 private fun ValueType.checkExpectedType(expected: ValueType) {

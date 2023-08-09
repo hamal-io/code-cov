@@ -5,7 +5,6 @@ import io.hamal.lib.domain.EventInvocation
 import io.hamal.lib.domain.State
 import io.hamal.lib.kua.ExitError
 import io.hamal.lib.kua.ExtensionError
-import io.hamal.lib.kua.SandboxFactory
 import io.hamal.lib.kua.function.Function1In0Out
 import io.hamal.lib.kua.function.FunctionContext
 import io.hamal.lib.kua.function.FunctionInput1Schema
@@ -14,13 +13,14 @@ import io.hamal.lib.kua.value.*
 import io.hamal.lib.sdk.DefaultHamalSdk
 import io.hamal.lib.sdk.HttpTemplateSupplier
 import io.hamal.runner.component.RunnerAsync
+import io.hamal.runner.config.SandboxFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.util.concurrent.TimeUnit
 import kotlin.time.Duration.Companion.milliseconds
 
 <span class="fc" id="L22">@Service</span>
-<span class="fc" id="L23">class AgentService(</span>
+<span class="fc" id="L23">class RunnerService(</span>
 <span class="fc" id="L24">    private val httpTemplateSupplier: HttpTemplateSupplier,</span>
 <span class="fc" id="L25">    private val sandboxFactory: SandboxFactory,</span>
 <span class="fc" id="L26">    private val async: RunnerAsync</span>
@@ -39,12 +39,12 @@ import kotlin.time.Duration.Companion.milliseconds
 <span class="fc" id="L39">                        lateinit var stateResult: State</span>
 <span class="fc" id="L40">                        val eventsToEmit = mutableListOf&lt;Event&gt;()</span>
 
-<span class="fc" id="L42">                        sandboxFactory.create().use { sb -&gt;</span>
+<span class="pc" id="L42">                        sandboxFactory.create(request).use { sb -&gt;</span>
 <span class="fc" id="L43">                            sb.run { state -&gt;</span>
 <span class="fc" id="L44">                                val ctx = state.tableCreateMap(1)</span>
 
-<span class="fc" id="L46">                                sb.bridge.pushFunctionValue(EmitEventFunction(eventsToEmit))</span>
-<span class="fc" id="L47">                                sb.bridge.tabletSetField(ctx.index, &quot;emit&quot;)</span>
+<span class="fc" id="L46">                                sb.native.pushFunctionValue(EmitEventFunction(eventsToEmit))</span>
+<span class="fc" id="L47">                                sb.native.tabletSetField(ctx.index, &quot;emit&quot;)</span>
 
 <span class="fc" id="L49">                                val funcState = state.tableCreateMap(1)</span>
 <span class="fc" id="L50">                                request.state.value.forEach { entry -&gt;</span>
@@ -73,7 +73,7 @@ import kotlin.time.Duration.Companion.milliseconds
                                             }
 <span class="nc" id="L74">                                        }</span>
 
-<span class="nc" id="L76">                                        sb.bridge.tableAppend(events.index)</span>
+<span class="nc" id="L76">                                        sb.native.tableAppend(events.index)</span>
 <span class="nc" id="L77">                                    }</span>
 
 //                                    invocation.events.forEach { evt -&gt;
@@ -86,16 +86,16 @@ import kotlin.time.Duration.Companion.milliseconds
 <span class="fc" id="L86">                                state.setGlobal(&quot;ctx&quot;, ctx)</span>
 <span class="fc" id="L87">                            }</span>
 
-<span class="fc" id="L89">                            sb.load(request.code)</span>
+<span class="nc" id="L89">                            sb.load(request.code)</span>
 
-<span class="fc" id="L91">                            sb.run { state -&gt;</span>
-<span class="fc" id="L92">                                val ctx = state.getGlobalTableMap(&quot;ctx&quot;)</span>
-<span class="fc" id="L93">                                val funcState = ctx.getTableMap(&quot;state&quot;)</span>
+<span class="nc" id="L91">                            sb.run { state -&gt;</span>
+<span class="nc" id="L92">                                val ctx = state.getGlobalTableMap(&quot;ctx&quot;)</span>
+<span class="nc" id="L93">                                val funcState = ctx.getTableMap(&quot;state&quot;)</span>
 
-<span class="fc" id="L95">                                val stateMap = mutableMapOf&lt;StringValue, SerializableValue&gt;()</span>
+<span class="nc" id="L95">                                val stateMap = mutableMapOf&lt;StringValue, SerializableValue&gt;()</span>
 
-<span class="fc" id="L97">                                state.bridge.pushNil()</span>
-<span class="pc bpc" id="L98" title="1 of 2 branches missed.">                                while (state.bridge.tableNext(funcState.index)) {</span>
+<span class="nc" id="L97">                                state.native.pushNil()</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">                                while (state.native.tableNext(funcState.index)) {</span>
 <span class="nc" id="L99">                                    val k = state.getStringValue(-2)</span>
 <span class="nc" id="L100">                                    val v = state.getAnyValue(-1)</span>
 
@@ -105,70 +105,66 @@ import kotlin.time.Duration.Companion.milliseconds
 <span class="nc" id="L105">                                        else -&gt; TODO()</span>
                                     }
 
-<span class="nc" id="L108">                                    state.bridge.pop(1)</span>
+<span class="nc" id="L108">                                    state.native.pop(1)</span>
                                 }
 
-<span class="fc" id="L111">                                stateResult = State(</span>
-<span class="fc" id="L112">                                    TableValue(stateMap)</span>
+<span class="nc" id="L111">                                stateResult = State(</span>
+<span class="nc" id="L112">                                    TableValue(stateMap)</span>
                                 )
-<span class="fc" id="L114">                            }</span>
-<span class="fc" id="L115">                        }</span>
+<span class="nc" id="L114">                            }</span>
+<span class="nc" id="L115">                        }</span>
 
-<span class="fc" id="L117">                        sdk.execService().complete(</span>
-<span class="pc bpc" id="L118" title="1 of 2 branches missed.">                            request.id, stateResult, eventsToEmit</span>
-                        )
-<span class="fc" id="L120">                    } catch (kua: ExtensionError) {</span>
-<span class="fc" id="L121">                        val e = kua.cause</span>
-<span class="pc bpc" id="L122" title="1 of 2 branches missed.">                        if (e is ExitError) {</span>
-<span class="fc" id="L123">                            println(&quot;Exit ${e.status.value}&quot;)</span>
-<span class="pc bpc" id="L124" title="1 of 2 branches missed.">                            if (e.status == NumberValue(0.0)) {</span>
-<span class="fc" id="L125">                                sdk.execService().complete(</span>
-<span class="fc" id="L126">                                    request.id, State(), listOf()</span>
-                                )
+<span class="nc bnc" id="L117" title="All 2 branches missed.">                        sdk.execService().complete(request.id, stateResult, eventsToEmit)</span>
+
+<span class="fc" id="L119">                    } catch (kua: ExtensionError) {</span>
+<span class="fc" id="L120">                        kua.printStackTrace()</span>
+
+
+<span class="fc" id="L123">                        val e = kua.cause</span>
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">                        if (e is ExitError) {</span>
+<span class="pc bpc" id="L125" title="1 of 2 branches missed.">                            if (e.status == NumberValue(0.0)) {</span>
+<span class="fc" id="L126">                                sdk.execService().complete(request.id, State(), listOf())</span>
                             } else {
-<span class="nc bnc" id="L129" title="All 2 branches missed.">                                sdk.execService().fail(request.id, ErrorValue(e.message ?: &quot;Unknown error&quot;))</span>
+<span class="nc bnc" id="L128" title="All 2 branches missed.">                                sdk.execService().fail(request.id, ErrorValue(e.message ?: &quot;Unknown reason&quot;))</span>
                             }
                         } else {
-<span class="nc" id="L132">                            throw kua</span>
+<span class="nc bnc" id="L131" title="All 2 branches missed.">                            sdk.execService().fail(request.id, ErrorValue(kua.message ?: &quot;Unknown reason&quot;))</span>
                         }
-<span class="nc" id="L134">                    } catch (t: Throwable) {</span>
-<span class="nc" id="L135">                        t.printStackTrace()</span>
-
-<span class="nc bnc" id="L137" title="All 2 branches missed.">                        sdk.execService().fail(request.id, ErrorValue(t.message ?: &quot;Unknown error&quot;))</span>
+<span class="nc" id="L133">                    } catch (t: Throwable) {</span>
+<span class="nc" id="L134">                        t.printStackTrace()</span>
+<span class="nc bnc" id="L135" title="All 2 branches missed.">                        sdk.execService().fail(request.id, ErrorValue(t.message ?: &quot;Unknown reason&quot;))</span>
                     }
-<span class="fc" id="L139">                }</span>
-<span class="fc" id="L140">        }</span>
-<span class="fc" id="L141">    }</span>
-
-
+<span class="fc" id="L137">                }</span>
+<span class="fc" id="L138">        }</span>
+<span class="fc" id="L139">    }</span>
 }
 
-<span class="fc" id="L146">class EmitEventFunction(</span>
-<span class="pc" id="L147">    val eventsCollector: MutableList&lt;Event&gt;</span>
-<span class="fc" id="L148">) : Function1In0Out&lt;TableMapValue&gt;(</span>
-<span class="fc" id="L149">    FunctionInput1Schema(TableMapValue::class)</span>
+<span class="fc" id="L142">class EmitEventFunction(</span>
+<span class="pc" id="L143">    val eventsCollector: MutableList&lt;Event&gt;</span>
+<span class="fc" id="L144">) : Function1In0Out&lt;TableMapValue&gt;(</span>
+<span class="fc" id="L145">    FunctionInput1Schema(TableMapValue::class)</span>
 ) {
     override fun invoke(ctx: FunctionContext, arg1: TableMapValue) {
-<span class="nc" id="L152">        ctx.pushNil()</span>
+<span class="nc" id="L148">        ctx.pushNil()</span>
 
-<span class="nc" id="L154">        val eventMap = mutableMapOf&lt;StringValue, SerializableValue&gt;()</span>
+<span class="nc" id="L150">        val eventMap = mutableMapOf&lt;StringValue, SerializableValue&gt;()</span>
 
-<span class="nc bnc" id="L156" title="All 2 branches missed.">        while (ctx.state.bridge.tableNext(arg1.index)) {</span>
-<span class="nc" id="L157">            val k = ctx.getStringValue(-2)</span>
-<span class="nc" id="L158">            val v = ctx.getAnyValue(-1)</span>
-<span class="nc" id="L159">            when (val n = v.value) {</span>
-<span class="nc bnc" id="L160" title="All 2 branches missed.">                is NumberValue -&gt; eventMap[k] = n</span>
-<span class="nc bnc" id="L161" title="All 2 branches missed.">                is StringValue -&gt; eventMap[k] = n</span>
-<span class="nc" id="L162">                else -&gt; TODO()</span>
+<span class="nc bnc" id="L152" title="All 2 branches missed.">        while (ctx.state.native.tableNext(arg1.index)) {</span>
+<span class="nc" id="L153">            val k = ctx.getStringValue(-2)</span>
+<span class="nc" id="L154">            val v = ctx.getAnyValue(-1)</span>
+<span class="nc" id="L155">            when (val n = v.value) {</span>
+<span class="nc bnc" id="L156" title="All 2 branches missed.">                is NumberValue -&gt; eventMap[k] = n</span>
+<span class="nc bnc" id="L157" title="All 2 branches missed.">                is StringValue -&gt; eventMap[k] = n</span>
+<span class="nc" id="L158">                else -&gt; TODO()</span>
             }
-<span class="nc" id="L164">            ctx.bridge.pop(1)</span>
+<span class="nc" id="L160">            ctx.native.pop(1)</span>
         }
 
 
         // FIXME make sure topic is set and string
-<span class="nc bnc" id="L169" title="All 2 branches missed.">        require(eventMap.containsKey(StringValue(&quot;topic&quot;)))</span>
+<span class="nc bnc" id="L165" title="All 2 branches missed.">        require(eventMap.containsKey(StringValue(&quot;topic&quot;)))</span>
 
-<span class="nc" id="L171">        eventsCollector.add(Event(TableValue(eventMap)))</span>
-<span class="nc" id="L172">    }</span>
+<span class="nc" id="L167">        eventsCollector.add(Event(TableValue(eventMap)))</span>
+<span class="nc" id="L168">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

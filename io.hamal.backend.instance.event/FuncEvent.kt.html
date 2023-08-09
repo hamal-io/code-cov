@@ -4,14 +4,14 @@ import io.hamal.lib.domain.Func
 import kotlinx.serialization.Serializable
 
 <span class="pc bnc" id="L6" title="All 8 branches missed.">@Serializable</span>
-@SystemEventTopic(&quot;func::created&quot;)
+@SystemTopic(&quot;func::created&quot;)
 <span class="fc" id="L8">data class FuncCreatedEvent(</span>
 <span class="pc" id="L9">    val func: Func,</span>
 <span class="fc" id="L10">) : SystemEvent()</span>
 
 
 <span class="pc bnc" id="L13" title="All 8 branches missed.">@Serializable</span>
-@SystemEventTopic(&quot;func::updated&quot;)
+@SystemTopic(&quot;func::updated&quot;)
 <span class="nc" id="L15">data class FuncUpdatedEvent(</span>
 <span class="nc" id="L16">    val func: Func,</span>
 <span class="pc" id="L17">) : SystemEvent()</span>

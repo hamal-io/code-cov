@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InvokeExecHandler.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.instance.req.handler.exec</a> &gt; <span class="el_source">InvokeExecHandler.kt</span></div><h1>InvokeExecHandler.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.instance.req.handler.exec
+
+import io.hamal.backend.instance.event.ExecPlannedEvent
+import io.hamal.backend.instance.event.SystemEventEmitter
+import io.hamal.backend.instance.req.ReqHandler
+import io.hamal.backend.instance.req.handler.cmdId
+import io.hamal.backend.repository.api.ExecCmdRepository
+import io.hamal.backend.repository.api.FuncQueryRepository
+import io.hamal.lib.common.domain.CmdId
+import io.hamal.lib.domain.Correlation
+import io.hamal.lib.domain.PlannedExec
+import io.hamal.lib.domain.req.SubmittedInvokeExecReq
+import io.hamal.lib.domain.vo.ExecInputs
+import io.hamal.lib.domain.vo.FuncInputs
+import io.hamal.lib.domain.vo.InvocationInputs
+import org.springframework.stereotype.Component
+
+@Component
+<span class="fc" id="L19">class InvokeExecHandler(</span>
+<span class="fc" id="L20">    private val execCmdRepository: ExecCmdRepository,</span>
+<span class="fc" id="L21">    private val eventEmitter: SystemEventEmitter,</span>
+<span class="fc" id="L22">    private val funcQueryRepository: FuncQueryRepository</span>
+<span class="fc" id="L23">) : ReqHandler&lt;SubmittedInvokeExecReq&gt;(SubmittedInvokeExecReq::class) {</span>
+
+    override fun invoke(req: SubmittedInvokeExecReq) {
+<span class="fc" id="L26">        planExec(req).also { emitEvent(req.cmdId(), it) }</span>
+<span class="fc" id="L27">    }</span>
+
+    private fun planExec(req: SubmittedInvokeExecReq): PlannedExec {
+<span class="fc" id="L30">        val correlationId = req.correlationId</span>
+<span class="fc bfc" id="L31" title="All 2 branches covered.">        val func = req.funcId?.let { funcQueryRepository.get(it) }</span>
+
+<span class="fc bfc" id="L33" title="All 4 branches covered.">        val correlation = if (func != null &amp;&amp; correlationId != null) {</span>
+<span class="fc" id="L34">            Correlation(correlationId, func.id)</span>
+        } else {
+<span class="fc" id="L36">            null</span>
+        }
+
+<span class="fc" id="L39">        return execCmdRepository.plan(</span>
+<span class="fc" id="L40">            ExecCmdRepository.PlanCmd(</span>
+<span class="fc" id="L41">                id = req.cmdId(),</span>
+<span class="fc" id="L42">                execId = req.id,</span>
+<span class="fc" id="L43">                correlation = correlation,</span>
+<span class="pc bpc" id="L44" title="1 of 4 branches missed.">                inputs = merge(func?.inputs ?: FuncInputs(), req.inputs),</span>
+<span class="pc bpc" id="L45" title="2 of 6 branches missed.">                code = func?.code ?: req.code ?: throw IllegalStateException(&quot;Code not found&quot;),</span>
+<span class="fc" id="L46">                invocation = req.invocation</span>
+            )
+        )
+    }
+
+    private fun emitEvent(cmdId: CmdId, exec: PlannedExec) {
+<span class="fc" id="L52">        eventEmitter.emit(cmdId, ExecPlannedEvent(exec))</span>
+<span class="fc" id="L53">    }</span>
+}
+
+<span class="nc" id="L56">internal fun InvocationInputs.toExecInputs() = ExecInputs(this.value)</span>
+internal fun merge(funcInputs: FuncInputs, invocationInputs: InvocationInputs): ExecInputs {
+<span class="fc" id="L58">    val result = ExecInputs()</span>
+<span class="fc" id="L59">    funcInputs.value.forEach { result.value[it.key] = it.value }</span>
+<span class="fc" id="L60">    invocationInputs.value.forEach { result.value[it.key] = it.value }</span>
+<span class="fc" id="L61">    return result</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

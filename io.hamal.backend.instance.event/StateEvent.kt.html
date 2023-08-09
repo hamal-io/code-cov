@@ -4,7 +4,7 @@ import io.hamal.lib.domain.CorrelatedState
 import kotlinx.serialization.Serializable
 
 <span class="pc bnc" id="L6" title="All 8 branches missed.">@Serializable</span>
-@SystemEventTopic(&quot;state::updated&quot;)
+@SystemTopic(&quot;state::updated&quot;)
 <span class="fc" id="L8">data class StateUpdatedEvent(</span>
 <span class="pc" id="L9">    val state: CorrelatedState,</span>
 <span class="fc" id="L10">) : SystemEvent()</span>

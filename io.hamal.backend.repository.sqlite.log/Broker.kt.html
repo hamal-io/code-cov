@@ -12,8 +12,8 @@ import java.nio.file.Path
 )
 
 <span class="pc" id="L14">class SqliteLogBrokerRepository(</span>
-    logBroker: SqliteLogBroker
-) : LogBrokerRepository&lt;SqliteLogTopic&gt; {
+<span class="fc" id="L15">    val logBroker: SqliteLogBroker</span>
+) : LogBrokerRepository {
 
     private val consumersRepository: SqliteLogBrokerConsumersRepository
     private val topicsRepository: SqliteLogBrokerTopicsRepository
@@ -31,10 +31,10 @@ import java.nio.file.Path
         )
 <span class="fc" id="L32">    }</span>
 
-<span class="fc" id="L34">    private val topicRepositoryMapping = KeyedOnce.default&lt;SqliteLogTopic, LogTopicRepository&gt;()</span>
+<span class="fc" id="L34">    private val topicRepositoryMapping = KeyedOnce.default&lt;LogTopic, LogTopicRepository&gt;()</span>
 
 
-    override fun create(cmdId: CmdId, topicToCreate: CreateTopic.TopicToCreate): SqliteLogTopic =
+    override fun create(cmdId: CmdId, topicToCreate: CreateTopic.TopicToCreate): LogTopic =
 <span class="fc" id="L38">        topicsRepository.create(</span>
 <span class="fc" id="L39">            cmdId,</span>
 <span class="fc" id="L40">            LogBrokerTopicsRepository.TopicToCreate(</span>
@@ -43,7 +43,7 @@ import java.nio.file.Path
             )
 <span class="fc" id="L44">        )</span>
 
-    override fun append(cmdId: CmdId, topic: SqliteLogTopic, bytes: ByteArray) {
+    override fun append(cmdId: CmdId, topic: LogTopic, bytes: ByteArray) {
 <span class="fc" id="L47">        resolveRepository(topic).append(cmdId, bytes)</span>
 <span class="fc" id="L48">    }</span>
 
@@ -55,18 +55,18 @@ import java.nio.file.Path
 <span class="fc" id="L55">        }</span>
 <span class="fc" id="L56">    }</span>
 
-    override fun consume(groupId: GroupId, topic: SqliteLogTopic, limit: Int): List&lt;LogChunk&gt; {
+    override fun consume(groupId: GroupId, topic: LogTopic, limit: Int): List&lt;LogChunk&gt; {
 <span class="fc" id="L59">        val nextChunkId = consumersRepository.nextChunkId(groupId, topic.id)</span>
 <span class="fc" id="L60">        return resolveRepository(topic).read(nextChunkId, limit)</span>
     }
 
-    override fun commit(groupId: GroupId, topic: SqliteLogTopic, chunkId: LogChunkId) {
+    override fun commit(groupId: GroupId, topic: LogTopic, chunkId: LogChunkId) {
 <span class="fc" id="L64">        consumersRepository.commit(groupId, topic.id, chunkId)</span>
 <span class="fc" id="L65">    }</span>
 
 <span class="nc" id="L67">    override fun findTopic(topicId: TopicId) = topicsRepository.find(topicId)</span>
 <span class="fc" id="L68">    override fun findTopic(topicName: TopicName) = topicsRepository.find(topicName)</span>
-    override fun listTopics(): List&lt;SqliteLogTopic&gt; {
+    override fun listTopics(): List&lt;LogTopic&gt; {
 <span class="nc" id="L70">        return topicsRepository.list()</span>
     }
 
@@ -79,12 +79,12 @@ import java.nio.file.Path
 <span class="nc" id="L79">    }</span>
 
 
-    override fun read(firstId: LogChunkId, topic: SqliteLogTopic, limit: Int): List&lt;LogChunk&gt; {
+    override fun read(firstId: LogChunkId, topic: LogTopic, limit: Int): List&lt;LogChunk&gt; {
 <span class="nc" id="L83">        return resolveRepository(topic).read(firstId, limit)</span>
     }
 
-<span class="fc" id="L86">    private fun resolveRepository(topic: SqliteLogTopic) = topicRepositoryMapping(topic) {</span>
-<span class="fc" id="L87">        SqliteLogTopicRepository(topic)</span>
+<span class="fc" id="L86">    private fun resolveRepository(topic: LogTopic) = topicRepositoryMapping(topic) {</span>
+<span class="fc" id="L87">        SqliteLogTopicRepository(topic, path = logBroker.path)</span>
 <span class="fc" id="L88">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

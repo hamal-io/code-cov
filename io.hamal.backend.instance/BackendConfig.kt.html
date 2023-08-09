@@ -44,7 +44,7 @@ import org.springframework.scheduling.annotation.EnableScheduling
         execCmdRepository: ExecCmdRepository,
         fixedRateTriggerService: FixedRateTriggerService,
         orchestrationService: OrchestrationService,
-        eventEmitter: SystemEventEmitter&lt;*&gt;
+        eventEmitter: SystemEventEmitter
 <span class="fc" id="L48">    ) = eventServiceFactory</span>
 <span class="fc" id="L49">        .register(TriggerCreatedEvent::class, TriggerCreatedHandler(fixedRateTriggerService))</span>
 

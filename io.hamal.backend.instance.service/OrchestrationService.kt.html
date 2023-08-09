@@ -13,7 +13,7 @@ import kotlin.concurrent.withLock
 <span class="fc" id="L13">@Service</span>
 <span class="fc" id="L14">class OrchestrationService(</span>
 <span class="fc" id="L15">    private val execCmdRepository: ExecCmdRepository,</span>
-<span class="fc" id="L16">    private val eventEmitter: SystemEventEmitter&lt;*&gt;</span>
+<span class="fc" id="L16">    private val eventEmitter: SystemEventEmitter</span>
 ) {
 
 <span class="pc" id="L19">    internal val lock: ReentrantLock = ReentrantLock()</span>

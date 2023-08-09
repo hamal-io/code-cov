@@ -10,12 +10,12 @@ import kotlin.reflect.KClass
 }
 
 fun &lt;EVENT : SystemEvent&gt; KClass&lt;EVENT&gt;.topic() =
-<span class="pc bpc" id="L13" title="2 of 6 branches missed.">    (annotations.find { annotation -&gt; annotation.annotationClass == SystemEventTopic::class }</span>
+<span class="pc bpc" id="L13" title="2 of 6 branches missed.">    (annotations.find { annotation -&gt; annotation.annotationClass == SystemTopic::class }</span>
 <span class="nc" id="L14">        ?: throw IllegalStateException(&quot;SystemEvent not annotated with @SystemEventTopic&quot;))</span>
-<span class="fc" id="L15">        .let { it as SystemEventTopic }.value</span>
+<span class="fc" id="L15">        .let { it as SystemTopic }.value</span>
 
 @MustBeDocumented
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class SystemEventTopic(val value: String)
+annotation class SystemTopic(val value: String)
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -4,30 +4,43 @@ import io.hamal.extension.std.log.LogExtensionFactory
 import io.hamal.extension.std.sys.SysExtensionFactory
 import io.hamal.extension.web3.eth.EthExtensionFactory
 import io.hamal.extension.web3.hml.HmlExtensionFactory
+import io.hamal.lib.domain.vo.ExecId
 import io.hamal.lib.http.HttpTemplate
+import io.hamal.lib.kua.DefaultSandboxContext
 import io.hamal.lib.kua.NativeLoader
-import io.hamal.lib.kua.NativeLoader.Preference.Jar
 import io.hamal.lib.kua.Sandbox
-import io.hamal.lib.kua.SandboxFactory
+import io.hamal.lib.sdk.domain.DequeueExecsResponse
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 
-<span class="nc" id="L16">@Configuration</span>
+<span class="nc" id="L17">@Configuration</span>
 @Profile(&quot;!test&quot;)
-<span class="nc" id="L18">open class SandboxConfig {</span>
+<span class="nc" id="L19">open class SandboxConfig {</span>
     @Bean
-<span class="nc" id="L20">    open fun sandboxFactory(): SandboxFactory = object : SandboxFactory {</span>
-        override fun create(): Sandbox {
-<span class="nc" id="L22">            NativeLoader.load(Jar)</span>
-<span class="nc" id="L23">            val template = HttpTemplate(&quot;http://localhost:8008&quot;)</span>
-<span class="nc" id="L24">            return Sandbox().also {</span>
-<span class="nc" id="L25">                it.register(LogExtensionFactory().create())</span>
-<span class="nc" id="L26">                it.register(SysExtensionFactory { template }.create())</span>
-<span class="nc" id="L27">                it.register(EthExtensionFactory().create())</span>
-<span class="nc" id="L28">                it.register(HmlExtensionFactory().create())</span>
-<span class="nc" id="L29">            }</span>
-        }
-<span class="nc" id="L31">    }</span>
+<span class="nc" id="L21">    open fun sandboxFactory(): SandboxFactory = RunnerSandboxFactory()</span>
+}
+
+interface SandboxFactory {
+    fun create(exec: DequeueExecsResponse.Exec): Sandbox
+}
+
+<span class="nc" id="L28">class RunnerSandboxFactory : SandboxFactory {</span>
+    override fun create(exec: DequeueExecsResponse.Exec): Sandbox {
+<span class="nc" id="L30">        NativeLoader.load(NativeLoader.Preference.Jar)</span>
+<span class="nc" id="L31">        val template = HttpTemplate(&quot;http://localhost:8008&quot;)</span>
+
+<span class="nc" id="L33">        val ctx = DefaultSandboxContext()</span>
+<span class="nc" id="L34">        ctx[ExecId::class] = exec.id</span>
+
+
+<span class="nc" id="L37">        return Sandbox(ctx).also {</span>
+<span class="nc" id="L38">            it.register(LogExtensionFactory { template }.create())</span>
+<span class="nc" id="L39">            it.register(SysExtensionFactory { template }.create())</span>
+<span class="nc" id="L40">            it.register(EthExtensionFactory().create())</span>
+<span class="nc" id="L41">            it.register(HmlExtensionFactory().create())</span>
+<span class="nc" id="L42">        }</span>
+    }
+
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -29,10 +29,10 @@ interface SystemEventServiceFactory {
     fun create(): EventService
 }
 
-<span class="fc" id="L32">class DefaultSystemEventService&lt;TOPIC : LogTopic&gt;(</span>
+<span class="fc" id="L32">class DefaultSystemEventService(</span>
 <span class="fc" id="L33">    val async: Async,</span>
 <span class="fc" id="L34">    val generateDomainId: GenerateDomainId,</span>
-<span class="fc" id="L35">    val systemEventBrokerRepository: LogBrokerRepository&lt;TOPIC&gt;</span>
+<span class="fc" id="L35">    val systemEventBrokerRepository: LogBrokerRepository</span>
 ) : SystemEventServiceFactory {
 
 <span class="fc" id="L38">    private val handlerContainer = SystemEventHandlerContainer()</span>

@@ -40,18 +40,8 @@ import kotlinx.serialization.Serializable
 <span class="fc" id="L40">) : SubmittedReq</span>
 
 <span class="pc bpc" id="L42" title="2 of 8 branches missed.">@Serializable</span>
-<span class="fc" id="L43">data class InvokeOneshotReq(</span>
+<span class="fc" id="L43">data class InvokeFuncReq(</span>
 <span class="fc" id="L44">    val correlationId: CorrelationId?,</span>
-<span class="fc" id="L45">    val inputs: InvocationInputs,</span>
+<span class="fc" id="L45">    val inputs: InvocationInputs?,</span>
 <span class="fc" id="L46">)</span>
-
-<span class="pc bpc" id="L48" title="2 of 12 branches missed.">@Serializable</span>
-<span class="fc" id="L49">data class SubmittedInvokeOneshotReq(</span>
-<span class="fc" id="L50">    override val reqId: ReqId,</span>
-<span class="fc" id="L51">    override var status: ReqStatus,</span>
-<span class="fc" id="L52">    val execId: ExecId,</span>
-<span class="fc" id="L53">    val funcId: FuncId,</span>
-<span class="fc" id="L54">    val correlationId: CorrelationId,</span>
-<span class="fc" id="L55">    val inputs: InvocationInputs,</span>
-<span class="fc" id="L56">) : SubmittedReq</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

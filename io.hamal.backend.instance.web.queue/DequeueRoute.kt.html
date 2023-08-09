@@ -21,7 +21,7 @@ import java.security.SecureRandom
 <span class="fc" id="L21">class DequeueRoute(</span>
 <span class="fc" id="L22">    private val execCmdRepository: ExecCmdRepository,</span>
 <span class="fc" id="L23">    private val stateQueryRepository: StateQueryRepository,</span>
-<span class="fc" id="L24">    private val eventEmitter: SystemEventEmitter&lt;*&gt;</span>
+<span class="fc" id="L24">    private val eventEmitter: SystemEventEmitter</span>
 ) {
     @PostMapping(&quot;/v1/dequeue&quot;)
     fun dequeue(): ResponseEntity&lt;DequeueExecsResponse&gt; {

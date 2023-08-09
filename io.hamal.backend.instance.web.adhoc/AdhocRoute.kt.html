@@ -2,7 +2,7 @@
 
 import io.hamal.backend.instance.req.SubmitRequest
 import io.hamal.lib.domain.req.InvokeAdhocReq
-import io.hamal.lib.domain.req.SubmittedInvokeAdhocReq
+import io.hamal.lib.domain.req.SubmittedInvokeExecReq
 import org.springframework.http.HttpStatus.ACCEPTED
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController
     @PostMapping(&quot;/v1/adhoc&quot;)
     fun adhoc(
         @RequestBody adhocInvocation: InvokeAdhocReq
-    ): ResponseEntity&lt;SubmittedInvokeAdhocReq&gt; {
+    ): ResponseEntity&lt;SubmittedInvokeExecReq&gt; {
 <span class="fc" id="L20">        val result = submitRequest(adhocInvocation)</span>
 <span class="fc" id="L21">        return ResponseEntity(result, ACCEPTED)</span>
     }

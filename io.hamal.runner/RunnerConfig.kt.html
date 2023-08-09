@@ -21,9 +21,9 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler
 <span class="fc" id="L21">open class RunnerConfig {</span>
 
     @Bean
-    open fun agentExecutor(): ThreadPoolTaskScheduler {
+    open fun runnerExecutor(): ThreadPoolTaskScheduler {
 <span class="fc" id="L25">        val result = ThreadPoolTaskScheduler()</span>
-<span class="fc" id="L26">        result.threadNamePrefix = &quot;4g3n1-&quot;</span>
+<span class="fc" id="L26">        result.threadNamePrefix = &quot;runner-&quot;</span>
 <span class="fc" id="L27">        result.poolSize = 1</span>
 <span class="fc" id="L28">        result.initialize()</span>
 <span class="fc" id="L29">        return result</span>

@@ -27,7 +27,7 @@ import io.hamal.lib.web3.eth.http.EthHttpBatchService
 <span class="nc" id="L27">        try {</span>
 <span class="nc" id="L28">            val batchService = EthHttpBatchService(HttpTemplate((config.value[&quot;host&quot;] as StringValue).value))</span>
 <span class="nc" id="L29">            ctx.pushNil()</span>
-<span class="nc bnc" id="L30" title="All 2 branches missed.">            while (ctx.state.bridge.tableNext(arg1.index)) {</span>
+<span class="nc bnc" id="L30" title="All 2 branches missed.">            while (ctx.state.native.tableNext(arg1.index)) {</span>
 //                val i = ctx.state.getNumber(-2)
 <span class="nc" id="L32">                val v = ctx.state.getTableMap(-1)</span>
 
@@ -40,7 +40,7 @@ import io.hamal.lib.web3.eth.http.EthHttpBatchService
                         )
                     }
                 }
-<span class="nc" id="L43">                ctx.state.bridge.pop(1)</span>
+<span class="nc" id="L43">                ctx.state.native.pop(1)</span>
             }
 
 <span class="nc" id="L46">            val result = ctx.tableCreateArray(0)</span>

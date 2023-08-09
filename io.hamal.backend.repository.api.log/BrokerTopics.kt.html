@@ -5,11 +5,11 @@ import io.hamal.lib.domain.vo.TopicId
 import io.hamal.lib.domain.vo.TopicName
 import java.io.Closeable
 
-interface LogBrokerTopicsRepository&lt;TOPIC : LogTopic&gt; : Closeable {
-    fun create(cmdId: CmdId, toCreate: TopicToCreate): TOPIC
-    fun find(name: TopicName): TOPIC?
-    fun find(id: TopicId): TOPIC?
-    fun list(): List&lt;TOPIC&gt;
+interface LogBrokerTopicsRepository : Closeable {
+    fun create(cmdId: CmdId, toCreate: TopicToCreate): LogTopic
+    fun find(name: TopicName): LogTopic?
+    fun find(id: TopicId): LogTopic?
+    fun list(): List&lt;LogTopic&gt;
     fun count(): ULong
 <span class="fc" id="L14">    data class TopicToCreate(</span>
 <span class="fc" id="L15">        val id: TopicId,</span>

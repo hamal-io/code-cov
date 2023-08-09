@@ -9,16 +9,16 @@ import kotlinx.serialization.protobuf.ProtoBuf
 import kotlinx.serialization.serializer
 import kotlin.reflect.KClass
 
-interface Appender&lt;TOPIC : LogTopic, VALUE : Any&gt; {
-    fun append(cmdId: CmdId, topic: TOPIC, value: VALUE)
+interface Appender&lt;VALUE : Any&gt; {
+    fun append(cmdId: CmdId, topic: LogTopic, value: VALUE)
 }
 
-<span class="fc" id="L16">class ProtobufAppender&lt;TOPIC : LogTopic, VALUE : Any&gt;(</span>
+<span class="fc" id="L16">class ProtobufAppender&lt;VALUE : Any&gt;(</span>
 <span class="fc" id="L17">    private val valueClass: KClass&lt;VALUE&gt;,</span>
-<span class="fc" id="L18">    private val repository: LogBrokerRepository&lt;TOPIC&gt;</span>
-) : Appender&lt;TOPIC, VALUE&gt; {
+<span class="fc" id="L18">    private val repository: LogBrokerRepository</span>
+) : Appender&lt;VALUE&gt; {
     @OptIn(InternalSerializationApi::class)
-    override fun append(cmdId: CmdId, topic: TOPIC, value: VALUE) {
+    override fun append(cmdId: CmdId, topic: LogTopic, value: VALUE) {
 <span class="fc" id="L22">        val encoded = ProtoBuf.encodeToByteArray(valueClass.serializer(), value)</span>
 <span class="fc" id="L23">        repository.append(CmdId(cmdId.value + &quot;_&quot; + encoded.contentHashCode()), topic, encoded)</span>
 <span class="fc" id="L24">    }</span>

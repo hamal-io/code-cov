@@ -19,16 +19,17 @@ object CorrelationIdConverter : Converter&lt;String, CorrelationId&gt; {
 
 <span class="fc" id="L20">object EventIdConverter : DomainIdConverter&lt;EventId&gt;(EventId::class, ::EventId)</span>
 <span class="fc" id="L21">object ExecIdConverter : DomainIdConverter&lt;ExecId&gt;(ExecId::class, ::ExecId)</span>
-<span class="fc" id="L22">object FuncIdConverter : DomainIdConverter&lt;FuncId&gt;(FuncId::class, ::FuncId)</span>
-<span class="fc" id="L23">object ReqIdConverter : DomainIdConverter&lt;ReqId&gt;(ReqId::class, ::ReqId)</span>
-<span class="fc" id="L24">object TopicIdConverter : DomainIdConverter&lt;TopicId&gt;(TopicId::class, ::TopicId)</span>
+<span class="fc" id="L22">object ExecLogIdConverter : DomainIdConverter&lt;ExecLogId&gt;(ExecLogId::class, ::ExecLogId)</span>
+<span class="fc" id="L23">object FuncIdConverter : DomainIdConverter&lt;FuncId&gt;(FuncId::class, ::FuncId)</span>
+<span class="fc" id="L24">object ReqIdConverter : DomainIdConverter&lt;ReqId&gt;(ReqId::class, ::ReqId)</span>
+<span class="fc" id="L25">object TopicIdConverter : DomainIdConverter&lt;TopicId&gt;(TopicId::class, ::TopicId)</span>
 
-<span class="fc" id="L26">sealed class DomainIdConverter&lt;ID : DomainId&gt;(</span>
-<span class="pc" id="L27">    val clazz: KClass&lt;ID&gt;,</span>
-<span class="pc" id="L28">    val ctor: (SnowflakeId) -&gt; ID,</span>
+<span class="fc" id="L27">sealed class DomainIdConverter&lt;ID : DomainId&gt;(</span>
+<span class="pc" id="L28">    val clazz: KClass&lt;ID&gt;,</span>
+<span class="pc" id="L29">    val ctor: (SnowflakeId) -&gt; ID,</span>
 ) : Converter&lt;String, ID&gt; {
     override fun convert(source: String): ID {
-<span class="fc" id="L31">        return ctor(SnowflakeId(source.toLong()))</span>
+<span class="fc" id="L32">        return ctor(SnowflakeId(source.toLong()))</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

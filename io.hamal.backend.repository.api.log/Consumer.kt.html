@@ -29,10 +29,10 @@ interface BatchConsumer&lt;VALUE : Any&gt; {
 }
 
 <span class="fc" id="L31">@OptIn(ExperimentalSerializationApi::class, InternalSerializationApi::class)</span>
-<span class="fc" id="L32">class ProtobufLogConsumer&lt;TOPIC : LogTopic, Value : Any&gt;(</span>
+<span class="fc" id="L32">class ProtobufLogConsumer&lt;Value : Any&gt;(</span>
 <span class="fc" id="L33">    override val groupId: GroupId,</span>
-<span class="fc" id="L34">    private val topic: TOPIC,</span>
-<span class="fc" id="L35">    private val repository: LogBrokerRepository&lt;TOPIC&gt;,</span>
+<span class="fc" id="L34">    private val topic: LogTopic,</span>
+<span class="fc" id="L35">    private val repository: LogBrokerRepository,</span>
 <span class="fc" id="L36">    private val valueClass: KClass&lt;Value&gt;</span>
 ) : LogConsumer&lt;Value&gt; {
 
@@ -52,10 +52,10 @@ interface BatchConsumer&lt;VALUE : Any&gt; {
 }
 
 <span class="fc" id="L54">@OptIn(ExperimentalSerializationApi::class, InternalSerializationApi::class)</span>
-<span class="fc" id="L55">class ProtobufBatchConsumer&lt;TOPIC : LogTopic, Value : Any&gt;(</span>
+<span class="fc" id="L55">class ProtobufBatchConsumer&lt;Value : Any&gt;(</span>
 <span class="fc" id="L56">    override val groupId: GroupId,</span>
-<span class="fc" id="L57">    private val topic: TOPIC,</span>
-<span class="fc" id="L58">    private val repository: LogBrokerRepository&lt;TOPIC&gt;,</span>
+<span class="fc" id="L57">    private val topic: LogTopic,</span>
+<span class="fc" id="L58">    private val repository: LogBrokerRepository,</span>
 <span class="fc" id="L59">    private val valueClass: KClass&lt;Value&gt;</span>
 ) : BatchConsumer&lt;Value&gt; {
 

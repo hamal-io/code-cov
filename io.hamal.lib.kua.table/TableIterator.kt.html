@@ -21,11 +21,11 @@ import io.hamal.lib.kua.value.Value
 <span class="fc" id="L21">    }</span>
 
     override fun hasNext(): Boolean {
-<span class="fc" id="L24">        hasNext = state.bridge.tableNext(index)</span>
+<span class="fc" id="L24">        hasNext = state.native.tableNext(index)</span>
 <span class="fc bfc" id="L25" title="All 2 branches covered.">        return if (hasNext) {</span>
 <span class="fc" id="L26">            val k = keyExtractor(state, -2)</span>
 <span class="fc" id="L27">            val v = valueExtractor(state, -1)</span>
-<span class="fc" id="L28">            state.bridge.pop(1)</span>
+<span class="fc" id="L28">            state.native.pop(1)</span>
 <span class="fc" id="L29">            nextTableEntry = TableEntry(k, v)</span>
 <span class="fc" id="L30">            true</span>
         } else {

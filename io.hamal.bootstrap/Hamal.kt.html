@@ -38,87 +38,40 @@ fun main(args: Array&lt;String&gt;) {
 <span class="nc" id="L38">    val ctx: ConfigurableApplicationContext = applicationBuilder.context()</span>
 
 
-<span class="nc bnc" id="L41" title="All 2 branches missed.">    if (isEnable(ctx, &quot;backend&quot;)) {</span>
-<span class="nc" id="L42">        applicationBuilder</span>
-<span class="nc" id="L43">            .parent(parent)</span>
-<span class="nc" id="L44">            .child(BackendConfig::class.java)</span>
-<span class="nc" id="L45">            .web(WebApplicationType.SERVLET)</span>
-<span class="nc" id="L46">            .properties(&quot;server.port=8008&quot;)</span>
-<span class="nc" id="L47">            .banner { _: Environment?, _: Class&lt;*&gt;?, out: PrintStream -&gt;</span>
-<span class="nc" id="L48">                out.println(&quot;&quot;)</span>
-<span class="nc" id="L49">                out.println(&quot;&quot;)</span>
-<span class="nc" id="L50">                out.println(</span>
-                    &quot;&quot;&quot;
-  ____             _                  _ 
- |  _ \           | |                | |
- | |_) | __ _  ___| | _____ _ __   __| |
- |  _ &lt; / _` |/ __| |/ / _ \ '_ \ / _` |
- | |_) | (_| | (__|   &lt;  __/ | | | (_| |
- |____/ \__,_|\___|_|\_\___|_| |_|\__,_|
-<span class="nc" id="L58">                &quot;&quot;&quot;.trimIndent()</span>
-                )
-<span class="nc" id="L60">                out.println(&quot;&quot;)</span>
-<span class="nc" id="L61">                out.println(&quot;&quot;)</span>
-<span class="nc" id="L62">            }</span>
-<span class="nc" id="L63">            .run(*args)</span>
-    }
+<span class="nc" id="L41">    applicationBuilder</span>
+<span class="nc" id="L42">        .parent(parent)</span>
+<span class="nc" id="L43">        .child(BackendConfig::class.java, FrontendConfig::class.java)</span>
+<span class="nc" id="L44">        .web(WebApplicationType.SERVLET)</span>
+<span class="nc" id="L45">        .properties(&quot;server.port=8008&quot;)</span>
+<span class="nc" id="L46">        .run(*args)</span>
 
 
-<span class="nc bnc" id="L67" title="All 2 branches missed.">    if (isEnable(ctx, &quot;agent&quot;)) {</span>
-<span class="nc" id="L68">        applicationBuilder</span>
-<span class="nc" id="L69">            .parent(parent)</span>
-<span class="nc" id="L70">            .child(</span>
-<span class="nc" id="L71">                RunnerConfig::class.java,</span>
-            )
-<span class="nc" id="L73">            .web(WebApplicationType.NONE)</span>
-<span class="nc" id="L74">            .banner { _: Environment?, _: Class&lt;*&gt;?, out: PrintStream -&gt;</span>
-<span class="nc" id="L75">                out.println(&quot;&quot;)</span>
-<span class="nc" id="L76">                out.println(&quot;&quot;)</span>
-<span class="nc" id="L77">                out.println(</span>
-                    &quot;&quot;&quot;
+<span class="nc" id="L49">    applicationBuilder</span>
+<span class="nc" id="L50">        .parent(parent)</span>
+<span class="nc" id="L51">        .child(RunnerConfig::class.java)</span>
+<span class="nc" id="L52">        .web(WebApplicationType.NONE)</span>
+<span class="nc" id="L53">        .banner { _: Environment?, _: Class&lt;*&gt;?, out: PrintStream -&gt;</span>
+<span class="nc" id="L54">            out.println(&quot;&quot;)</span>
+<span class="nc" id="L55">            out.println(&quot;&quot;)</span>
+<span class="nc" id="L56">            out.println(</span>
+                &quot;&quot;&quot;
   _____                             
  |  __ \                            
  | |__) |   _ _ __  _ __   ___ _ __ 
  |  _  / | | | '_ \| '_ \ / _ \ '__|
  | | \ \ |_| | | | | | | |  __/ |   
  |_|  \_\__,_|_| |_|_| |_|\___|_| 
-<span class="nc" id="L85">                &quot;&quot;&quot;.trimIndent()</span>
-                )
-<span class="nc" id="L87">                out.println(&quot;&quot;)</span>
-<span class="nc" id="L88">                out.println(&quot;&quot;)</span>
-<span class="nc" id="L89">            }</span>
-<span class="nc" id="L90">            .run(*args)</span>
-    }
+<span class="nc" id="L64">                &quot;&quot;&quot;.trimIndent()</span>
+            )
+<span class="nc" id="L66">            out.println(&quot;&quot;)</span>
+<span class="nc" id="L67">            out.println(&quot;&quot;)</span>
+<span class="nc" id="L68">        }</span>
+<span class="nc" id="L69">        .run(*args)</span>
 
-<span class="nc bnc" id="L93" title="All 2 branches missed.">    if (isEnable(ctx, &quot;frontend&quot;)) {</span>
-<span class="nc" id="L94">        applicationBuilder</span>
-<span class="nc" id="L95">            .parent(parent)</span>
-<span class="nc" id="L96">            .child(FrontendConfig::class.java)</span>
-<span class="nc" id="L97">            .web(WebApplicationType.SERVLET)</span>
-<span class="nc" id="L98">            .properties(&quot;server.port=8009&quot;)</span>
-<span class="nc" id="L99">            .banner { _: Environment?, _: Class&lt;*&gt;?, out: PrintStream -&gt;</span>
-<span class="nc" id="L100">                out.println(&quot;&quot;)</span>
-<span class="nc" id="L101">                out.println(&quot;&quot;)</span>
-<span class="nc" id="L102">                out.println(</span>
-                    &quot;&quot;&quot;
-  ______               _                 _ 
- |  ____|             | |               | |
- | |__ _ __ ___  _ __ | |_ ___ _ __   __| |
- |  __| '__/ _ \| '_ \| __/ _ \ '_ \ / _` |
- | |  | | | (_) | | | | ||  __/ | | | (_| |
- |_|  |_|  \___/|_| |_|\__\___|_| |_|\__,_|
-<span class="nc" id="L110">                &quot;&quot;&quot;.trimIndent()</span>
-                )
-<span class="nc" id="L112">                out.println(&quot;&quot;)</span>
-<span class="nc" id="L113">                out.println(&quot;&quot;)</span>
-<span class="nc" id="L114">            }</span>
-<span class="nc" id="L115">            .run(*args)</span>
-    }
-
-<span class="nc" id="L118">}</span>
+<span class="nc" id="L71">}</span>
 
 fun isEnable(ctx: ConfigurableApplicationContext, module: String): Boolean {
 //    return ctx.environment.getProperty(&quot;io.hamal.module.$module.enabled&quot;, &quot;false&quot;) == &quot;true&quot;
-<span class="nc" id="L122">    return true</span>
+<span class="nc" id="L75">    return true</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

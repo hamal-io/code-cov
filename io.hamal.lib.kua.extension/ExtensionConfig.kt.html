@@ -33,8 +33,8 @@ import io.hamal.lib.kua.value.Value
 ) {
     override fun invoke(ctx: FunctionContext, arg1: TableMapValue) {
 <span class="nc" id="L35">        val state = ctx.state</span>
-<span class="nc" id="L36">        state.bridge.pushNil()</span>
-<span class="nc bnc" id="L37" title="All 2 branches missed.">        while (state.bridge.tableNext(arg1.index)) {</span>
+<span class="nc" id="L36">        state.native.pushNil()</span>
+<span class="nc bnc" id="L37" title="All 2 branches missed.">        while (state.native.tableNext(arg1.index)) {</span>
 <span class="nc" id="L38">            val k = state.getString(-2)</span>
 <span class="nc" id="L39">            val v = state.getAnyValue(-1)</span>
 
@@ -42,7 +42,7 @@ import io.hamal.lib.kua.value.Value
 <span class="nc bnc" id="L42" title="All 2 branches missed.">                is StringValue -&gt; config.value[k] = n</span>
 <span class="nc" id="L43">                else -&gt; TODO()</span>
             }
-<span class="nc" id="L45">            state.bridge.pop(1)</span>
+<span class="nc" id="L45">            state.native.pop(1)</span>
         }
 <span class="nc" id="L47">    }</span>
 }

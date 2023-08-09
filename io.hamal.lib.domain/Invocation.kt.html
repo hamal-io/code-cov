@@ -12,25 +12,25 @@ sealed class Invocation {
 }
 
 <span class="pc bpc" id="L14" title="3 of 9 branches missed.">@Serializable</span>
-@SerialName(&quot;Adhoc&quot;)
+@SerialName(&quot;AdhocInvocation&quot;)
 <span class="fc" id="L16">data class AdhocInvocation(</span>
 <span class="pc bpc" id="L17" title="2 of 4 branches missed.">    override val invokedAt: InvokedAt = InvokedAt.now()</span>
 <span class="fc" id="L18">) : Invocation()</span>
 
 <span class="pc bpc" id="L20" title="3 of 9 branches missed.">@Serializable</span>
-@SerialName(&quot;FixedRate&quot;)
+@SerialName(&quot;FixedRateInvocation&quot;)
 <span class="fc" id="L22">data class FixedRateInvocation(</span>
 <span class="pc bpc" id="L23" title="2 of 4 branches missed.">    override val invokedAt: InvokedAt = InvokedAt.now()</span>
 <span class="fc" id="L24">) : Invocation()</span>
 
 <span class="pc bpc" id="L26" title="3 of 9 branches missed.">@Serializable</span>
-@SerialName(&quot;OneShot&quot;)
-<span class="fc" id="L28">data class OneShotInvocation(</span>
+@SerialName(&quot;FuncInvocation&quot;)
+<span class="fc" id="L28">data class FuncInvocation(</span>
 <span class="pc bpc" id="L29" title="2 of 4 branches missed.">    override val invokedAt: InvokedAt = InvokedAt.now()</span>
 <span class="fc" id="L30">) : Invocation()</span>
 
 <span class="pc bpc" id="L32" title="3 of 10 branches missed.">@Serializable</span>
-@SerialName(&quot;Event&quot;)
+@SerialName(&quot;EventInvocation&quot;)
 <span class="fc" id="L34">data class EventInvocation(</span>
 <span class="pc" id="L35">    val events: List&lt;Event&gt;,</span>
 <span class="pc bpc" id="L36" title="2 of 4 branches missed.">    override val invokedAt: InvokedAt = InvokedAt.now()</span>

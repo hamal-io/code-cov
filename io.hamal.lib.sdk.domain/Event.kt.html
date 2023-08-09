@@ -13,16 +13,23 @@ import kotlinx.serialization.Serializable
 <span class="fc" id="L13">)</span>
 
 
-<span class="pc bpc" id="L16" title="2 of 7 branches missed.">@Serializable</span>
-<span class="fc" id="L17">data class ListTopicsResponse(</span>
-<span class="fc" id="L18">    val topics: List&lt;Topic&gt;</span>
+<span class="pc bpc" id="L16" title="2 of 8 branches missed.">@Serializable</span>
+<span class="fc" id="L17">data class ApiTopic(</span>
+<span class="fc" id="L18">    val id: TopicId,</span>
+<span class="fc" id="L19">    val name: TopicName</span>
+<span class="fc" id="L20">)</span>
+
+
+<span class="pc bpc" id="L23" title="2 of 7 branches missed.">@Serializable</span>
+<span class="fc" id="L24">data class ListTopicsResponse(</span>
+<span class="fc" id="L25">    val topics: List&lt;Topic&gt;</span>
 ) {
-<span class="pc bpc" id="L20" title="2 of 8 branches missed.">    @Serializable</span>
-<span class="fc" id="L21">    data class Topic(</span>
-<span class="pc" id="L22">        val id: TopicId,</span>
-<span class="fc" id="L23">        val name: TopicName</span>
-<span class="fc" id="L24">    )</span>
-<span class="fc" id="L25">}</span>
+<span class="pc bpc" id="L27" title="2 of 8 branches missed.">    @Serializable</span>
+<span class="fc" id="L28">    data class Topic(</span>
+<span class="pc" id="L29">        val id: TopicId,</span>
+<span class="fc" id="L30">        val name: TopicName</span>
+<span class="fc" id="L31">    )</span>
+<span class="fc" id="L32">}</span>
 
 
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

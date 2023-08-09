@@ -26,7 +26,7 @@ import io.hamal.lib.web3.hml.http.HmlHttpBatchService
 <span class="nc" id="L26">        try {</span>
 <span class="nc" id="L27">            val batchService = HmlHttpBatchService(HttpTemplate((config.value[&quot;host&quot;] as StringValue).value))</span>
 <span class="nc" id="L28">            ctx.pushNil()</span>
-<span class="nc bnc" id="L29" title="All 2 branches missed.">            while (ctx.state.bridge.tableNext(arg1.index)) {</span>
+<span class="nc bnc" id="L29" title="All 2 branches missed.">            while (ctx.state.native.tableNext(arg1.index)) {</span>
 //                val i = ctx.state.getNumber(-2)
 <span class="nc" id="L31">                val v = ctx.state.getTableMap(-1)</span>
 
@@ -39,7 +39,7 @@ import io.hamal.lib.web3.hml.http.HmlHttpBatchService
                         )
                     }
                 }
-<span class="nc" id="L42">                ctx.state.bridge.pop(1)</span>
+<span class="nc" id="L42">                ctx.state.native.pop(1)</span>
             }
 
 <span class="nc" id="L45">            val result = ctx.tableCreateArray(0)</span>
