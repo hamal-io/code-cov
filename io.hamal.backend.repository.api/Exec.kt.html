@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Exec.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.repository.api</a> &gt; <span class="el_source">Exec.kt</span></div><h1>Exec.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.repository.api
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Exec.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.repository.api</a> &gt; <span class="el_source">Exec.kt</span></div><h1>Exec.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.repository.api
 
 import io.hamal.lib.common.SnowflakeId
 import io.hamal.lib.common.domain.CmdId
@@ -7,8 +7,8 @@ import io.hamal.lib.common.domain.Limit
 import io.hamal.lib.domain.Correlation
 import io.hamal.lib.domain.Invocation
 import io.hamal.lib.domain.vo.*
-import io.hamal.lib.kua.value.CodeValue
-import io.hamal.lib.kua.value.ErrorValue
+import io.hamal.lib.kua.type.CodeType
+import io.hamal.lib.kua.type.ErrorType
 import kotlinx.serialization.Serializable
 
 interface ExecCmdRepository {
@@ -25,7 +25,7 @@ interface ExecCmdRepository {
 <span class="fc" id="L25">        val execId: ExecId,</span>
 <span class="fc" id="L26">        val correlation: Correlation?,</span>
 <span class="fc" id="L27">        val inputs: ExecInputs,</span>
-<span class="fc" id="L28">        val code: CodeValue,</span>
+<span class="fc" id="L28">        val code: CodeType,</span>
 <span class="fc" id="L29">        val invocation: Invocation</span>
     )
 
@@ -51,7 +51,7 @@ interface ExecCmdRepository {
 <span class="fc" id="L51">    data class FailCmd(</span>
 <span class="fc" id="L52">        val id: CmdId,</span>
 <span class="fc" id="L53">        val execId: ExecId,</span>
-<span class="fc" id="L54">        val cause: ErrorValue</span>
+<span class="fc" id="L54">        val cause: ErrorType</span>
     )
 }
 
@@ -73,7 +73,7 @@ sealed class Exec : DomainObject&lt;ExecId&gt; {
 
     abstract val correlation: Correlation?
     abstract val inputs: ExecInputs
-    abstract val code: CodeValue
+    abstract val code: CodeType
     abstract val invocation: Invocation
 
     override fun equals(other: Any?): Boolean {
@@ -101,7 +101,7 @@ sealed class Exec : DomainObject&lt;ExecId&gt; {
 <span class="fc" id="L101">    override val id: ExecId,</span>
 <span class="fc" id="L102">    override val correlation: Correlation?,</span>
 <span class="fc" id="L103">    override val inputs: ExecInputs,</span>
-<span class="fc" id="L104">    override val code: CodeValue,</span>
+<span class="fc" id="L104">    override val code: CodeType,</span>
 <span class="fc" id="L105">    override val invocation: Invocation</span>
 // FIXME    val plannedAt: PlannedAt
 <span class="fc" id="L107">) : Exec() {</span>
@@ -191,7 +191,7 @@ sealed class Exec : DomainObject&lt;ExecId&gt; {
 <span class="pc" id="L191">    val startedExec: StartedExec,</span>
     //FIXME failedAt
 <span class="pc" id="L193">    val failedAt: FailedAt,</span>
-<span class="fc" id="L194">    val cause: ErrorValue</span>
+<span class="fc" id="L194">    val cause: ErrorType</span>
 <span class="fc" id="L195">) : Exec() {</span>
 <span class="pc bpc" id="L196" title="2 of 4 branches missed.">    override val status = ExecStatus.Failed</span>
 <span class="fc" id="L197">    override val correlation get() = startedExec.correlation</span>

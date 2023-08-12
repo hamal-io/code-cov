@@ -1,7 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CreateFuncFunction.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.extension.std.sys</a> &gt; <span class="el_source">CreateFuncFunction.kt</span></div><h1>CreateFuncFunction.kt</h1><pre class="source lang-java linenums">package io.hamal.extension.std.sys
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CreateFuncFunction.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.extension.std.sys</a> &gt; <span class="el_source">CreateFuncFunction.kt</span></div><h1>CreateFuncFunction.kt</h1><pre class="source lang-java linenums">package io.hamal.extension.std.sys
 
 import io.hamal.lib.domain.req.CreateFuncReq
-import io.hamal.lib.domain.req.SubmittedCreateFuncReq
 import io.hamal.lib.domain.vo.FuncInputs
 import io.hamal.lib.domain.vo.FuncName
 import io.hamal.lib.http.HttpTemplate
@@ -10,16 +9,17 @@ import io.hamal.lib.kua.function.Function1In2Out
 import io.hamal.lib.kua.function.FunctionContext
 import io.hamal.lib.kua.function.FunctionInput1Schema
 import io.hamal.lib.kua.function.FunctionOutput2Schema
-import io.hamal.lib.kua.table.TableMapValue
-import io.hamal.lib.kua.value.ErrorValue
+import io.hamal.lib.kua.table.TableMap
+import io.hamal.lib.kua.type.ErrorType
+import io.hamal.lib.sdk.domain.ApiSubmittedReqWithDomainId
 
 <span class="fc" id="L16">class CreateFuncFunction(</span>
 <span class="fc" id="L17">    private val templateSupplier: () -&gt; HttpTemplate</span>
-<span class="fc" id="L18">) : Function1In2Out&lt;TableMapValue, ErrorValue, TableMapValue&gt;(</span>
-<span class="fc" id="L19">    FunctionInput1Schema(TableMapValue::class),</span>
-<span class="fc" id="L20">    FunctionOutput2Schema(ErrorValue::class, TableMapValue::class)</span>
+<span class="fc" id="L18">) : Function1In2Out&lt;TableMap, ErrorType, TableMap&gt;(</span>
+<span class="fc" id="L19">    FunctionInput1Schema(TableMap::class),</span>
+<span class="fc" id="L20">    FunctionOutput2Schema(ErrorType::class, TableMap::class)</span>
 ) {
-    override fun invoke(ctx: FunctionContext, arg1: TableMapValue): Pair&lt;ErrorValue?, TableMapValue&gt; {
+    override fun invoke(ctx: FunctionContext, arg1: TableMap): Pair&lt;ErrorType?, TableMap&gt; {
 <span class="fc" id="L23">        try {</span>
 
 //            val name: StringValue = when (val x = arg1[&quot;name&quot;]) {
@@ -51,12 +51,12 @@ import io.hamal.lib.kua.value.ErrorValue
 <span class="fc" id="L51">            val res = templateSupplier()</span>
 <span class="fc" id="L52">                .post(&quot;/v1/funcs&quot;)</span>
 <span class="fc" id="L53">                .body(r)</span>
-<span class="fc" id="L54">                .execute(SubmittedCreateFuncReq::class)</span>
+<span class="fc" id="L54">                .execute(ApiSubmittedReqWithDomainId::class)</span>
 
 <span class="fc" id="L56">            return null to ctx.tableCreateMap(1).also {</span>
-<span class="fc" id="L57">                it[&quot;req_id&quot;] = res.reqId.value.toString()</span>
+<span class="fc" id="L57">                it[&quot;req_id&quot;] = res.reqId</span>
 <span class="fc" id="L58">                it[&quot;status&quot;] = res.status.name</span>
-<span class="fc" id="L59">                it[&quot;id&quot;] = res.id.value.toString()</span>
+<span class="fc" id="L59">                it[&quot;id&quot;] = res.id</span>
 <span class="fc" id="L60">            }</span>
 
 <span class="nc" id="L62">        } catch (t: Throwable) {</span>

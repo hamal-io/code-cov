@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CallFunction.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.extension.web3.eth.dep</a> &gt; <span class="el_source">CallFunction.kt</span></div><h1>CallFunction.kt</h1><pre class="source lang-java linenums">package io.hamal.extension.web3.eth.dep
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CallFunction.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.extension.web3.eth.dep</a> &gt; <span class="el_source">CallFunction.kt</span></div><h1>CallFunction.kt</h1><pre class="source lang-java linenums">package io.hamal.extension.web3.eth.dep
 
 import io.hamal.lib.http.HttpTemplate
 import io.hamal.lib.kua.extension.ExtensionConfig
@@ -6,9 +6,9 @@ import io.hamal.lib.kua.function.Function1In2Out
 import io.hamal.lib.kua.function.FunctionContext
 import io.hamal.lib.kua.function.FunctionInput1Schema
 import io.hamal.lib.kua.function.FunctionOutput2Schema
-import io.hamal.lib.kua.table.TableMapValue
-import io.hamal.lib.kua.value.ErrorValue
-import io.hamal.lib.kua.value.StringValue
+import io.hamal.lib.kua.table.TableMap
+import io.hamal.lib.kua.type.ErrorType
+import io.hamal.lib.kua.type.StringType
 import io.hamal.lib.web3.eth.EthBatchService
 import io.hamal.lib.web3.eth.abi.type.EthAddress
 import io.hamal.lib.web3.eth.abi.type.EthPrefixedHexString
@@ -19,14 +19,14 @@ import java.math.BigInteger
 
 <span class="nc" id="L20">class CallFunction(</span>
 <span class="nc" id="L21">    val config: ExtensionConfig</span>
-<span class="nc" id="L22">) : Function1In2Out&lt;TableMapValue, ErrorValue, StringValue&gt;(</span>
-<span class="nc" id="L23">    FunctionInput1Schema(TableMapValue::class),</span>
-<span class="nc" id="L24">    FunctionOutput2Schema(ErrorValue::class, StringValue::class)</span>
+<span class="nc" id="L22">) : Function1In2Out&lt;TableMap, ErrorType, StringType&gt;(</span>
+<span class="nc" id="L23">    FunctionInput1Schema(TableMap::class),</span>
+<span class="nc" id="L24">    FunctionOutput2Schema(ErrorType::class, StringType::class)</span>
 ) {
-    override fun invoke(ctx: FunctionContext, arg1: TableMapValue): Pair&lt;ErrorValue?, StringValue?&gt; {
+    override fun invoke(ctx: FunctionContext, arg1: TableMap): Pair&lt;ErrorType?, StringType?&gt; {
 
 <span class="nc" id="L28">        val b = EthHttpBatchService(</span>
-<span class="nc" id="L29">            HttpTemplate((config.value[&quot;host&quot;] as StringValue).value)</span>
+<span class="nc" id="L29">            HttpTemplate((config.value[&quot;host&quot;] as StringType).value)</span>
 <span class="nc" id="L30">        ).call(</span>
 <span class="nc" id="L31">            EthBatchService.EthCallRequest(</span>
 <span class="nc" id="L32">                to = EthAddress(EthPrefixedHexString(arg1.getString(&quot;to&quot;))),</span>
@@ -35,7 +35,7 @@ import java.math.BigInteger
             )
 <span class="nc" id="L36">        ).execute().first() as EthCallResponse</span>
 
-<span class="nc" id="L38">        return null to StringValue(b.result.value)</span>
+<span class="nc" id="L38">        return null to StringType(b.result.value)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

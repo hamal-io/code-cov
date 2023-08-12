@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TableArray.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.kua.table</a> &gt; <span class="el_source">TableArray.kt</span></div><h1>TableArray.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.kua.table
+
+import io.hamal.lib.common.SnowflakeId
+import io.hamal.lib.common.domain.DomainId
+import io.hamal.lib.kua.type.*
+
+interface TableArray : TableProxy {
+    fun append(value: Boolean): Int
+<span class="nc" id="L9">    fun append(value: BooleanType) = append(value.value)</span>
+
+    fun append(value: Double): Int
+<span class="fc" id="L12">    fun append(value: Int) = append(value.toDouble())</span>
+<span class="nc" id="L13">    fun append(value: Long) = append(value.toDouble())</span>
+<span class="nc" id="L14">    fun append(value: Float) = append(value.toDouble())</span>
+<span class="nc" id="L15">    fun append(value: DoubleType) = append(value.value)</span>
+
+<span class="nc" id="L17">    fun append(value: SnowflakeId) = append(value.value.toString(16))</span>
+<span class="nc" id="L18">    fun append(value: DomainId) = append(value.value.value)</span>
+
+    fun append(value: String): Int
+<span class="nc" id="L21">    fun append(value: StringType) = append(value.value)</span>
+
+    fun append(value: TableMap): Int
+    fun append(value: TableArray): Int
+
+    fun get(idx: Int): AnyType
+<span class="nc" id="L27">    fun getBoolean(idx: Int) = getBooleanValue(idx) == TrueValue</span>
+    fun getBooleanValue(idx: Int): BooleanType
+    fun getNumberValue(idx: Int): DoubleType
+<span class="fc" id="L30">    fun getInt(idx: Int) = getNumberValue(idx).value.toInt()</span>
+<span class="nc" id="L31">    fun getLong(idx: Int) = getNumberValue(idx).value.toLong()</span>
+<span class="nc" id="L32">    fun getFloat(idx: Int) = getNumberValue(idx).value.toFloat()</span>
+<span class="nc" id="L33">    fun getDouble(idx: Int) = getNumberValue(idx).value.toDouble()</span>
+<span class="fc" id="L34">    fun getString(idx: Int) = getStringValue(idx).value</span>
+    fun getStringValue(idx: Int): StringType
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EventTriggerService.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.instance.service</a> &gt; <span class="el_source">EventTriggerService.kt</span></div><h1>EventTriggerService.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.instance.service
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EventTriggerService.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.instance.service</a> &gt; <span class="el_source">EventTriggerService.kt</span></div><h1>EventTriggerService.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.instance.service
 
 import io.hamal.backend.instance.component.Async
 import io.hamal.backend.instance.req.InvokeExec
@@ -13,13 +13,13 @@ import io.hamal.lib.common.SnowflakeId
 import io.hamal.lib.common.domain.Limit
 import io.hamal.lib.domain.Event
 import io.hamal.lib.domain.EventInvocation
+import io.hamal.lib.domain.GenerateDomainId
 import io.hamal.lib.domain._enum.TriggerType
 import io.hamal.lib.domain.vo.CorrelationId
 import io.hamal.lib.domain.vo.ExecId
 import io.hamal.lib.domain.vo.InvocationInputs
 import io.hamal.lib.domain.vo.TriggerId
-import io.hamal.lib.domain.vo.port.GenerateDomainId
-import io.hamal.lib.kua.value.TableValue
+import io.hamal.lib.kua.type.TableType
 import jakarta.annotation.PostConstruct
 import org.springframework.stereotype.Service
 import java.util.concurrent.ScheduledFuture
@@ -66,7 +66,7 @@ import kotlin.time.Duration.Companion.milliseconds
 <span class="nc" id="L66">                                    execId = generateDomainId(::ExecId),</span>
 <span class="nc" id="L67">                                    funcId = trigger.funcId,</span>
 <span class="nc bnc" id="L68" title="All 2 branches missed.">                                    correlationId = trigger.correlationId ?: CorrelationId(&quot;__default__&quot;),</span>
-<span class="nc" id="L69">                                    inputs = InvocationInputs(TableValue()),</span>
+<span class="nc" id="L69">                                    inputs = InvocationInputs(TableType()),</span>
 <span class="nc" id="L70">                                    invocation = EventInvocation(evts),</span>
 <span class="nc" id="L71">                                    code = funcQueryRepository.get(trigger.funcId).code</span>
                                 )

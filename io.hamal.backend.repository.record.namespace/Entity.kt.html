@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Entity.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.repository.record.namespace</a> &gt; <span class="el_source">Entity.kt</span></div><h1>Entity.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.repository.record.namespace
+
+import io.hamal.backend.repository.api.Namespace
+import io.hamal.backend.repository.record.RecordEntity
+import io.hamal.backend.repository.record.RecordSequence
+import io.hamal.lib.common.domain.CmdId
+import io.hamal.lib.domain.vo.NamespaceId
+import io.hamal.lib.domain.vo.NamespaceInputs
+import io.hamal.lib.domain.vo.NamespaceName
+
+<span class="fc" id="L11">data class Entity(</span>
+<span class="fc" id="L12">    override val id: NamespaceId,</span>
+<span class="fc" id="L13">    override val cmdId: CmdId,</span>
+<span class="pc" id="L14">    override val sequence: RecordSequence,</span>
+
+<span class="pc" id="L16">    var name: NamespaceName? = null,</span>
+<span class="pc" id="L17">    var inputs: NamespaceInputs? = null,</span>
+
+) : RecordEntity&lt;NamespaceId, NamespaceRecord, Namespace&gt; {
+
+    override fun apply(rec: NamespaceRecord): Entity {
+<span class="fc" id="L22">        return when (rec) {</span>
+<span class="fc bfc" id="L23" title="All 2 branches covered.">            is NamespaceCreationRecord -&gt; copy(</span>
+<span class="fc" id="L24">                id = rec.entityId,</span>
+<span class="fc" id="L25">                cmdId = rec.cmdId,</span>
+<span class="fc" id="L26">                sequence = rec.sequence(),</span>
+<span class="fc" id="L27">                name = rec.name,</span>
+<span class="fc" id="L28">                inputs = rec.inputs,</span>
+            )
+
+<span class="fc" id="L31">            is NamespaceUpdatedRecord -&gt; copy(</span>
+<span class="fc" id="L32">                id = rec.entityId,</span>
+<span class="fc" id="L33">                cmdId = rec.cmdId,</span>
+<span class="fc" id="L34">                sequence = rec.sequence(),</span>
+<span class="fc" id="L35">                name = rec.name,</span>
+<span class="fc" id="L36">                inputs = rec.inputs,</span>
+            )
+        }
+    }
+
+    override fun toDomainObject(): Namespace {
+<span class="fc" id="L42">        return Namespace(</span>
+<span class="fc" id="L43">            cmdId = cmdId,</span>
+<span class="fc" id="L44">            id = id,</span>
+<span class="fc" id="L45">            name = name!!,</span>
+<span class="fc" id="L46">            inputs = inputs!!,</span>
+        )
+    }
+<span class="fc" id="L49">}</span>
+
+fun List&lt;NamespaceRecord&gt;.createEntity(): Entity {
+<span class="pc bpc" id="L52" title="2 of 4 branches missed.">    check(isNotEmpty()) { &quot;At least one record is required&quot; }</span>
+<span class="fc" id="L53">    val firstRecord = first()</span>
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">    check(firstRecord is NamespaceCreationRecord)</span>
+
+<span class="fc" id="L56">    var result = Entity(</span>
+<span class="fc" id="L57">        id = firstRecord.entityId,</span>
+<span class="fc" id="L58">        cmdId = firstRecord.cmdId,</span>
+<span class="fc" id="L59">        sequence = firstRecord.sequence()</span>
+    )
+
+<span class="fc" id="L62">    forEach { record -&gt;</span>
+<span class="fc" id="L63">        result = result.apply(record)</span>
+<span class="fc" id="L64">    }</span>
+
+<span class="fc" id="L66">    return result</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

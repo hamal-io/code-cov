@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SandboxConfig.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.runner.config</a> &gt; <span class="el_source">SandboxConfig.kt</span></div><h1>SandboxConfig.kt</h1><pre class="source lang-java linenums">package io.hamal.runner.config
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SandboxConfig.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.runner.config</a> &gt; <span class="el_source">SandboxConfig.kt</span></div><h1>SandboxConfig.kt</h1><pre class="source lang-java linenums">package io.hamal.runner.config
 
 import io.hamal.extension.std.log.LogExtensionFactory
 import io.hamal.extension.std.sys.SysExtensionFactory
@@ -8,38 +8,42 @@ import io.hamal.lib.domain.vo.ExecId
 import io.hamal.lib.http.HttpTemplate
 import io.hamal.lib.kua.DefaultSandboxContext
 import io.hamal.lib.kua.NativeLoader
+import io.hamal.lib.kua.NativeLoader.Preference.Jar
 import io.hamal.lib.kua.Sandbox
 import io.hamal.lib.sdk.domain.DequeueExecsResponse
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 
-<span class="nc" id="L17">@Configuration</span>
+<span class="nc" id="L19">@Configuration</span>
 @Profile(&quot;!test&quot;)
-<span class="nc" id="L19">open class SandboxConfig {</span>
+<span class="nc" id="L21">class SandboxConfig {</span>
     @Bean
-<span class="nc" id="L21">    open fun sandboxFactory(): SandboxFactory = RunnerSandboxFactory()</span>
+    fun sandboxFactory(
+        @Value(&quot;\${io.hamal.runner.host}&quot;) host: String
+<span class="nc" id="L25">    ): SandboxFactory = RunnerSandboxFactory(host)</span>
 }
 
 interface SandboxFactory {
     fun create(exec: DequeueExecsResponse.Exec): Sandbox
 }
 
-<span class="nc" id="L28">class RunnerSandboxFactory : SandboxFactory {</span>
+<span class="nc" id="L32">class RunnerSandboxFactory(val instanceHost: String) : SandboxFactory {</span>
     override fun create(exec: DequeueExecsResponse.Exec): Sandbox {
-<span class="nc" id="L30">        NativeLoader.load(NativeLoader.Preference.Jar)</span>
-<span class="nc" id="L31">        val template = HttpTemplate(&quot;http://localhost:8008&quot;)</span>
+<span class="nc" id="L34">        NativeLoader.load(Jar)</span>
 
-<span class="nc" id="L33">        val ctx = DefaultSandboxContext()</span>
-<span class="nc" id="L34">        ctx[ExecId::class] = exec.id</span>
+<span class="nc" id="L36">        val template = HttpTemplate(instanceHost) // FIXME sdk instead</span>
 
+<span class="nc" id="L38">        val ctx = DefaultSandboxContext()</span>
+<span class="nc" id="L39">        ctx[ExecId::class] = exec.id</span>
 
-<span class="nc" id="L37">        return Sandbox(ctx).also {</span>
-<span class="nc" id="L38">            it.register(LogExtensionFactory { template }.create())</span>
-<span class="nc" id="L39">            it.register(SysExtensionFactory { template }.create())</span>
-<span class="nc" id="L40">            it.register(EthExtensionFactory().create())</span>
-<span class="nc" id="L41">            it.register(HmlExtensionFactory().create())</span>
-<span class="nc" id="L42">        }</span>
+<span class="nc" id="L41">        return Sandbox(ctx).also {</span>
+<span class="nc" id="L42">            it.register(LogExtensionFactory { template }.create())</span>
+<span class="nc" id="L43">            it.register(SysExtensionFactory { template }.create())</span>
+<span class="nc" id="L44">            it.register(EthExtensionFactory().create())</span>
+<span class="nc" id="L45">            it.register(HmlExtensionFactory().create())</span>
+<span class="nc" id="L46">        }</span>
     }
 
 }

@@ -1,28 +1,28 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Decode.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.extension.web3.eth</a> &gt; <span class="el_source">Decode.kt</span></div><h1>Decode.kt</h1><pre class="source lang-java linenums">package io.hamal.extension.web3.eth
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Decode.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.extension.web3.eth</a> &gt; <span class="el_source">Decode.kt</span></div><h1>Decode.kt</h1><pre class="source lang-java linenums">package io.hamal.extension.web3.eth
 
 import io.hamal.lib.kua.function.Function2In2Out
 import io.hamal.lib.kua.function.FunctionContext
 import io.hamal.lib.kua.function.FunctionInput2Schema
 import io.hamal.lib.kua.function.FunctionOutput2Schema
-import io.hamal.lib.kua.value.AnyValue
-import io.hamal.lib.kua.value.ErrorValue
-import io.hamal.lib.kua.value.NumberValue
-import io.hamal.lib.kua.value.StringValue
+import io.hamal.lib.kua.type.AnyType
+import io.hamal.lib.kua.type.ErrorType
+import io.hamal.lib.kua.type.DoubleType
+import io.hamal.lib.kua.type.StringType
 import io.hamal.lib.web3.eth.abi.EthTypeDecoder
 import io.hamal.lib.web3.eth.abi.type.EthPrefixedHexString
 import io.hamal.lib.web3.util.ByteWindow
 
-<span class="fc" id="L15">object DecodeParameterFunction : Function2In2Out&lt;StringValue, StringValue, ErrorValue, AnyValue&gt;(</span>
-<span class="fc" id="L16">    FunctionInput2Schema(StringValue::class, StringValue::class),</span>
-<span class="fc" id="L17">    FunctionOutput2Schema(ErrorValue::class, AnyValue::class)</span>
+<span class="fc" id="L15">object EthDecodeParameterFunction : Function2In2Out&lt;StringType, StringType, ErrorType, AnyType&gt;(</span>
+<span class="fc" id="L16">    FunctionInput2Schema(StringType::class, StringType::class),</span>
+<span class="fc" id="L17">    FunctionOutput2Schema(ErrorType::class, AnyType::class)</span>
 ) {
-    override fun invoke(ctx: FunctionContext, type: StringValue, value: StringValue): Pair&lt;ErrorValue?, AnyValue?&gt; {
+    override fun invoke(ctx: FunctionContext, type: StringType, value: StringType): Pair&lt;ErrorType?, AnyType?&gt; {
 //        EthTypeDecoder.Uint256.decode(arg1.value.)
 
 <span class="pc bpc" id="L22" title="1 of 2 branches missed.">        if (type.value == &quot;string&quot;) {</span>
-<span class="nc" id="L23">            return null to AnyValue(</span>
+<span class="nc" id="L23">            return null to AnyType(</span>
                 //FIXME must be decimal value
-<span class="nc" id="L25">                StringValue(</span>
+<span class="nc" id="L25">                StringType(</span>
 <span class="nc" id="L26">                    EthTypeDecoder.String.decode(</span>
 <span class="nc" id="L27">                        ByteWindow.Companion.of(</span>
 <span class="nc" id="L28">                            EthPrefixedHexString(value.value)</span>
@@ -33,9 +33,9 @@ import io.hamal.lib.web3.util.ByteWindow
         }
 
 <span class="pc bpc" id="L35" title="1 of 2 branches missed.">        if (type.value == &quot;uint256&quot;) {</span>
-<span class="fc" id="L36">            return null to AnyValue(</span>
+<span class="fc" id="L36">            return null to AnyType(</span>
                 //FIXME must be decimal value
-<span class="fc" id="L38">                NumberValue(</span>
+<span class="fc" id="L38">                DoubleType(</span>
 <span class="fc" id="L39">                    EthTypeDecoder.Uint256.decode(</span>
 <span class="fc" id="L40">                        ByteWindow.Companion.of(</span>
 <span class="fc" id="L41">                            EthPrefixedHexString(value.value)</span>

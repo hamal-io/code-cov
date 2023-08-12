@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DefaultTableProxy.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.kua.table</a> &gt; <span class="el_source">DefaultTableProxy.kt</span></div><h1>DefaultTableProxy.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.kua.table
+
+import io.hamal.lib.kua.State
+import io.hamal.lib.kua.function.FunctionType
+import io.hamal.lib.kua.type.*
+
+
+interface TableProxy : Type {
+    val index: Int
+    val type: Type
+
+    fun length(): Int
+
+    enum class Type {
+<span class="fc" id="L15">        Array,</span>
+<span class="fc" id="L16">        Map</span>
+    }
+}
+
+
+<span class="pc" id="L21">data class DefaultTableProxy(</span>
+<span class="fc" id="L22">    override val index: Int,</span>
+<span class="pc" id="L23">    val state: State,</span>
+<span class="pc" id="L24">    override val type: TableProxy.Type</span>
+) : TableMap, TableArray {
+
+    override fun unset(key: String): Int {
+<span class="nc" id="L28">        native.pushString(key)</span>
+<span class="nc" id="L29">        native.pushNil()</span>
+<span class="nc" id="L30">        return state.tableSetRaw(index)</span>
+    }
+
+    override fun set(key: String, value: Boolean): Int {
+<span class="nc" id="L34">        native.pushString(key)</span>
+<span class="nc" id="L35">        native.pushBoolean(value)</span>
+<span class="nc" id="L36">        return state.tableSetRaw(index)</span>
+    }
+
+
+    override fun set(key: String, value: Double): Int {
+<span class="nc" id="L41">        native.pushString(key)</span>
+<span class="nc" id="L42">        native.pushNumber(value)</span>
+<span class="nc" id="L43">        return state.tableSetRaw(index)</span>
+    }
+
+    override fun set(key: String, value: String): Int {
+<span class="fc" id="L47">        state.pushString(key)</span>
+<span class="fc" id="L48">        state.pushString(value)</span>
+<span class="fc" id="L49">        return state.tableSetRaw(index)</span>
+    }
+
+    override fun set(key: String, value: FunctionType&lt;*, *, *, *&gt;): Int {
+<span class="fc" id="L53">        state.pushString(key)</span>
+<span class="fc" id="L54">        state.pushFunction(value)</span>
+<span class="fc" id="L55">        return state.tableSetRaw(index)</span>
+    }
+
+    override fun set(key: String, value: TableMap): Int {
+<span class="fc" id="L59">        state.pushString(key)</span>
+<span class="fc" id="L60">        state.pushTable(value)</span>
+<span class="fc" id="L61">        return state.tableSetRaw(index)</span>
+    }
+
+    override fun set(key: String, value: TableArray): Int {
+<span class="fc" id="L65">        state.pushString(key)</span>
+<span class="fc" id="L66">        state.pushTable(value)</span>
+<span class="fc" id="L67">        return state.tableSetRaw(index)</span>
+    }
+
+    override fun getBooleanValue(key: String): BooleanType {
+<span class="nc" id="L71">        state.pushString(key)</span>
+<span class="nc" id="L72">        val type = state.tableGetRaw(index)</span>
+<span class="nc" id="L73">        type.checkExpectedType(ValueType.Boolean)</span>
+<span class="nc" id="L74">        return booleanOf(native.toBoolean(state.top.value)).also { native.pop(1) }</span>
+    }
+
+    override fun getCodeValue(key: String): CodeType {
+<span class="fc" id="L78">        state.pushString(key)</span>
+<span class="fc" id="L79">        val type = state.tableGetRaw(index)</span>
+<span class="fc" id="L80">        type.checkExpectedType(ValueType.String)</span>
+<span class="fc" id="L81">        return CodeType(native.toString(state.top.value)).also { native.pop(1) }</span>
+    }
+
+    override fun getNumberValue(key: String): DoubleType {
+<span class="fc" id="L85">        state.pushString(key)</span>
+<span class="fc" id="L86">        val type = state.tableGetRaw(index)</span>
+<span class="fc" id="L87">        type.checkExpectedType(ValueType.Number)</span>
+<span class="fc" id="L88">        return DoubleType(native.toNumber(state.top.value)).also { native.pop(1) }</span>
+    }
+
+    override fun getStringValue(key: String): StringType {
+<span class="fc" id="L92">        state.pushString(key)</span>
+<span class="fc" id="L93">        val type = state.tableGetRaw(index)</span>
+<span class="fc" id="L94">        type.checkExpectedType(ValueType.String)</span>
+<span class="fc" id="L95">        return StringType(native.toString(state.top.value)).also { native.pop(1) }</span>
+    }
+
+    override fun getTableMap(key: String): TableMap {
+<span class="nc" id="L99">        state.pushString(key)</span>
+<span class="nc" id="L100">        val type = state.tableGetRaw(index)</span>
+<span class="nc" id="L101">        type.checkExpectedType(ValueType.Table)</span>
+<span class="nc" id="L102">        return state.getTableMap(state.top.value)</span>
+    }
+
+<span class="fc" id="L105">    override fun length() = native.tableGetLength(index)</span>
+
+    override fun append(value: Boolean): Int {
+<span class="nc" id="L108">        native.pushBoolean(value)</span>
+<span class="nc" id="L109">        return state.tableAppend(index)</span>
+    }
+
+    override fun append(value: Double): Int {
+<span class="fc" id="L113">        native.pushNumber(value)</span>
+<span class="fc" id="L114">        return state.tableAppend(index)</span>
+    }
+
+    override fun append(value: String): Int {
+<span class="fc" id="L118">        native.pushString(value)</span>
+<span class="fc" id="L119">        return state.tableAppend(index)</span>
+    }
+
+    override fun append(value: TableMap): Int {
+<span class="fc" id="L123">        state.pushTable(value)</span>
+<span class="fc" id="L124">        return state.tableAppend(index)</span>
+    }
+
+    override fun append(value: TableArray): Int {
+<span class="nc" id="L128">        state.pushTable(value)</span>
+<span class="nc" id="L129">        return state.tableAppend(index)</span>
+    }
+
+    override fun get(idx: Int): AnyType {
+<span class="nc" id="L133">        TODO(&quot;Not yet implemented&quot;)</span>
+    }
+
+    override fun getBooleanValue(idx: Int): BooleanType {
+<span class="nc" id="L137">        val type = state.tableGetRawIdx(index, idx)</span>
+<span class="nc" id="L138">        type.checkExpectedType(ValueType.Boolean)</span>
+<span class="nc" id="L139">        return state.getBooleanValue(-1)</span>
+    }
+
+    override fun getNumberValue(idx: Int): DoubleType {
+<span class="fc" id="L143">        val type = state.tableGetRawIdx(index, idx)</span>
+<span class="fc" id="L144">        type.checkExpectedType(ValueType.Number)</span>
+<span class="fc" id="L145">        return state.getNumberValue(-1)</span>
+    }
+
+    override fun getStringValue(idx: Int): StringType {
+<span class="fc" id="L149">        val type = state.tableGetRawIdx(index, idx)</span>
+<span class="fc" id="L150">        type.checkExpectedType(ValueType.String)</span>
+<span class="fc" id="L151">        return state.getStringValue(-1)</span>
+    }
+
+<span class="fc" id="L154">    private val native = state.native</span>
+}
+
+private fun ValueType.checkExpectedType(expected: ValueType) {
+<span class="pc bpc" id="L158" title="2 of 4 branches missed.">    check(this == expected) {</span>
+<span class="nc" id="L159">        &quot;Expected type to be ${expected.toString().lowercase()} but was ${this.toString().lowercase()}&quot;</span>
+    }
+<span class="fc" id="L161">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

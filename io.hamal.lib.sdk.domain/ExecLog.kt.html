@@ -1,23 +1,30 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExecLog.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.sdk.domain</a> &gt; <span class="el_source">ExecLog.kt</span></div><h1>ExecLog.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.sdk.domain
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExecLog.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.sdk.domain</a> &gt; <span class="el_source">ExecLog.kt</span></div><h1>ExecLog.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.sdk.domain
 
-import io.hamal.lib.domain.ExecLog
-import io.hamal.lib.domain.ExecLogLevel
-import io.hamal.lib.domain.LocalAt
-import io.hamal.lib.domain.ExecLogMessage
+import io.hamal.lib.domain._enum.ExecLogLevel
+import io.hamal.lib.domain.vo.*
 import kotlinx.serialization.Serializable
 
-<span class="nc bnc" id="L9" title="All 9 branches missed.">@Serializable</span>
-<span class="nc" id="L10">data class AppendExecLogCmd(</span>
-<span class="nc" id="L11">    val level: ExecLogLevel,</span>
-<span class="nc" id="L12">    val message: ExecLogMessage,</span>
-<span class="nc" id="L13">    val localAt: LocalAt</span>
-<span class="nc" id="L14">)</span>
+<span class="nc bnc" id="L7" title="All 9 branches missed.">@Serializable</span>
+<span class="nc" id="L8">data class AppendExecLogCmd(</span>
+<span class="nc" id="L9">    val level: ExecLogLevel,</span>
+<span class="nc" id="L10">    val message: ExecLogMessage,</span>
+<span class="nc" id="L11">    val localAt: LocalAt</span>
+<span class="nc" id="L12">)</span>
 
 
-<span class="nc bnc" id="L17" title="All 7 branches missed.">@Serializable</span>
-<span class="nc" id="L18">data class ListExecLogsResponse(</span>
-<span class="nc" id="L19">    val logs: List&lt;ExecLog&gt;</span>
-<span class="nc" id="L20">)</span>
+<span class="nc bnc" id="L15" title="All 7 branches missed.">@Serializable</span>
+<span class="nc" id="L16">data class ApiExcLogList(</span>
+<span class="nc" id="L17">    val logs: List&lt;ApiExecLog&gt;</span>
+<span class="nc" id="L18">)</span>
 
 
+<span class="nc bnc" id="L21" title="All 12 branches missed.">@Serializable</span>
+<span class="nc" id="L22">data class ApiExecLog(</span>
+<span class="nc" id="L23">    val id: ExecLogId,</span>
+<span class="nc" id="L24">    val execId: ExecId,</span>
+<span class="nc" id="L25">    val level: ExecLogLevel,</span>
+<span class="nc" id="L26">    val message: ExecLogMessage,</span>
+<span class="nc" id="L27">    val localAt: LocalAt,</span>
+<span class="nc" id="L28">    val remoteAt: RemoteAt</span>
+<span class="nc" id="L29">)</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

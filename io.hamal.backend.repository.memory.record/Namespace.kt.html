@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Namespace.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.repository.memory.record</a> &gt; <span class="el_source">Namespace.kt</span></div><h1>Namespace.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.repository.memory.record
+
+import io.hamal.backend.repository.api.Namespace
+import io.hamal.backend.repository.api.NamespaceCmdRepository
+import io.hamal.backend.repository.api.NamespaceQueryRepository
+import io.hamal.backend.repository.api.NamespaceQueryRepository.NamespaceQuery
+import io.hamal.backend.repository.record.namespace.NamespaceCreationRecord
+import io.hamal.backend.repository.record.namespace.NamespaceRecord
+import io.hamal.backend.repository.record.namespace.NamespaceUpdatedRecord
+import io.hamal.backend.repository.record.namespace.createEntity
+import io.hamal.lib.common.domain.CmdId
+import io.hamal.lib.common.domain.Limit
+import io.hamal.lib.common.util.CollectionUtils.takeWhileInclusive
+import io.hamal.lib.domain.vo.NamespaceId
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
+
+internal object CurrentNamespaceProjection {
+<span class="fc" id="L19">    private val projection = mutableMapOf&lt;NamespaceId, Namespace&gt;()</span>
+    fun apply(namespace: Namespace) {
+<span class="fc" id="L21">        projection[namespace.id] = namespace</span>
+<span class="fc" id="L22">    }</span>
+
+<span class="fc" id="L24">    fun find(namespaceId: NamespaceId): Namespace? = projection[namespaceId]</span>
+
+    fun list(afterId: NamespaceId, limit: Limit): List&lt;Namespace&gt; {
+<span class="fc" id="L27">        return projection.keys.sorted()</span>
+<span class="fc" id="L28">            .reversed()</span>
+<span class="fc bfc" id="L29" title="All 2 branches covered.">            .dropWhile { it &gt;= afterId }</span>
+<span class="fc" id="L30">            .take(limit.value)</span>
+<span class="fc" id="L31">            .mapNotNull { find(it) }</span>
+    }
+
+    fun clear() {
+<span class="fc" id="L35">        projection.clear()</span>
+<span class="fc" id="L36">    }</span>
+}
+
+<span class="fc" id="L39">object MemoryNamespaceRepository : BaseRecordRepository&lt;NamespaceId, NamespaceRecord&gt;(), NamespaceCmdRepository,</span>
+    NamespaceQueryRepository {
+<span class="fc" id="L41">    private val lock = ReentrantLock()</span>
+    override fun create(cmd: NamespaceCmdRepository.CreateCmd): Namespace {
+<span class="fc" id="L43">        return lock.withLock {</span>
+<span class="fc" id="L44">            val namespaceId = cmd.namespaceId</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">            if (contains(namespaceId)) {</span>
+<span class="fc" id="L46">                versionOf(namespaceId, cmd.id)</span>
+            } else {
+<span class="fc" id="L48">                addRecord(</span>
+<span class="fc" id="L49">                    NamespaceCreationRecord(</span>
+<span class="fc" id="L50">                        entityId = namespaceId,</span>
+<span class="fc" id="L51">                        cmdId = cmd.id,</span>
+<span class="fc" id="L52">                        name = cmd.name,</span>
+<span class="fc" id="L53">                        inputs = cmd.inputs,</span>
+                    )
+                )
+<span class="fc" id="L56">                (currentVersion(namespaceId)).also(CurrentNamespaceProjection::apply)</span>
+            }
+        }
+    }
+
+    override fun update(namespaceId: NamespaceId, cmd: NamespaceCmdRepository.UpdateCmd): Namespace {
+<span class="fc" id="L62">        return lock.withLock {</span>
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">            if (commandAlreadyApplied(namespaceId, cmd.id)) {</span>
+<span class="nc" id="L64">                versionOf(namespaceId, cmd.id)</span>
+            } else {
+<span class="fc" id="L66">                addRecord(</span>
+<span class="fc" id="L67">                    NamespaceUpdatedRecord(</span>
+<span class="fc" id="L68">                        entityId = namespaceId,</span>
+<span class="fc" id="L69">                        cmdId = cmd.id,</span>
+<span class="fc" id="L70">                        name = cmd.name,</span>
+<span class="fc" id="L71">                        inputs = cmd.inputs,</span>
+                    )
+                )
+<span class="fc" id="L74">                (currentVersion(namespaceId)).also(CurrentNamespaceProjection::apply)</span>
+            }
+        }
+    }
+
+<span class="fc" id="L79">    override fun find(namespaceId: NamespaceId): Namespace? = CurrentNamespaceProjection.find(namespaceId)</span>
+
+    override fun list(block: NamespaceQuery.() -&gt; Unit): List&lt;Namespace&gt; {
+<span class="fc" id="L82">        val query = NamespaceQuery().also(block)</span>
+<span class="fc" id="L83">        return CurrentNamespaceProjection.list(query.afterId, query.limit)</span>
+    }
+
+    override fun clear() {
+<span class="fc" id="L87">        super.clear()</span>
+<span class="fc" id="L88">        CurrentNamespaceProjection.clear()</span>
+<span class="fc" id="L89">    }</span>
+}
+
+private fun MemoryNamespaceRepository.currentVersion(id: NamespaceId): Namespace {
+<span class="fc" id="L93">    return listRecords(id)</span>
+<span class="fc" id="L94">        .createEntity()</span>
+<span class="fc" id="L95">        .toDomainObject()</span>
+}
+
+private fun MemoryNamespaceRepository.commandAlreadyApplied(id: NamespaceId, cmdId: CmdId) =
+<span class="fc" id="L99">    listRecords(id).any { it.cmdId == cmdId }</span>
+
+private fun MemoryNamespaceRepository.versionOf(id: NamespaceId, cmdId: CmdId): Namespace {
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">    return listRecords(id).takeWhileInclusive { it.cmdId != cmdId }</span>
+<span class="fc" id="L103">        .createEntity()</span>
+<span class="fc" id="L104">        .toDomainObject()</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CreateTriggerRoute.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.instance.web.trigger</a> &gt; <span class="el_source">CreateTriggerRoute.kt</span></div><h1>CreateTriggerRoute.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.instance.web.trigger
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CreateTriggerRoute.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.instance.web.trigger</a> &gt; <span class="el_source">CreateTriggerRoute.kt</span></div><h1>CreateTriggerRoute.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.instance.web.trigger
 
 import io.hamal.backend.instance.req.SubmitRequest
 import io.hamal.backend.repository.api.FuncQueryRepository
 import io.hamal.backend.repository.api.log.LogBrokerRepository
 import io.hamal.lib.domain._enum.TriggerType
 import io.hamal.lib.domain.req.CreateTriggerReq
-import io.hamal.lib.domain.req.SubmittedCreateTriggerReq
+import io.hamal.lib.sdk.domain.ApiSubmittedReqWithDomainId
 import org.springframework.http.HttpStatus.ACCEPTED
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -21,23 +21,29 @@ import org.springframework.web.bind.annotation.RestController
     @PostMapping(&quot;/v1/triggers&quot;)
     fun createTrigger(
         @RequestBody createTrigger: CreateTriggerReq
-    ): ResponseEntity&lt;SubmittedCreateTriggerReq&gt; {
+    ): ResponseEntity&lt;ApiSubmittedReqWithDomainId&gt; {
 <span class="fc" id="L25">        ensureFuncExists(createTrigger)</span>
 <span class="fc" id="L26">        ensureTopicExists(createTrigger)</span>
 
 <span class="fc" id="L28">        val result = request(createTrigger)</span>
-<span class="fc" id="L29">        return ResponseEntity(result, ACCEPTED)</span>
+<span class="fc" id="L29">        return ResponseEntity(result.let {</span>
+<span class="fc" id="L30">            ApiSubmittedReqWithDomainId(</span>
+<span class="fc" id="L31">                reqId = it.reqId,</span>
+<span class="fc" id="L32">                status = it.status,</span>
+<span class="fc" id="L33">                id = it.id.value</span>
+            )
+<span class="fc" id="L35">        }, ACCEPTED)</span>
     }
 
     private fun ensureFuncExists(createTrigger: CreateTriggerReq) {
-<span class="fc" id="L33">        funcQueryRepository.get(createTrigger.funcId)</span>
-<span class="fc" id="L34">    }</span>
+<span class="fc" id="L39">        funcQueryRepository.get(createTrigger.funcId)</span>
+<span class="fc" id="L40">    }</span>
 
     private fun ensureTopicExists(createTrigger: CreateTriggerReq) {
-<span class="fc bfc" id="L37" title="All 2 branches covered.">        if (createTrigger.type == TriggerType.Event) {</span>
-<span class="fc bfc" id="L38" title="All 2 branches covered.">            requireNotNull(createTrigger.topicId) { &quot;topicId is missing&quot; }</span>
-<span class="fc" id="L39">            eventBrokerRepository.getTopic(createTrigger.topicId!!)</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">        if (createTrigger.type == TriggerType.Event) {</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">            requireNotNull(createTrigger.topicId) { &quot;topicId is missing&quot; }</span>
+<span class="fc" id="L45">            eventBrokerRepository.getTopic(createTrigger.topicId!!)</span>
         }
-<span class="fc" id="L41">    }</span>
+<span class="fc" id="L47">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

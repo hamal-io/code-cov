@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Repository.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.repository.sqlite.record.func</a> &gt; <span class="el_source">Repository.kt</span></div><h1>Repository.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.repository.sqlite.record.func
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Repository.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.repository.sqlite.record.func</a> &gt; <span class="el_source">Repository.kt</span></div><h1>Repository.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.repository.sqlite.record.func
 
 import io.hamal.backend.repository.api.Func
 import io.hamal.backend.repository.api.FuncCmdRepository
@@ -75,35 +75,34 @@ internal object CreateFunc : CreateDomainObject&lt;FuncId, FuncRecord, Func&gt; 
         }
     }
 
-    override fun update(cmd: FuncCmdRepository.UpdateCmd): Func {
-<span class="nc" id="L79">        val funcId = cmd.funcId</span>
-<span class="nc" id="L80">        val cmdId = cmd.id</span>
-<span class="nc" id="L81">        return tx {</span>
-<span class="nc bnc" id="L82" title="All 2 branches missed.">            if (commandAlreadyApplied(funcId, cmdId)) {</span>
-<span class="nc" id="L83">                versionOf(funcId, cmdId)</span>
+    override fun update(funcId: FuncId, cmd: FuncCmdRepository.UpdateCmd): Func {
+<span class="nc" id="L79">        val cmdId = cmd.id</span>
+<span class="nc" id="L80">        return tx {</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">            if (commandAlreadyApplied(funcId, cmdId)) {</span>
+<span class="nc" id="L82">                versionOf(funcId, cmdId)</span>
             } else {
-<span class="nc" id="L85">                storeRecord(</span>
-<span class="nc" id="L86">                    FuncUpdatedRecord(</span>
-<span class="nc" id="L87">                        entityId = funcId,</span>
-<span class="nc" id="L88">                        cmdId = cmdId,</span>
-<span class="nc" id="L89">                        name = cmd.name,</span>
-<span class="nc" id="L90">                        inputs = cmd.inputs,</span>
-<span class="nc" id="L91">                        code = cmd.code,</span>
+<span class="nc" id="L84">                storeRecord(</span>
+<span class="nc" id="L85">                    FuncUpdatedRecord(</span>
+<span class="nc" id="L86">                        entityId = funcId,</span>
+<span class="nc" id="L87">                        cmdId = cmdId,</span>
+<span class="nc" id="L88">                        name = cmd.name,</span>
+<span class="nc" id="L89">                        inputs = cmd.inputs,</span>
+<span class="nc" id="L90">                        code = cmd.code,</span>
                     )
                 )
-<span class="nc" id="L94">                currentVersion(funcId)</span>
-<span class="nc" id="L95">                    .also { ProjectionCurrent.update(this, it) }</span>
+<span class="nc" id="L93">                currentVersion(funcId)</span>
+<span class="nc" id="L94">                    .also { ProjectionCurrent.update(this, it) }</span>
             }
         }
     }
 
     override fun find(funcId: FuncId): Func? {
-<span class="nc" id="L101">        return ProjectionCurrent.find(connection, funcId)</span>
+<span class="nc" id="L100">        return ProjectionCurrent.find(connection, funcId)</span>
     }
 
     override fun list(block: FuncQuery.() -&gt; Unit): List&lt;Func&gt; {
-<span class="nc" id="L105">        val query = FuncQuery().also(block)</span>
-<span class="nc" id="L106">        return ProjectionCurrent.list(connection, query.afterId, query.limit)</span>
+<span class="nc" id="L104">        val query = FuncQuery().also(block)</span>
+<span class="nc" id="L105">        return ProjectionCurrent.list(connection, query.afterId, query.limit)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExtensionRegistry.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bootstrap</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.kua.extension</a> &gt; <span class="el_source">ExtensionRegistry.kt</span></div><h1>ExtensionRegistry.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.kua.extension
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExtensionRegistry.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.kua.extension</a> &gt; <span class="el_source">ExtensionRegistry.kt</span></div><h1>ExtensionRegistry.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.kua.extension
 
 import io.hamal.lib.kua.Sandbox
-import io.hamal.lib.kua.function.FunctionValue
-import io.hamal.lib.kua.table.TableMapValue
+import io.hamal.lib.kua.function.FunctionType
+import io.hamal.lib.kua.table.TableMap
 
 
 <span class="fc" id="L8">class ExtensionRegistry(</span>
@@ -11,7 +11,7 @@ import io.hamal.lib.kua.table.TableMapValue
 
 <span class="pc" id="L12">    val state = sb.state</span>
 <span class="fc" id="L13">    val extensions = mutableMapOf&lt;String, ScriptExtension&gt;()</span>
-<span class="pc" id="L14">    val extensionFactories = mutableMapOf&lt;String, TableMapValue&gt;()</span>
+<span class="pc" id="L14">    val extensionFactories = mutableMapOf&lt;String, TableMap&gt;()</span>
 
     fun register(extension: ScriptExtension) {
 <span class="fc" id="L17">        extensions[extension.name] = extension</span>
@@ -21,14 +21,14 @@ import io.hamal.lib.kua.table.TableMapValue
 
 <span class="fc" id="L22">    }</span>
 
-    fun loadFactory(name: String): TableMapValue {
+    fun loadFactory(name: String): TableMap {
 <span class="fc" id="L25">        val extension = extensions[name]!!</span>
 <span class="fc" id="L26">        val internals = extension.internals</span>
 <span class="fc" id="L27">        val internalTable = state.tableCreateMap(internals.size)</span>
 
 <span class="fc" id="L29">        internals.forEach { entry -&gt;</span>
 <span class="fc" id="L30">            val fn = entry.value</span>
-<span class="pc bpc" id="L31" title="1 of 2 branches missed.">            require(fn is FunctionValue&lt;*, *, *, *&gt;)</span>
+<span class="pc bpc" id="L31" title="1 of 2 branches missed.">            require(fn is FunctionType&lt;*, *, *, *&gt;)</span>
 <span class="fc" id="L32">            internalTable[entry.key] = fn</span>
 <span class="fc" id="L33">        }</span>
 
