@@ -13,13 +13,13 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
-<span class="pc" id="L16">@Serializable</span>
+<span class="fc" id="L16">@Serializable</span>
 <span class="fc" id="L17">sealed class ExecRecord(</span>
 <span class="fc" id="L18">    @Transient</span>
 <span class="fc" id="L19">    override var sequence: RecordSequence? = null</span>
 <span class="fc" id="L20">) : Record&lt;ExecId&gt;()</span>
 
-<span class="nc bnc" id="L22" title="All 12 branches missed.">@Serializable</span>
+<span class="pc bnc" id="L22" title="All 12 branches missed.">@Serializable</span>
 @SerialName(&quot;EPR&quot;)
 <span class="fc" id="L24">data class ExecPlannedRecord(</span>
 <span class="fc" id="L25">    override val entityId: ExecId,</span>
@@ -28,42 +28,42 @@ import kotlinx.serialization.Transient
 <span class="fc" id="L28">    val inputs: ExecInputs,</span>
 <span class="fc" id="L29">    val code: CodeType,</span>
 <span class="fc" id="L30">    val invocation: Invocation</span>
-<span class="pc" id="L31">) : ExecRecord()</span>
+<span class="fc" id="L31">) : ExecRecord()</span>
 
-<span class="nc bnc" id="L33" title="All 8 branches missed.">@Serializable</span>
+<span class="pc bnc" id="L33" title="All 8 branches missed.">@Serializable</span>
 @SerialName(&quot;ESCR&quot;)
 <span class="fc" id="L35">data class ExecScheduledRecord(</span>
 <span class="fc" id="L36">    override val entityId: ExecId,</span>
 <span class="fc" id="L37">    override val cmdId: CmdId,</span>
-<span class="pc" id="L38">) : ExecRecord()</span>
+<span class="fc" id="L38">) : ExecRecord()</span>
 
-<span class="nc bnc" id="L40" title="All 8 branches missed.">@Serializable</span>
+<span class="pc bnc" id="L40" title="All 8 branches missed.">@Serializable</span>
 @SerialName(&quot;EQR&quot;)
 <span class="fc" id="L42">data class ExecQueuedRecord(</span>
 <span class="fc" id="L43">    override val entityId: ExecId,</span>
 <span class="fc" id="L44">    override val cmdId: CmdId,</span>
-<span class="pc" id="L45">) : ExecRecord()</span>
+<span class="fc" id="L45">) : ExecRecord()</span>
 
 
-<span class="nc bnc" id="L48" title="All 8 branches missed.">@Serializable</span>
+<span class="pc bnc" id="L48" title="All 8 branches missed.">@Serializable</span>
 @SerialName(&quot;ESTR&quot;)
 <span class="fc" id="L50">data class ExecStartedRecord(</span>
 <span class="fc" id="L51">    override val entityId: ExecId,</span>
 <span class="fc" id="L52">    override val cmdId: CmdId,</span>
-<span class="pc" id="L53">) : ExecRecord()</span>
+<span class="fc" id="L53">) : ExecRecord()</span>
 
-<span class="nc bnc" id="L55" title="All 8 branches missed.">@Serializable</span>
+<span class="pc bnc" id="L55" title="All 8 branches missed.">@Serializable</span>
 @SerialName(&quot;ECR&quot;)
 <span class="fc" id="L57">data class ExecCompletedRecord(</span>
 <span class="fc" id="L58">    override val entityId: ExecId,</span>
 <span class="fc" id="L59">    override val cmdId: CmdId,</span>
-<span class="pc" id="L60">) : ExecRecord()</span>
+<span class="fc" id="L60">) : ExecRecord()</span>
 
-<span class="nc bnc" id="L62" title="All 9 branches missed.">@Serializable</span>
+<span class="pc bnc" id="L62" title="All 9 branches missed.">@Serializable</span>
 @SerialName(&quot;EFR&quot;)
 <span class="fc" id="L64">data class ExecFailedRecord(</span>
 <span class="fc" id="L65">    override val entityId: ExecId,</span>
 <span class="fc" id="L66">    override val cmdId: CmdId,</span>
 <span class="fc" id="L67">    val cause: ErrorType</span>
-<span class="pc" id="L68">) : ExecRecord()</span>
+<span class="fc" id="L68">) : ExecRecord()</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

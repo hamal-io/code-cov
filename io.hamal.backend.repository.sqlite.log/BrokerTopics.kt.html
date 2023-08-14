@@ -63,7 +63,7 @@ import java.util.concurrent.ConcurrentHashMap
     }
 
     override fun find(name: TopicName): LogTopic? =
-<span class="pc bpc" id="L66" title="1 of 2 branches missed.">        topicMapping[name] ?: connection.executeQueryOne(&quot;SELECT id, name FROM topics WHERE name = :name&quot;) {</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">        topicMapping[name] ?: connection.executeQueryOne(&quot;SELECT id, name FROM topics WHERE name = :name&quot;) {</span>
 <span class="fc" id="L67">            query {</span>
 <span class="fc" id="L68">                set(&quot;name&quot;, name.value)</span>
             }
@@ -73,7 +73,7 @@ import java.util.concurrent.ConcurrentHashMap
 <span class="fc" id="L73">                    name = TopicName(rs.getString(&quot;name&quot;))</span>
                 )
             }
-<span class="pc bpc" id="L76" title="1 of 2 branches missed.">        }?.also { topicMapping[it.name] = it }</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">        }?.also { topicMapping[it.name] = it }</span>
 
     override fun find(id: TopicId): LogTopic? =
 <span class="nc bnc" id="L79" title="All 6 branches missed.">        topicMapping.values.find { it.id == id }</span>
@@ -101,10 +101,10 @@ import java.util.concurrent.ConcurrentHashMap
     }
 
     override fun clear() {
-<span class="nc" id="L104">        connection.tx {</span>
-<span class="nc" id="L105">            execute(&quot;DELETE FROM topics&quot;)</span>
-<span class="nc" id="L106">        }</span>
-<span class="nc" id="L107">    }</span>
+<span class="fc" id="L104">        connection.tx {</span>
+<span class="fc" id="L105">            execute(&quot;DELETE FROM topics&quot;)</span>
+<span class="fc" id="L106">        }</span>
+<span class="fc" id="L107">    }</span>
 
     override fun close() {
 <span class="fc" id="L110">        connection.close()</span>

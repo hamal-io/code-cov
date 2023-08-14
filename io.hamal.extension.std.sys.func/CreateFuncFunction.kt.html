@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CreateFuncFunction.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.extension.std.sys.func</a> &gt; <span class="el_source">CreateFuncFunction.kt</span></div><h1>CreateFuncFunction.kt</h1><pre class="source lang-java linenums">package io.hamal.extension.std.sys.func
+
+import io.hamal.lib.domain.req.CreateFuncReq
+import io.hamal.lib.domain.vo.FuncInputs
+import io.hamal.lib.domain.vo.FuncName
+import io.hamal.lib.http.HttpTemplate
+import io.hamal.lib.http.body
+import io.hamal.lib.kua.function.Function1In2Out
+import io.hamal.lib.kua.function.FunctionContext
+import io.hamal.lib.kua.function.FunctionInput1Schema
+import io.hamal.lib.kua.function.FunctionOutput2Schema
+import io.hamal.lib.kua.table.TableMap
+import io.hamal.lib.kua.type.ErrorType
+import io.hamal.lib.sdk.domain.ApiSubmittedReqWithId
+
+<span class="fc" id="L16">class CreateFuncFunction(</span>
+<span class="fc" id="L17">    private val templateSupplier: () -&gt; HttpTemplate</span>
+<span class="fc" id="L18">) : Function1In2Out&lt;TableMap, ErrorType, TableMap&gt;(</span>
+<span class="fc" id="L19">    FunctionInput1Schema(TableMap::class),</span>
+<span class="fc" id="L20">    FunctionOutput2Schema(ErrorType::class, TableMap::class)</span>
+) {
+    override fun invoke(ctx: FunctionContext, arg1: TableMap): Pair&lt;ErrorType?, TableMap&gt; {
+<span class="fc" id="L23">        try {</span>
+<span class="fc" id="L24">            val r = CreateFuncReq(</span>
+<span class="fc" id="L25">                name = FuncName(arg1.getString(&quot;name&quot;)),</span>
+<span class="fc" id="L26">                inputs = FuncInputs(),</span>
+<span class="fc" id="L27">                code = arg1.getCode(&quot;code&quot;)</span>
+            )
+
+<span class="fc" id="L30">            val res = templateSupplier()</span>
+<span class="fc" id="L31">                .post(&quot;/v1/funcs&quot;)</span>
+<span class="fc" id="L32">                .body(r)</span>
+<span class="fc" id="L33">                .execute(ApiSubmittedReqWithId::class)</span>
+
+<span class="fc" id="L35">            return null to ctx.tableCreateMap(1).also {</span>
+<span class="fc" id="L36">                it[&quot;req_id&quot;] = res.reqId</span>
+<span class="fc" id="L37">                it[&quot;status&quot;] = res.status.name</span>
+<span class="fc" id="L38">                it[&quot;id&quot;] = res.id</span>
+<span class="fc" id="L39">            }</span>
+
+<span class="nc" id="L41">        } catch (t: Throwable) {</span>
+<span class="nc" id="L42">            t.printStackTrace()</span>
+<span class="nc" id="L43">            throw t</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -23,59 +23,59 @@ import kotlin.reflect.KClass
     fun currentVersion(id: ID): OBJ
 <span class="nc" id="L24">}</span>
 
-<span class="nc" id="L26">@OptIn(ExperimentalSerializationApi::class, InternalSerializationApi::class)</span>
-<span class="nc" id="L27">class SqliteRecordTransaction&lt;ID : DomainId, RECORD : Record&lt;ID&gt;, OBJ : DomainObject&lt;ID&gt;&gt;(</span>
-<span class="nc" id="L28">    private val createDomainObject: CreateDomainObject&lt;ID, RECORD, OBJ&gt;,</span>
-<span class="nc" id="L29">    private val recordClass: KClass&lt;RECORD&gt;,</span>
-<span class="nc" id="L30">    private val delegate: Transaction,</span>
-<span class="nc" id="L31">    private val recordCache: RecordCache&lt;ID, RECORD, OBJ&gt;</span>
+<span class="pc" id="L26">@OptIn(ExperimentalSerializationApi::class, InternalSerializationApi::class)</span>
+<span class="fc" id="L27">class SqliteRecordTransaction&lt;ID : DomainId, RECORD : Record&lt;ID&gt;, OBJ : DomainObject&lt;ID&gt;&gt;(</span>
+<span class="fc" id="L28">    private val createDomainObject: CreateDomainObject&lt;ID, RECORD, OBJ&gt;,</span>
+<span class="fc" id="L29">    private val recordClass: KClass&lt;RECORD&gt;,</span>
+<span class="fc" id="L30">    private val delegate: Transaction,</span>
+<span class="fc" id="L31">    private val recordCache: RecordCache&lt;ID, RECORD, OBJ&gt;</span>
 ) : RecordTransaction&lt;ID, RECORD, OBJ&gt; {
 
     override fun storeRecord(record: RECORD): RECORD {
-<span class="nc" id="L35">        recordCache.add(this, record)</span>
+<span class="fc" id="L35">        recordCache.add(this, record)</span>
 
-<span class="nc" id="L37">        execute(</span>
+<span class="fc" id="L37">        execute(</span>
             &quot;&quot;&quot;
                 INSERT INTO records
                     (cmd_id, entity_id,  data) 
                 VALUES
                     (:cmdId, :entityId,  :data)
-<span class="nc" id="L43">            &quot;&quot;&quot;.trimIndent()</span>
+<span class="fc" id="L43">            &quot;&quot;&quot;.trimIndent()</span>
         ) {
-<span class="nc" id="L45">            set(&quot;cmdId&quot;, record.cmdId)</span>
-<span class="nc" id="L46">            set(&quot;entityId&quot;, record.entityId)</span>
-<span class="nc" id="L47">            set(&quot;data&quot;, protobuf.encodeToByteArray(recordClass.serializer(), record))</span>
+<span class="fc" id="L45">            set(&quot;cmdId&quot;, record.cmdId)</span>
+<span class="fc" id="L46">            set(&quot;entityId&quot;, record.entityId)</span>
+<span class="fc" id="L47">            set(&quot;data&quot;, protobuf.encodeToByteArray(recordClass.serializer(), record))</span>
         }
 
-<span class="nc" id="L50">        return record</span>
+<span class="fc" id="L50">        return record</span>
     }
 
     override fun recordsOf(id: ID): List&lt;RECORD&gt; {
-<span class="nc" id="L54">        return recordCache.list(this, id)</span>
+<span class="fc" id="L54">        return recordCache.list(this, id)</span>
     }
 
     override fun lastRecordOf(id: ID): RECORD {
-<span class="nc bnc" id="L58" title="All 2 branches missed.">        return recordCache.list(this, id).lastOrNull()</span>
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">        return recordCache.list(this, id).lastOrNull()</span>
 <span class="nc" id="L59">            ?: throw IllegalArgumentException(&quot;No records found for $id&quot;)</span>
     }
 
     override fun commandAlreadyApplied(id: ID, cmdId: CmdId): Boolean {
-<span class="nc" id="L63">        return recordsOf(id).any { it.cmdId == cmdId }</span>
+<span class="fc" id="L63">        return recordsOf(id).any { it.cmdId == cmdId }</span>
     }
 
     override fun versionOf(id: ID, cmdId: CmdId): OBJ {
-<span class="nc bnc" id="L67" title="All 2 branches missed.">        return createDomainObject(recordsOf(id).takeWhileInclusive { it.cmdId != cmdId })</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">        return createDomainObject(recordsOf(id).takeWhileInclusive { it.cmdId != cmdId })</span>
     }
 
     override fun currentVersion(id: ID): OBJ {
-<span class="nc" id="L71">        val lastRecord = lastRecordOf(id)</span>
-<span class="nc" id="L72">        return versionOf(id, lastRecord.cmdId)</span>
+<span class="fc" id="L71">        val lastRecord = lastRecordOf(id)</span>
+<span class="fc" id="L72">        return versionOf(id, lastRecord.cmdId)</span>
     }
 
 <span class="nc" id="L75">    override fun execute(sql: String) = delegate.execute(sql)</span>
 
     override fun execute(sql: String, block: NamedPreparedStatementDelegate.() -&gt; NamedPreparedStatementDelegate) =
-<span class="nc" id="L78">        delegate.execute(sql, block)</span>
+<span class="fc" id="L78">        delegate.execute(sql, block)</span>
 
     override fun &lt;T : Any&gt; execute(
         sql: String,
@@ -91,7 +91,7 @@ import kotlin.reflect.KClass
     override fun &lt;T : Any&gt; executeQuery(
         sql: String,
         block: NamedPreparedStatementResultSetDelegate&lt;T&gt;.() -&gt; NamedPreparedStatementResultSetDelegate&lt;T&gt;
-<span class="nc" id="L94">    ) = delegate.executeQuery(sql, block)</span>
+<span class="fc" id="L94">    ) = delegate.executeQuery(sql, block)</span>
 
 <span class="nc" id="L96">    override fun abort() = delegate.abort()</span>
 }

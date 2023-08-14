@@ -4,7 +4,7 @@ import io.hamal.backend.instance.req.SubmitRequest
 import io.hamal.backend.repository.api.FuncQueryRepository
 import io.hamal.lib.domain.req.InvokeFuncReq
 import io.hamal.lib.domain.vo.FuncId
-import io.hamal.lib.sdk.domain.ApiSubmittedReqWithDomainId
+import io.hamal.lib.sdk.domain.ApiSubmittedReqWithId
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
@@ -21,14 +21,14 @@ import org.springframework.web.bind.annotation.RestController
     fun execFunc(
         @PathVariable(&quot;funcId&quot;) funcId: FuncId,
         @RequestBody invocation: InvokeFuncReq
-    ): ResponseEntity&lt;ApiSubmittedReqWithDomainId&gt; {
+    ): ResponseEntity&lt;ApiSubmittedReqWithId&gt; {
 <span class="fc" id="L25">        val func = funcQueryRepository.get(funcId)</span>
 <span class="fc" id="L26">        val result = request(func.id, invocation)</span>
 <span class="fc" id="L27">        return ResponseEntity(result.let {</span>
-<span class="fc" id="L28">            ApiSubmittedReqWithDomainId(</span>
+<span class="fc" id="L28">            ApiSubmittedReqWithId(</span>
 <span class="fc" id="L29">                reqId = it.reqId,</span>
 <span class="fc" id="L30">                status = it.status,</span>
-<span class="fc" id="L31">                id = it.id.value</span>
+<span class="fc" id="L31">                id = it.id</span>
             )
 <span class="fc" id="L33">        }, HttpStatus.ACCEPTED)</span>
     }

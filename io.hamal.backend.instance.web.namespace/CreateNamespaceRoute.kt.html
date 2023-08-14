@@ -2,7 +2,7 @@
 
 import io.hamal.backend.instance.req.SubmitRequest
 import io.hamal.lib.domain.req.CreateNamespaceReq
-import io.hamal.lib.sdk.domain.ApiSubmittedReqWithDomainId
+import io.hamal.lib.sdk.domain.ApiSubmittedReqWithId
 import org.springframework.http.HttpStatus.ACCEPTED
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.RestController
     @PostMapping(&quot;/v1/namespaces&quot;)
     fun createNamespace(
         @RequestBody createNamespace: CreateNamespaceReq
-    ): ResponseEntity&lt;ApiSubmittedReqWithDomainId&gt; {
+    ): ResponseEntity&lt;ApiSubmittedReqWithId&gt; {
 <span class="fc" id="L20">        val result = request(createNamespace)</span>
 <span class="fc" id="L21">        return ResponseEntity(</span>
 <span class="fc" id="L22">            result.let {</span>
-<span class="fc" id="L23">                ApiSubmittedReqWithDomainId(</span>
+<span class="fc" id="L23">                ApiSubmittedReqWithId(</span>
 <span class="fc" id="L24">                    reqId = it.reqId,</span>
 <span class="fc" id="L25">                    status = it.status,</span>
-<span class="fc" id="L26">                    id = it.id.value</span>
+<span class="fc" id="L26">                    id = it.id</span>
                 )
 <span class="fc" id="L28">            }, ACCEPTED</span>
         )

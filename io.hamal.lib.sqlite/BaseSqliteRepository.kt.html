@@ -39,10 +39,10 @@ import kotlin.io.path.Path
     abstract fun clear()
 
     override fun close() {
-<span class="nc bnc" id="L42" title="All 2 branches missed.">        if (connection.isOpen) {</span>
-<span class="nc" id="L43">            connection.close()</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">        if (connection.isOpen) {</span>
+<span class="fc" id="L43">            connection.close()</span>
         }
-<span class="nc" id="L45">    }</span>
+<span class="fc" id="L45">    }</span>
 
 
 }
@@ -54,6 +54,6 @@ private fun ensureFilePath(config: BaseSqliteRepository.Config): Path {
 
 //FIXME properly integrate this
 fun &lt;T : Any&gt; unsafeInCriteria(parameter: String, values: Iterable&lt;T&gt;): String {
-<span class="nc" id="L57">    return &quot;$parameter in (${values.joinToString(&quot;,&quot;) { it.toString() }})&quot;</span>
+<span class="fc" id="L57">    return &quot;$parameter in (${values.joinToString(&quot;,&quot;) { it.toString() }})&quot;</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

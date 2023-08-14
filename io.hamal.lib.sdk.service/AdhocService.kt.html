@@ -3,18 +3,18 @@
 import io.hamal.lib.domain.req.InvokeAdhocReq
 import io.hamal.lib.http.HttpTemplate
 import io.hamal.lib.http.body
-import io.hamal.lib.sdk.domain.ApiSubmittedReqWithDomainId
+import io.hamal.lib.sdk.domain.ApiSubmittedReqWithId
 
 interface AdhocService {
-    fun submit(req: InvokeAdhocReq): ApiSubmittedReqWithDomainId
+    fun submit(req: InvokeAdhocReq): ApiSubmittedReqWithId
 }
 
-<span class="pc" id="L12">data class DefaultAdhocService(val template: HttpTemplate) : AdhocService {</span>
-    override fun submit(req: InvokeAdhocReq): ApiSubmittedReqWithDomainId {
+<span class="pc" id="L12">class DefaultAdhocService(val template: HttpTemplate) : AdhocService {</span>
+    override fun submit(req: InvokeAdhocReq): ApiSubmittedReqWithId {
 <span class="fc" id="L14">        return template</span>
 <span class="fc" id="L15">            .post(&quot;/v1/adhoc&quot;)</span>
 <span class="fc" id="L16">            .body(req)</span>
-<span class="fc" id="L17">            .execute(ApiSubmittedReqWithDomainId::class)</span>
+<span class="fc" id="L17">            .execute(ApiSubmittedReqWithId::class)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -120,7 +120,7 @@ interface FunctionType&lt;
         FunctionOutput1&lt;OUTPUT_ARG_1&gt;
         &gt; {
 
-    abstract fun invoke(ctx: FunctionContext, arg1: INPUT_ARG_1): OUTPUT_ARG_1
+    abstract fun invoke(ctx: FunctionContext, arg1: INPUT_ARG_1): OUTPUT_ARG_1?
 
     override fun invoke(ctx: FunctionContext, input: FunctionInput1&lt;INPUT_ARG_1&gt;): FunctionOutput1&lt;OUTPUT_ARG_1&gt; {
 <span class="fc" id="L126">        val result = invoke(ctx, input.arg1)</span>

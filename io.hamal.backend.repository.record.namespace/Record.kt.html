@@ -11,27 +11,27 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
 
-<span class="pc" id="L14">@Serializable</span>
+<span class="fc" id="L14">@Serializable</span>
 <span class="fc" id="L15">sealed class NamespaceRecord(</span>
 <span class="fc" id="L16">    @Transient</span>
 <span class="fc" id="L17">    override var sequence: RecordSequence? = null</span>
 <span class="fc" id="L18">) : Record&lt;NamespaceId&gt;()</span>
 
-<span class="nc bnc" id="L20" title="All 10 branches missed.">@Serializable</span>
+<span class="pc bnc" id="L20" title="All 10 branches missed.">@Serializable</span>
 @SerialName(&quot;NSCR&quot;)
 <span class="fc" id="L22">data class NamespaceCreationRecord(</span>
 <span class="fc" id="L23">    override val entityId: NamespaceId,</span>
 <span class="fc" id="L24">    override val cmdId: CmdId,</span>
 <span class="fc" id="L25">    val name: NamespaceName,</span>
 <span class="fc" id="L26">    val inputs: NamespaceInputs,</span>
-<span class="pc" id="L27">) : NamespaceRecord()</span>
+<span class="fc" id="L27">) : NamespaceRecord()</span>
 
-<span class="nc bnc" id="L29" title="All 10 branches missed.">@Serializable</span>
+<span class="pc bnc" id="L29" title="All 10 branches missed.">@Serializable</span>
 @SerialName(&quot;NSUR&quot;)
 <span class="fc" id="L31">data class NamespaceUpdatedRecord(</span>
 <span class="fc" id="L32">    override val entityId: NamespaceId,</span>
 <span class="fc" id="L33">    override val cmdId: CmdId,</span>
 <span class="fc" id="L34">    val name: NamespaceName,</span>
 <span class="fc" id="L35">    val inputs: NamespaceInputs,</span>
-<span class="pc" id="L36">) : NamespaceRecord()</span>
+<span class="fc" id="L36">) : NamespaceRecord()</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

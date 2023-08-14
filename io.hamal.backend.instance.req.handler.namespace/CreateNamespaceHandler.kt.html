@@ -6,32 +6,48 @@ import io.hamal.backend.instance.req.ReqHandler
 import io.hamal.backend.instance.req.handler.cmdId
 import io.hamal.backend.repository.api.Namespace
 import io.hamal.backend.repository.api.NamespaceCmdRepository
+import io.hamal.backend.repository.api.NamespaceCmdRepository.CreateCmd
 import io.hamal.backend.repository.api.submitted_req.SubmittedCreateNamespaceReq
 import io.hamal.lib.common.domain.CmdId
+import io.hamal.lib.domain.GenerateDomainId
+import io.hamal.lib.domain.vo.NamespaceId
 import org.springframework.stereotype.Component
 
 @Component
-<span class="fc" id="L14">class CreateNamespaceHandler(</span>
-<span class="fc" id="L15">    val namespaceCmdRepository: NamespaceCmdRepository,</span>
-<span class="fc" id="L16">    val eventEmitter: SystemEventEmitter</span>
-<span class="fc" id="L17">) : ReqHandler&lt;SubmittedCreateNamespaceReq&gt;(SubmittedCreateNamespaceReq::class) {</span>
+<span class="fc" id="L17">class CreateNamespaceHandler(</span>
+<span class="fc" id="L18">    val namespaceCmdRepository: NamespaceCmdRepository,</span>
+<span class="fc" id="L19">    val eventEmitter: SystemEventEmitter,</span>
+<span class="fc" id="L20">    val generateDomainId: GenerateDomainId</span>
+<span class="fc" id="L21">) : ReqHandler&lt;SubmittedCreateNamespaceReq&gt;(SubmittedCreateNamespaceReq::class) {</span>
     override fun invoke(req: SubmittedCreateNamespaceReq) {
-<span class="fc" id="L19">        createNamespace(req).also { emitEvent(req.cmdId(), it) }</span>
-<span class="fc" id="L20">    }</span>
+<span class="fc" id="L23">        createNamespace(req).also { emitEvent(req.cmdId(), it) }</span>
+<span class="fc" id="L24">    }</span>
 }
 
 private fun CreateNamespaceHandler.createNamespace(req: SubmittedCreateNamespaceReq): Namespace {
-<span class="fc" id="L24">    return namespaceCmdRepository.create(</span>
-<span class="fc" id="L25">        NamespaceCmdRepository.CreateCmd(</span>
-<span class="fc" id="L26">            id = req.cmdId(),</span>
-<span class="fc" id="L27">            namespaceId = req.id,</span>
-<span class="fc" id="L28">            name = req.name,</span>
-<span class="fc" id="L29">            inputs = req.inputs</span>
+<span class="fc" id="L28">    val allNames = req.name.allNamespaceNames()</span>
+<span class="fc" id="L29">    allNames.take(allNames.size - 1).forEach { name -&gt;</span>
+<span class="fc" id="L30">        namespaceCmdRepository.create(</span>
+<span class="fc" id="L31">            CreateCmd(</span>
+<span class="fc" id="L32">                id = req.cmdId(),</span>
+<span class="fc" id="L33">                namespaceId = generateDomainId(::NamespaceId),</span>
+<span class="fc" id="L34">                name = name,</span>
+<span class="fc" id="L35">                inputs = req.inputs</span>
+            )
+        )
+<span class="fc" id="L38">    }</span>
+
+<span class="fc" id="L40">    return namespaceCmdRepository.create(</span>
+<span class="fc" id="L41">        CreateCmd(</span>
+<span class="fc" id="L42">            id = req.cmdId(),</span>
+<span class="fc" id="L43">            namespaceId = req.id,</span>
+<span class="fc" id="L44">            name = req.name,</span>
+<span class="fc" id="L45">            inputs = req.inputs</span>
         )
     )
 }
 
 private fun CreateNamespaceHandler.emitEvent(cmdId: CmdId, namespace: Namespace) {
-<span class="fc" id="L35">    eventEmitter.emit(cmdId, NamespaceCreatedEvent(namespace))</span>
-<span class="fc" id="L36">}</span>
+<span class="fc" id="L51">    eventEmitter.emit(cmdId, NamespaceCreatedEvent(namespace))</span>
+<span class="fc" id="L52">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

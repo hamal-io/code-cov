@@ -5,7 +5,7 @@ import io.hamal.backend.repository.api.FuncQueryRepository
 import io.hamal.backend.repository.api.log.LogBrokerRepository
 import io.hamal.lib.domain._enum.TriggerType
 import io.hamal.lib.domain.req.CreateTriggerReq
-import io.hamal.lib.sdk.domain.ApiSubmittedReqWithDomainId
+import io.hamal.lib.sdk.domain.ApiSubmittedReqWithId
 import org.springframework.http.HttpStatus.ACCEPTED
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -21,16 +21,16 @@ import org.springframework.web.bind.annotation.RestController
     @PostMapping(&quot;/v1/triggers&quot;)
     fun createTrigger(
         @RequestBody createTrigger: CreateTriggerReq
-    ): ResponseEntity&lt;ApiSubmittedReqWithDomainId&gt; {
+    ): ResponseEntity&lt;ApiSubmittedReqWithId&gt; {
 <span class="fc" id="L25">        ensureFuncExists(createTrigger)</span>
 <span class="fc" id="L26">        ensureTopicExists(createTrigger)</span>
 
 <span class="fc" id="L28">        val result = request(createTrigger)</span>
 <span class="fc" id="L29">        return ResponseEntity(result.let {</span>
-<span class="fc" id="L30">            ApiSubmittedReqWithDomainId(</span>
+<span class="fc" id="L30">            ApiSubmittedReqWithId(</span>
 <span class="fc" id="L31">                reqId = it.reqId,</span>
 <span class="fc" id="L32">                status = it.status,</span>
-<span class="fc" id="L33">                id = it.id.value</span>
+<span class="fc" id="L33">                id = it.id</span>
             )
 <span class="fc" id="L35">        }, ACCEPTED)</span>
     }

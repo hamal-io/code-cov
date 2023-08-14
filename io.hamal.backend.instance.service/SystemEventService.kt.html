@@ -91,14 +91,14 @@ interface SystemEventServiceFactory {
 <span class="fc" id="L91">            }</span>
 
             override fun cancel() {
-<span class="nc" id="L94">                scheduledTasks.forEach {</span>
-<span class="nc" id="L95">                    it.cancel(false)</span>
-<span class="nc" id="L96">                }</span>
-<span class="nc" id="L97">            }</span>
+<span class="fc" id="L94">                scheduledTasks.forEach {</span>
+<span class="fc" id="L95">                    it.cancel(false)</span>
+<span class="fc" id="L96">                }</span>
+<span class="fc" id="L97">            }</span>
 
             override fun destroy() {
-<span class="nc" id="L100">                cancel()</span>
-<span class="nc" id="L101">            }</span>
+<span class="fc" id="L100">                cancel()</span>
+<span class="fc" id="L101">            }</span>
         }
     }
 }

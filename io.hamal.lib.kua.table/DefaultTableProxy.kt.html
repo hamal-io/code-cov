@@ -74,7 +74,7 @@ interface TableProxy : Type {
 <span class="nc" id="L74">        return booleanOf(native.toBoolean(state.top.value)).also { native.pop(1) }</span>
     }
 
-    override fun getCodeValue(key: String): CodeType {
+    override fun getCode(key: String): CodeType {
 <span class="fc" id="L78">        state.pushString(key)</span>
 <span class="fc" id="L79">        val type = state.tableGetRaw(index)</span>
 <span class="fc" id="L80">        type.checkExpectedType(ValueType.String)</span>
@@ -96,10 +96,10 @@ interface TableProxy : Type {
     }
 
     override fun getTableMap(key: String): TableMap {
-<span class="nc" id="L99">        state.pushString(key)</span>
-<span class="nc" id="L100">        val type = state.tableGetRaw(index)</span>
-<span class="nc" id="L101">        type.checkExpectedType(ValueType.Table)</span>
-<span class="nc" id="L102">        return state.getTableMap(state.top.value)</span>
+<span class="fc" id="L99">        state.pushString(key)</span>
+<span class="fc" id="L100">        val type = state.tableGetRaw(index)</span>
+<span class="fc" id="L101">        type.checkExpectedType(ValueType.Table)</span>
+<span class="fc" id="L102">        return state.getTableMap(state.top.value)</span>
     }
 
 <span class="fc" id="L105">    override fun length() = native.tableGetLength(index)</span>

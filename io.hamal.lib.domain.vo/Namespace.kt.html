@@ -18,13 +18,28 @@ import kotlinx.serialization.Serializable
 }
 
 
-<span class="nc" id="L21">@Serializable(with = NamespaceName.Serializer::class)</span>
-<span class="fc" id="L22">class NamespaceName(override val value: String) : DomainName() {</span>
-<span class="fc" id="L23">    internal object Serializer : DomainNameSerializer&lt;NamespaceName&gt;(::NamespaceName)</span>
+//FIXME make sure namespace name does not contain any whitespaces and does not end with ::
+<span class="nc" id="L22">@Serializable(with = NamespaceName.Serializer::class)</span>
+<span class="fc" id="L23">class NamespaceName(override val value: String) : DomainName() {</span>
+<span class="fc" id="L24">    internal object Serializer : DomainNameSerializer&lt;NamespaceName&gt;(::NamespaceName)</span>
+
+    fun allNamespaceNames(): List&lt;NamespaceName&gt; {
+<span class="fc" id="L27">        val parts = value.split(&quot;::&quot;)</span>
+<span class="fc" id="L28">        val result = mutableListOf&lt;NamespaceName&gt;()</span>
+<span class="pc bpc" id="L29" title="1 of 4 branches missed.">        for (x in IntRange(0, parts.size - 1)) {</span>
+<span class="fc" id="L30">            val builder = StringBuilder()</span>
+<span class="pc bpc" id="L31" title="1 of 4 branches missed.">            for (y in IntRange(0, x)) {</span>
+<span class="fc" id="L32">                builder.append(parts[y])</span>
+<span class="fc" id="L33">                builder.append(&quot;::&quot;)</span>
+            }
+<span class="fc" id="L35">            result.add(NamespaceName(builder.toString().let { it.substring(0, it.length - 2) }))</span>
+        }
+<span class="fc" id="L37">        return result</span>
+    }
 }
 
-<span class="nc" id="L26">@Serializable(with = NamespaceInputs.Serializer::class)</span>
-<span class="fc" id="L27">class NamespaceInputs(override val value: TableType = TableType()) : Inputs() {</span>
-<span class="fc" id="L28">    internal object Serializer : InputsSerializer&lt;NamespaceInputs&gt;(::NamespaceInputs)</span>
-<span class="fc" id="L29">}</span>
+<span class="nc" id="L41">@Serializable(with = NamespaceInputs.Serializer::class)</span>
+<span class="fc" id="L42">class NamespaceInputs(override val value: TableType = TableType()) : Inputs() {</span>
+<span class="fc" id="L43">    internal object Serializer : InputsSerializer&lt;NamespaceInputs&gt;(::NamespaceInputs)</span>
+<span class="fc" id="L44">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

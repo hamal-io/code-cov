@@ -17,90 +17,90 @@ import java.nio.file.Path
 
 internal object CreateNamespace : CreateDomainObject&lt;NamespaceId, NamespaceRecord, Namespace&gt; {
     override fun invoke(recs: List&lt;NamespaceRecord&gt;): Namespace {
-<span class="nc bnc" id="L20" title="All 4 branches missed.">        check(recs.isNotEmpty()) { &quot;At least one record is required&quot; }</span>
-<span class="nc" id="L21">        val firstRecord = recs.first()</span>
-<span class="nc bnc" id="L22" title="All 2 branches missed.">        check(firstRecord is NamespaceCreationRecord)</span>
+<span class="pc bpc" id="L20" title="2 of 4 branches missed.">        check(recs.isNotEmpty()) { &quot;At least one record is required&quot; }</span>
+<span class="fc" id="L21">        val firstRecord = recs.first()</span>
+<span class="pc bpc" id="L22" title="1 of 2 branches missed.">        check(firstRecord is NamespaceCreationRecord)</span>
 
-<span class="nc" id="L24">        var result = Entity(</span>
-<span class="nc" id="L25">            id = firstRecord.entityId,</span>
-<span class="nc" id="L26">            cmdId = firstRecord.cmdId,</span>
-<span class="nc" id="L27">            sequence = firstRecord.sequence()</span>
+<span class="fc" id="L24">        var result = Entity(</span>
+<span class="fc" id="L25">            id = firstRecord.entityId,</span>
+<span class="fc" id="L26">            cmdId = firstRecord.cmdId,</span>
+<span class="fc" id="L27">            sequence = firstRecord.sequence()</span>
         )
 
-<span class="nc" id="L30">        recs.forEach { record -&gt;</span>
-<span class="nc" id="L31">            result = result.apply(record)</span>
-<span class="nc" id="L32">        }</span>
+<span class="fc" id="L30">        recs.forEach { record -&gt;</span>
+<span class="fc" id="L31">            result = result.apply(record)</span>
+<span class="fc" id="L32">        }</span>
 
-<span class="nc" id="L34">        return result.toDomainObject()</span>
+<span class="fc" id="L34">        return result.toDomainObject()</span>
     }
 }
 
-<span class="nc" id="L38">class SqliteNamespaceRepository(</span>
+<span class="fc" id="L38">class SqliteNamespaceRepository(</span>
     config: Config
-<span class="nc" id="L40">) : SqliteRecordRepository&lt;NamespaceId, NamespaceRecord, Namespace&gt;(</span>
-<span class="nc" id="L41">    config = config,</span>
-<span class="nc" id="L42">    createDomainObject = CreateNamespace,</span>
+<span class="fc" id="L40">) : SqliteRecordRepository&lt;NamespaceId, NamespaceRecord, Namespace&gt;(</span>
+<span class="fc" id="L41">    config = config,</span>
+<span class="fc" id="L42">    createDomainObject = CreateNamespace,</span>
     recordClass = NamespaceRecord::class,
-<span class="nc" id="L44">    projections = listOf(</span>
-<span class="nc" id="L45">        ProjectionCurrent</span>
-    )
+<span class="fc" id="L44">    projections = listOf(ProjectionCurrent, ProjectionUniqueName)</span>
 ), NamespaceCmdRepository, NamespaceQueryRepository {
 
-<span class="nc" id="L49">    data class Config(</span>
-<span class="nc" id="L50">        override val path: Path</span>
+<span class="fc" id="L47">    data class Config(</span>
+<span class="fc" id="L48">        override val path: Path</span>
     ) : BaseSqliteRepository.Config {
-<span class="nc" id="L52">        override val filename = &quot;namespace.db&quot;</span>
+<span class="fc" id="L50">        override val filename = &quot;namespace.db&quot;</span>
     }
 
     override fun create(cmd: CreateCmd): Namespace {
-<span class="nc" id="L56">        val namespaceId = cmd.namespaceId</span>
-<span class="nc" id="L57">        val cmdId = cmd.id</span>
-<span class="nc" id="L58">        return tx {</span>
-<span class="nc bnc" id="L59" title="All 2 branches missed.">            if (commandAlreadyApplied(namespaceId, cmdId)) {</span>
-<span class="nc" id="L60">                versionOf(namespaceId, cmdId)</span>
+<span class="fc" id="L54">        val namespaceId = cmd.namespaceId</span>
+<span class="fc" id="L55">        val cmdId = cmd.id</span>
+<span class="fc" id="L56">        return tx {</span>
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">            if (commandAlreadyApplied(namespaceId, cmdId)) {</span>
+<span class="nc" id="L58">                versionOf(namespaceId, cmdId)</span>
             } else {
-<span class="nc" id="L62">                storeRecord(</span>
-<span class="nc" id="L63">                    NamespaceCreationRecord(</span>
-<span class="nc" id="L64">                        entityId = namespaceId,</span>
-<span class="nc" id="L65">                        cmdId = cmdId,</span>
-<span class="nc" id="L66">                        name = cmd.name,</span>
-<span class="nc" id="L67">                        inputs = cmd.inputs,</span>
+<span class="fc" id="L60">                storeRecord(</span>
+<span class="fc" id="L61">                    NamespaceCreationRecord(</span>
+<span class="fc" id="L62">                        entityId = namespaceId,</span>
+<span class="fc" id="L63">                        cmdId = cmdId,</span>
+<span class="fc" id="L64">                        name = cmd.name,</span>
+<span class="fc" id="L65">                        inputs = cmd.inputs,</span>
                     )
                 )
 
-<span class="nc" id="L71">                currentVersion(namespaceId)</span>
-<span class="nc" id="L72">                    .also { ProjectionCurrent.update(this, it) }</span>
+<span class="fc" id="L69">                currentVersion(namespaceId)</span>
+<span class="fc" id="L70">                    .also { ProjectionCurrent.upsert(this, it) }</span>
+<span class="fc" id="L71">                    .also { ProjectionUniqueName.upsert(this, it) }</span>
             }
         }
     }
 
     override fun update(namespaceId: NamespaceId, cmd: NamespaceCmdRepository.UpdateCmd): Namespace {
-<span class="nc" id="L78">        val cmdId = cmd.id</span>
-<span class="nc" id="L79">        return tx {</span>
-<span class="nc bnc" id="L80" title="All 2 branches missed.">            if (commandAlreadyApplied(namespaceId, cmdId)) {</span>
-<span class="nc" id="L81">                versionOf(namespaceId, cmdId)</span>
+<span class="nc" id="L77">        val cmdId = cmd.id</span>
+<span class="nc" id="L78">        return tx {</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">            if (commandAlreadyApplied(namespaceId, cmdId)) {</span>
+<span class="nc" id="L80">                versionOf(namespaceId, cmdId)</span>
             } else {
-<span class="nc" id="L83">                storeRecord(</span>
-<span class="nc" id="L84">                    NamespaceUpdatedRecord(</span>
-<span class="nc" id="L85">                        entityId = namespaceId,</span>
-<span class="nc" id="L86">                        cmdId = cmdId,</span>
-<span class="nc" id="L87">                        name = cmd.name,</span>
-<span class="nc" id="L88">                        inputs = cmd.inputs,</span>
+<span class="nc" id="L82">                storeRecord(</span>
+<span class="nc" id="L83">                    NamespaceUpdatedRecord(</span>
+<span class="nc" id="L84">                        entityId = namespaceId,</span>
+<span class="nc" id="L85">                        cmdId = cmdId,</span>
+<span class="nc" id="L86">                        name = cmd.name,</span>
+<span class="nc" id="L87">                        inputs = cmd.inputs,</span>
                     )
                 )
-<span class="nc" id="L91">                currentVersion(namespaceId)</span>
-<span class="nc" id="L92">                    .also { ProjectionCurrent.update(this, it) }</span>
+<span class="nc" id="L90">                currentVersion(namespaceId)</span>
+<span class="nc" id="L91">                    .also { ProjectionCurrent.upsert(this, it) }</span>
+<span class="nc" id="L92">                    .also { ProjectionUniqueName.upsert(this, it) }</span>
             }
         }
     }
 
     override fun find(namespaceId: NamespaceId): Namespace? {
-<span class="nc" id="L98">        return ProjectionCurrent.find(connection, namespaceId)</span>
+<span class="fc" id="L98">        return ProjectionCurrent.find(connection, namespaceId)</span>
     }
 
     override fun list(block: NamespaceQuery.() -&gt; Unit): List&lt;Namespace&gt; {
-<span class="nc" id="L102">        val query = NamespaceQuery().also(block)</span>
-<span class="nc" id="L103">        return ProjectionCurrent.list(connection, query.afterId, query.limit)</span>
+<span class="fc" id="L102">        val query = NamespaceQuery().also(block)</span>
+<span class="fc" id="L103">        return ProjectionCurrent.list(connection, query.afterId, query.limit)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

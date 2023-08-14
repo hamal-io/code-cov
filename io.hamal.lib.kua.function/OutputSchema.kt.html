@@ -20,7 +20,7 @@ object FunctionOutput0Schema : FunctionOutputSchema&lt;FunctionOutput0&gt; {
 ) : FunctionOutputSchema&lt;FunctionOutput1&lt;ARG_1&gt;&gt; {
 <span class="pc" id="L21">    override val size = 1</span>
     override fun pushResult(ctx: FunctionContext, output: FunctionOutput1&lt;ARG_1&gt;) {
-<span class="pc bpc" id="L23" title="1 of 2 branches missed.">        ctx.push(output.arg1 ?: NilType)</span>
+<span class="fc bfc" id="L23" title="All 2 branches covered.">        ctx.push(output.arg1 ?: NilType)</span>
 <span class="fc" id="L24">    }</span>
 }
 

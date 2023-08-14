@@ -8,12 +8,12 @@ import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.serializer
 import kotlin.reflect.KClass
 
-<span class="nc" id="L11">@OptIn(ExperimentalSerializationApi::class, InternalSerializationApi::class)</span>
-<span class="nc" id="L12">class RecordLoader&lt;ID : DomainId, RECORD : Record&lt;ID&gt;&gt;(</span>
-<span class="nc" id="L13">    private val recordClass: KClass&lt;RECORD&gt;,</span>
+<span class="fc" id="L11">@OptIn(ExperimentalSerializationApi::class, InternalSerializationApi::class)</span>
+<span class="fc" id="L12">class RecordLoader&lt;ID : DomainId, RECORD : Record&lt;ID&gt;&gt;(</span>
+<span class="fc" id="L13">    private val recordClass: KClass&lt;RECORD&gt;,</span>
 ) {
     fun loadAll(tx: RecordTransaction&lt;ID, RECORD, *&gt;, id: ID): List&lt;RECORD&gt; {
-<span class="nc" id="L16">        return tx.executeQuery(</span>
+<span class="fc" id="L16">        return tx.executeQuery(</span>
             &quot;&quot;&quot;
         SELECT 
             sequence,
@@ -21,12 +21,12 @@ import kotlin.reflect.KClass
         FROM records 
             WHERE entity_id = :entityId 
         ORDER BY sequence;
-<span class="nc" id="L24">    &quot;&quot;&quot;.trimIndent()</span>
+<span class="fc" id="L24">    &quot;&quot;&quot;.trimIndent()</span>
         ) {
-<span class="nc" id="L26">            query {</span>
-<span class="nc" id="L27">                set(&quot;entityId&quot;, id)</span>
+<span class="fc" id="L26">            query {</span>
+<span class="fc" id="L27">                set(&quot;entityId&quot;, id)</span>
             }
-<span class="nc" id="L29">            map { rs -&gt;</span>
+<span class="fc" id="L29">            map { rs -&gt;</span>
 <span class="nc" id="L30">                protobuf.decodeFromByteArray(recordClass.serializer(), rs.getBytes(&quot;data&quot;)).apply {</span>
 <span class="nc" id="L31">                    sequence = RecordSequence(rs.getInt(&quot;sequence&quot;))</span>
 <span class="nc" id="L32">                }</span>

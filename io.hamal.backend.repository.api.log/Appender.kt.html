@@ -20,7 +20,7 @@ interface Appender&lt;VALUE : Any&gt; {
     @OptIn(InternalSerializationApi::class)
     override fun append(cmdId: CmdId, topic: LogTopic, value: VALUE) {
 <span class="fc" id="L22">        val encoded = ProtoBuf.encodeToByteArray(valueClass.serializer(), value)</span>
-<span class="fc" id="L23">        repository.append(CmdId(cmdId.value + &quot;_&quot; + encoded.contentHashCode()), topic, encoded)</span>
+<span class="fc" id="L23">        repository.append(cmdId + encoded.contentHashCode(), topic, encoded)</span>
 <span class="fc" id="L24">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

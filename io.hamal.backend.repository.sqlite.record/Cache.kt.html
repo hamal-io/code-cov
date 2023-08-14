@@ -6,26 +6,26 @@ import io.hamal.lib.common.KeyedOnce
 import io.hamal.lib.common.domain.DomainId
 import io.hamal.lib.common.domain.DomainObject
 
-<span class="nc" id="L9">class RecordCache&lt;ID : DomainId, RECORD : Record&lt;ID&gt;, OBJ : DomainObject&lt;ID&gt;&gt;(</span>
-<span class="nc" id="L10">    private val recordLoader: RecordLoader&lt;ID, RECORD&gt;</span>
+<span class="fc" id="L9">class RecordCache&lt;ID : DomainId, RECORD : Record&lt;ID&gt;, OBJ : DomainObject&lt;ID&gt;&gt;(</span>
+<span class="fc" id="L10">    private val recordLoader: RecordLoader&lt;ID, RECORD&gt;</span>
 ) {
-<span class="nc" id="L12">    private val store = KeyedOnce.lru&lt;ID, MutableList&lt;RECORD&gt;&gt;(10_000)</span>
+<span class="fc" id="L12">    private val store = KeyedOnce.lru&lt;ID, MutableList&lt;RECORD&gt;&gt;(10_000)</span>
 
     fun add(tx: RecordTransaction&lt;ID, RECORD, OBJ&gt;, record: RECORD) {
-<span class="nc" id="L15">        val records = records(tx, record.entityId)</span>
-<span class="nc bnc" id="L16" title="All 2 branches missed.">        records.add(record.apply { sequence = sequence ?: RecordSequence(records.size + 1) })</span>
-<span class="nc" id="L17">    }</span>
+<span class="fc" id="L15">        val records = records(tx, record.entityId)</span>
+<span class="pc bpc" id="L16" title="1 of 2 branches missed.">        records.add(record.apply { sequence = sequence ?: RecordSequence(records.size + 1) })</span>
+<span class="fc" id="L17">    }</span>
 
     fun list(tx: RecordTransaction&lt;ID, RECORD, OBJ&gt;, entityId: ID): List&lt;RECORD&gt; {
-<span class="nc" id="L20">        return records(tx, entityId).toList()</span>
+<span class="fc" id="L20">        return records(tx, entityId).toList()</span>
     }
 
     fun invalidate() {
-<span class="nc" id="L24">        store.clear()</span>
-<span class="nc" id="L25">    }</span>
+<span class="fc" id="L24">        store.clear()</span>
+<span class="fc" id="L25">    }</span>
 
     private fun records(tx: RecordTransaction&lt;ID, RECORD, OBJ&gt;, entityId: ID): MutableList&lt;RECORD&gt; {
-<span class="nc" id="L28">        return store(entityId) { recordLoader.loadAll(tx, it).toMutableList() }</span>
+<span class="fc" id="L28">        return store(entityId) { recordLoader.loadAll(tx, it).toMutableList() }</span>
     }
 
 }

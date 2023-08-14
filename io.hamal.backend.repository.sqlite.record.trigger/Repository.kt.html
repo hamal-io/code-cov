@@ -35,21 +35,21 @@ internal object CreateTrigger : CreateDomainObject&lt;TriggerId, TriggerRecord, 
     }
 }
 
-<span class="nc" id="L38">class SqliteTriggerRepository(</span>
+<span class="pc" id="L38">class SqliteTriggerRepository(</span>
     config: Config
-<span class="nc" id="L40">) : SqliteRecordRepository&lt;TriggerId, TriggerRecord, Trigger&gt;(</span>
-<span class="nc" id="L41">    config = config,</span>
-<span class="nc" id="L42">    createDomainObject = CreateTrigger,</span>
+<span class="fc" id="L40">) : SqliteRecordRepository&lt;TriggerId, TriggerRecord, Trigger&gt;(</span>
+<span class="fc" id="L41">    config = config,</span>
+<span class="fc" id="L42">    createDomainObject = CreateTrigger,</span>
     recordClass = TriggerRecord::class,
-<span class="nc" id="L44">    projections = listOf(</span>
-<span class="nc" id="L45">        ProjectionCurrent</span>
+<span class="fc" id="L44">    projections = listOf(</span>
+<span class="fc" id="L45">        ProjectionCurrent</span>
     )
 ), TriggerCmdRepository, TriggerQueryRepository {
 
-<span class="nc" id="L49">    data class Config(</span>
-<span class="nc" id="L50">        override val path: Path,</span>
+<span class="fc" id="L49">    data class Config(</span>
+<span class="fc" id="L50">        override val path: Path,</span>
     ) : BaseSqliteRepository.Config {
-<span class="nc" id="L52">        override val filename = &quot;trigger.db&quot;</span>
+<span class="fc" id="L52">        override val filename = &quot;trigger.db&quot;</span>
     }
 
     override fun create(cmd: CreateFixedRateCmd): FixedRateTrigger {
@@ -72,7 +72,7 @@ internal object CreateTrigger : CreateDomainObject&lt;TriggerId, TriggerRecord, 
                 )
 
 <span class="nc" id="L74">                (currentVersion(triggerId) as FixedRateTrigger)</span>
-<span class="nc" id="L75">                    .also { ProjectionCurrent.update(this, it) }</span>
+<span class="nc" id="L75">                    .also { ProjectionCurrent.upsert(this, it) }</span>
             }
         }
     }
@@ -97,7 +97,7 @@ internal object CreateTrigger : CreateDomainObject&lt;TriggerId, TriggerRecord, 
                 )
 
 <span class="nc" id="L99">                (currentVersion(triggerId) as EventTrigger)</span>
-<span class="nc" id="L100">                    .also { ProjectionCurrent.update(this, it) }</span>
+<span class="nc" id="L100">                    .also { ProjectionCurrent.upsert(this, it) }</span>
             }
         }
     }
@@ -107,8 +107,8 @@ internal object CreateTrigger : CreateDomainObject&lt;TriggerId, TriggerRecord, 
     }
 
     override fun list(block: TriggerQuery.() -&gt; Unit): List&lt;Trigger&gt; {
-<span class="nc" id="L110">        val query = TriggerQuery().also(block)</span>
-<span class="nc" id="L111">        return ProjectionCurrent.list(connection, query)</span>
+<span class="fc" id="L110">        val query = TriggerQuery().also(block)</span>
+<span class="fc" id="L111">        return ProjectionCurrent.list(connection, query)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

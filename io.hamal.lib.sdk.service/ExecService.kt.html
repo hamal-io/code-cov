@@ -22,7 +22,7 @@ interface ExecService {
     fun fail(execId: ExecId, error: ErrorType)
 }
 
-<span class="pc" id="L25">data class DefaultExecService(val template: HttpTemplate) : ExecService {</span>
+<span class="pc" id="L25">class DefaultExecService(val template: HttpTemplate) : ExecService {</span>
     override fun poll(): DequeueExecsResponse {
 <span class="fc" id="L27">        return template.post(&quot;/v1/dequeue&quot;).execute(DequeueExecsResponse::class)</span>
     }
@@ -31,14 +31,14 @@ interface ExecService {
         execId: ExecId, stateAfterCompletion: State, events: List&lt;Event&gt;
     ) {
 <span class="fc" id="L33">        template.post(&quot;/v1/execs/{execId}/complete&quot;).path(&quot;execId&quot;, execId).body(</span>
-<span class="fc" id="L34">                CompleteExecReq(</span>
-<span class="fc" id="L35">                    state = stateAfterCompletion, events = events</span>
-                )
-<span class="fc" id="L37">            ).execute()</span>
+<span class="fc" id="L34">            CompleteExecReq(</span>
+<span class="fc" id="L35">                state = stateAfterCompletion, events = events</span>
+            )
+<span class="fc" id="L37">        ).execute()</span>
 <span class="fc" id="L38">    }</span>
 
     override fun fail(execId: ExecId, error: ErrorType) {
-<span class="nc" id="L41">        template.post(&quot;/v1/execs/${execId}/fail&quot;).path(&quot;execId&quot;, execId).body(FailExecReq(cause = error)).execute()</span>
+<span class="nc" id="L41">        template.post(&quot;/v1/execs/{execId}/fail&quot;).path(&quot;execId&quot;, execId).body(FailExecReq(cause = error)).execute()</span>
 <span class="nc" id="L42">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

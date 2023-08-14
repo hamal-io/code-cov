@@ -14,7 +14,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 @OptIn(ExperimentalSerializationApi::class)
 internal object ProjectionCurrent : Projection&lt;ExecId, ExecRecord, Exec&gt; {
     fun find(connection: Connection, execId: ExecId): Exec? {
-<span class="nc" id="L17">        return connection.executeQueryOne(</span>
+<span class="fc" id="L17">        return connection.executeQueryOne(</span>
             &quot;&quot;&quot;
             SELECT 
                 data
@@ -22,19 +22,19 @@ internal object ProjectionCurrent : Projection&lt;ExecId, ExecRecord, Exec&gt; {
                 current
             WHERE
                 id  = :id
-<span class="nc" id="L25">        &quot;&quot;&quot;.trimIndent()</span>
+<span class="fc" id="L25">        &quot;&quot;&quot;.trimIndent()</span>
         ) {
-<span class="nc" id="L27">            query {</span>
-<span class="nc" id="L28">                set(&quot;id&quot;, execId)</span>
+<span class="fc" id="L27">            query {</span>
+<span class="fc" id="L28">                set(&quot;id&quot;, execId)</span>
             }
-<span class="nc" id="L30">            map { rs -&gt;</span>
-<span class="nc" id="L31">                protobuf.decodeFromByteArray(Exec.serializer(), rs.getBytes(&quot;data&quot;))</span>
+<span class="fc" id="L30">            map { rs -&gt;</span>
+<span class="fc" id="L31">                protobuf.decodeFromByteArray(Exec.serializer(), rs.getBytes(&quot;data&quot;))</span>
             }
         }
     }
 
     fun list(connection: Connection, afterId: ExecId, limit: Limit): List&lt;Exec&gt; {
-<span class="nc" id="L37">        return connection.executeQuery&lt;Exec&gt;(</span>
+<span class="fc" id="L37">        return connection.executeQuery&lt;Exec&gt;(</span>
             &quot;&quot;&quot;
             SELECT 
                 data
@@ -44,35 +44,35 @@ internal object ProjectionCurrent : Projection&lt;ExecId, ExecRecord, Exec&gt; {
                 id &lt; :afterId
             ORDER BY id DESC
             LIMIT :limit
-<span class="nc" id="L47">        &quot;&quot;&quot;.trimIndent()</span>
+<span class="fc" id="L47">        &quot;&quot;&quot;.trimIndent()</span>
         ) {
-<span class="nc" id="L49">            query {</span>
-<span class="nc" id="L50">                set(&quot;afterId&quot;, afterId)</span>
-<span class="nc" id="L51">                set(&quot;limit&quot;, limit)</span>
+<span class="fc" id="L49">            query {</span>
+<span class="fc" id="L50">                set(&quot;afterId&quot;, afterId)</span>
+<span class="fc" id="L51">                set(&quot;limit&quot;, limit)</span>
             }
-<span class="nc" id="L53">            map { rs -&gt;</span>
-<span class="nc" id="L54">                protobuf.decodeFromByteArray(Exec.serializer(), rs.getBytes(&quot;data&quot;))</span>
+<span class="fc" id="L53">            map { rs -&gt;</span>
+<span class="fc" id="L54">                protobuf.decodeFromByteArray(Exec.serializer(), rs.getBytes(&quot;data&quot;))</span>
             }
         }
     }
 
-    override fun update(tx: RecordTransaction&lt;ExecId, ExecRecord, Exec&gt;, obj: Exec) {
-<span class="nc" id="L60">        tx.execute(</span>
+    override fun upsert(tx: RecordTransaction&lt;ExecId, ExecRecord, Exec&gt;, obj: Exec) {
+<span class="fc" id="L60">        tx.execute(</span>
             &quot;&quot;&quot;
                 INSERT OR REPLACE INTO current
                     (id,status, data) 
                 VALUES
                     (:id,:status, :data)
-<span class="nc" id="L66">            &quot;&quot;&quot;.trimIndent()</span>
+<span class="fc" id="L66">            &quot;&quot;&quot;.trimIndent()</span>
         ) {
-<span class="nc" id="L68">            set(&quot;id&quot;, obj.id)</span>
-<span class="nc" id="L69">            set(&quot;status&quot;, obj.status.value)</span>
-<span class="nc" id="L70">            set(&quot;data&quot;, protobuf.encodeToByteArray(Exec.serializer(), obj))</span>
+<span class="fc" id="L68">            set(&quot;id&quot;, obj.id)</span>
+<span class="fc" id="L69">            set(&quot;status&quot;, obj.status.value)</span>
+<span class="fc" id="L70">            set(&quot;data&quot;, protobuf.encodeToByteArray(Exec.serializer(), obj))</span>
         }
-<span class="nc" id="L72">    }</span>
+<span class="fc" id="L72">    }</span>
 
     override fun setupSchema(connection: Connection) {
-<span class="nc" id="L75">        connection.execute(</span>
+<span class="fc" id="L75">        connection.execute(</span>
             &quot;&quot;&quot;
             CREATE TABLE IF NOT EXISTS current (
                  id             INTEGER NOT NULL,
@@ -80,13 +80,13 @@ internal object ProjectionCurrent : Projection&lt;ExecId, ExecRecord, Exec&gt; {
                  data           BLOB NOT NULL,
                  PRIMARY KEY    (id)
             );
-<span class="nc" id="L83">        &quot;&quot;&quot;.trimIndent()</span>
+<span class="fc" id="L83">        &quot;&quot;&quot;.trimIndent()</span>
         )
-<span class="nc" id="L85">    }</span>
+<span class="fc" id="L85">    }</span>
 
     override fun clear(connection: Connection) {
-<span class="nc" id="L88">        connection.execute(&quot;&quot;&quot;DELETE FROM current&quot;&quot;&quot;)</span>
-<span class="nc" id="L89">    }</span>
+<span class="fc" id="L88">        connection.execute(&quot;&quot;&quot;DELETE FROM current&quot;&quot;&quot;)</span>
+<span class="fc" id="L89">    }</span>
 
     override fun invalidate() {
 <span class="nc" id="L92">    }</span>

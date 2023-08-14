@@ -28,5 +28,7 @@ import java.math.BigInteger
     }
 
 <span class="nc" id="L30">    override fun compareTo(other: CmdId) = value.compareTo(other.value)</span>
+
+<span class="fc" id="L32">    operator fun plus(hashcode: Int): CmdId = CmdId(&quot;${value}_$hashcode&quot;)</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
