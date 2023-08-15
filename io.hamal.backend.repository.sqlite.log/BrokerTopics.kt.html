@@ -76,25 +76,25 @@ import java.util.concurrent.ConcurrentHashMap
 <span class="fc bfc" id="L76" title="All 2 branches covered.">        }?.also { topicMapping[it.name] = it }</span>
 
     override fun find(id: TopicId): LogTopic? =
-<span class="nc bnc" id="L79" title="All 6 branches missed.">        topicMapping.values.find { it.id == id }</span>
-<span class="nc" id="L80">            ?: connection.executeQueryOne(&quot;SELECT id,name FROM topics WHERE id = :id&quot;) {</span>
-<span class="nc" id="L81">                query {</span>
-<span class="nc" id="L82">                    set(&quot;id&quot;, id)</span>
+<span class="pc bpc" id="L79" title="4 of 6 branches missed.">        topicMapping.values.find { it.id == id }</span>
+<span class="fc" id="L80">            ?: connection.executeQueryOne(&quot;SELECT id,name FROM topics WHERE id = :id&quot;) {</span>
+<span class="fc" id="L81">                query {</span>
+<span class="fc" id="L82">                    set(&quot;id&quot;, id)</span>
                 }
-<span class="nc" id="L84">                map { rs -&gt;</span>
-<span class="nc" id="L85">                    LogTopic(</span>
-<span class="nc" id="L86">                        id = rs.getDomainId(&quot;id&quot;, ::TopicId),</span>
-<span class="nc" id="L87">                        name = TopicName(rs.getString(&quot;name&quot;))</span>
+<span class="fc" id="L84">                map { rs -&gt;</span>
+<span class="fc" id="L85">                    LogTopic(</span>
+<span class="fc" id="L86">                        id = rs.getDomainId(&quot;id&quot;, ::TopicId),</span>
+<span class="fc" id="L87">                        name = TopicName(rs.getString(&quot;name&quot;))</span>
                     )
                 }
-<span class="nc bnc" id="L90" title="All 2 branches missed.">            }?.also { topicMapping[it.name] = it }</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">            }?.also { topicMapping[it.name] = it }</span>
 
     override fun list(): List&lt;LogTopic&gt; {
-<span class="nc" id="L93">        return connection.executeQuery&lt;LogTopic&gt;(&quot;SELECT id,name FROM topics&quot;) {</span>
-<span class="nc" id="L94">            map { rs -&gt;</span>
-<span class="nc" id="L95">                LogTopic(</span>
-<span class="nc" id="L96">                    id = rs.getDomainId(&quot;id&quot;, ::TopicId),</span>
-<span class="nc" id="L97">                    name = TopicName(rs.getString(&quot;name&quot;))</span>
+<span class="fc" id="L93">        return connection.executeQuery&lt;LogTopic&gt;(&quot;SELECT id,name FROM topics&quot;) {</span>
+<span class="fc" id="L94">            map { rs -&gt;</span>
+<span class="fc" id="L95">                LogTopic(</span>
+<span class="fc" id="L96">                    id = rs.getDomainId(&quot;id&quot;, ::TopicId),</span>
+<span class="fc" id="L97">                    name = TopicName(rs.getString(&quot;name&quot;))</span>
                 )
             }
         }

@@ -17,15 +17,15 @@ import io.hamal.lib.sdk.domain.ApiSubmittedReq
 <span class="fc" id="L17">    FunctionOutput1Schema(ErrorType::class)</span>
 ) {
     override fun invoke(ctx: FunctionContext, arg1: StringType): ErrorType? {
-<span class="nc" id="L20">        while (true) {</span>
-<span class="nc" id="L21">            templateSupplier().get(&quot;/v1/reqs/{reqId}&quot;)</span>
-<span class="nc" id="L22">                .path(&quot;reqId&quot;, arg1.value)</span>
-<span class="nc" id="L23">                .execute(ApiSubmittedReq::class)</span>
-<span class="nc" id="L24">                .let {</span>
-<span class="nc bnc" id="L25" title="All 2 branches missed.">                    when (it.status) {</span>
+<span class="fc" id="L20">        while (true) {</span>
+<span class="fc" id="L21">            templateSupplier().get(&quot;/v1/reqs/{reqId}&quot;)</span>
+<span class="fc" id="L22">                .path(&quot;reqId&quot;, arg1.value)</span>
+<span class="fc" id="L23">                .execute(ApiSubmittedReq::class)</span>
+<span class="pc" id="L24">                .let {</span>
+<span class="pc bpc" id="L25" title="1 of 2 branches missed.">                    when (it.status) {</span>
                         ReqStatus.Completed,
                         ReqStatus.Failed -&gt; {
-<span class="nc" id="L28">                            return null</span>
+<span class="fc" id="L28">                            return null</span>
                         }
 
                         else -&gt; {

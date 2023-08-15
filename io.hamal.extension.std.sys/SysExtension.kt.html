@@ -6,6 +6,9 @@ import io.hamal.extension.std.sys.exec.ListExecFunction
 import io.hamal.extension.std.sys.func.*
 import io.hamal.extension.std.sys.namespace.CreateNamespaceFunction
 import io.hamal.extension.std.sys.req.GetReqFunction
+import io.hamal.extension.std.sys.topic.CreateTopicFunction
+import io.hamal.extension.std.sys.topic.GetTopicFunction
+import io.hamal.extension.std.sys.topic.ListTopicFunction
 import io.hamal.extension.std.sys.trigger.CreateTriggerFunction
 import io.hamal.extension.std.sys.trigger.GetTriggerFunction
 import io.hamal.extension.std.sys.trigger.ListTriggerFunction
@@ -13,35 +16,39 @@ import io.hamal.lib.kua.extension.ScriptExtension
 import io.hamal.lib.kua.extension.ScriptExtensionFactory
 import io.hamal.lib.sdk.HttpTemplateSupplier
 
-<span class="fc" id="L16">class SysExtensionFactory(</span>
-<span class="fc" id="L17">    private val templateSupplier: HttpTemplateSupplier</span>
+<span class="fc" id="L19">class SysExtensionFactory(</span>
+<span class="fc" id="L20">    private val templateSupplier: HttpTemplateSupplier</span>
 ) : ScriptExtensionFactory {
     override fun create(): ScriptExtension {
-<span class="fc" id="L20">        return ScriptExtension(</span>
-<span class="fc" id="L21">            name = &quot;sys&quot;,</span>
-<span class="fc" id="L22">            internals = mapOf(</span>
-<span class="fc" id="L23">                &quot;await&quot; to AwaitFunction(templateSupplier),</span>
-<span class="fc" id="L24">                &quot;await_completed&quot; to AwaitCompletedFunction(templateSupplier),</span>
-<span class="fc" id="L25">                &quot;await_failed&quot; to AwaitFailedFunction(templateSupplier),</span>
+<span class="fc" id="L23">        return ScriptExtension(</span>
+<span class="fc" id="L24">            name = &quot;sys&quot;,</span>
+<span class="fc" id="L25">            internals = mapOf(</span>
+<span class="fc" id="L26">                &quot;await&quot; to AwaitFunction(templateSupplier),</span>
+<span class="fc" id="L27">                &quot;await_completed&quot; to AwaitCompletedFunction(templateSupplier),</span>
+<span class="fc" id="L28">                &quot;await_failed&quot; to AwaitFailedFunction(templateSupplier),</span>
 
-<span class="fc" id="L27">                &quot;adhoc&quot; to InvokeAdhocFunction(templateSupplier),</span>
+<span class="fc" id="L30">                &quot;adhoc&quot; to InvokeAdhocFunction(templateSupplier),</span>
 
-<span class="fc" id="L29">                &quot;get_req&quot; to GetReqFunction(templateSupplier),</span>
+<span class="fc" id="L32">                &quot;get_req&quot; to GetReqFunction(templateSupplier),</span>
 
-<span class="fc" id="L31">                &quot;list_execs&quot; to ListExecFunction(templateSupplier),</span>
-<span class="fc" id="L32">                &quot;get_exec&quot; to GetExecFunction(templateSupplier),</span>
+<span class="fc" id="L34">                &quot;list_execs&quot; to ListExecFunction(templateSupplier),</span>
+<span class="fc" id="L35">                &quot;get_exec&quot; to GetExecFunction(templateSupplier),</span>
 
-<span class="fc" id="L34">                &quot;create_func&quot; to CreateFuncFunction(templateSupplier),</span>
-<span class="fc" id="L35">                &quot;get_func&quot; to GetFuncFunction(templateSupplier),</span>
-<span class="fc" id="L36">                &quot;list_func&quot; to ListFuncFunction(templateSupplier),</span>
+<span class="fc" id="L37">                &quot;create_func&quot; to CreateFuncFunction(templateSupplier),</span>
+<span class="fc" id="L38">                &quot;get_func&quot; to GetFuncFunction(templateSupplier),</span>
+<span class="fc" id="L39">                &quot;list_func&quot; to ListFuncFunction(templateSupplier),</span>
 
-<span class="fc" id="L38">                &quot;create_namespace&quot; to CreateNamespaceFunction(templateSupplier),</span>
-<span class="fc" id="L39">                &quot;get_namespace&quot; to GetNamespaceFunction(templateSupplier),</span>
-<span class="fc" id="L40">                &quot;list_namespace&quot; to ListNamespaceFunction(templateSupplier),</span>
+<span class="fc" id="L41">                &quot;create_namespace&quot; to CreateNamespaceFunction(templateSupplier),</span>
+<span class="fc" id="L42">                &quot;get_namespace&quot; to GetNamespaceFunction(templateSupplier),</span>
+<span class="fc" id="L43">                &quot;list_namespace&quot; to ListNamespaceFunction(templateSupplier),</span>
 
-<span class="fc" id="L42">                &quot;create_trigger&quot; to CreateTriggerFunction(templateSupplier),</span>
-<span class="fc" id="L43">                &quot;get_trigger&quot; to GetTriggerFunction(templateSupplier),</span>
-<span class="fc" id="L44">                &quot;list_trigger&quot; to ListTriggerFunction(templateSupplier)</span>
+<span class="fc" id="L45">                &quot;create_topic&quot; to CreateTopicFunction(templateSupplier),</span>
+<span class="fc" id="L46">                &quot;list_topic&quot; to ListTopicFunction(templateSupplier),</span>
+<span class="fc" id="L47">                &quot;get_topic&quot; to GetTopicFunction(templateSupplier),</span>
+
+<span class="fc" id="L49">                &quot;create_trigger&quot; to CreateTriggerFunction(templateSupplier),</span>
+<span class="fc" id="L50">                &quot;get_trigger&quot; to GetTriggerFunction(templateSupplier),</span>
+<span class="fc" id="L51">                &quot;list_trigger&quot; to ListTriggerFunction(templateSupplier)</span>
 
             )
         )

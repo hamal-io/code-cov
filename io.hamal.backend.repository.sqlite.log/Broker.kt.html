@@ -64,10 +64,10 @@ import java.nio.file.Path
 <span class="fc" id="L64">        consumersRepository.commit(groupId, topic.id, chunkId)</span>
 <span class="fc" id="L65">    }</span>
 
-<span class="nc" id="L67">    override fun findTopic(topicId: TopicId) = topicsRepository.find(topicId)</span>
+<span class="fc" id="L67">    override fun findTopic(topicId: TopicId) = topicsRepository.find(topicId)</span>
 <span class="fc" id="L68">    override fun findTopic(topicName: TopicName) = topicsRepository.find(topicName)</span>
     override fun listTopics(): List&lt;LogTopic&gt; {
-<span class="nc" id="L70">        return topicsRepository.list()</span>
+<span class="fc" id="L70">        return topicsRepository.list()</span>
     }
 
     override fun clear() {

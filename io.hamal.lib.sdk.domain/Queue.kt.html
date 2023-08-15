@@ -13,14 +13,14 @@ import kotlinx.serialization.Serializable
 <span class="fc" id="L13">data class DequeueExecsResponse(</span>
 <span class="fc" id="L14">    val execs: List&lt;Exec&gt;</span>
 ) {
-<span class="pc bpc" id="L16" title="2 of 12 branches missed.">    @Serializable</span>
-<span class="fc" id="L17">    data class Exec(</span>
+<span class="pc bpc" id="L16" title="3 of 18 branches missed.">    @Serializable</span>
+<span class="pc" id="L17">    data class Exec(</span>
 <span class="fc" id="L18">        val id: ExecId,</span>
-<span class="fc" id="L19">        val correlation: Correlation?,</span>
-<span class="fc" id="L20">        val inputs: ExecInputs,</span>
-<span class="fc" id="L21">        val state: State,</span>
-<span class="fc" id="L22">        val code: CodeType,</span>
-<span class="fc" id="L23">        val invocation: Invocation</span>
-<span class="fc" id="L24">    )</span>
+<span class="fc" id="L19">        val inputs: ExecInputs,</span>
+<span class="fc" id="L20">        val state: State,</span>
+<span class="fc" id="L21">        val code: CodeType,</span>
+<span class="fc" id="L22">        val invocation: Invocation,</span>
+<span class="pc" id="L23">        val correlation: Correlation? = null</span>
+<span class="pc" id="L24">    )</span>
 <span class="fc" id="L25">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

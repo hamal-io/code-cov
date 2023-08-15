@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ListTopisRoute.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.instance.web.topic</a> &gt; <span class="el_source">ListTopisRoute.kt</span></div><h1>ListTopisRoute.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.instance.web.topic
 
 import io.hamal.backend.repository.api.log.LogBrokerRepository
-import io.hamal.lib.sdk.domain.ListTopicsResponse
-import io.hamal.lib.sdk.domain.ListTopicsResponse.Topic
+import io.hamal.lib.sdk.domain.ApiTopicList
+import io.hamal.lib.sdk.domain.ApiTopicList.Topic
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RestController
 <span class="fc" id="L12">    private val eventBrokerRepository: LogBrokerRepository</span>
 ) {
     @GetMapping(&quot;/v1/topics&quot;)
-    fun listTopics(): ResponseEntity&lt;ListTopicsResponse&gt; {
+    fun listTopics(): ResponseEntity&lt;ApiTopicList&gt; {
 <span class="fc" id="L16">        val topics = eventBrokerRepository.listTopics()</span>
 <span class="fc" id="L17">        return ResponseEntity.ok(</span>
-<span class="fc" id="L18">            ListTopicsResponse(</span>
+<span class="fc" id="L18">            ApiTopicList(</span>
 <span class="fc" id="L19">                topics = topics.map { topic -&gt;</span>
 <span class="fc" id="L20">                    Topic(</span>
 <span class="fc" id="L21">                        id = topic.id,</span>
