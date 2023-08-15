@@ -9,7 +9,7 @@ import io.hamal.lib.kua.type.CodeType
 import kotlinx.serialization.Serializable
 import kotlin.time.Duration
 
-<span class="pc bpc" id="L12" title="10 of 42 branches missed.">@Serializable</span>
+<span class="pc bpc" id="L12" title="11 of 51 branches missed.">@Serializable</span>
 <span class="fc" id="L13">data class SubmittedCreateTriggerReq(</span>
 <span class="fc" id="L14">    override val reqId: ReqId,</span>
 <span class="fc" id="L15">    override var status: ReqStatus,</span>
@@ -18,21 +18,22 @@ import kotlin.time.Duration
 <span class="fc" id="L18">    val name: TriggerName,</span>
 <span class="fc" id="L19">    val funcId: FuncId,</span>
 <span class="fc" id="L20">    val inputs: TriggerInputs,</span>
-<span class="fc" id="L21">    val correlationId: CorrelationId? = null,</span>
-<span class="fc" id="L22">    val duration: Duration? = null,</span>
-<span class="fc" id="L23">    val topicId: TopicId? = null</span>
-<span class="fc" id="L24">) : SubmittedReq</span>
+<span class="pc" id="L21">    var namespaceId: NamespaceId? = null,</span>
+<span class="fc" id="L22">    val correlationId: CorrelationId? = null,</span>
+<span class="fc" id="L23">    val duration: Duration? = null,</span>
+<span class="fc" id="L24">    val topicId: TopicId? = null</span>
+<span class="fc" id="L25">) : SubmittedReq</span>
 
 
-<span class="pc bpc" id="L27" title="2 of 14 branches missed.">@Serializable</span>
-<span class="fc" id="L28">data class SubmittedInvokeExecReq(</span>
-<span class="fc" id="L29">    override val reqId: ReqId,</span>
-<span class="fc" id="L30">    override var status: ReqStatus,</span>
-<span class="fc" id="L31">    val id: ExecId,</span>
-<span class="fc" id="L32">    val funcId: FuncId?,</span>
-<span class="fc" id="L33">    val correlationId: CorrelationId?,</span>
-<span class="fc" id="L34">    val inputs: InvocationInputs,</span>
-<span class="fc" id="L35">    val invocation: Invocation,</span>
-<span class="fc" id="L36">    val code: CodeType?</span>
-<span class="fc" id="L37">) : SubmittedReq</span>
+<span class="pc bpc" id="L28" title="2 of 14 branches missed.">@Serializable</span>
+<span class="fc" id="L29">data class SubmittedInvokeExecReq(</span>
+<span class="fc" id="L30">    override val reqId: ReqId,</span>
+<span class="fc" id="L31">    override var status: ReqStatus,</span>
+<span class="fc" id="L32">    val id: ExecId,</span>
+<span class="fc" id="L33">    val funcId: FuncId?,</span>
+<span class="fc" id="L34">    val correlationId: CorrelationId?,</span>
+<span class="fc" id="L35">    val inputs: InvocationInputs,</span>
+<span class="fc" id="L36">    val invocation: Invocation,</span>
+<span class="fc" id="L37">    val code: CodeType?</span>
+<span class="fc" id="L38">) : SubmittedReq</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

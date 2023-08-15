@@ -6,7 +6,7 @@ import io.hamal.lib.kua.function.FunctionInput2Schema
 import io.hamal.lib.kua.function.FunctionOutput2Schema
 import io.hamal.lib.kua.type.AnyType
 import io.hamal.lib.kua.type.ErrorType
-import io.hamal.lib.kua.type.DoubleType
+import io.hamal.lib.kua.type.NumberType
 import io.hamal.lib.kua.type.StringType
 import io.hamal.lib.web3.eth.abi.EthTypeDecoder
 import io.hamal.lib.web3.eth.abi.type.EthPrefixedHexString
@@ -35,7 +35,7 @@ import io.hamal.lib.web3.util.ByteWindow
 <span class="pc bpc" id="L35" title="1 of 2 branches missed.">        if (type.value == &quot;uint256&quot;) {</span>
 <span class="fc" id="L36">            return null to AnyType(</span>
                 //FIXME must be decimal value
-<span class="fc" id="L38">                DoubleType(</span>
+<span class="fc" id="L38">                NumberType(</span>
 <span class="fc" id="L39">                    EthTypeDecoder.Uint256.decode(</span>
 <span class="fc" id="L40">                        ByteWindow.Companion.of(</span>
 <span class="fc" id="L41">                            EthPrefixedHexString(value.value)</span>

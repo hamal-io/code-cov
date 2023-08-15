@@ -12,7 +12,7 @@ interface TableArray : TableProxy {
 <span class="fc" id="L12">    fun append(value: Int) = append(value.toDouble())</span>
 <span class="nc" id="L13">    fun append(value: Long) = append(value.toDouble())</span>
 <span class="nc" id="L14">    fun append(value: Float) = append(value.toDouble())</span>
-<span class="nc" id="L15">    fun append(value: DoubleType) = append(value.value)</span>
+<span class="nc" id="L15">    fun append(value: NumberType) = append(value.value)</span>
 
 <span class="nc" id="L17">    fun append(value: SnowflakeId) = append(value.value.toString(16))</span>
 <span class="nc" id="L18">    fun append(value: DomainId) = append(value.value.value)</span>
@@ -26,7 +26,7 @@ interface TableArray : TableProxy {
     fun get(idx: Int): AnyType
 <span class="nc" id="L27">    fun getBoolean(idx: Int) = getBooleanValue(idx) == TrueValue</span>
     fun getBooleanValue(idx: Int): BooleanType
-    fun getNumberValue(idx: Int): DoubleType
+    fun getNumberValue(idx: Int): NumberType
 <span class="fc" id="L30">    fun getInt(idx: Int) = getNumberValue(idx).value.toInt()</span>
 <span class="nc" id="L31">    fun getLong(idx: Int) = getNumberValue(idx).value.toLong()</span>
 <span class="nc" id="L32">    fun getFloat(idx: Int) = getNumberValue(idx).value.toFloat()</span>

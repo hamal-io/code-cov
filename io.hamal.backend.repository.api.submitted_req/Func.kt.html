@@ -5,28 +5,31 @@ import io.hamal.lib.domain._enum.ReqStatus
 import io.hamal.lib.domain.vo.FuncId
 import io.hamal.lib.domain.vo.FuncInputs
 import io.hamal.lib.domain.vo.FuncName
+import io.hamal.lib.domain.vo.NamespaceId
 import io.hamal.lib.kua.type.CodeType
 import kotlinx.serialization.Serializable
 
 
-<span class="pc bpc" id="L12" title="2 of 12 branches missed.">@Serializable</span>
-<span class="fc" id="L13">data class SubmittedCreateFuncReq(</span>
-<span class="fc" id="L14">    override val reqId: ReqId,</span>
-<span class="fc" id="L15">    override var status: ReqStatus,</span>
-<span class="fc" id="L16">    val id: FuncId,</span>
-<span class="fc" id="L17">    val name: FuncName,</span>
-<span class="fc" id="L18">    val inputs: FuncInputs,</span>
-<span class="fc" id="L19">    val code: CodeType</span>
-<span class="fc" id="L20">) : SubmittedReq</span>
+<span class="pc bpc" id="L13" title="2 of 13 branches missed.">@Serializable</span>
+<span class="fc" id="L14">data class SubmittedCreateFuncReq(</span>
+<span class="fc" id="L15">    override val reqId: ReqId,</span>
+<span class="fc" id="L16">    override var status: ReqStatus,</span>
+<span class="fc" id="L17">    val id: FuncId,</span>
+<span class="fc" id="L18">    val namespaceId: NamespaceId?,</span>
+<span class="fc" id="L19">    val name: FuncName,</span>
+<span class="fc" id="L20">    val inputs: FuncInputs,</span>
+<span class="fc" id="L21">    val code: CodeType</span>
+<span class="fc" id="L22">) : SubmittedReq</span>
 
 
-<span class="pc bpc" id="L23" title="2 of 12 branches missed.">@Serializable</span>
-<span class="fc" id="L24">data class SubmittedUpdateFuncReq(</span>
-<span class="fc" id="L25">    override val reqId: ReqId,</span>
-<span class="fc" id="L26">    override var status: ReqStatus,</span>
-<span class="fc" id="L27">    val id: FuncId,</span>
-<span class="fc" id="L28">    val name: FuncName,</span>
-<span class="fc" id="L29">    val inputs: FuncInputs,</span>
-<span class="fc" id="L30">    val code: CodeType</span>
-<span class="fc" id="L31">) : SubmittedReq</span>
+<span class="pc bpc" id="L25" title="2 of 13 branches missed.">@Serializable</span>
+<span class="fc" id="L26">data class SubmittedUpdateFuncReq(</span>
+<span class="fc" id="L27">    override val reqId: ReqId,</span>
+<span class="fc" id="L28">    override var status: ReqStatus,</span>
+<span class="fc" id="L29">    val id: FuncId,</span>
+<span class="fc" id="L30">    val namespaceId: NamespaceId?,</span>
+<span class="fc" id="L31">    val name: FuncName?,</span>
+<span class="fc" id="L32">    val inputs: FuncInputs?,</span>
+<span class="fc" id="L33">    val code: CodeType?</span>
+<span class="fc" id="L34">) : SubmittedReq</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

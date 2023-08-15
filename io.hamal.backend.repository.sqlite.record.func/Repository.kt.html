@@ -42,67 +42,73 @@ internal object CreateFunc : CreateDomainObject&lt;FuncId, FuncRecord, Func&gt; 
 <span class="fc" id="L42">    createDomainObject = CreateFunc,</span>
     recordClass = FuncRecord::class,
 <span class="fc" id="L44">    projections = listOf(</span>
-<span class="fc" id="L45">        ProjectionCurrent</span>
+<span class="fc" id="L45">        ProjectionCurrent,</span>
+<span class="fc" id="L46">        ProjectionUniqueName</span>
     )
 ), FuncCmdRepository, FuncQueryRepository {
 
-<span class="fc" id="L49">    data class Config(</span>
-<span class="fc" id="L50">        override val path: Path</span>
+<span class="fc" id="L50">    data class Config(</span>
+<span class="fc" id="L51">        override val path: Path</span>
     ) : BaseSqliteRepository.Config {
-<span class="fc" id="L52">        override val filename = &quot;func.db&quot;</span>
+<span class="fc" id="L53">        override val filename = &quot;func.db&quot;</span>
     }
 
     override fun create(cmd: CreateCmd): Func {
-<span class="fc" id="L56">        val funcId = cmd.funcId</span>
-<span class="fc" id="L57">        val cmdId = cmd.id</span>
-<span class="fc" id="L58">        return tx {</span>
-<span class="pc bpc" id="L59" title="1 of 2 branches missed.">            if (commandAlreadyApplied(funcId, cmdId)) {</span>
-<span class="nc" id="L60">                versionOf(funcId, cmdId)</span>
+<span class="fc" id="L57">        val funcId = cmd.funcId</span>
+<span class="fc" id="L58">        val cmdId = cmd.id</span>
+<span class="fc" id="L59">        return tx {</span>
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">            if (commandAlreadyApplied(funcId, cmdId)) {</span>
+<span class="nc" id="L61">                versionOf(funcId, cmdId)</span>
             } else {
-<span class="fc" id="L62">                storeRecord(</span>
-<span class="fc" id="L63">                    FuncCreationRecord(</span>
-<span class="fc" id="L64">                        entityId = funcId,</span>
-<span class="fc" id="L65">                        cmdId = cmdId,</span>
-<span class="fc" id="L66">                        name = cmd.name,</span>
-<span class="fc" id="L67">                        inputs = cmd.inputs,</span>
-<span class="fc" id="L68">                        code = cmd.code,</span>
+<span class="fc" id="L63">                storeRecord(</span>
+<span class="fc" id="L64">                    FuncCreationRecord(</span>
+<span class="fc" id="L65">                        entityId = funcId,</span>
+<span class="fc" id="L66">                        cmdId = cmdId,</span>
+<span class="fc" id="L67">                        namespaceId = cmd.namespaceId,</span>
+<span class="fc" id="L68">                        name = cmd.name,</span>
+<span class="fc" id="L69">                        inputs = cmd.inputs,</span>
+<span class="fc" id="L70">                        code = cmd.code,</span>
                     )
                 )
 
-<span class="fc" id="L72">                currentVersion(funcId)</span>
-<span class="fc" id="L73">                    .also { ProjectionCurrent.upsert(this, it) }</span>
+<span class="fc" id="L74">                currentVersion(funcId)</span>
+<span class="fc" id="L75">                    .also { ProjectionCurrent.upsert(this, it) }</span>
+<span class="fc" id="L76">                    .also { ProjectionUniqueName.upsert(this, it) }</span>
             }
         }
     }
 
     override fun update(funcId: FuncId, cmd: FuncCmdRepository.UpdateCmd): Func {
-<span class="nc" id="L79">        val cmdId = cmd.id</span>
-<span class="nc" id="L80">        return tx {</span>
-<span class="nc bnc" id="L81" title="All 2 branches missed.">            if (commandAlreadyApplied(funcId, cmdId)) {</span>
-<span class="nc" id="L82">                versionOf(funcId, cmdId)</span>
+<span class="nc" id="L82">        val cmdId = cmd.id</span>
+<span class="nc" id="L83">        return tx {</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">            if (commandAlreadyApplied(funcId, cmdId)) {</span>
+<span class="nc" id="L85">                versionOf(funcId, cmdId)</span>
             } else {
-<span class="nc" id="L84">                storeRecord(</span>
-<span class="nc" id="L85">                    FuncUpdatedRecord(</span>
-<span class="nc" id="L86">                        entityId = funcId,</span>
-<span class="nc" id="L87">                        cmdId = cmdId,</span>
-<span class="nc" id="L88">                        name = cmd.name,</span>
-<span class="nc" id="L89">                        inputs = cmd.inputs,</span>
-<span class="nc" id="L90">                        code = cmd.code,</span>
+<span class="nc" id="L87">                val currentVersion = versionOf(funcId, cmdId)</span>
+<span class="nc" id="L88">                storeRecord(</span>
+<span class="nc" id="L89">                    FuncUpdatedRecord(</span>
+<span class="nc" id="L90">                        entityId = funcId,</span>
+<span class="nc" id="L91">                        cmdId = cmdId,</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">                        namespaceId = cmd.namespaceId ?: currentVersion.namespaceId,</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">                        name = cmd.name ?: currentVersion.name,</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">                        inputs = cmd.inputs ?: currentVersion.inputs,</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">                        code = cmd.code ?: currentVersion.code,</span>
                     )
                 )
-<span class="nc" id="L93">                currentVersion(funcId)</span>
-<span class="nc" id="L94">                    .also { ProjectionCurrent.upsert(this, it) }</span>
+<span class="nc" id="L98">                currentVersion(funcId)</span>
+<span class="nc" id="L99">                    .also { ProjectionCurrent.upsert(this, it) }</span>
+<span class="nc" id="L100">                    .also { ProjectionUniqueName.upsert(this, it) }</span>
             }
         }
     }
 
     override fun find(funcId: FuncId): Func? {
-<span class="fc" id="L100">        return ProjectionCurrent.find(connection, funcId)</span>
+<span class="fc" id="L106">        return ProjectionCurrent.find(connection, funcId)</span>
     }
 
     override fun list(block: FuncQuery.() -&gt; Unit): List&lt;Func&gt; {
-<span class="fc" id="L104">        val query = FuncQuery().also(block)</span>
-<span class="fc" id="L105">        return ProjectionCurrent.list(connection, query.afterId, query.limit)</span>
+<span class="fc" id="L110">        val query = FuncQuery().also(block)</span>
+<span class="fc" id="L111">        return ProjectionCurrent.list(connection, query.afterId, query.limit)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

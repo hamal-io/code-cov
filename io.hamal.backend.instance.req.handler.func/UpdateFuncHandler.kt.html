@@ -26,14 +26,15 @@ private fun UpdateFuncHandler.updateFunc(req: SubmittedUpdateFuncReq): Func {
 <span class="fc" id="L26">        req.id,</span>
 <span class="fc" id="L27">        FuncCmdRepository.UpdateCmd(</span>
 <span class="fc" id="L28">            id = req.cmdId(),</span>
-<span class="fc" id="L29">            name = req.name,</span>
-<span class="fc" id="L30">            inputs = req.inputs,</span>
-<span class="fc" id="L31">            code = req.code</span>
+<span class="fc" id="L29">            namespaceId = req.namespaceId,</span>
+<span class="fc" id="L30">            name = req.name,</span>
+<span class="fc" id="L31">            inputs = req.inputs,</span>
+<span class="fc" id="L32">            code = req.code</span>
         )
     )
 }
 
 private fun UpdateFuncHandler.emitEvent(cmdId: CmdId, func: Func) {
-<span class="fc" id="L37">    eventEmitter.emit(cmdId, FuncCreatedEvent(func))</span>
-<span class="fc" id="L38">}</span>
+<span class="fc" id="L38">    eventEmitter.emit(cmdId, FuncCreatedEvent(func))</span>
+<span class="fc" id="L39">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

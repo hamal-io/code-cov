@@ -37,7 +37,7 @@ object FunctionOutput0Schema : FunctionOutputSchema&lt;FunctionOutput0&gt; {
 
 <span class="fc" id="L38">fun &lt;VALUE : Type&gt; FunctionContext.push(value: VALUE) = when (value) {</span>
 <span class="fc bfc" id="L39" title="All 2 branches covered.">    is NilType -&gt; pushNil()</span>
-<span class="fc bfc" id="L40" title="All 2 branches covered.">    is DoubleType -&gt; pushNumber(value)</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">    is NumberType -&gt; pushNumber(value)</span>
 <span class="fc bfc" id="L41" title="All 2 branches covered.">    is StringType -&gt; pushString(value)</span>
 <span class="fc bfc" id="L42" title="All 2 branches covered.">    is TableArray -&gt; pushTop(value.index)</span>
 <span class="pc bpc" id="L43" title="1 of 2 branches missed.">    is TableMap -&gt; pushTop(value.index)</span>

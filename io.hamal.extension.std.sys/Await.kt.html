@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Await.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.extension.std.sys</a> &gt; <span class="el_source">Await.kt</span></div><h1>Await.kt</h1><pre class="source lang-java linenums">package io.hamal.extension.std.sys
+
+import io.hamal.lib.domain._enum.ReqStatus
+import io.hamal.lib.http.HttpTemplate
+import io.hamal.lib.kua.function.Function1In1Out
+import io.hamal.lib.kua.function.FunctionContext
+import io.hamal.lib.kua.function.FunctionInput1Schema
+import io.hamal.lib.kua.function.FunctionOutput1Schema
+import io.hamal.lib.kua.type.ErrorType
+import io.hamal.lib.kua.type.StringType
+import io.hamal.lib.sdk.domain.ApiSubmittedReq
+
+<span class="fc" id="L13">class AwaitFunction(</span>
+<span class="fc" id="L14">    private val templateSupplier: () -&gt; HttpTemplate</span>
+<span class="fc" id="L15">) : Function1In1Out&lt;StringType, ErrorType&gt;(</span>
+<span class="fc" id="L16">    FunctionInput1Schema(StringType::class),</span>
+<span class="fc" id="L17">    FunctionOutput1Schema(ErrorType::class)</span>
+) {
+    override fun invoke(ctx: FunctionContext, arg1: StringType): ErrorType? {
+<span class="nc" id="L20">        while (true) {</span>
+<span class="nc" id="L21">            templateSupplier().get(&quot;/v1/reqs/{reqId}&quot;)</span>
+<span class="nc" id="L22">                .path(&quot;reqId&quot;, arg1.value)</span>
+<span class="nc" id="L23">                .execute(ApiSubmittedReq::class)</span>
+<span class="nc" id="L24">                .let {</span>
+<span class="nc bnc" id="L25" title="All 2 branches missed.">                    when (it.status) {</span>
+                        ReqStatus.Completed,
+                        ReqStatus.Failed -&gt; {
+<span class="nc" id="L28">                            return null</span>
+                        }
+
+                        else -&gt; {
+<span class="nc" id="L32">                            Thread.sleep(1)</span>
+                        }
+                    }
+<span class="nc" id="L35">                }</span>
+        }
+    }
+}
+
+
+<span class="fc" id="L41">class AwaitCompletedFunction(</span>
+<span class="fc" id="L42">    private val templateSupplier: () -&gt; HttpTemplate</span>
+<span class="fc" id="L43">) : Function1In1Out&lt;StringType, ErrorType&gt;(</span>
+<span class="fc" id="L44">    FunctionInput1Schema(StringType::class),</span>
+<span class="fc" id="L45">    FunctionOutput1Schema(ErrorType::class)</span>
+) {
+    override fun invoke(ctx: FunctionContext, arg1: StringType): ErrorType? {
+<span class="fc" id="L48">        while (true) {</span>
+<span class="fc" id="L49">            templateSupplier().get(&quot;/v1/reqs/{reqId}&quot;)</span>
+<span class="fc" id="L50">                .path(&quot;reqId&quot;, arg1.value)</span>
+<span class="fc" id="L51">                .execute(ApiSubmittedReq::class)</span>
+<span class="fc" id="L52">                .let {</span>
+<span class="pc bpc" id="L53" title="1 of 3 branches missed.">                    when (it.status) {</span>
+                        ReqStatus.Completed -&gt; {
+<span class="fc" id="L55">                            return null</span>
+                        }
+
+                        ReqStatus.Failed -&gt; {
+<span class="nc" id="L59">                            return ErrorType(&quot;expected $arg1 to complete but failed&quot;)</span>
+                        }
+
+                        else -&gt; {
+<span class="fc" id="L63">                            Thread.sleep(1)</span>
+                        }
+                    }
+<span class="fc" id="L66">                }</span>
+        }
+    }
+}
+
+<span class="fc" id="L71">class AwaitFailedFunction(</span>
+<span class="fc" id="L72">    private val templateSupplier: () -&gt; HttpTemplate</span>
+<span class="fc" id="L73">) : Function1In1Out&lt;StringType, ErrorType&gt;(</span>
+<span class="fc" id="L74">    FunctionInput1Schema(StringType::class),</span>
+<span class="fc" id="L75">    FunctionOutput1Schema(ErrorType::class)</span>
+) {
+    override fun invoke(ctx: FunctionContext, arg1: StringType): ErrorType? {
+<span class="fc" id="L78">        while (true) {</span>
+<span class="fc" id="L79">            templateSupplier().get(&quot;/v1/reqs/{reqId}&quot;)</span>
+<span class="fc" id="L80">                .path(&quot;reqId&quot;, arg1.value)</span>
+<span class="fc" id="L81">                .execute(ApiSubmittedReq::class)</span>
+<span class="fc" id="L82">                .let {</span>
+<span class="pc bpc" id="L83" title="1 of 3 branches missed.">                    when (it.status) {</span>
+                        ReqStatus.Completed -&gt; {
+<span class="nc" id="L85">                            return ErrorType(&quot;expected $arg1 to fail but completed&quot;)</span>
+                        }
+
+                        ReqStatus.Failed -&gt; {
+<span class="fc" id="L89">                            return null</span>
+                        }
+
+                        else -&gt; {
+<span class="fc" id="L93">                            Thread.sleep(1)</span>
+                        }
+                    }
+<span class="fc" id="L96">                }</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

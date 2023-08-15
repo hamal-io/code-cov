@@ -5,60 +5,65 @@ import io.hamal.backend.instance.event.TriggerCreatedEvent
 import io.hamal.backend.instance.req.ReqHandler
 import io.hamal.backend.instance.req.handler.cmdId
 import io.hamal.backend.repository.api.FuncQueryRepository
+import io.hamal.backend.repository.api.NamespaceQueryRepository
 import io.hamal.backend.repository.api.Trigger
 import io.hamal.backend.repository.api.TriggerCmdRepository
 import io.hamal.backend.repository.api.log.LogBrokerRepository
 import io.hamal.backend.repository.api.submitted_req.SubmittedCreateTriggerReq
 import io.hamal.lib.common.domain.CmdId
 import io.hamal.lib.domain._enum.TriggerType
+import io.hamal.lib.domain.vo.NamespaceName
 import org.springframework.stereotype.Component
 
 @Component
-<span class="fc" id="L17">class CreateTriggerHandler(</span>
-<span class="fc" id="L18">    private val triggerCmdRepository: TriggerCmdRepository,</span>
-<span class="fc" id="L19">    private val eventEmitter: SystemEventEmitter,</span>
-<span class="fc" id="L20">    private val funcQueryRepository: FuncQueryRepository,</span>
-<span class="fc" id="L21">    private val eventBrokerRepository: LogBrokerRepository</span>
-<span class="fc" id="L22">) : ReqHandler&lt;SubmittedCreateTriggerReq&gt;(SubmittedCreateTriggerReq::class) {</span>
+<span class="fc" id="L19">class CreateTriggerHandler(</span>
+<span class="fc" id="L20">    private val triggerCmdRepository: TriggerCmdRepository,</span>
+<span class="fc" id="L21">    private val eventEmitter: SystemEventEmitter,</span>
+<span class="fc" id="L22">    private val funcQueryRepository: FuncQueryRepository,</span>
+<span class="fc" id="L23">    private val eventBrokerRepository: LogBrokerRepository,</span>
+<span class="fc" id="L24">    private val namespaceQueryRepository: NamespaceQueryRepository</span>
+<span class="fc" id="L25">) : ReqHandler&lt;SubmittedCreateTriggerReq&gt;(SubmittedCreateTriggerReq::class) {</span>
     override fun invoke(req: SubmittedCreateTriggerReq) {
-<span class="fc" id="L24">        funcQueryRepository.get(req.funcId)</span>
+<span class="fc" id="L27">        funcQueryRepository.get(req.funcId)</span>
 
-<span class="fc bfc" id="L26" title="All 2 branches covered.">        val trigger = when (req.type) {</span>
-<span class="fc" id="L27">            TriggerType.FixedRate -&gt; triggerCmdRepository.create(</span>
-<span class="fc" id="L28">                TriggerCmdRepository.CreateFixedRateCmd(</span>
-<span class="fc" id="L29">                    id = req.cmdId(),</span>
-<span class="fc" id="L30">                    triggerId = req.id,</span>
-<span class="fc" id="L31">                    name = req.name,</span>
-<span class="fc" id="L32">                    correlationId = req.correlationId,</span>
-<span class="fc" id="L33">                    funcId = req.funcId,</span>
-<span class="fc" id="L34">                    inputs = req.inputs,</span>
-<span class="pc bpc" id="L35" title="1 of 2 branches missed.">                    duration = requireNotNull(req.duration) { &quot;duration must not be null&quot; }</span>
+<span class="fc bfc" id="L29" title="All 2 branches covered.">        val trigger = when (req.type) {</span>
+<span class="fc" id="L30">            TriggerType.FixedRate -&gt; triggerCmdRepository.create(</span>
+<span class="fc" id="L31">                TriggerCmdRepository.CreateFixedRateCmd(</span>
+<span class="fc" id="L32">                    id = req.cmdId(),</span>
+<span class="fc" id="L33">                    triggerId = req.id,</span>
+<span class="fc" id="L34">                    name = req.name,</span>
+<span class="fc" id="L35">                    correlationId = req.correlationId,</span>
+<span class="fc" id="L36">                    funcId = req.funcId,</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">                    namespaceId = req.namespaceId ?: namespaceQueryRepository.get(NamespaceName(&quot;hamal&quot;)).id,</span>
+<span class="fc" id="L38">                    inputs = req.inputs,</span>
+<span class="pc bpc" id="L39" title="1 of 2 branches missed.">                    duration = requireNotNull(req.duration) { &quot;duration must not be null&quot; }</span>
                 )
             )
 
             TriggerType.Event -&gt; {
-<span class="fc" id="L40">                eventBrokerRepository.getTopic(req.topicId!!)</span>
+<span class="fc" id="L44">                eventBrokerRepository.getTopic(req.topicId!!)</span>
 
-<span class="fc" id="L42">                triggerCmdRepository.create(</span>
-<span class="fc" id="L43">                    TriggerCmdRepository.CreateEventCmd(</span>
-<span class="fc" id="L44">                        id = req.cmdId(),</span>
-<span class="fc" id="L45">                        triggerId = req.id,</span>
-<span class="fc" id="L46">                        name = req.name,</span>
-<span class="fc" id="L47">                        correlationId = req.correlationId,</span>
-<span class="fc" id="L48">                        funcId = req.funcId,</span>
-<span class="fc" id="L49">                        inputs = req.inputs,</span>
-<span class="pc bpc" id="L50" title="1 of 2 branches missed.">                        topicId = requireNotNull(req.topicId) { &quot;topicId must not be null&quot; },</span>
+<span class="fc" id="L46">                triggerCmdRepository.create(</span>
+<span class="fc" id="L47">                    TriggerCmdRepository.CreateEventCmd(</span>
+<span class="fc" id="L48">                        id = req.cmdId(),</span>
+<span class="fc" id="L49">                        triggerId = req.id,</span>
+<span class="fc" id="L50">                        name = req.name,</span>
+<span class="fc" id="L51">                        correlationId = req.correlationId,</span>
+<span class="fc" id="L52">                        funcId = req.funcId,</span>
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">                        namespaceId = req.namespaceId ?: namespaceQueryRepository.get(NamespaceName(&quot;hamal&quot;)).id,</span>
+<span class="fc" id="L54">                        inputs = req.inputs,</span>
+<span class="pc bpc" id="L55" title="1 of 2 branches missed.">                        topicId = requireNotNull(req.topicId) { &quot;topicId must not be null&quot; },</span>
                     )
                 )
             }
         }
 
-<span class="fc" id="L56">        emitEvent(req.cmdId(), trigger)</span>
-<span class="fc" id="L57">    }</span>
+<span class="fc" id="L61">        emitEvent(req.cmdId(), trigger)</span>
+<span class="fc" id="L62">    }</span>
 
     private fun emitEvent(cmdId: CmdId, trigger: Trigger) {
-<span class="fc" id="L60">        eventEmitter.emit(cmdId, TriggerCreatedEvent(trigger))</span>
-<span class="fc" id="L61">    }</span>
+<span class="fc" id="L65">        eventEmitter.emit(cmdId, TriggerCreatedEvent(trigger))</span>
+<span class="fc" id="L66">    }</span>
 }
 
 

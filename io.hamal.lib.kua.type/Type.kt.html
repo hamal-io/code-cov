@@ -6,21 +6,4 @@ interface Type
 
 <span class="fc" id="L7">@Serializable</span>
 sealed interface SerializableType : Type
-
-<span class="fc" id="L10">enum class ValueType(</span>
-<span class="fc" id="L11">    val value: Int</span>
-) {
-<span class="fc" id="L13">    Nil(0),</span>
-<span class="fc" id="L14">    Boolean(1),</span>
-<span class="fc" id="L15">    Number(3),</span>
-<span class="fc" id="L16">    String(4),</span>
-<span class="fc" id="L17">    Table(5);</span>
-
-    companion object {
-        fun ValueType(value: Int): ValueType {
-<span class="pc bpc" id="L21" title="2 of 8 branches missed.">            return ValueType.values().find { it.value == value }</span>
-<span class="nc" id="L22">                ?: throw IllegalArgumentException(&quot;Invalid value type&quot;)</span>
-        }
-    }
-}
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

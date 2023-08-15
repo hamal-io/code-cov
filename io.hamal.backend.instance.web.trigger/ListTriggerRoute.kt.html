@@ -1,36 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ListTriggerRoute.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.instance.web.trigger</a> &gt; <span class="el_source">ListTriggerRoute.kt</span></div><h1>ListTriggerRoute.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.instance.web.trigger
 
+import io.hamal.backend.repository.api.FuncQueryRepository
+import io.hamal.backend.repository.api.NamespaceQueryRepository
 import io.hamal.backend.repository.api.TriggerQueryRepository
 import io.hamal.lib.common.domain.Limit
 import io.hamal.lib.domain._enum.TriggerType
 import io.hamal.lib.domain.vo.TriggerId
 import io.hamal.lib.sdk.domain.ApiTriggerList
+import io.hamal.lib.sdk.domain.ApiTriggerList.ApiSimpleTrigger.Func
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 
-<span class="fc" id="L14">@RestController</span>
-<span class="fc" id="L15">class ListTriggerRoute(</span>
-<span class="fc" id="L16">    private val triggerQueryRepository: TriggerQueryRepository</span>
+<span class="fc" id="L17">@RestController</span>
+<span class="fc" id="L18">class ListTriggerRoute(</span>
+<span class="fc" id="L19">    private val triggerQueryRepository: TriggerQueryRepository,</span>
+<span class="fc" id="L20">    private val namespaceQueryRepository: NamespaceQueryRepository,</span>
+<span class="fc" id="L21">    private val funcQueryRepository: FuncQueryRepository</span>
 ) {
     @GetMapping(&quot;/v1/triggers&quot;)
     fun listTrigger(
         @RequestParam(required = false, name = &quot;after_id&quot;, defaultValue = &quot;7FFFFFFFFFFFFFFF&quot;) triggerId: TriggerId,
         @RequestParam(required = false, name = &quot;limit&quot;, defaultValue = &quot;100&quot;) limit: Limit
     ): ResponseEntity&lt;ApiTriggerList&gt; {
-<span class="fc" id="L23">        val result = triggerQueryRepository.list {</span>
-<span class="fc" id="L24">            this.afterId = triggerId</span>
-<span class="fc" id="L25">            this.types = TriggerType.values().toSet()</span>
-<span class="fc" id="L26">            this.limit = limit</span>
-<span class="fc" id="L27">        }</span>
-<span class="fc" id="L28">        return ResponseEntity.ok(</span>
-<span class="fc" id="L29">            ApiTriggerList(</span>
-<span class="fc" id="L30">                result.map {</span>
-<span class="fc" id="L31">                    ApiTriggerList.ApiSimpleTrigger(</span>
-<span class="fc" id="L32">                        id = it.id,</span>
-<span class="fc" id="L33">                        name = it.name</span>
+<span class="fc" id="L28">        val result = triggerQueryRepository.list {</span>
+<span class="fc" id="L29">            this.afterId = triggerId</span>
+<span class="fc" id="L30">            this.types = TriggerType.values().toSet()</span>
+<span class="fc" id="L31">            this.limit = limit</span>
+<span class="fc" id="L32">        }</span>
+
+<span class="fc" id="L34">        val namespaces = namespaceQueryRepository.list(result.map { it.namespaceId })</span>
+<span class="fc" id="L35">            .associateBy { it.id }</span>
+
+<span class="fc" id="L37">        val funcs = funcQueryRepository.list(result.map { it.funcId })</span>
+<span class="fc" id="L38">            .associateBy { it.id }</span>
+
+<span class="fc" id="L40">        return ResponseEntity.ok(</span>
+<span class="fc" id="L41">            ApiTriggerList(</span>
+<span class="fc" id="L42">                result.map {</span>
+<span class="fc" id="L43">                    ApiTriggerList.ApiSimpleTrigger(</span>
+<span class="fc" id="L44">                        id = it.id,</span>
+<span class="fc" id="L45">                        name = it.name,</span>
+<span class="fc" id="L46">                        func = Func(</span>
+<span class="fc" id="L47">                            id = it.funcId,</span>
+<span class="fc" id="L48">                            name = funcs[it.funcId]!!.name</span>
+                        ),
+<span class="fc" id="L50">                        namespace = ApiTriggerList.ApiSimpleTrigger.Namespace(</span>
+<span class="fc" id="L51">                            id = it.namespaceId,</span>
+<span class="fc" id="L52">                            name = namespaces[it.namespaceId]!!.name</span>
+                        )
                     )
                 }
             )

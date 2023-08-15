@@ -8,63 +8,62 @@ import io.hamal.lib.kua.table.TableMap
 import io.hamal.lib.kua.type.AnyType
 import io.hamal.lib.kua.type.ErrorType
 import io.hamal.lib.kua.type.TableType
-import io.hamal.lib.kua.type.ValueType
 import kotlin.reflect.KClass
 
 
-<span class="pc" id="L15">class FunctionContext(</span>
-<span class="fc" id="L16">    val state: State</span>
+<span class="pc" id="L14">class FunctionContext(</span>
+<span class="fc" id="L15">    val state: State</span>
 ) : State, SandboxContext {
 
-<span class="fc" id="L19">    override val native = state.native</span>
-<span class="nc" id="L20">    override val top: StackTop get() = state.top</span>
+<span class="fc" id="L18">    override val native = state.native</span>
+<span class="nc" id="L19">    override val top: StackTop get() = state.top</span>
 
-<span class="nc" id="L22">    override fun isEmpty() = state.isEmpty()</span>
-<span class="nc" id="L23">    override fun isNotEmpty() = state.isNotEmpty()</span>
-<span class="nc" id="L24">    override fun setTop(idx: Int) = state.setTop(idx)</span>
-<span class="fc" id="L25">    override fun absIndex(idx: Int) = state.absIndex(idx)</span>
+<span class="nc" id="L21">    override fun isEmpty() = state.isEmpty()</span>
+<span class="nc" id="L22">    override fun isNotEmpty() = state.isNotEmpty()</span>
+<span class="nc" id="L23">    override fun setTop(idx: Int) = state.setTop(idx)</span>
+<span class="fc" id="L24">    override fun absIndex(idx: Int) = state.absIndex(idx)</span>
 
-<span class="fc" id="L27">    override fun pushTop(idx: Int) = state.pushTop(idx)</span>
+<span class="fc" id="L26">    override fun pushTop(idx: Int) = state.pushTop(idx)</span>
 
-<span class="nc" id="L29">    override fun type(idx: Int): ValueType = state.type(idx)</span>
-<span class="fc" id="L30">    override fun pushNil() = state.pushNil()</span>
-<span class="fc" id="L31">    override fun pushAny(value: AnyType) = state.pushAny(value)</span>
-<span class="fc" id="L32">    override fun getAny(idx: Int) = state.getAny(idx)</span>
-<span class="nc" id="L33">    override fun pushBoolean(value: Boolean) = state.pushBoolean(value)</span>
-<span class="nc" id="L34">    override fun getBoolean(idx: Int) = state.getBoolean(idx)</span>
-<span class="fc" id="L35">    override fun pushError(value: ErrorType) = state.pushError(value)</span>
-<span class="nc" id="L36">    override fun pushFunction(value: FunctionType&lt;*, *, *, *&gt;) = state.pushFunction(value)</span>
+<span class="nc" id="L28">    override fun type(idx: Int) = state.type(idx)</span>
+<span class="fc" id="L29">    override fun pushNil() = state.pushNil()</span>
+<span class="fc" id="L30">    override fun pushAny(value: AnyType) = state.pushAny(value)</span>
+<span class="fc" id="L31">    override fun getAny(idx: Int) = state.getAny(idx)</span>
+<span class="nc" id="L32">    override fun pushBoolean(value: Boolean) = state.pushBoolean(value)</span>
+<span class="nc" id="L33">    override fun getBoolean(idx: Int) = state.getBoolean(idx)</span>
+<span class="fc" id="L34">    override fun pushError(value: ErrorType) = state.pushError(value)</span>
+<span class="nc" id="L35">    override fun pushFunction(value: FunctionType&lt;*, *, *, *&gt;) = state.pushFunction(value)</span>
 
-<span class="fc" id="L38">    override fun getNumber(idx: Int) = state.getNumber(idx)</span>
-<span class="fc" id="L39">    override fun pushNumber(value: Double) = state.pushNumber(value)</span>
-<span class="fc" id="L40">    override fun getString(idx: Int) = state.getString(idx)</span>
-<span class="fc" id="L41">    override fun pushString(value: String) = state.pushString(value)</span>
-<span class="nc" id="L42">    override fun pushTable(value: TableType) = state.pushTable(value)</span>
-<span class="nc" id="L43">    override fun pushTable(proxy: TableMap) = state.pushTable(proxy)</span>
-<span class="nc" id="L44">    override fun pushTable(proxy: TableArray) = state.pushTable(proxy)</span>
-<span class="nc" id="L45">    override fun getTable(idx: Int) = state.getTable(idx)</span>
-<span class="nc" id="L46">    override fun getTableMap(idx: Int) = state.getTableMap(idx)</span>
-<span class="nc" id="L47">    override fun getTableArray(idx: Int) = state.getTableArray(idx)</span>
+<span class="fc" id="L37">    override fun getNumber(idx: Int) = state.getNumber(idx)</span>
+<span class="fc" id="L38">    override fun pushNumber(value: Double) = state.pushNumber(value)</span>
+<span class="fc" id="L39">    override fun getString(idx: Int) = state.getString(idx)</span>
+<span class="fc" id="L40">    override fun pushString(value: String) = state.pushString(value)</span>
+<span class="nc" id="L41">    override fun pushTable(value: TableType) = state.pushTable(value)</span>
+<span class="nc" id="L42">    override fun pushTable(proxy: TableMap) = state.pushTable(proxy)</span>
+<span class="nc" id="L43">    override fun pushTable(proxy: TableArray) = state.pushTable(proxy)</span>
+<span class="nc" id="L44">    override fun getTable(idx: Int) = state.getTable(idx)</span>
+<span class="nc" id="L45">    override fun getTableMap(idx: Int) = state.getTableMap(idx)</span>
+<span class="nc" id="L46">    override fun getTableArray(idx: Int) = state.getTableArray(idx)</span>
 
-<span class="nc" id="L49">    override fun setGlobal(name: String, value: FunctionType&lt;*, *, *, *&gt;) = state.setGlobal(name, value)</span>
-<span class="fc" id="L50">    override fun setGlobal(name: String, value: TableMap) = state.setGlobal(name, value)</span>
-<span class="nc" id="L51">    override fun setGlobal(name: String, value: TableArray) = state.setGlobal(name, value)</span>
-<span class="fc" id="L52">    override fun getGlobalTableMap(name: String): TableMap = state.getGlobalTableMap(name)</span>
-<span class="fc" id="L53">    override fun unsetGlobal(name: String) = state.unsetGlobal(name)</span>
+<span class="nc" id="L48">    override fun setGlobal(name: String, value: FunctionType&lt;*, *, *, *&gt;) = state.setGlobal(name, value)</span>
+<span class="fc" id="L49">    override fun setGlobal(name: String, value: TableMap) = state.setGlobal(name, value)</span>
+<span class="nc" id="L50">    override fun setGlobal(name: String, value: TableArray) = state.setGlobal(name, value)</span>
+<span class="fc" id="L51">    override fun getGlobalTableMap(name: String): TableMap = state.getGlobalTableMap(name)</span>
+<span class="fc" id="L52">    override fun unsetGlobal(name: String) = state.unsetGlobal(name)</span>
 
-<span class="fc" id="L55">    override fun tableCreateMap(capacity: Int) = state.tableCreateMap(capacity)</span>
-<span class="fc" id="L56">    override fun tableCreateArray(capacity: Int) = state.tableCreateArray(capacity)</span>
+<span class="fc" id="L54">    override fun tableCreateMap(capacity: Int) = state.tableCreateMap(capacity)</span>
+<span class="fc" id="L55">    override fun tableCreateArray(capacity: Int) = state.tableCreateArray(capacity)</span>
 
-<span class="nc" id="L58">    override fun tableAppend(idx: Int) = state.tableAppend(idx)</span>
-<span class="nc" id="L59">    override fun tableSetRaw(idx: Int) = state.tableSetRaw(idx)</span>
-<span class="nc" id="L60">    override fun tableSetRawIdx(stackIdx: Int, tableIdx: Int) = state.tableSetRawIdx(stackIdx, tableIdx)</span>
-<span class="nc" id="L61">    override fun tableGetRaw(idx: Int) = state.tableGetRaw(idx)</span>
-<span class="nc" id="L62">    override fun tableGetRawIdx(stackIdx: Int, tableIdx: Int) = state.tableGetRawIdx(stackIdx, tableIdx)</span>
+<span class="nc" id="L57">    override fun tableAppend(idx: Int) = state.tableAppend(idx)</span>
+<span class="nc" id="L58">    override fun tableSetRaw(idx: Int) = state.tableSetRaw(idx)</span>
+<span class="nc" id="L59">    override fun tableSetRawIdx(stackIdx: Int, tableIdx: Int) = state.tableSetRawIdx(stackIdx, tableIdx)</span>
+<span class="nc" id="L60">    override fun tableGetRaw(idx: Int) = state.tableGetRaw(idx)</span>
+<span class="nc" id="L61">    override fun tableGetRawIdx(stackIdx: Int, tableIdx: Int) = state.tableGetRawIdx(stackIdx, tableIdx)</span>
 
-<span class="fc" id="L64">    override fun load(code: String) = state.load(code)</span>
+<span class="fc" id="L63">    override fun load(code: String) = state.load(code)</span>
 
     override fun &lt;OBJ : Any&gt; get(clazz: KClass&lt;OBJ&gt;): OBJ {
-<span class="nc" id="L67">        return native.sandbox.ctx[clazz]</span>
+<span class="nc" id="L66">        return native.sandbox.ctx[clazz]</span>
     }
 }
 

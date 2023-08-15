@@ -5,15 +5,16 @@ import io.hamal.lib.domain.vo.*
 import kotlinx.serialization.Serializable
 import kotlin.time.Duration
 
-<span class="pc bpc" id="L8" title="10 of 39 branches missed.">@Serializable</span>
+<span class="pc bpc" id="L8" title="11 of 48 branches missed.">@Serializable</span>
 <span class="fc" id="L9">data class CreateTriggerReq(</span>
 <span class="fc" id="L10">    val type: TriggerType,</span>
 <span class="fc" id="L11">    val name: TriggerName,</span>
 <span class="fc" id="L12">    val funcId: FuncId,</span>
-<span class="fc" id="L13">    val inputs: TriggerInputs,</span>
-<span class="fc" id="L14">    val correlationId: CorrelationId? = null,</span>
-<span class="fc" id="L15">    val duration: Duration? = null,</span>
-<span class="fc" id="L16">    val topicId: TopicId? = null,</span>
-<span class="fc" id="L17">)</span>
+<span class="fc" id="L13">    val namespaceId: NamespaceId? = null,</span>
+<span class="fc" id="L14">    val inputs: TriggerInputs,</span>
+<span class="fc" id="L15">    val correlationId: CorrelationId? = null,</span>
+<span class="fc" id="L16">    val duration: Duration? = null,</span>
+<span class="fc" id="L17">    val topicId: TopicId? = null,</span>
+<span class="fc" id="L18">)</span>
 
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

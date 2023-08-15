@@ -10,33 +10,35 @@ import kotlinx.serialization.Transient
 import kotlin.time.Duration
 
 
-<span class="pc" id="L13">@Serializable</span>
+<span class="fc" id="L13">@Serializable</span>
 <span class="fc" id="L14">sealed class TriggerRecord(</span>
 <span class="fc" id="L15">    @Transient</span>
 <span class="fc" id="L16">    override var sequence: RecordSequence? = null</span>
 <span class="fc" id="L17">) : Record&lt;TriggerId&gt;()</span>
 
-<span class="nc bnc" id="L19" title="All 23 branches missed.">@Serializable</span>
+<span class="pc bpc" id="L19" title="21 of 24 branches missed.">@Serializable</span>
 @SerialName(&quot;FRCR&quot;)
 <span class="pc" id="L21">data class FixedRateTriggerCreationRecord(</span>
 <span class="fc" id="L22">    override val entityId: TriggerId,</span>
 <span class="fc" id="L23">    override val cmdId: CmdId,</span>
 <span class="fc" id="L24">    val funcId: FuncId,</span>
-<span class="fc" id="L25">    val name: TriggerName,</span>
-<span class="fc" id="L26">    val inputs: TriggerInputs,</span>
-<span class="fc" id="L27">    val duration: Duration,</span>
-<span class="pc" id="L28">    val correlationId: CorrelationId? = null</span>
-<span class="pc" id="L29">) : TriggerRecord()</span>
+<span class="fc" id="L25">    val namespaceId: NamespaceId,</span>
+<span class="fc" id="L26">    val name: TriggerName,</span>
+<span class="fc" id="L27">    val inputs: TriggerInputs,</span>
+<span class="fc" id="L28">    val duration: Duration,</span>
+<span class="pc" id="L29">    val correlationId: CorrelationId? = null</span>
+<span class="pc" id="L30">) : TriggerRecord()</span>
 
-<span class="nc bnc" id="L31" title="All 19 branches missed.">@Serializable</span>
+<span class="pc bnc" id="L32" title="All 20 branches missed.">@Serializable</span>
 @SerialName(&quot;ECR&quot;)
-<span class="pc" id="L33">data class EventTriggerCreationRecord(</span>
-<span class="fc" id="L34">    override val entityId: TriggerId,</span>
-<span class="fc" id="L35">    override val cmdId: CmdId,</span>
-<span class="fc" id="L36">    val funcId: FuncId,</span>
-<span class="fc" id="L37">    val name: TriggerName,</span>
-<span class="fc" id="L38">    val inputs: TriggerInputs,</span>
-<span class="fc" id="L39">    val topicId: TopicId,</span>
-<span class="pc" id="L40">    val correlationId: CorrelationId? = null</span>
-<span class="pc" id="L41">) : TriggerRecord()</span>
+<span class="pc" id="L34">data class EventTriggerCreationRecord(</span>
+<span class="fc" id="L35">    override val entityId: TriggerId,</span>
+<span class="fc" id="L36">    override val cmdId: CmdId,</span>
+<span class="fc" id="L37">    val funcId: FuncId,</span>
+<span class="fc" id="L38">    val namespaceId: NamespaceId,</span>
+<span class="fc" id="L39">    val name: TriggerName,</span>
+<span class="fc" id="L40">    val inputs: TriggerInputs,</span>
+<span class="fc" id="L41">    val topicId: TopicId,</span>
+<span class="pc" id="L42">    val correlationId: CorrelationId? = null</span>
+<span class="pc" id="L43">) : TriggerRecord()</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

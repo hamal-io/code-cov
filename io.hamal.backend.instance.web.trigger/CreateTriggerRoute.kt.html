@@ -2,6 +2,7 @@
 
 import io.hamal.backend.instance.req.SubmitRequest
 import io.hamal.backend.repository.api.FuncQueryRepository
+import io.hamal.backend.repository.api.NamespaceQueryRepository
 import io.hamal.backend.repository.api.log.LogBrokerRepository
 import io.hamal.lib.domain._enum.TriggerType
 import io.hamal.lib.domain.req.CreateTriggerReq
@@ -12,38 +13,44 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
-<span class="fc" id="L15">@RestController</span>
-<span class="fc" id="L16">class CreateTriggerRoute(</span>
-<span class="fc" id="L17">    private val funcQueryRepository: FuncQueryRepository,</span>
-<span class="fc" id="L18">    private val eventBrokerRepository: LogBrokerRepository,</span>
-<span class="fc" id="L19">    private val request: SubmitRequest</span>
+<span class="fc" id="L16">@RestController</span>
+<span class="fc" id="L17">class CreateTriggerRoute(</span>
+<span class="fc" id="L18">    private val funcQueryRepository: FuncQueryRepository,</span>
+<span class="fc" id="L19">    private val eventBrokerRepository: LogBrokerRepository,</span>
+<span class="fc" id="L20">    private val request: SubmitRequest,</span>
+<span class="fc" id="L21">    private val namespaceQueryRepository: NamespaceQueryRepository</span>
 ) {
     @PostMapping(&quot;/v1/triggers&quot;)
     fun createTrigger(
         @RequestBody createTrigger: CreateTriggerReq
     ): ResponseEntity&lt;ApiSubmittedReqWithId&gt; {
-<span class="fc" id="L25">        ensureFuncExists(createTrigger)</span>
-<span class="fc" id="L26">        ensureTopicExists(createTrigger)</span>
+<span class="fc" id="L27">        ensureFuncExists(createTrigger)</span>
+<span class="fc" id="L28">        ensureTopicExists(createTrigger)</span>
+<span class="fc" id="L29">        ensureNamespaceExist(createTrigger)</span>
 
-<span class="fc" id="L28">        val result = request(createTrigger)</span>
-<span class="fc" id="L29">        return ResponseEntity(result.let {</span>
-<span class="fc" id="L30">            ApiSubmittedReqWithId(</span>
-<span class="fc" id="L31">                reqId = it.reqId,</span>
-<span class="fc" id="L32">                status = it.status,</span>
-<span class="fc" id="L33">                id = it.id</span>
+<span class="fc" id="L31">        val result = request(createTrigger)</span>
+<span class="fc" id="L32">        return ResponseEntity(result.let {</span>
+<span class="fc" id="L33">            ApiSubmittedReqWithId(</span>
+<span class="fc" id="L34">                reqId = it.reqId,</span>
+<span class="fc" id="L35">                status = it.status,</span>
+<span class="fc" id="L36">                id = it.id</span>
             )
-<span class="fc" id="L35">        }, ACCEPTED)</span>
+<span class="fc" id="L38">        }, ACCEPTED)</span>
     }
 
     private fun ensureFuncExists(createTrigger: CreateTriggerReq) {
-<span class="fc" id="L39">        funcQueryRepository.get(createTrigger.funcId)</span>
-<span class="fc" id="L40">    }</span>
+<span class="fc" id="L42">        funcQueryRepository.get(createTrigger.funcId)</span>
+<span class="fc" id="L43">    }</span>
 
     private fun ensureTopicExists(createTrigger: CreateTriggerReq) {
-<span class="fc bfc" id="L43" title="All 2 branches covered.">        if (createTrigger.type == TriggerType.Event) {</span>
-<span class="fc bfc" id="L44" title="All 2 branches covered.">            requireNotNull(createTrigger.topicId) { &quot;topicId is missing&quot; }</span>
-<span class="fc" id="L45">            eventBrokerRepository.getTopic(createTrigger.topicId!!)</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        if (createTrigger.type == TriggerType.Event) {</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">            requireNotNull(createTrigger.topicId) { &quot;topicId is missing&quot; }</span>
+<span class="fc" id="L48">            eventBrokerRepository.getTopic(createTrigger.topicId!!)</span>
         }
-<span class="fc" id="L47">    }</span>
+<span class="fc" id="L50">    }</span>
+
+    private fun ensureNamespaceExist(createTriggerReq: CreateTriggerReq) {
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        createTriggerReq.namespaceId?.let { namespaceQueryRepository.get(it) }</span>
+<span class="fc" id="L54">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

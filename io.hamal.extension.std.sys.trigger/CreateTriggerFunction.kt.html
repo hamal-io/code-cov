@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CreateTriggerFunction.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.extension.std.sys.trigger</a> &gt; <span class="el_source">CreateTriggerFunction.kt</span></div><h1>CreateTriggerFunction.kt</h1><pre class="source lang-java linenums">package io.hamal.extension.std.sys.trigger
+
+import io.hamal.lib.common.SnowflakeId
+import io.hamal.lib.domain._enum.TriggerType
+import io.hamal.lib.domain.req.CreateTriggerReq
+import io.hamal.lib.domain.vo.FuncId
+import io.hamal.lib.domain.vo.NamespaceId
+import io.hamal.lib.domain.vo.TriggerInputs
+import io.hamal.lib.domain.vo.TriggerName
+import io.hamal.lib.http.HttpTemplate
+import io.hamal.lib.http.body
+import io.hamal.lib.kua.function.Function1In2Out
+import io.hamal.lib.kua.function.FunctionContext
+import io.hamal.lib.kua.function.FunctionInput1Schema
+import io.hamal.lib.kua.function.FunctionOutput2Schema
+import io.hamal.lib.kua.table.TableMap
+import io.hamal.lib.kua.type.ErrorType
+import io.hamal.lib.kua.type.StringType
+import io.hamal.lib.sdk.domain.ApiSubmittedReqWithId
+import kotlin.time.Duration
+
+<span class="fc" id="L22">class CreateTriggerFunction(</span>
+<span class="fc" id="L23">    private val templateSupplier: () -&gt; HttpTemplate</span>
+<span class="fc" id="L24">) : Function1In2Out&lt;TableMap, ErrorType, TableMap&gt;(</span>
+<span class="fc" id="L25">    FunctionInput1Schema(TableMap::class),</span>
+<span class="fc" id="L26">    FunctionOutput2Schema(ErrorType::class, TableMap::class)</span>
+) {
+    override fun invoke(ctx: FunctionContext, arg1: TableMap): Pair&lt;ErrorType?, TableMap&gt; {
+<span class="fc" id="L29">        try {</span>
+
+<span class="fc" id="L31">            val type = TriggerType.valueOf(arg1.getString(&quot;type&quot;))</span>
+
+<span class="pc bpc" id="L33" title="1 of 2 branches missed.">            val namespaceId = if (arg1.type(&quot;namespace_id&quot;) == StringType::class) {</span>
+<span class="nc" id="L34">                NamespaceId(SnowflakeId(arg1.getString(&quot;namespace_id&quot;)))</span>
+            } else {
+<span class="fc" id="L36">                null</span>
+            }
+
+<span class="fc" id="L39">            val r = CreateTriggerReq(</span>
+<span class="fc" id="L40">                type = type,</span>
+<span class="fc" id="L41">                namespaceId = namespaceId,</span>
+<span class="fc" id="L42">                funcId = FuncId(SnowflakeId(arg1.getString(&quot;func_id&quot;))),</span>
+<span class="fc" id="L43">                name = TriggerName(arg1.getString(&quot;name&quot;)),</span>
+<span class="fc" id="L44">                inputs = TriggerInputs(),</span>
+<span class="fc" id="L45">                duration = Duration.parseIsoString(arg1.getString(&quot;duration&quot;))</span>
+            )
+
+<span class="fc" id="L48">            val res = templateSupplier()</span>
+<span class="fc" id="L49">                .post(&quot;/v1/triggers&quot;)</span>
+<span class="fc" id="L50">                .body(r)</span>
+<span class="fc" id="L51">                .execute(ApiSubmittedReqWithId::class)</span>
+
+<span class="fc" id="L53">            return null to ctx.tableCreateMap(1).also {</span>
+<span class="fc" id="L54">                it[&quot;req_id&quot;] = res.reqId</span>
+<span class="fc" id="L55">                it[&quot;status&quot;] = res.status.name</span>
+<span class="fc" id="L56">                it[&quot;id&quot;] = res.id</span>
+<span class="fc" id="L57">            }</span>
+
+<span class="nc" id="L59">        } catch (t: Throwable) {</span>
+<span class="nc" id="L60">            t.printStackTrace()</span>
+<span class="nc" id="L61">            throw t</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

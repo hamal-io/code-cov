@@ -5,7 +5,7 @@ import io.hamal.lib.kua.table.TableArray
 import io.hamal.lib.kua.table.TableMap
 import io.hamal.lib.kua.table.TableProxy
 import io.hamal.lib.kua.type.AnyType
-import io.hamal.lib.kua.type.DoubleType
+import io.hamal.lib.kua.type.NumberType
 import io.hamal.lib.kua.type.StringType
 import io.hamal.lib.kua.type.Type
 import kotlin.reflect.KClass
@@ -50,11 +50,11 @@ fun &lt;ARG : Type&gt; KClass&lt;ARG&gt;.extract(ctx: FunctionContext, idx: Int)
     @Suppress(&quot;UNCHECKED_CAST&quot;)
 <span class="fc" id="L51">    return when (this) {</span>
 <span class="fc bfc" id="L52" title="All 2 branches covered.">        AnyType::class -&gt; ctx.getAny(idx) as ARG</span>
-<span class="fc bfc" id="L53" title="All 2 branches covered.">        DoubleType::class -&gt; ctx.getNumberValue(idx) as ARG</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        NumberType::class -&gt; ctx.getNumberValue(idx) as ARG</span>
 <span class="fc bfc" id="L54" title="All 2 branches covered.">        StringType::class -&gt; ctx.getStringValue(idx) as ARG</span>
 <span class="pc bpc" id="L55" title="1 of 2 branches missed.">        Type::class -&gt; TODO() //FIXME loads the entire table from lua -- maybe some form of readonly table value and table value is interface?!</span>
-<span class="fc bfc" id="L56" title="All 2 branches covered.">        TableMap::class -&gt; DefaultTableProxy(idx, ctx.state, TableProxy.Type.Map) as ARG</span>
-<span class="pc bpc" id="L57" title="1 of 2 branches missed.">        TableArray::class -&gt; DefaultTableProxy(idx, ctx.state, TableProxy.Type.Array) as ARG</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">        TableMap::class -&gt; DefaultTableProxy(idx, ctx.state, TableProxy.Mode.Map) as ARG</span>
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">        TableArray::class -&gt; DefaultTableProxy(idx, ctx.state, TableProxy.Mode.Array) as ARG</span>
 <span class="nc" id="L58">        else -&gt; TODO()</span>
     }
 }

@@ -53,7 +53,7 @@ import kotlin.time.Duration.Companion.milliseconds
 <span class="fc" id="L53">                                exec.state.value.forEach { entry -&gt;</span>
 <span class="nc" id="L54">                                    when (val value = entry.value) {</span>
 <span class="nc bnc" id="L55" title="All 2 branches missed.">                                        is BooleanType -&gt; funcState[entry.key] = value</span>
-<span class="nc bnc" id="L56" title="All 2 branches missed.">                                        is DoubleType -&gt; funcState[entry.key] = value</span>
+<span class="nc bnc" id="L56" title="All 2 branches missed.">                                        is NumberType -&gt; funcState[entry.key] = value</span>
 <span class="nc bnc" id="L57" title="All 2 branches missed.">                                        is StringType -&gt; funcState[entry.key] = value</span>
 <span class="nc" id="L58">                                        else -&gt; TODO()</span>
                                     }
@@ -70,7 +70,7 @@ import kotlin.time.Duration.Companion.milliseconds
 <span class="nc" id="L70">                                        evt.value.forEach { payload -&gt;</span>
 <span class="nc" id="L71">                                            when (val v = payload.value) {</span>
 <span class="nc bnc" id="L72" title="All 2 branches missed.">                                                is StringType -&gt; evtTable[payload.key] = v</span>
-<span class="nc bnc" id="L73" title="All 2 branches missed.">                                                is DoubleType -&gt; evtTable[payload.key] = v</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">                                                is NumberType -&gt; evtTable[payload.key] = v</span>
 <span class="nc" id="L74">                                                else -&gt; TODO()</span>
                                             }
 <span class="nc" id="L76">                                        }</span>
@@ -101,7 +101,7 @@ import kotlin.time.Duration.Companion.milliseconds
 <span class="nc" id="L101">                                    val v = state.getAny(-1)</span>
 
 <span class="nc" id="L103">                                    when (val n = v.value) {</span>
-<span class="nc bnc" id="L104" title="All 2 branches missed.">                                        is DoubleType -&gt; stateMap[k] = n</span>
+<span class="nc bnc" id="L104" title="All 2 branches missed.">                                        is NumberType -&gt; stateMap[k] = n</span>
 <span class="nc bnc" id="L105" title="All 2 branches missed.">                                        is StringType -&gt; stateMap[k] = n</span>
 <span class="nc" id="L106">                                        else -&gt; TODO()</span>
                                     }
@@ -121,7 +121,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 <span class="nc" id="L122">                        val e = kua.cause</span>
 <span class="nc bnc" id="L123" title="All 2 branches missed.">                        if (e is ExitError) {</span>
-<span class="nc bnc" id="L124" title="All 2 branches missed.">                            if (e.status == DoubleType(0.0)) {</span>
+<span class="nc bnc" id="L124" title="All 2 branches missed.">                            if (e.status == NumberType(0.0)) {</span>
 <span class="nc" id="L125">                                sdk.execService().complete(exec.id, State(), listOf())</span>
 <span class="nc" id="L126">                                log.debug(&quot;Completed exec: {}&quot;, exec.id)</span>
                             } else {
@@ -160,7 +160,7 @@ import kotlin.time.Duration.Companion.milliseconds
 <span class="nc" id="L160">            val k = ctx.getStringValue(-2)</span>
 <span class="nc" id="L161">            val v = ctx.getAny(-1)</span>
 <span class="nc" id="L162">            when (val n = v.value) {</span>
-<span class="nc bnc" id="L163" title="All 2 branches missed.">                is DoubleType -&gt; eventMap[k] = n</span>
+<span class="nc bnc" id="L163" title="All 2 branches missed.">                is NumberType -&gt; eventMap[k] = n</span>
 <span class="nc bnc" id="L164" title="All 2 branches missed.">                is StringType -&gt; eventMap[k] = n</span>
 <span class="nc" id="L165">                else -&gt; TODO()</span>
             }

@@ -1,27 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Func.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.sdk.domain</a> &gt; <span class="el_source">Func.kt</span></div><h1>Func.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.sdk.domain
 
-import io.hamal.lib.domain.vo.FuncId
-import io.hamal.lib.domain.vo.FuncInputs
-import io.hamal.lib.domain.vo.FuncName
+import io.hamal.lib.domain.vo.*
 import io.hamal.lib.kua.type.CodeType
 import kotlinx.serialization.Serializable
 
-<span class="pc bpc" id="L9" title="2 of 7 branches missed.">@Serializable</span>
-<span class="fc" id="L10">data class ApiFuncList(</span>
-<span class="fc" id="L11">    val funcs: List&lt;ApiSimpleFunc&gt;</span>
+<span class="pc bpc" id="L7" title="2 of 7 branches missed.">@Serializable</span>
+<span class="fc" id="L8">data class ApiFuncList(</span>
+<span class="fc" id="L9">    val funcs: List&lt;ApiSimpleFunc&gt;</span>
 ) {
-<span class="pc bpc" id="L13" title="2 of 8 branches missed.">    @Serializable</span>
-<span class="fc" id="L14">    data class ApiSimpleFunc(</span>
-<span class="fc" id="L15">        val id: FuncId, val name: FuncName</span>
-<span class="fc" id="L16">    )</span>
-<span class="fc" id="L17">}</span>
+<span class="pc bpc" id="L11" title="2 of 9 branches missed.">    @Serializable</span>
+<span class="fc" id="L12">    data class ApiSimpleFunc(</span>
+<span class="fc" id="L13">        val id: FuncId,</span>
+<span class="fc" id="L14">        val namespace: Namespace,</span>
+<span class="fc" id="L15">        val name: FuncName</span>
+    ) {
+<span class="pc bpc" id="L17" title="2 of 8 branches missed.">        @Serializable</span>
+<span class="fc" id="L18">        data class Namespace(</span>
+<span class="fc" id="L19">            val id: NamespaceId,</span>
+<span class="fc" id="L20">            val name: NamespaceName</span>
+<span class="fc" id="L21">        )</span>
+<span class="fc" id="L22">    }</span>
+<span class="fc" id="L23">}</span>
 
 
-<span class="pc bpc" id="L20" title="2 of 10 branches missed.">@Serializable</span>
-<span class="fc" id="L21">data class ApiFunc(</span>
-<span class="fc" id="L22">    val id: FuncId,</span>
-<span class="fc" id="L23">    val name: FuncName,</span>
-<span class="fc" id="L24">    val inputs: FuncInputs,</span>
-<span class="fc" id="L25">    val code: CodeType</span>
-<span class="fc" id="L26">)</span>
+<span class="pc bpc" id="L26" title="2 of 11 branches missed.">@Serializable</span>
+<span class="fc" id="L27">data class ApiFunc(</span>
+<span class="fc" id="L28">    val id: FuncId,</span>
+<span class="fc" id="L29">    val namespace: Namespace,</span>
+<span class="fc" id="L30">    val name: FuncName,</span>
+<span class="fc" id="L31">    val inputs: FuncInputs,</span>
+<span class="fc" id="L32">    val code: CodeType</span>
+) {
+<span class="pc bpc" id="L34" title="2 of 8 branches missed.">    @Serializable</span>
+<span class="fc" id="L35">    data class Namespace(</span>
+<span class="fc" id="L36">        val id: NamespaceId,</span>
+<span class="fc" id="L37">        val name: NamespaceName</span>
+<span class="fc" id="L38">    )</span>
+<span class="fc" id="L39">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

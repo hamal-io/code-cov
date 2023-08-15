@@ -15,27 +15,27 @@ import java.nio.file.Path
 
 internal object CreateTrigger : CreateDomainObject&lt;TriggerId, TriggerRecord, Trigger&gt; {
     override fun invoke(recs: List&lt;TriggerRecord&gt;): Trigger {
-<span class="nc bnc" id="L18" title="All 4 branches missed.">        check(recs.isNotEmpty()) { &quot;At least one record is required&quot; }</span>
-<span class="nc" id="L19">        val firstRecord = recs.first()</span>
+<span class="pc bpc" id="L18" title="2 of 4 branches missed.">        check(recs.isNotEmpty()) { &quot;At least one record is required&quot; }</span>
+<span class="fc" id="L19">        val firstRecord = recs.first()</span>
 
 
-<span class="nc bnc" id="L22" title="All 6 branches missed.">        check(firstRecord is FixedRateTriggerCreationRecord || firstRecord is EventTriggerCreationRecord)</span>
+<span class="pc bpc" id="L22" title="4 of 6 branches missed.">        check(firstRecord is FixedRateTriggerCreationRecord || firstRecord is EventTriggerCreationRecord)</span>
 
-<span class="nc" id="L24">        var result = Entity(</span>
-<span class="nc" id="L25">            id = firstRecord.entityId,</span>
-<span class="nc" id="L26">            cmdId = firstRecord.cmdId,</span>
-<span class="nc" id="L27">            sequence = firstRecord.sequence()</span>
+<span class="fc" id="L24">        var result = Entity(</span>
+<span class="fc" id="L25">            id = firstRecord.entityId,</span>
+<span class="fc" id="L26">            cmdId = firstRecord.cmdId,</span>
+<span class="fc" id="L27">            sequence = firstRecord.sequence()</span>
         )
 
-<span class="nc" id="L30">        recs.forEach { record -&gt;</span>
-<span class="nc" id="L31">            result = result.apply(record)</span>
-<span class="nc" id="L32">        }</span>
+<span class="fc" id="L30">        recs.forEach { record -&gt;</span>
+<span class="fc" id="L31">            result = result.apply(record)</span>
+<span class="fc" id="L32">        }</span>
 
-<span class="nc" id="L34">        return result.toDomainObject()</span>
+<span class="fc" id="L34">        return result.toDomainObject()</span>
     }
 }
 
-<span class="pc" id="L38">class SqliteTriggerRepository(</span>
+<span class="fc" id="L38">class SqliteTriggerRepository(</span>
     config: Config
 <span class="fc" id="L40">) : SqliteRecordRepository&lt;TriggerId, TriggerRecord, Trigger&gt;(</span>
 <span class="fc" id="L41">    config = config,</span>
@@ -53,62 +53,64 @@ internal object CreateTrigger : CreateDomainObject&lt;TriggerId, TriggerRecord, 
     }
 
     override fun create(cmd: CreateFixedRateCmd): FixedRateTrigger {
-<span class="nc" id="L56">        val triggerId = cmd.triggerId</span>
-<span class="nc" id="L57">        val cmdId = cmd.id</span>
-<span class="nc" id="L58">        return tx {</span>
-<span class="nc bnc" id="L59" title="All 2 branches missed.">            if (commandAlreadyApplied(triggerId, cmdId)) {</span>
+<span class="fc" id="L56">        val triggerId = cmd.triggerId</span>
+<span class="fc" id="L57">        val cmdId = cmd.id</span>
+<span class="fc" id="L58">        return tx {</span>
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">            if (commandAlreadyApplied(triggerId, cmdId)) {</span>
 <span class="nc" id="L60">                versionOf(triggerId, cmdId) as FixedRateTrigger</span>
             } else {
-<span class="nc" id="L62">                storeRecord(</span>
-<span class="nc" id="L63">                    FixedRateTriggerCreationRecord(</span>
-<span class="nc" id="L64">                        entityId = triggerId,</span>
-<span class="nc" id="L65">                        cmdId = cmdId,</span>
-<span class="nc" id="L66">                        funcId = cmd.funcId,</span>
-<span class="nc" id="L67">                        name = cmd.name,</span>
-<span class="nc" id="L68">                        inputs = cmd.inputs,</span>
-<span class="nc" id="L69">                        duration = cmd.duration,</span>
-<span class="nc" id="L70">                        correlationId = cmd.correlationId</span>
+<span class="fc" id="L62">                storeRecord(</span>
+<span class="fc" id="L63">                    FixedRateTriggerCreationRecord(</span>
+<span class="fc" id="L64">                        entityId = triggerId,</span>
+<span class="fc" id="L65">                        cmdId = cmdId,</span>
+<span class="fc" id="L66">                        funcId = cmd.funcId,</span>
+<span class="fc" id="L67">                        namespaceId = cmd.namespaceId,</span>
+<span class="fc" id="L68">                        name = cmd.name,</span>
+<span class="fc" id="L69">                        inputs = cmd.inputs,</span>
+<span class="fc" id="L70">                        duration = cmd.duration,</span>
+<span class="fc" id="L71">                        correlationId = cmd.correlationId</span>
                     )
                 )
 
-<span class="nc" id="L74">                (currentVersion(triggerId) as FixedRateTrigger)</span>
-<span class="nc" id="L75">                    .also { ProjectionCurrent.upsert(this, it) }</span>
+<span class="fc" id="L75">                (currentVersion(triggerId) as FixedRateTrigger)</span>
+<span class="fc" id="L76">                    .also { ProjectionCurrent.upsert(this, it) }</span>
             }
         }
     }
 
     override fun create(cmd: TriggerCmdRepository.CreateEventCmd): EventTrigger {
-<span class="nc" id="L81">        val triggerId = cmd.triggerId</span>
-<span class="nc" id="L82">        val cmdId = cmd.id</span>
-<span class="nc" id="L83">        return tx {</span>
-<span class="nc bnc" id="L84" title="All 2 branches missed.">            if (commandAlreadyApplied(triggerId, cmdId)) {</span>
-<span class="nc" id="L85">                versionOf(triggerId, cmdId) as EventTrigger</span>
+<span class="nc" id="L82">        val triggerId = cmd.triggerId</span>
+<span class="nc" id="L83">        val cmdId = cmd.id</span>
+<span class="nc" id="L84">        return tx {</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">            if (commandAlreadyApplied(triggerId, cmdId)) {</span>
+<span class="nc" id="L86">                versionOf(triggerId, cmdId) as EventTrigger</span>
             } else {
-<span class="nc" id="L87">                storeRecord(</span>
-<span class="nc" id="L88">                    EventTriggerCreationRecord(</span>
-<span class="nc" id="L89">                        entityId = triggerId,</span>
-<span class="nc" id="L90">                        cmdId = cmdId,</span>
-<span class="nc" id="L91">                        funcId = cmd.funcId,</span>
-<span class="nc" id="L92">                        name = cmd.name,</span>
-<span class="nc" id="L93">                        inputs = cmd.inputs,</span>
-<span class="nc" id="L94">                        topicId = cmd.topicId,</span>
-<span class="nc" id="L95">                        correlationId = cmd.correlationId</span>
+<span class="nc" id="L88">                storeRecord(</span>
+<span class="nc" id="L89">                    EventTriggerCreationRecord(</span>
+<span class="nc" id="L90">                        entityId = triggerId,</span>
+<span class="nc" id="L91">                        cmdId = cmdId,</span>
+<span class="nc" id="L92">                        funcId = cmd.funcId,</span>
+<span class="nc" id="L93">                        namespaceId = cmd.namespaceId,</span>
+<span class="nc" id="L94">                        name = cmd.name,</span>
+<span class="nc" id="L95">                        inputs = cmd.inputs,</span>
+<span class="nc" id="L96">                        topicId = cmd.topicId,</span>
+<span class="nc" id="L97">                        correlationId = cmd.correlationId</span>
                     )
                 )
 
-<span class="nc" id="L99">                (currentVersion(triggerId) as EventTrigger)</span>
-<span class="nc" id="L100">                    .also { ProjectionCurrent.upsert(this, it) }</span>
+<span class="nc" id="L101">                (currentVersion(triggerId) as EventTrigger)</span>
+<span class="nc" id="L102">                    .also { ProjectionCurrent.upsert(this, it) }</span>
             }
         }
     }
 
     override fun find(triggerId: TriggerId): Trigger? {
-<span class="nc" id="L106">        return ProjectionCurrent.find(connection, triggerId)</span>
+<span class="fc" id="L108">        return ProjectionCurrent.find(connection, triggerId)</span>
     }
 
     override fun list(block: TriggerQuery.() -&gt; Unit): List&lt;Trigger&gt; {
-<span class="fc" id="L110">        val query = TriggerQuery().also(block)</span>
-<span class="fc" id="L111">        return ProjectionCurrent.list(connection, query)</span>
+<span class="fc" id="L112">        val query = TriggerQuery().also(block)</span>
+<span class="fc" id="L113">        return ProjectionCurrent.list(connection, query)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
