@@ -6,7 +6,7 @@ import io.hamal.lib.kua.function.Function1In2Out
 import io.hamal.lib.kua.function.FunctionContext
 import io.hamal.lib.kua.function.FunctionInput1Schema
 import io.hamal.lib.kua.function.FunctionOutput2Schema
-import io.hamal.lib.kua.table.TableArray
+import io.hamal.lib.kua.table.TableTypeArray
 import io.hamal.lib.kua.type.ErrorType
 import io.hamal.lib.kua.type.StringType
 import io.hamal.lib.web3.eth.abi.type.EthUint64
@@ -21,11 +21,11 @@ import logger
 
 <span class="fc" id="L22">class EthExecuteFunction(</span>
 <span class="fc" id="L23">    private val config: ExtensionConfig</span>
-<span class="fc" id="L24">) : Function1In2Out&lt;TableArray, ErrorType, TableArray&gt;(</span>
-<span class="fc" id="L25">    FunctionInput1Schema(TableArray::class),</span>
-<span class="fc" id="L26">    FunctionOutput2Schema(ErrorType::class, TableArray::class)</span>
+<span class="fc" id="L24">) : Function1In2Out&lt;TableTypeArray, ErrorType, TableTypeArray&gt;(</span>
+<span class="fc" id="L25">    FunctionInput1Schema(TableTypeArray::class),</span>
+<span class="fc" id="L26">    FunctionOutput2Schema(ErrorType::class, TableTypeArray::class)</span>
 ) {
-    override fun invoke(ctx: FunctionContext, arg1: TableArray): Pair&lt;ErrorType?, TableArray?&gt; {
+    override fun invoke(ctx: FunctionContext, arg1: TableTypeArray): Pair&lt;ErrorType?, TableTypeArray?&gt; {
 <span class="nc" id="L29">        try {</span>
 <span class="nc" id="L30">            log.trace(&quot;Setting up batch service&quot;)</span>
 <span class="nc" id="L31">            val batchService = EthHttpBatchService(HttpTemplate((config.value[&quot;host&quot;] as StringType).value))</span>

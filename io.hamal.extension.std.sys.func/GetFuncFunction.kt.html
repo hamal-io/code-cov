@@ -7,7 +7,7 @@ import io.hamal.lib.kua.function.Function1In2Out
 import io.hamal.lib.kua.function.FunctionContext
 import io.hamal.lib.kua.function.FunctionInput1Schema
 import io.hamal.lib.kua.function.FunctionOutput2Schema
-import io.hamal.lib.kua.table.TableMap
+import io.hamal.lib.kua.table.TableTypeMap
 import io.hamal.lib.kua.type.ErrorType
 import io.hamal.lib.kua.type.StringType
 import io.hamal.lib.sdk.domain.ApiError
@@ -15,11 +15,11 @@ import io.hamal.lib.sdk.domain.ApiFunc
 
 <span class="fc" id="L16">class GetFuncFunction(</span>
 <span class="fc" id="L17">    private val templateSupplier: () -&gt; HttpTemplate</span>
-<span class="fc" id="L18">) : Function1In2Out&lt;StringType, ErrorType, TableMap&gt;(</span>
+<span class="fc" id="L18">) : Function1In2Out&lt;StringType, ErrorType, TableTypeMap&gt;(</span>
 <span class="fc" id="L19">    FunctionInput1Schema(StringType::class),</span>
-<span class="fc" id="L20">    FunctionOutput2Schema(ErrorType::class, TableMap::class)</span>
+<span class="fc" id="L20">    FunctionOutput2Schema(ErrorType::class, TableTypeMap::class)</span>
 ) {
-    override fun invoke(ctx: FunctionContext, arg1: StringType): Pair&lt;ErrorType?, TableMap?&gt; {
+    override fun invoke(ctx: FunctionContext, arg1: StringType): Pair&lt;ErrorType?, TableTypeMap?&gt; {
 <span class="fc" id="L23">        val response = templateSupplier()</span>
 <span class="fc" id="L24">            .get(&quot;/v1/funcs/${arg1.value}&quot;)</span>
 <span class="fc" id="L25">            .execute()</span>

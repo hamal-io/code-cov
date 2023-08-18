@@ -6,7 +6,7 @@ import io.hamal.lib.domain.vo.base.InputsSerializer
 import io.hamal.lib.kua.type.TableType
 import kotlinx.serialization.Serializable
 
-
+// FIXME separate topic from payload
 <span class="fc" id="L10">@Serializable(with = Event.Serializer::class)</span>
 <span class="pc" id="L11">class Event(override val value: TableType = TableType()) : Inputs() {</span>
 <span class="fc" id="L12">    internal object Serializer : InputsSerializer&lt;Event&gt;(::Event) // FIXME custom event serializer</span>

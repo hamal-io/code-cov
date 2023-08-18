@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InputSchema.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.kua.function</a> &gt; <span class="el_source">InputSchema.kt</span></div><h1>InputSchema.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.kua.function
 
 import io.hamal.lib.kua.table.DefaultTableProxy
-import io.hamal.lib.kua.table.TableArray
-import io.hamal.lib.kua.table.TableMap
+import io.hamal.lib.kua.table.TableTypeArray
+import io.hamal.lib.kua.table.TableTypeMap
 import io.hamal.lib.kua.table.TableProxy
 import io.hamal.lib.kua.type.AnyType
 import io.hamal.lib.kua.type.NumberType
@@ -53,8 +53,8 @@ fun &lt;ARG : Type&gt; KClass&lt;ARG&gt;.extract(ctx: FunctionContext, idx: Int)
 <span class="fc bfc" id="L53" title="All 2 branches covered.">        NumberType::class -&gt; ctx.getNumberValue(idx) as ARG</span>
 <span class="fc bfc" id="L54" title="All 2 branches covered.">        StringType::class -&gt; ctx.getStringValue(idx) as ARG</span>
 <span class="pc bpc" id="L55" title="1 of 2 branches missed.">        Type::class -&gt; TODO() //FIXME loads the entire table from lua -- maybe some form of readonly table value and table value is interface?!</span>
-<span class="fc bfc" id="L56" title="All 2 branches covered.">        TableMap::class -&gt; DefaultTableProxy(idx, ctx.state, TableProxy.Mode.Map) as ARG</span>
-<span class="pc bpc" id="L57" title="1 of 2 branches missed.">        TableArray::class -&gt; DefaultTableProxy(idx, ctx.state, TableProxy.Mode.Array) as ARG</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">        TableTypeMap::class -&gt; DefaultTableProxy(idx, ctx.state, TableProxy.Mode.Map) as ARG</span>
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">        TableTypeArray::class -&gt; DefaultTableProxy(idx, ctx.state, TableProxy.Mode.Array) as ARG</span>
 <span class="nc" id="L58">        else -&gt; TODO()</span>
     }
 }

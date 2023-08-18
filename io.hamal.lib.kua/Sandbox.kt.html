@@ -3,15 +3,15 @@
 import io.hamal.lib.kua.builtin.Require
 import io.hamal.lib.kua.extension.*
 import io.hamal.lib.kua.function.FunctionType
-import io.hamal.lib.kua.table.TableArray
-import io.hamal.lib.kua.table.TableMap
+import io.hamal.lib.kua.table.TableTypeArray
+import io.hamal.lib.kua.table.TableTypeMap
 import io.hamal.lib.kua.type.AnyType
 import io.hamal.lib.kua.type.CodeType
 import io.hamal.lib.kua.type.ErrorType
 import io.hamal.lib.kua.type.TableType
 
 <span class="pc" id="L13">class Sandbox(</span>
-<span class="pc" id="L14">    val ctx: SandboxContext</span>
+<span class="fc" id="L14">    val ctx: SandboxContext</span>
 ) : State, AutoCloseable {
 
 <span class="fc" id="L17">    override val native: Native = Native(this)</span>
@@ -34,8 +34,8 @@ import io.hamal.lib.kua.type.TableType
 <span class="fc" id="L34">    override fun load(code: String) = native.load(code)</span>
 
     fun run(fn: (State) -&gt; Unit) {
-<span class="fc" id="L37">        fn(state)</span>
-<span class="fc" id="L38">    }</span>
+<span class="nc" id="L37">        fn(state)</span>
+<span class="nc" id="L38">    }</span>
 
     fun register(extension: ScriptExtension) {
 <span class="fc" id="L41">        registry.register(extension)</span>
@@ -67,16 +67,16 @@ import io.hamal.lib.kua.type.TableType
 <span class="nc" id="L67">    override fun pushString(value: String) = state.pushString(value)</span>
 
 <span class="nc" id="L69">    override fun pushTable(value: TableType) = state.pushTable(value)</span>
-<span class="nc" id="L70">    override fun pushTable(proxy: TableMap) = state.pushTable(proxy)</span>
-<span class="nc" id="L71">    override fun pushTable(proxy: TableArray) = state.pushTable(proxy)</span>
+<span class="nc" id="L70">    override fun pushTable(proxy: TableTypeMap) = state.pushTable(proxy)</span>
+<span class="nc" id="L71">    override fun pushTable(proxy: TableTypeArray) = state.pushTable(proxy)</span>
 <span class="nc" id="L72">    override fun getTable(idx: Int) = state.getTable(idx)</span>
 <span class="nc" id="L73">    override fun getTableMap(idx: Int) = state.getTableMap(idx)</span>
 <span class="nc" id="L74">    override fun getTableArray(idx: Int) = state.getTableArray(idx)</span>
 
 <span class="fc" id="L76">    override fun setGlobal(name: String, value: FunctionType&lt;*, *, *, *&gt;) = state.setGlobal(name, value)</span>
-<span class="fc" id="L77">    override fun setGlobal(name: String, value: TableMap) = state.setGlobal(name, value)</span>
-<span class="fc" id="L78">    override fun setGlobal(name: String, value: TableArray) = state.setGlobal(name, value)</span>
-<span class="nc" id="L79">    override fun getGlobalTableMap(name: String): TableMap = state.getGlobalTableMap(name)</span>
+<span class="fc" id="L77">    override fun setGlobal(name: String, value: TableTypeMap) = state.setGlobal(name, value)</span>
+<span class="fc" id="L78">    override fun setGlobal(name: String, value: TableTypeArray) = state.setGlobal(name, value)</span>
+<span class="nc" id="L79">    override fun getGlobalTableMap(name: String): TableTypeMap = state.getGlobalTableMap(name)</span>
 <span class="fc" id="L80">    override fun unsetGlobal(name: String) = state.unsetGlobal(name)</span>
 
 <span class="fc" id="L82">    override fun tableCreateMap(capacity: Int) = state.tableCreateMap(capacity)</span>
@@ -99,7 +99,7 @@ internal fun State.registerGlobalExtension(extension: NativeExtension) {
 <span class="fc" id="L99">    setGlobal(extension.name, result)</span>
 <span class="fc" id="L100">}</span>
 
-fun State.registerExtension(extension: NativeExtension): TableMap {
+fun State.registerExtension(extension: NativeExtension): TableTypeMap {
 
 <span class="fc" id="L104">    val r = tableCreateMap(1)</span>
 <span class="fc" id="L105">    extension.values</span>
@@ -116,7 +116,7 @@ fun State.registerExtension(extension: NativeExtension): TableMap {
 <span class="fc" id="L116">    return r</span>
 }
 
-fun State.createConfig(config: ExtensionConfig): TableMap {
+fun State.createConfig(config: ExtensionConfig): TableTypeMap {
 
 <span class="fc" id="L121">    val result = tableCreateMap(1)</span>
 

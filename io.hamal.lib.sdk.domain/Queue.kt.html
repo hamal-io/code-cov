@@ -10,16 +10,16 @@ import kotlinx.serialization.Serializable
 
 
 <span class="pc bpc" id="L12" title="2 of 7 branches missed.">@Serializable</span>
-<span class="fc" id="L13">data class DequeueExecsResponse(</span>
-<span class="fc" id="L14">    val execs: List&lt;Exec&gt;</span>
+<span class="fc" id="L13">data class ApiUnitOfWorkList(</span>
+<span class="fc" id="L14">    val work: List&lt;ApiUnitOfWork&gt;</span>
 ) {
 <span class="pc bpc" id="L16" title="3 of 18 branches missed.">    @Serializable</span>
-<span class="pc" id="L17">    data class Exec(</span>
+<span class="pc" id="L17">    data class ApiUnitOfWork(</span>
 <span class="fc" id="L18">        val id: ExecId,</span>
 <span class="fc" id="L19">        val inputs: ExecInputs,</span>
 <span class="fc" id="L20">        val state: State,</span>
 <span class="fc" id="L21">        val code: CodeType,</span>
-<span class="fc" id="L22">        val invocation: Invocation,</span>
+<span class="pc" id="L22">        val invocation: Invocation,</span>
 <span class="pc" id="L23">        val correlation: Correlation? = null</span>
 <span class="pc" id="L24">    )</span>
 <span class="fc" id="L25">}</span>

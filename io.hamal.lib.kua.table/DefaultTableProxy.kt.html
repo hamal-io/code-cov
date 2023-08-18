@@ -23,7 +23,7 @@ interface TableProxy : Type {
 <span class="fc" id="L23">    override val index: Int,</span>
 <span class="pc" id="L24">    val state: State,</span>
 <span class="pc" id="L25">    override val mode: TableProxy.Mode</span>
-) : TableMap, TableArray {
+) : TableTypeMap, TableTypeArray {
 
     override fun unset(key: String): Int {
 <span class="nc" id="L29">        native.pushString(key)</span>
@@ -56,16 +56,16 @@ interface TableProxy : Type {
 <span class="fc" id="L56">        return state.tableSetRaw(index)</span>
     }
 
-    override fun set(key: String, value: TableMap): Int {
+    override fun set(key: String, value: TableTypeMap): Int {
 <span class="fc" id="L60">        state.pushString(key)</span>
 <span class="fc" id="L61">        state.pushTable(value)</span>
 <span class="fc" id="L62">        return state.tableSetRaw(index)</span>
     }
 
-    override fun set(key: String, value: TableArray): Int {
-<span class="fc" id="L66">        state.pushString(key)</span>
-<span class="fc" id="L67">        state.pushTable(value)</span>
-<span class="fc" id="L68">        return state.tableSetRaw(index)</span>
+    override fun set(key: String, value: TableTypeArray): Int {
+<span class="nc" id="L66">        state.pushString(key)</span>
+<span class="nc" id="L67">        state.pushTable(value)</span>
+<span class="nc" id="L68">        return state.tableSetRaw(index)</span>
     }
 
     override fun getBooleanValue(key: String): BooleanType {
@@ -96,11 +96,11 @@ interface TableProxy : Type {
 <span class="fc" id="L96">        return StringType(native.toString(state.top.value)).also { native.pop(1) }</span>
     }
 
-    override fun getTableMap(key: String): TableMap {
-<span class="fc" id="L100">        state.pushString(key)</span>
-<span class="fc" id="L101">        val type = state.tableGetRaw(index)</span>
-<span class="fc" id="L102">        type.checkExpectedType(TableType::class)</span>
-<span class="fc" id="L103">        return state.getTableMap(state.top.value)</span>
+    override fun getTableMap(key: String): TableTypeMap {
+<span class="nc" id="L100">        state.pushString(key)</span>
+<span class="nc" id="L101">        val type = state.tableGetRaw(index)</span>
+<span class="nc" id="L102">        type.checkExpectedType(TableType::class)</span>
+<span class="nc" id="L103">        return state.getTableMap(state.top.value)</span>
     }
 
     override fun type(key: String): KClass&lt;out Type&gt; {
@@ -125,12 +125,12 @@ interface TableProxy : Type {
 <span class="fc" id="L125">        return state.tableAppend(index)</span>
     }
 
-    override fun append(value: TableMap): Int {
+    override fun append(value: TableTypeMap): Int {
 <span class="fc" id="L129">        state.pushTable(value)</span>
 <span class="fc" id="L130">        return state.tableAppend(index)</span>
     }
 
-    override fun append(value: TableArray): Int {
+    override fun append(value: TableTypeArray): Int {
 <span class="nc" id="L134">        state.pushTable(value)</span>
 <span class="nc" id="L135">        return state.tableAppend(index)</span>
     }

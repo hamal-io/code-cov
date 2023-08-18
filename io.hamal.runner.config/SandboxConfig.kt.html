@@ -4,46 +4,43 @@ import io.hamal.extension.std.log.LogExtensionFactory
 import io.hamal.extension.std.sys.SysExtensionFactory
 import io.hamal.extension.web3.eth.EthExtensionFactory
 import io.hamal.extension.web3.hml.HmlExtensionFactory
-import io.hamal.lib.domain.vo.ExecId
 import io.hamal.lib.http.HttpTemplate
-import io.hamal.lib.kua.DefaultSandboxContext
 import io.hamal.lib.kua.NativeLoader
 import io.hamal.lib.kua.NativeLoader.Preference.Jar
 import io.hamal.lib.kua.Sandbox
-import io.hamal.lib.sdk.domain.DequeueExecsResponse
+import io.hamal.lib.kua.SandboxContext
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 
-<span class="nc" id="L19">@Configuration</span>
+<span class="nc" id="L17">@Configuration</span>
 @Profile(&quot;!test&quot;)
-<span class="nc" id="L21">class SandboxConfig {</span>
+<span class="nc" id="L19">class SandboxConfig {</span>
     @Bean
     fun sandboxFactory(
         @Value(&quot;\${io.hamal.runner.host}&quot;) host: String
-<span class="nc" id="L25">    ): SandboxFactory = RunnerSandboxFactory(host)</span>
+<span class="nc" id="L23">    ): SandboxFactory = RunnerSandboxFactory(host)</span>
 }
 
 interface SandboxFactory {
-    fun create(exec: DequeueExecsResponse.Exec): Sandbox
+    fun create(ctx: SandboxContext): Sandbox
 }
 
-<span class="nc" id="L32">class RunnerSandboxFactory(val instanceHost: String) : SandboxFactory {</span>
-    override fun create(exec: DequeueExecsResponse.Exec): Sandbox {
+<span class="nc" id="L30">class RunnerSandboxFactory(</span>
+<span class="nc" id="L31">    val instanceHost: String</span>
+) : SandboxFactory {
+    override fun create(ctx: SandboxContext): Sandbox {
 <span class="nc" id="L34">        NativeLoader.load(Jar)</span>
 
 <span class="nc" id="L36">        val template = HttpTemplate(instanceHost) // FIXME sdk instead</span>
 
-<span class="nc" id="L38">        val ctx = DefaultSandboxContext()</span>
-<span class="nc" id="L39">        ctx[ExecId::class] = exec.id</span>
-
-<span class="nc" id="L41">        return Sandbox(ctx).also {</span>
-<span class="nc" id="L42">            it.register(LogExtensionFactory { template }.create())</span>
-<span class="nc" id="L43">            it.register(SysExtensionFactory { template }.create())</span>
-<span class="nc" id="L44">            it.register(EthExtensionFactory().create())</span>
-<span class="nc" id="L45">            it.register(HmlExtensionFactory().create())</span>
-<span class="nc" id="L46">        }</span>
+<span class="nc" id="L38">        return Sandbox(ctx).also {</span>
+<span class="nc" id="L39">            it.register(LogExtensionFactory { template }.create())</span>
+<span class="nc" id="L40">            it.register(SysExtensionFactory { template }.create())</span>
+<span class="nc" id="L41">            it.register(EthExtensionFactory().create())</span>
+<span class="nc" id="L42">            it.register(HmlExtensionFactory().create())</span>
+<span class="nc" id="L43">        }</span>
     }
 
 }

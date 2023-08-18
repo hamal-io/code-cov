@@ -2,17 +2,22 @@
 
 import io.hamal.lib.kua.NativeLoader.Preference.BuildDir
 import io.hamal.lib.kua.function.FunctionType
+import kotlin.reflect.KClass
 
 fun Sandbox.registerGlobalFunction(name: String, function: FunctionType&lt;*, *, *, *&gt;) {
-<span class="fc" id="L7">    setGlobal(name, function)</span>
-<span class="fc" id="L8">}</span>
+<span class="fc" id="L8">    setGlobal(name, function)</span>
+<span class="fc" id="L9">}</span>
 
 
 fun main() {
-<span class="nc" id="L12">    NativeLoader.load(BuildDir)</span>
-<span class="nc" id="L13">    Sandbox(DefaultSandboxContext()).also { sb -&gt;</span>
+<span class="nc" id="L13">    NativeLoader.load(BuildDir)</span>
+<span class="nc" id="L14">    Sandbox(object : SandboxContext {</span>
+        override fun &lt;OBJ : Any&gt; get(clazz: KClass&lt;OBJ&gt;): OBJ {
+<span class="nc" id="L16">            TODO(&quot;Not yet implemented&quot;)</span>
+        }
+<span class="nc" id="L18">    }).also { sb -&gt;</span>
 
-<span class="nc" id="L15">//        val registry = ExtensionRegistry(sb)</span>
+<span class="nc" id="L20">//        val registry = ExtensionRegistry(sb)</span>
 //        registry.register(
 //            ScriptExtension(
 //                name = &quot;web3.eth&quot;,
@@ -49,12 +54,12 @@ fun main() {
 //
 //        sb.registerGlobalFunction(&quot;require&quot;, Require(registry))
 
-<span class="nc" id="L52">    }.use { sb -&gt;</span>
+<span class="nc" id="L57">    }.use { sb -&gt;</span>
 
-<span class="nc" id="L54">        sb.load(</span>
+<span class="nc" id="L59">        sb.load(</span>
             &quot;&quot;&quot;
-<span class="nc" id="L56">        &quot;&quot;&quot;.trimIndent()</span>
+<span class="nc" id="L61">        &quot;&quot;&quot;.trimIndent()</span>
         )
-<span class="nc" id="L58">    }</span>
-<span class="nc" id="L59">}</span>
+<span class="nc" id="L63">    }</span>
+<span class="nc" id="L64">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

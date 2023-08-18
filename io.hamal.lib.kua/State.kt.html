@@ -2,8 +2,8 @@
 
 import io.hamal.lib.kua.function.FunctionType
 import io.hamal.lib.kua.table.DefaultTableProxy
-import io.hamal.lib.kua.table.TableArray
-import io.hamal.lib.kua.table.TableMap
+import io.hamal.lib.kua.table.TableTypeArray
+import io.hamal.lib.kua.table.TableTypeMap
 import io.hamal.lib.kua.table.TableProxy
 import io.hamal.lib.kua.type.*
 import kotlin.reflect.KClass
@@ -44,20 +44,20 @@ interface State {
 <span class="fc" id="L44">    fun pushString(value: StringType) = pushString(value.value)</span>
 
     fun pushTable(value: TableType): StackTop
-    fun pushTable(proxy: TableMap): StackTop
-    fun pushTable(proxy: TableArray): StackTop
+    fun pushTable(proxy: TableTypeMap): StackTop
+    fun pushTable(proxy: TableTypeArray): StackTop
     fun getTable(idx: Int): TableType
-    fun getTableMap(idx: Int): TableMap
-    fun getTableArray(idx: Int): TableArray
+    fun getTableMap(idx: Int): TableTypeMap
+    fun getTableArray(idx: Int): TableTypeArray
 
     fun setGlobal(name: String, value: FunctionType&lt;*, *, *, *&gt;)
-    fun setGlobal(name: String, value: TableMap)
-    fun setGlobal(name: String, value: TableArray)
-    fun getGlobalTableMap(name: String): TableMap
+    fun setGlobal(name: String, value: TableTypeMap)
+    fun setGlobal(name: String, value: TableTypeArray)
+    fun getGlobalTableMap(name: String): TableTypeMap
     fun unsetGlobal(name: String)
 
-<span class="nc" id="L59">    fun tableCreateMap(capacity: Int = 0): TableMap</span>
-<span class="fc" id="L60">    fun tableCreateArray(capacity: Int = 0): TableArray</span>
+<span class="nc" id="L59">    fun tableCreateMap(capacity: Int = 0): TableTypeMap</span>
+<span class="fc" id="L60">    fun tableCreateArray(capacity: Int = 0): TableTypeArray</span>
     fun tableAppend(idx: Int): Int
     fun tableSetRaw(idx: Int): Int
     fun tableSetRawIdx(stackIdx: Int, tableIdx: Int): Int
@@ -89,7 +89,7 @@ interface State {
 <span class="fc bfc" id="L89" title="All 2 branches covered.">            is BooleanType -&gt; pushBoolean(underlying)</span>
 <span class="fc bfc" id="L90" title="All 2 branches covered.">            is NumberType -&gt; pushNumber(underlying)</span>
 <span class="fc bfc" id="L91" title="All 2 branches covered.">            is StringType -&gt; pushString(underlying)</span>
-<span class="pc bpc" id="L92" title="1 of 2 branches missed.">            is TableArray -&gt; pushTable(underlying)</span>
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">            is TableTypeArray -&gt; pushTable(underlying)</span>
 <span class="nc" id="L93">            else -&gt; TODO(&quot;${underlying.javaClass} not supported yet&quot;)</span>
         }
     }
@@ -118,36 +118,36 @@ interface State {
 <span class="nc" id="L118">        TODO(&quot;Not yet implemented&quot;)</span>
     }
 
-<span class="fc" id="L121">    override fun pushTable(proxy: TableMap) = StackTop(native.pushTop(proxy.index))</span>
+<span class="fc" id="L121">    override fun pushTable(proxy: TableTypeMap) = StackTop(native.pushTop(proxy.index))</span>
 
-<span class="fc" id="L123">    override fun pushTable(proxy: TableArray) = StackTop(native.pushTop(proxy.index))</span>
+<span class="fc" id="L123">    override fun pushTable(proxy: TableTypeArray) = StackTop(native.pushTop(proxy.index))</span>
 
     override fun getTable(idx: Int): TableType {
 <span class="nc" id="L126">        TODO(&quot;Not yet implemented&quot;)</span>
     }
 
     //FIXME type check
-<span class="fc" id="L130">    override fun getTableMap(idx: Int): TableMap = DefaultTableProxy(absIndex(idx), this, TableProxy.Mode.Map)</span>
+<span class="fc" id="L130">    override fun getTableMap(idx: Int): TableTypeMap = DefaultTableProxy(absIndex(idx), this, TableProxy.Mode.Map)</span>
 
     //FIXME type check
-<span class="nc" id="L133">    override fun getTableArray(idx: Int): TableArray = DefaultTableProxy(absIndex(idx), this, TableProxy.Mode.Array)</span>
+<span class="nc" id="L133">    override fun getTableArray(idx: Int): TableTypeArray = DefaultTableProxy(absIndex(idx), this, TableProxy.Mode.Array)</span>
 
     override fun setGlobal(name: String, value: FunctionType&lt;*, *, *, *&gt;) {
 <span class="fc" id="L136">        native.pushFunction(value)</span>
 <span class="fc" id="L137">        native.setGlobal(name)</span>
 <span class="fc" id="L138">    }</span>
 
-    override fun setGlobal(name: String, value: TableMap) {
+    override fun setGlobal(name: String, value: TableTypeMap) {
 <span class="fc" id="L141">        native.pushTop(value.index)</span>
 <span class="fc" id="L142">        native.setGlobal(name)</span>
 <span class="fc" id="L143">    }</span>
 
-    override fun setGlobal(name: String, value: TableArray) {
+    override fun setGlobal(name: String, value: TableTypeArray) {
 <span class="fc" id="L146">        native.pushTop(value.index)</span>
 <span class="fc" id="L147">        native.setGlobal(name)</span>
 <span class="fc" id="L148">    }</span>
 
-    override fun getGlobalTableMap(name: String): TableMap {
+    override fun getGlobalTableMap(name: String): TableTypeMap {
 <span class="fc" id="L151">        native.getGlobal(name)</span>
 <span class="fc" id="L152">        return getTableMap(top.value)</span>
     }
@@ -157,7 +157,7 @@ interface State {
 <span class="fc" id="L157">        native.setGlobal(name)</span>
 <span class="fc" id="L158">    }</span>
 
-    override fun tableCreateMap(capacity: Int): TableMap {
+    override fun tableCreateMap(capacity: Int): TableTypeMap {
 <span class="fc" id="L161">        return DefaultTableProxy(</span>
 <span class="fc" id="L162">            index = native.tableCreate(0, capacity),</span>
 <span class="fc" id="L163">            state = this,</span>
@@ -165,7 +165,7 @@ interface State {
         )
     }
 
-    override fun tableCreateArray(capacity: Int): TableArray {
+    override fun tableCreateArray(capacity: Int): TableTypeArray {
 <span class="fc" id="L169">        return DefaultTableProxy(</span>
 <span class="fc" id="L170">            index = native.tableCreate(capacity, 0),</span>
 <span class="fc" id="L171">            state = this,</span>

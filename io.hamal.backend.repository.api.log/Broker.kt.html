@@ -52,26 +52,27 @@ interface FindTopic {
     Closeable {
 
     fun listTopics(): List&lt;LogTopic&gt;
+<span class="fc" id="L55">    fun list(topicIds: List&lt;TopicId&gt;) = topicIds.map(::getTopic) //FIXME as one request  ?!</span>
 
     @OptIn(ExperimentalSerializationApi::class)
     fun listEvents(topic: LogTopic, block: EventQuery.() -&gt; Unit): List&lt;EventWithId&gt; {
-<span class="fc" id="L58">        val query = EventQuery().also(block)</span>
-<span class="fc" id="L59">        val firstId = LogChunkId(SnowflakeId(query.afterId.value.value + 1))</span>
-<span class="fc" id="L60">        return read(firstId, topic, query.limit.value)</span>
-<span class="fc" id="L61">            .map { chunk -&gt;</span>
-<span class="fc" id="L62">                val evt = ProtoBuf.decodeFromByteArray(Event.serializer(), chunk.bytes)</span>
-<span class="fc" id="L63">                EventWithId(</span>
-<span class="fc" id="L64">                    id = EventId(chunk.id.value),</span>
-<span class="fc" id="L65">                    value = evt.value</span>
+<span class="fc" id="L59">        val query = EventQuery().also(block)</span>
+<span class="fc" id="L60">        val firstId = LogChunkId(SnowflakeId(query.afterId.value.value + 1))</span>
+<span class="fc" id="L61">        return read(firstId, topic, query.limit.value)</span>
+<span class="fc" id="L62">            .map { chunk -&gt;</span>
+<span class="fc" id="L63">                val evt = ProtoBuf.decodeFromByteArray(Event.serializer(), chunk.bytes)</span>
+<span class="fc" id="L64">                EventWithId(</span>
+<span class="fc" id="L65">                    id = EventId(chunk.id.value),</span>
+<span class="fc" id="L66">                    value = evt.value</span>
                 )
             }
     }
 
     fun clear()
 
-<span class="fc" id="L72">    data class EventQuery(</span>
-<span class="fc" id="L73">        var afterId: EventId = EventId(0),</span>
-<span class="fc" id="L74">        var limit: Limit = Limit(1)</span>
-<span class="fc" id="L75">    )</span>
-<span class="fc" id="L76">}</span>
+<span class="fc" id="L73">    data class EventQuery(</span>
+<span class="fc" id="L74">        var afterId: EventId = EventId(0),</span>
+<span class="fc" id="L75">        var limit: Limit = Limit(1)</span>
+<span class="fc" id="L76">    )</span>
+<span class="fc" id="L77">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

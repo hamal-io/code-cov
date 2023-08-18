@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExtensionClassLoader.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.runner.extension</a> &gt; <span class="el_source">ExtensionClassLoader.kt</span></div><h1>ExtensionClassLoader.kt</h1><pre class="source lang-java linenums">package io.hamal.runner.extension
+
+import java.net.URL
+import java.net.URLClassLoader
+
+
+<span class="nc" id="L7">internal class ExtensionClassLoader(</span>
+<span class="nc" id="L8">    urls: Array&lt;URL&gt;, private val urlClassLoader: URLClassLoader, private val parentClassLoader: ClassLoader</span>
+<span class="nc" id="L9">) : URLClassLoader(urls, null) {</span>
+    //    public WorkerExtensionClassLoader(URL[] urls, ClassLoader parentClassLoader) {
+    //        super(urls, null);
+    //        this.parentClassLoader = parentClassLoader;
+    //    }
+    constructor(
+        urls: Array&lt;URL&gt;, parentClassLoader: ClassLoader
+<span class="nc" id="L16">    ) : this(</span>
+<span class="nc" id="L17">        urls, URLClassLoader(urls, parentClassLoader), parentClassLoader</span>
+<span class="nc" id="L18">    )</span>
+
+    @Throws(ClassNotFoundException::class)
+    override fun loadClass(name: String, resolve: Boolean): Class&lt;*&gt; {
+<span class="nc" id="L22">        println(&quot;Load Class ${name} $resolve&quot;)</span>
+<span class="nc" id="L23">        val loadedClass = loadClassByName(name)</span>
+<span class="nc bnc" id="L24" title="All 2 branches missed.">        if (resolve) {</span>
+<span class="nc" id="L25">            resolveClass(loadedClass)</span>
+        }
+<span class="nc" id="L27">        return loadedClass</span>
+    }
+
+    @Throws(ClassNotFoundException::class)
+    fun loadClassByName(name: String): Class&lt;*&gt; {
+<span class="nc" id="L32">        val loadedClass = findLoadedClass(name)</span>
+<span class="nc" id="L33">        println(&quot;loadClassByName $name $loadedClass &quot;)</span>
+<span class="nc bnc" id="L34" title="All 2 branches missed.">        if (loadedClass != null) {</span>
+<span class="nc" id="L35">            return loadedClass</span>
+        }
+
+
+<span class="nc bnc" id="L39" title="All 2 branches missed.">        return if (loadWithParentClassLoader(name)) {</span>
+<span class="nc" id="L40">            println(&quot;parent&quot;)</span>
+<span class="nc" id="L41">            val res = parentClassLoader.loadClass(name)</span>
+<span class="nc" id="L42">            println(&quot;use parent class loader $name $res&quot;)</span>
+<span class="nc" id="L43">            res</span>
+<span class="nc" id="L44">        } else {</span>
+<span class="nc" id="L45">            println(&quot;url $name&quot;)</span>
+<span class="nc" id="L46">            try {</span>
+<span class="nc" id="L47">                val res = urlClassLoader.loadClass(name)</span>
+<span class="nc" id="L48">                println(&quot;use url class loader $name $res&quot;)</span>
+<span class="nc" id="L49">                res</span>
+<span class="nc" id="L50">            } catch (t: Throwable) {</span>
+<span class="nc" id="L51">                throw RuntimeException(t)</span>
+            }
+        }
+    }
+
+    fun loadWithParentClassLoader(name: String): Boolean {
+<span class="nc bnc" id="L57" title="All 4 branches missed.">        return isFromExtensionSPI(name) || isFromLib(name)</span>
+    }
+
+    private fun isFromExtensionSPI(name: String): Boolean {
+<span class="nc" id="L61">        return name.startsWith(&quot;io.hamal.agent.extension.api&quot;)</span>
+    }
+
+    private fun isFromLib(name: String): Boolean {
+<span class="nc" id="L65">        return name.startsWith(&quot;io.hamal.lib&quot;)</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

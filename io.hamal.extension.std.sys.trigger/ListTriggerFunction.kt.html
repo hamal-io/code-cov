@@ -4,42 +4,74 @@ import io.hamal.lib.http.HttpTemplate
 import io.hamal.lib.kua.function.Function0In2Out
 import io.hamal.lib.kua.function.FunctionContext
 import io.hamal.lib.kua.function.FunctionOutput2Schema
-import io.hamal.lib.kua.table.TableArray
+import io.hamal.lib.kua.table.TableTypeArray
 import io.hamal.lib.kua.type.ErrorType
+import io.hamal.lib.sdk.domain.ApiSimpleEventTrigger
+import io.hamal.lib.sdk.domain.ApiSimpleFixedRateTrigger
+import io.hamal.lib.sdk.domain.ApiSimpleTrigger
 import io.hamal.lib.sdk.domain.ApiTriggerList
 
-<span class="fc" id="L11">class ListTriggerFunction(</span>
-<span class="fc" id="L12">    private val templateSupplier: () -&gt; HttpTemplate</span>
-<span class="fc" id="L13">) : Function0In2Out&lt;ErrorType, TableArray&gt;(</span>
-<span class="fc" id="L14">    FunctionOutput2Schema(ErrorType::class, TableArray::class)</span>
+<span class="fc" id="L14">class ListTriggerFunction(</span>
+<span class="fc" id="L15">    private val templateSupplier: () -&gt; HttpTemplate</span>
+<span class="fc" id="L16">) : Function0In2Out&lt;ErrorType, TableTypeArray&gt;(</span>
+<span class="fc" id="L17">    FunctionOutput2Schema(ErrorType::class, TableTypeArray::class)</span>
 ) {
-    override fun invoke(ctx: FunctionContext): Pair&lt;ErrorType?, TableArray?&gt; {
-<span class="fc" id="L17">        val triggers = try {</span>
-<span class="fc" id="L18">            templateSupplier()</span>
-<span class="fc" id="L19">                .get(&quot;/v1/triggers&quot;)</span>
-<span class="fc" id="L20">                .execute(ApiTriggerList::class)</span>
-<span class="fc" id="L21">                .triggers</span>
-<span class="nc" id="L22">        } catch (t: Throwable) {</span>
-<span class="nc" id="L23">            t.printStackTrace()</span>
-<span class="nc" id="L24">            listOf&lt;ApiTriggerList.ApiSimpleTrigger&gt;()</span>
+    override fun invoke(ctx: FunctionContext): Pair&lt;ErrorType?, TableTypeArray?&gt; {
+<span class="fc" id="L20">        val triggers = try {</span>
+<span class="fc" id="L21">            templateSupplier()</span>
+<span class="fc" id="L22">                .get(&quot;/v1/triggers&quot;)</span>
+<span class="fc" id="L23">                .execute(ApiTriggerList::class)</span>
+<span class="fc" id="L24">                .triggers</span>
+<span class="nc" id="L25">        } catch (t: Throwable) {</span>
+<span class="nc" id="L26">            t.printStackTrace()</span>
+<span class="nc" id="L27">            listOf&lt;ApiSimpleTrigger&gt;()</span>
         }
 
-<span class="fc" id="L27">        return null to ctx.tableCreateArray().also { rs -&gt;</span>
-<span class="fc" id="L28">            triggers.forEach { trigger -&gt;</span>
-<span class="fc" id="L29">                val inner = ctx.tableCreateMap(2)</span>
-<span class="fc" id="L30">                inner[&quot;id&quot;] = trigger.id</span>
-<span class="fc" id="L31">                inner[&quot;name&quot;] = trigger.name.value</span>
-<span class="fc" id="L32">                inner[&quot;func&quot;] = ctx.tableCreateMap(2).also { nt -&gt;</span>
-<span class="fc" id="L33">                    nt[&quot;id&quot;] = trigger.func.id</span>
-<span class="fc" id="L34">                    nt[&quot;name&quot;] = trigger.func.name.value</span>
-<span class="fc" id="L35">                }</span>
-<span class="fc" id="L36">                inner[&quot;namespace&quot;] = ctx.tableCreateMap(2).also { nt -&gt;</span>
-<span class="fc" id="L37">                    nt[&quot;id&quot;] = trigger.namespace.id</span>
-<span class="fc" id="L38">                    nt[&quot;name&quot;] = trigger.namespace.name.value</span>
-<span class="fc" id="L39">                }</span>
-<span class="fc" id="L40">                rs.append(inner)</span>
-<span class="fc" id="L41">            }</span>
-<span class="fc" id="L42">        }</span>
+<span class="fc" id="L30">        return null to ctx.tableCreateArray().also { rs -&gt;</span>
+<span class="fc" id="L31">            triggers.forEach { trigger -&gt;</span>
+
+<span class="fc" id="L33">                when (val t = trigger) {</span>
+<span class="fc bfc" id="L34" title="All 2 branches covered.">                    is ApiSimpleFixedRateTrigger -&gt; {</span>
+<span class="fc" id="L35">                        val inner = ctx.tableCreateMap(6)</span>
+<span class="fc" id="L36">                        inner[&quot;id&quot;] = t.id</span>
+<span class="fc" id="L37">                        inner[&quot;type&quot;] = &quot;FixedRate&quot;</span>
+<span class="fc" id="L38">                        inner[&quot;name&quot;] = t.name.value</span>
+<span class="fc" id="L39">                        inner[&quot;func&quot;] = ctx.tableCreateMap(2).also { nt -&gt;</span>
+<span class="fc" id="L40">                            nt[&quot;id&quot;] = t.func.id</span>
+<span class="fc" id="L41">                            nt[&quot;name&quot;] = t.func.name.value</span>
+<span class="fc" id="L42">                        }</span>
+<span class="fc" id="L43">                        inner[&quot;namespace&quot;] = ctx.tableCreateMap(2).also { nt -&gt;</span>
+<span class="fc" id="L44">                            nt[&quot;id&quot;] = t.namespace.id</span>
+<span class="fc" id="L45">                            nt[&quot;name&quot;] = t.namespace.name.value</span>
+<span class="fc" id="L46">                        }</span>
+<span class="fc" id="L47">                        inner[&quot;duration&quot;] = t.duration.toIsoString()</span>
+<span class="fc" id="L48">                        rs.append(inner)</span>
+                    }
+
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">                    is ApiSimpleEventTrigger -&gt; {</span>
+<span class="fc" id="L52">                        val inner = ctx.tableCreateMap(6)</span>
+<span class="fc" id="L53">                        inner[&quot;id&quot;] = t.id</span>
+<span class="fc" id="L54">                        inner[&quot;type&quot;] = &quot;Event&quot;</span>
+<span class="fc" id="L55">                        inner[&quot;name&quot;] = t.name.value</span>
+<span class="fc" id="L56">                        inner[&quot;func&quot;] = ctx.tableCreateMap(2).also { nt -&gt;</span>
+<span class="fc" id="L57">                            nt[&quot;id&quot;] = t.func.id</span>
+<span class="fc" id="L58">                            nt[&quot;name&quot;] = t.func.name.value</span>
+<span class="fc" id="L59">                        }</span>
+<span class="fc" id="L60">                        inner[&quot;namespace&quot;] = ctx.tableCreateMap(2).also { nt -&gt;</span>
+<span class="fc" id="L61">                            nt[&quot;id&quot;] = t.namespace.id</span>
+<span class="fc" id="L62">                            nt[&quot;name&quot;] = t.namespace.name.value</span>
+<span class="fc" id="L63">                        }</span>
+<span class="fc" id="L64">                        inner[&quot;topic&quot;] = ctx.tableCreateMap(2).also { nt -&gt;</span>
+<span class="fc" id="L65">                            nt[&quot;id&quot;] = t.topic.id</span>
+<span class="fc" id="L66">                            nt[&quot;name&quot;] = t.topic.name.value</span>
+<span class="fc" id="L67">                        }</span>
+<span class="fc" id="L68">                        rs.append(inner)</span>
+                    }
+
+<span class="nc" id="L71">                    else -&gt; TODO()</span>
+                }
+<span class="fc" id="L73">            }</span>
+<span class="fc" id="L74">        }</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

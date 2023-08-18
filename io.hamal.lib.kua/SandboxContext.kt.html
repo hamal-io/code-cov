@@ -6,15 +6,9 @@ interface SandboxContext {
     operator fun &lt;OBJ : Any&gt; get(clazz: KClass&lt;OBJ&gt;): OBJ
 }
 
-<span class="fc" id="L9">class DefaultSandboxContext : SandboxContext {</span>
-    operator fun &lt;OBJ : Any&gt; set(clazz: KClass&lt;OBJ&gt;, obj: OBJ) {
-<span class="nc" id="L11">        store[clazz] = obj</span>
-<span class="nc" id="L12">    }</span>
-
-    override operator fun &lt;OBJ : Any&gt; get(clazz: KClass&lt;OBJ&gt;): OBJ {
-<span class="nc" id="L15">        return store[clazz] as OBJ</span>
+<span class="fc" id="L9">class NopSandboxContext : SandboxContext {</span>
+    override fun &lt;OBJ : Any&gt; get(clazz: KClass&lt;OBJ&gt;): OBJ {
+<span class="nc" id="L11">        TODO(&quot;Not yet implemented&quot;)</span>
     }
-
-<span class="fc" id="L18">    private val store = mutableMapOf&lt;KClass&lt;*&gt;, Any&gt;()</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

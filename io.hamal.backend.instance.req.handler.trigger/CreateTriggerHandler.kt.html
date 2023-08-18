@@ -50,7 +50,7 @@ import org.springframework.stereotype.Component
 <span class="fc" id="L50">                        name = req.name,</span>
 <span class="fc" id="L51">                        correlationId = req.correlationId,</span>
 <span class="fc" id="L52">                        funcId = req.funcId,</span>
-<span class="pc bpc" id="L53" title="1 of 2 branches missed.">                        namespaceId = req.namespaceId ?: namespaceQueryRepository.get(NamespaceName(&quot;hamal&quot;)).id,</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">                        namespaceId = req.namespaceId ?: namespaceQueryRepository.get(NamespaceName(&quot;hamal&quot;)).id,</span>
 <span class="fc" id="L54">                        inputs = req.inputs,</span>
 <span class="pc bpc" id="L55" title="1 of 2 branches missed.">                        topicId = requireNotNull(req.topicId) { &quot;topicId must not be null&quot; },</span>
                     )

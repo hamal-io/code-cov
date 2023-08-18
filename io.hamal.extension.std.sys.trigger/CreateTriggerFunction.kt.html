@@ -3,62 +3,72 @@
 import io.hamal.lib.common.SnowflakeId
 import io.hamal.lib.domain._enum.TriggerType
 import io.hamal.lib.domain.req.CreateTriggerReq
-import io.hamal.lib.domain.vo.FuncId
-import io.hamal.lib.domain.vo.NamespaceId
-import io.hamal.lib.domain.vo.TriggerInputs
-import io.hamal.lib.domain.vo.TriggerName
+import io.hamal.lib.domain.vo.*
 import io.hamal.lib.http.HttpTemplate
 import io.hamal.lib.http.body
 import io.hamal.lib.kua.function.Function1In2Out
 import io.hamal.lib.kua.function.FunctionContext
 import io.hamal.lib.kua.function.FunctionInput1Schema
 import io.hamal.lib.kua.function.FunctionOutput2Schema
-import io.hamal.lib.kua.table.TableMap
+import io.hamal.lib.kua.table.TableTypeMap
 import io.hamal.lib.kua.type.ErrorType
 import io.hamal.lib.kua.type.StringType
 import io.hamal.lib.sdk.domain.ApiSubmittedReqWithId
 import kotlin.time.Duration
 
-<span class="fc" id="L22">class CreateTriggerFunction(</span>
-<span class="fc" id="L23">    private val templateSupplier: () -&gt; HttpTemplate</span>
-<span class="fc" id="L24">) : Function1In2Out&lt;TableMap, ErrorType, TableMap&gt;(</span>
-<span class="fc" id="L25">    FunctionInput1Schema(TableMap::class),</span>
-<span class="fc" id="L26">    FunctionOutput2Schema(ErrorType::class, TableMap::class)</span>
+<span class="fc" id="L19">class CreateTriggerFunction(</span>
+<span class="fc" id="L20">    private val templateSupplier: () -&gt; HttpTemplate</span>
+<span class="fc" id="L21">) : Function1In2Out&lt;TableTypeMap, ErrorType, TableTypeMap&gt;(</span>
+<span class="fc" id="L22">    FunctionInput1Schema(TableTypeMap::class),</span>
+<span class="fc" id="L23">    FunctionOutput2Schema(ErrorType::class, TableTypeMap::class)</span>
 ) {
-    override fun invoke(ctx: FunctionContext, arg1: TableMap): Pair&lt;ErrorType?, TableMap&gt; {
-<span class="fc" id="L29">        try {</span>
+    override fun invoke(ctx: FunctionContext, arg1: TableTypeMap): Pair&lt;ErrorType?, TableTypeMap&gt; {
+<span class="fc" id="L26">        try {</span>
 
-<span class="fc" id="L31">            val type = TriggerType.valueOf(arg1.getString(&quot;type&quot;))</span>
+<span class="fc" id="L28">            val type = TriggerType.valueOf(arg1.getString(&quot;type&quot;))</span>
 
-<span class="pc bpc" id="L33" title="1 of 2 branches missed.">            val namespaceId = if (arg1.type(&quot;namespace_id&quot;) == StringType::class) {</span>
-<span class="nc" id="L34">                NamespaceId(SnowflakeId(arg1.getString(&quot;namespace_id&quot;)))</span>
+<span class="fc bfc" id="L30" title="All 2 branches covered.">            val namespaceId = if (arg1.type(&quot;namespace_id&quot;) == StringType::class) {</span>
+<span class="fc" id="L31">                NamespaceId(SnowflakeId(arg1.getString(&quot;namespace_id&quot;)))</span>
             } else {
-<span class="fc" id="L36">                null</span>
+<span class="fc" id="L33">                null</span>
             }
 
-<span class="fc" id="L39">            val r = CreateTriggerReq(</span>
-<span class="fc" id="L40">                type = type,</span>
-<span class="fc" id="L41">                namespaceId = namespaceId,</span>
-<span class="fc" id="L42">                funcId = FuncId(SnowflakeId(arg1.getString(&quot;func_id&quot;))),</span>
-<span class="fc" id="L43">                name = TriggerName(arg1.getString(&quot;name&quot;)),</span>
-<span class="fc" id="L44">                inputs = TriggerInputs(),</span>
-<span class="fc" id="L45">                duration = Duration.parseIsoString(arg1.getString(&quot;duration&quot;))</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">            val duration = if (arg1.type(&quot;duration&quot;) == StringType::class) {</span>
+<span class="fc" id="L37">                Duration.parseIsoString(arg1.getString(&quot;duration&quot;))</span>
+            } else {
+<span class="fc" id="L39">                null</span>
+            }
+
+<span class="fc bfc" id="L42" title="All 2 branches covered.">            val topicId = if (arg1.type(&quot;topic_id&quot;) == StringType::class) {</span>
+<span class="fc" id="L43">                TopicId(SnowflakeId(arg1.getString(&quot;topic_id&quot;)))</span>
+            } else {
+<span class="fc" id="L45">                null</span>
+            }
+
+<span class="fc" id="L48">            val r = CreateTriggerReq(</span>
+<span class="fc" id="L49">                type = type,</span>
+<span class="fc" id="L50">                namespaceId = namespaceId,</span>
+<span class="fc" id="L51">                funcId = FuncId(SnowflakeId(arg1.getString(&quot;func_id&quot;))),</span>
+<span class="fc" id="L52">                name = TriggerName(arg1.getString(&quot;name&quot;)),</span>
+<span class="fc" id="L53">                inputs = TriggerInputs(),</span>
+<span class="fc" id="L54">                duration = duration,</span>
+<span class="fc" id="L55">                topicId = topicId</span>
             )
 
-<span class="fc" id="L48">            val res = templateSupplier()</span>
-<span class="fc" id="L49">                .post(&quot;/v1/triggers&quot;)</span>
-<span class="fc" id="L50">                .body(r)</span>
-<span class="fc" id="L51">                .execute(ApiSubmittedReqWithId::class)</span>
+<span class="fc" id="L58">            val res = templateSupplier()</span>
+<span class="fc" id="L59">                .post(&quot;/v1/triggers&quot;)</span>
+<span class="fc" id="L60">                .body(r)</span>
+<span class="fc" id="L61">                .execute(ApiSubmittedReqWithId::class)</span>
 
-<span class="fc" id="L53">            return null to ctx.tableCreateMap(1).also {</span>
-<span class="fc" id="L54">                it[&quot;req_id&quot;] = res.reqId</span>
-<span class="fc" id="L55">                it[&quot;status&quot;] = res.status.name</span>
-<span class="fc" id="L56">                it[&quot;id&quot;] = res.id</span>
-<span class="fc" id="L57">            }</span>
+<span class="fc" id="L63">            return null to ctx.tableCreateMap(1).also {</span>
+<span class="fc" id="L64">                it[&quot;req_id&quot;] = res.reqId</span>
+<span class="fc" id="L65">                it[&quot;status&quot;] = res.status.name</span>
+<span class="fc" id="L66">                it[&quot;id&quot;] = res.id</span>
+<span class="fc" id="L67">            }</span>
 
-<span class="nc" id="L59">        } catch (t: Throwable) {</span>
-<span class="nc" id="L60">            t.printStackTrace()</span>
-<span class="nc" id="L61">            throw t</span>
+<span class="nc" id="L69">        } catch (t: Throwable) {</span>
+<span class="nc" id="L70">            t.printStackTrace()</span>
+<span class="nc" id="L71">            throw t</span>
         }
     }
 }

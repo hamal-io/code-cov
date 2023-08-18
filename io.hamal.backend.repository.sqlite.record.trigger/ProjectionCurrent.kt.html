@@ -76,8 +76,8 @@ internal object ProjectionCurrent : Projection&lt;TriggerId, TriggerRecord, Trig
 <span class="fc" id="L76">            set(&quot;id&quot;, obj.id)</span>
 <span class="fc" id="L77">            set(</span>
 <span class="fc" id="L78">                &quot;type&quot;, when (obj) {</span>
-<span class="pc bpc" id="L79" title="1 of 2 branches missed.">                    is FixedRateTrigger -&gt; TriggerType.FixedRate</span>
-<span class="nc" id="L80">                    is EventTrigger -&gt; TriggerType.Event</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">                    is FixedRateTrigger -&gt; TriggerType.FixedRate</span>
+<span class="fc" id="L80">                    is EventTrigger -&gt; TriggerType.Event</span>
 <span class="fc" id="L81">                }.value</span>
             )
 <span class="fc" id="L83">            set(&quot;data&quot;, protobuf.encodeToByteArray(Trigger.serializer(), obj))</span>
@@ -102,7 +102,7 @@ internal object ProjectionCurrent : Projection&lt;TriggerId, TriggerRecord, Trig
 <span class="fc" id="L102">    }</span>
 
     override fun invalidate() {
-<span class="nc" id="L105">    }</span>
+<span class="fc" id="L105">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -3,8 +3,8 @@
 import io.hamal.lib.kua.SandboxContext
 import io.hamal.lib.kua.StackTop
 import io.hamal.lib.kua.State
-import io.hamal.lib.kua.table.TableArray
-import io.hamal.lib.kua.table.TableMap
+import io.hamal.lib.kua.table.TableTypeArray
+import io.hamal.lib.kua.table.TableTypeMap
 import io.hamal.lib.kua.type.AnyType
 import io.hamal.lib.kua.type.ErrorType
 import io.hamal.lib.kua.type.TableType
@@ -39,16 +39,16 @@ import kotlin.reflect.KClass
 <span class="fc" id="L39">    override fun getString(idx: Int) = state.getString(idx)</span>
 <span class="fc" id="L40">    override fun pushString(value: String) = state.pushString(value)</span>
 <span class="nc" id="L41">    override fun pushTable(value: TableType) = state.pushTable(value)</span>
-<span class="nc" id="L42">    override fun pushTable(proxy: TableMap) = state.pushTable(proxy)</span>
-<span class="nc" id="L43">    override fun pushTable(proxy: TableArray) = state.pushTable(proxy)</span>
+<span class="nc" id="L42">    override fun pushTable(proxy: TableTypeMap) = state.pushTable(proxy)</span>
+<span class="nc" id="L43">    override fun pushTable(proxy: TableTypeArray) = state.pushTable(proxy)</span>
 <span class="nc" id="L44">    override fun getTable(idx: Int) = state.getTable(idx)</span>
 <span class="nc" id="L45">    override fun getTableMap(idx: Int) = state.getTableMap(idx)</span>
 <span class="nc" id="L46">    override fun getTableArray(idx: Int) = state.getTableArray(idx)</span>
 
 <span class="nc" id="L48">    override fun setGlobal(name: String, value: FunctionType&lt;*, *, *, *&gt;) = state.setGlobal(name, value)</span>
-<span class="fc" id="L49">    override fun setGlobal(name: String, value: TableMap) = state.setGlobal(name, value)</span>
-<span class="nc" id="L50">    override fun setGlobal(name: String, value: TableArray) = state.setGlobal(name, value)</span>
-<span class="fc" id="L51">    override fun getGlobalTableMap(name: String): TableMap = state.getGlobalTableMap(name)</span>
+<span class="fc" id="L49">    override fun setGlobal(name: String, value: TableTypeMap) = state.setGlobal(name, value)</span>
+<span class="nc" id="L50">    override fun setGlobal(name: String, value: TableTypeArray) = state.setGlobal(name, value)</span>
+<span class="fc" id="L51">    override fun getGlobalTableMap(name: String): TableTypeMap = state.getGlobalTableMap(name)</span>
 <span class="fc" id="L52">    override fun unsetGlobal(name: String) = state.unsetGlobal(name)</span>
 
 <span class="fc" id="L54">    override fun tableCreateMap(capacity: Int) = state.tableCreateMap(capacity)</span>
@@ -63,7 +63,7 @@ import kotlin.reflect.KClass
 <span class="fc" id="L63">    override fun load(code: String) = state.load(code)</span>
 
     override fun &lt;OBJ : Any&gt; get(clazz: KClass&lt;OBJ&gt;): OBJ {
-<span class="nc" id="L66">        return native.sandbox.ctx[clazz]</span>
+<span class="fc" id="L66">        return native.sandbox.ctx[clazz]</span>
     }
 }
 

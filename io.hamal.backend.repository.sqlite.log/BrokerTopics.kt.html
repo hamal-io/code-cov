@@ -76,7 +76,7 @@ import java.util.concurrent.ConcurrentHashMap
 <span class="fc bfc" id="L76" title="All 2 branches covered.">        }?.also { topicMapping[it.name] = it }</span>
 
     override fun find(id: TopicId): LogTopic? =
-<span class="pc bpc" id="L79" title="4 of 6 branches missed.">        topicMapping.values.find { it.id == id }</span>
+<span class="fc bfc" id="L79" title="All 6 branches covered.">        topicMapping.values.find { it.id == id }</span>
 <span class="fc" id="L80">            ?: connection.executeQueryOne(&quot;SELECT id,name FROM topics WHERE id = :id&quot;) {</span>
 <span class="fc" id="L81">                query {</span>
 <span class="fc" id="L82">                    set(&quot;id&quot;, id)</span>

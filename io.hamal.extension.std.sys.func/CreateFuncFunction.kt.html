@@ -11,18 +11,18 @@ import io.hamal.lib.kua.function.Function1In2Out
 import io.hamal.lib.kua.function.FunctionContext
 import io.hamal.lib.kua.function.FunctionInput1Schema
 import io.hamal.lib.kua.function.FunctionOutput2Schema
-import io.hamal.lib.kua.table.TableMap
+import io.hamal.lib.kua.table.TableTypeMap
 import io.hamal.lib.kua.type.ErrorType
 import io.hamal.lib.kua.type.StringType
 import io.hamal.lib.sdk.domain.ApiSubmittedReqWithId
 
 <span class="fc" id="L19">class CreateFuncFunction(</span>
 <span class="fc" id="L20">    private val templateSupplier: () -&gt; HttpTemplate</span>
-<span class="fc" id="L21">) : Function1In2Out&lt;TableMap, ErrorType, TableMap&gt;(</span>
-<span class="fc" id="L22">    FunctionInput1Schema(TableMap::class),</span>
-<span class="fc" id="L23">    FunctionOutput2Schema(ErrorType::class, TableMap::class)</span>
+<span class="fc" id="L21">) : Function1In2Out&lt;TableTypeMap, ErrorType, TableTypeMap&gt;(</span>
+<span class="fc" id="L22">    FunctionInput1Schema(TableTypeMap::class),</span>
+<span class="fc" id="L23">    FunctionOutput2Schema(ErrorType::class, TableTypeMap::class)</span>
 ) {
-    override fun invoke(ctx: FunctionContext, arg1: TableMap): Pair&lt;ErrorType?, TableMap&gt; {
+    override fun invoke(ctx: FunctionContext, arg1: TableTypeMap): Pair&lt;ErrorType?, TableTypeMap&gt; {
 <span class="fc" id="L26">        try {</span>
 <span class="fc bfc" id="L27" title="All 2 branches covered.">            val namespaceId = if (arg1.type(&quot;namespace_id&quot;) == StringType::class) {</span>
 <span class="fc" id="L28">                NamespaceId(SnowflakeId(arg1.getString(&quot;namespace_id&quot;)))</span>

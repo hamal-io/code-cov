@@ -6,7 +6,7 @@ import io.hamal.lib.kua.function.Function1In2Out
 import io.hamal.lib.kua.function.FunctionContext
 import io.hamal.lib.kua.function.FunctionInput1Schema
 import io.hamal.lib.kua.function.FunctionOutput2Schema
-import io.hamal.lib.kua.table.TableArray
+import io.hamal.lib.kua.table.TableTypeArray
 import io.hamal.lib.kua.type.ErrorType
 import io.hamal.lib.kua.type.NumberType
 import io.hamal.lib.kua.type.StringType
@@ -18,11 +18,11 @@ import io.hamal.lib.web3.hml.http.HmlHttpBatchService
 
 <span class="nc" id="L19">class HmlExecuteFunction(</span>
 <span class="nc" id="L20">    private val config: ExtensionConfig</span>
-<span class="nc" id="L21">) : Function1In2Out&lt;TableArray, ErrorType, TableArray&gt;(</span>
-<span class="nc" id="L22">    FunctionInput1Schema(TableArray::class),</span>
-<span class="nc" id="L23">    FunctionOutput2Schema(ErrorType::class, TableArray::class)</span>
+<span class="nc" id="L21">) : Function1In2Out&lt;TableTypeArray, ErrorType, TableTypeArray&gt;(</span>
+<span class="nc" id="L22">    FunctionInput1Schema(TableTypeArray::class),</span>
+<span class="nc" id="L23">    FunctionOutput2Schema(ErrorType::class, TableTypeArray::class)</span>
 ) {
-    override fun invoke(ctx: FunctionContext, arg1: TableArray): Pair&lt;ErrorType?, TableArray?&gt; {
+    override fun invoke(ctx: FunctionContext, arg1: TableTypeArray): Pair&lt;ErrorType?, TableTypeArray?&gt; {
 <span class="nc" id="L26">        try {</span>
 <span class="nc" id="L27">            val batchService = HmlHttpBatchService(HttpTemplate((config.value[&quot;host&quot;] as StringType).value))</span>
 <span class="nc" id="L28">            ctx.pushNil()</span>

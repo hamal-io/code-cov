@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Extension.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.runner.execute</a> &gt; <span class="el_source">Extension.kt</span></div><h1>Extension.kt</h1><pre class="source lang-java linenums">package io.hamal.runner.execute
+
+import io.hamal.lib.domain.vo.ExecId
+import io.hamal.lib.kua.extension.ScriptExtension
+import io.hamal.lib.kua.extension.ScriptExtensionFactory
+import io.hamal.lib.kua.type.StringType
+import io.hamal.runner.extension.ctx.function.EmitFunction
+
+<span class="fc" id="L9">class ExecutionContextFactory(</span>
+<span class="fc" id="L10">    private val executionContext: SandboxExecutionContext</span>
+) : ScriptExtensionFactory {
+    override fun create(): ScriptExtension {
+<span class="fc" id="L13">        return ScriptExtension(</span>
+<span class="fc" id="L14">            name = &quot;ctx&quot;,</span>
+<span class="fc" id="L15">            internals = mapOf(</span>
+<span class="fc" id="L16">                &quot;exec_id&quot; to StringType(executionContext[ExecId::class].value.value.toString(16)),</span>
+<span class="fc" id="L17">                &quot;emit&quot; to EmitFunction(executionContext)</span>
+            )
+        )
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
