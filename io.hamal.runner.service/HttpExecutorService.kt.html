@@ -5,7 +5,7 @@ import io.hamal.lib.sdk.HttpTemplateSupplier
 import io.hamal.runner.config.SandboxFactory
 import io.hamal.runner.connector.HttpConnector
 import io.hamal.runner.connector.UnitOfWork
-import io.hamal.runner.execute.DefaultExecutor
+import io.hamal.runner.run.DefaultCodeRunner
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler
@@ -25,7 +25,7 @@ import kotlin.time.toJavaDuration
 <span class="fc" id="L25">        val template = httpTemplateSupplier()</span>
 <span class="fc" id="L26">        val sdk = DefaultHamalSdk(template)</span>
 <span class="fc" id="L27">        val connector = HttpConnector(sdk)</span>
-<span class="fc" id="L28">        val execute = DefaultExecutor(connector, sandboxFactory)</span>
+<span class="fc" id="L28">        val execute = DefaultCodeRunner(connector, sandboxFactory)</span>
 <span class="fc" id="L29">        runnerExecutor.scheduleAtFixedRate({</span>
 <span class="fc" id="L30">            connector.poll().forEach { uow -&gt;</span>
 
