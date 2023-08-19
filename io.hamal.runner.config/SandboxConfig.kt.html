@@ -9,38 +9,40 @@ import io.hamal.lib.kua.NativeLoader
 import io.hamal.lib.kua.NativeLoader.Preference.Jar
 import io.hamal.lib.kua.Sandbox
 import io.hamal.lib.kua.SandboxContext
+import io.hamal.lib.sdk.DefaultHamalSdk
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 
-<span class="nc" id="L17">@Configuration</span>
+<span class="nc" id="L18">@Configuration</span>
 @Profile(&quot;!test&quot;)
-<span class="nc" id="L19">class SandboxConfig {</span>
+<span class="nc" id="L20">class SandboxConfig {</span>
     @Bean
     fun sandboxFactory(
         @Value(&quot;\${io.hamal.runner.host}&quot;) host: String
-<span class="nc" id="L23">    ): SandboxFactory = RunnerSandboxFactory(host)</span>
+<span class="nc" id="L24">    ): SandboxFactory = RunnerSandboxFactory(host)</span>
 }
 
 interface SandboxFactory {
     fun create(ctx: SandboxContext): Sandbox
 }
 
-<span class="nc" id="L30">class RunnerSandboxFactory(</span>
-<span class="nc" id="L31">    val instanceHost: String</span>
+<span class="nc" id="L31">class RunnerSandboxFactory(</span>
+<span class="nc" id="L32">    val instanceHost: String</span>
 ) : SandboxFactory {
     override fun create(ctx: SandboxContext): Sandbox {
-<span class="nc" id="L34">        NativeLoader.load(Jar)</span>
+<span class="nc" id="L35">        NativeLoader.load(Jar)</span>
 
-<span class="nc" id="L36">        val template = HttpTemplate(instanceHost) // FIXME sdk instead</span>
+<span class="nc" id="L37">        val template = HttpTemplate(instanceHost) // FIXME sdk instead</span>
+<span class="nc" id="L38">        val sdk = DefaultHamalSdk(template)</span>
 
-<span class="nc" id="L38">        return Sandbox(ctx).also {</span>
-<span class="nc" id="L39">            it.register(LogExtensionFactory { template }.create())</span>
-<span class="nc" id="L40">            it.register(SysExtensionFactory { template }.create())</span>
-<span class="nc" id="L41">            it.register(EthExtensionFactory().create())</span>
-<span class="nc" id="L42">            it.register(HmlExtensionFactory().create())</span>
-<span class="nc" id="L43">        }</span>
+<span class="nc" id="L40">        return Sandbox(ctx).also {</span>
+<span class="nc" id="L41">            it.register(LogExtensionFactory(sdk.execLogService).create())</span>
+<span class="nc" id="L42">            it.register(SysExtensionFactory { template }.create())</span>
+<span class="nc" id="L43">            it.register(EthExtensionFactory().create())</span>
+<span class="nc" id="L44">            it.register(HmlExtensionFactory().create())</span>
+<span class="nc" id="L45">        }</span>
     }
 
 }

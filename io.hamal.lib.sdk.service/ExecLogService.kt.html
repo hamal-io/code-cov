@@ -9,13 +9,14 @@ interface ExecLogService {
     fun append(execId: ExecId, cmd: AppendExecLogCmd)
 }
 
-<span class="nc" id="L12">class DefaultExecLogService(val template: HttpTemplate) : ExecLogService {</span>
+<span class="pc" id="L12">class DefaultExecLogService(val template: HttpTemplate) : ExecLogService {</span>
 
     override fun append(execId: ExecId, cmd: AppendExecLogCmd) {
 <span class="nc" id="L15">        template</span>
-<span class="nc" id="L16">            .post(&quot;/v1/execs/${execId.value.value}/logs&quot;)</span>
-<span class="nc" id="L17">            .body(cmd)</span>
-<span class="nc" id="L18">            .execute()</span>
-<span class="nc" id="L19">    }</span>
+<span class="nc" id="L16">            .post(&quot;/v1/execs/{execId}/logs&quot;)</span>
+<span class="nc" id="L17">            .path(&quot;execId&quot;, execId)</span>
+<span class="nc" id="L18">            .body(cmd)</span>
+<span class="nc" id="L19">            .execute()</span>
+<span class="nc" id="L20">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController
 ) {
     @GetMapping(&quot;/v1/exec-logs&quot;)
     fun getExecLogs(
-        @RequestParam(required = false, name = &quot;after_id&quot;, defaultValue = &quot;${Long.MAX_VALUE}&quot;) afterId: ExecLogId,
+        @RequestParam(required = false, name = &quot;after_id&quot;, defaultValue = &quot;7FFFFFFFFFFFFFFF&quot;) afterId: ExecLogId,
         @RequestParam(required = false, name = &quot;limit&quot;, defaultValue = &quot;100&quot;) limit: Limit
     ): ResponseEntity&lt;ApiExcLogList&gt; {
 <span class="nc" id="L22">        val logs = execLogQueryRepository.list {</span>

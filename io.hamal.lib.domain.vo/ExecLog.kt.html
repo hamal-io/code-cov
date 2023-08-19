@@ -22,8 +22,8 @@ import java.time.Instant
 <span class="nc" id="L22">    internal object Serializer : DomainIdSerializer&lt;ExecLogId&gt;(::ExecLogId)</span>
 }
 
-<span class="nc" id="L25">@Serializable(with = ExecLogMessage.Serializer::class)</span>
-<span class="nc" id="L26">data class ExecLogMessage(val value: String) {</span>
+<span class="pc" id="L25">@Serializable(with = ExecLogMessage.Serializer::class)</span>
+<span class="fc" id="L26">data class ExecLogMessage(val value: String) {</span>
     object Serializer : KSerializer&lt;ExecLogMessage&gt; {
 <span class="nc" id="L28">        override val descriptor = PrimitiveSerialDescriptor(&quot;LogMessage&quot;, PrimitiveKind.STRING)</span>
 <span class="nc" id="L29">        override fun deserialize(decoder: Decoder) = ExecLogMessage(decoder.decodeString())</span>
@@ -34,10 +34,10 @@ import java.time.Instant
 }
 
 @Serializable(with = LocalAt.Serializer::class)
-<span class="nc" id="L37">class LocalAt(override val value: Instant) : DomainAt() {</span>
+<span class="pc" id="L37">class LocalAt(override val value: Instant) : DomainAt() {</span>
 <span class="nc" id="L38">    companion object {</span>
         @JvmStatic
-<span class="nc" id="L40">        fun now(): LocalAt = LocalAt(TimeUtils.now())</span>
+<span class="fc" id="L40">        fun now(): LocalAt = LocalAt(TimeUtils.now())</span>
     }
 
 <span class="nc" id="L43">    internal object Serializer : DomainAtSerializer&lt;LocalAt&gt;(::LocalAt)</span>
