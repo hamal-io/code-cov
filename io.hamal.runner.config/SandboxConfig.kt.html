@@ -37,13 +37,12 @@ interface SandboxFactory {
 <span class="nc" id="L37">        val template = HttpTemplate(instanceHost) // FIXME sdk instead</span>
 <span class="nc" id="L38">        val sdk = DefaultHamalSdk(template)</span>
 
-<span class="nc" id="L40">        return Sandbox(ctx).also {</span>
-<span class="nc" id="L41">            it.register(LogExtensionFactory(sdk.execLogService).create())</span>
-<span class="nc" id="L42">            it.register(SysExtensionFactory { template }.create())</span>
-<span class="nc" id="L43">            it.register(EthExtensionFactory().create())</span>
-<span class="nc" id="L44">            it.register(HmlExtensionFactory().create())</span>
-<span class="nc" id="L45">        }</span>
+<span class="nc" id="L40">        return Sandbox(ctx).register(</span>
+<span class="nc" id="L41">            LogExtensionFactory(sdk.execLogService),</span>
+<span class="nc" id="L42">            SysExtensionFactory { template },</span>
+<span class="nc" id="L43">            EthExtensionFactory(),</span>
+<span class="nc" id="L44">            HmlExtensionFactory()</span>
+        )
     }
-
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

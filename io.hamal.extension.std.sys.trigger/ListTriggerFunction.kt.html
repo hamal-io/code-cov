@@ -4,7 +4,7 @@ import io.hamal.lib.http.HttpTemplate
 import io.hamal.lib.kua.function.Function0In2Out
 import io.hamal.lib.kua.function.FunctionContext
 import io.hamal.lib.kua.function.FunctionOutput2Schema
-import io.hamal.lib.kua.table.TableTypeArray
+import io.hamal.lib.kua.table.TableProxyArray
 import io.hamal.lib.kua.type.ErrorType
 import io.hamal.lib.sdk.domain.ApiSimpleEventTrigger
 import io.hamal.lib.sdk.domain.ApiSimpleFixedRateTrigger
@@ -13,10 +13,10 @@ import io.hamal.lib.sdk.domain.ApiTriggerList
 
 <span class="fc" id="L14">class ListTriggerFunction(</span>
 <span class="fc" id="L15">    private val templateSupplier: () -&gt; HttpTemplate</span>
-<span class="fc" id="L16">) : Function0In2Out&lt;ErrorType, TableTypeArray&gt;(</span>
-<span class="fc" id="L17">    FunctionOutput2Schema(ErrorType::class, TableTypeArray::class)</span>
+<span class="fc" id="L16">) : Function0In2Out&lt;ErrorType, TableProxyArray&gt;(</span>
+<span class="fc" id="L17">    FunctionOutput2Schema(ErrorType::class, TableProxyArray::class)</span>
 ) {
-    override fun invoke(ctx: FunctionContext): Pair&lt;ErrorType?, TableTypeArray?&gt; {
+    override fun invoke(ctx: FunctionContext): Pair&lt;ErrorType?, TableProxyArray?&gt; {
 <span class="fc" id="L20">        val triggers = try {</span>
 <span class="fc" id="L21">            templateSupplier()</span>
 <span class="fc" id="L22">                .get(&quot;/v1/triggers&quot;)</span>

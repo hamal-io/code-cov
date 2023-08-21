@@ -8,17 +8,17 @@ import io.hamal.lib.kua.function.Function1In2Out
 import io.hamal.lib.kua.function.FunctionContext
 import io.hamal.lib.kua.function.FunctionInput1Schema
 import io.hamal.lib.kua.function.FunctionOutput2Schema
-import io.hamal.lib.kua.table.TableTypeMap
+import io.hamal.lib.kua.table.TableProxyMap
 import io.hamal.lib.kua.type.ErrorType
 import io.hamal.lib.sdk.domain.ApiSubmittedReqWithId
 
 <span class="fc" id="L15">class CreateTopicFunction(</span>
 <span class="fc" id="L16">    private val templateSupplier: () -&gt; HttpTemplate</span>
-<span class="fc" id="L17">) : Function1In2Out&lt;TableTypeMap, ErrorType, TableTypeMap&gt;(</span>
-<span class="fc" id="L18">    FunctionInput1Schema(TableTypeMap::class),</span>
-<span class="fc" id="L19">    FunctionOutput2Schema(ErrorType::class, TableTypeMap::class)</span>
+<span class="fc" id="L17">) : Function1In2Out&lt;TableProxyMap, ErrorType, TableProxyMap&gt;(</span>
+<span class="fc" id="L18">    FunctionInput1Schema(TableProxyMap::class),</span>
+<span class="fc" id="L19">    FunctionOutput2Schema(ErrorType::class, TableProxyMap::class)</span>
 ) {
-    override fun invoke(ctx: FunctionContext, arg1: TableTypeMap): Pair&lt;ErrorType?, TableTypeMap&gt; {
+    override fun invoke(ctx: FunctionContext, arg1: TableProxyMap): Pair&lt;ErrorType?, TableProxyMap&gt; {
 <span class="fc" id="L22">        try {</span>
 <span class="fc" id="L23">            val r = CreateTopicReq(</span>
 <span class="fc" id="L24">                name = TopicName(arg1.getString(&quot;name&quot;)),</span>

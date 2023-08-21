@@ -5,22 +5,21 @@ import io.hamal.lib.kua.SandboxContext
 import kotlin.reflect.KClass
 
 <span class="fc" id="L7">class RunnerSandboxContext : SandboxContext {</span>
-
-<span class="fc" id="L9">    val emittedEvents get() : List&lt;Event&gt; = eventsToEmit</span>
+<span class="fc" id="L8">    val runnerEmittedEvents get() : List&lt;Event&gt; = eventsToEmit</span>
 
     operator fun &lt;OBJ : Any&gt; set(clazz: KClass&lt;OBJ&gt;, obj: OBJ) {
-<span class="fc" id="L12">        store[clazz] = obj</span>
-<span class="fc" id="L13">    }</span>
+<span class="fc" id="L11">        store[clazz] = obj</span>
+<span class="fc" id="L12">    }</span>
 
     override operator fun &lt;OBJ : Any&gt; get(clazz: KClass&lt;OBJ&gt;): OBJ {
-<span class="fc" id="L16">        return store[clazz] as OBJ</span>
+<span class="fc" id="L15">        return store[clazz] as OBJ</span>
     }
 
     fun emit(evt: Event) {
-<span class="fc" id="L20">        eventsToEmit.add(evt)</span>
-<span class="fc" id="L21">    }</span>
+<span class="fc" id="L19">        eventsToEmit.add(evt)</span>
+<span class="fc" id="L20">    }</span>
 
-<span class="fc" id="L23">    private val store = mutableMapOf&lt;KClass&lt;*&gt;, Any&gt;()</span>
-<span class="fc" id="L24">    private val eventsToEmit = mutableListOf&lt;Event&gt;()</span>
+<span class="fc" id="L22">    private val store = mutableMapOf&lt;KClass&lt;*&gt;, Any&gt;()</span>
+<span class="fc" id="L23">    private val eventsToEmit = mutableListOf&lt;Event&gt;()</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

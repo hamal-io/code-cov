@@ -4,6 +4,7 @@ import io.hamal.lib.domain._enum.ExecLogLevel
 import io.hamal.lib.domain.vo.ExecId
 import io.hamal.lib.domain.vo.ExecLogMessage
 import io.hamal.lib.domain.vo.LocalAt
+import io.hamal.lib.kua.Sandbox
 import io.hamal.lib.kua.extension.ScriptExtension
 import io.hamal.lib.kua.extension.ScriptExtensionFactory
 import io.hamal.lib.kua.function.Function2In1Out
@@ -17,47 +18,47 @@ import io.hamal.lib.sdk.service.ExecLogService
 import logger
 
 
-<span class="fc" id="L20">val log = logger(LogFunction::class)</span>
+<span class="fc" id="L21">val log = logger(LogFunction::class)</span>
 
-<span class="fc" id="L22">class LogExtensionFactory(</span>
-<span class="fc" id="L23">    private val execLogService: ExecLogService</span>
+<span class="fc" id="L23">class LogExtensionFactory(</span>
+<span class="fc" id="L24">    private val execLogService: ExecLogService</span>
 ) : ScriptExtensionFactory {
-    override fun create(): ScriptExtension {
-<span class="fc" id="L26">        return ScriptExtension(</span>
-<span class="fc" id="L27">            name = &quot;log&quot;,</span>
-<span class="fc" id="L28">            internals = mapOf(</span>
-<span class="fc" id="L29">                &quot;log&quot; to LogFunction(execLogService),</span>
+    override fun create(sandbox: Sandbox): ScriptExtension {
+<span class="fc" id="L27">        return ScriptExtension(</span>
+<span class="fc" id="L28">            name = &quot;log&quot;,</span>
+<span class="fc" id="L29">            internals = mapOf(</span>
+<span class="fc" id="L30">                &quot;log&quot; to LogFunction(execLogService),</span>
             )
         )
     }
 }
 
-<span class="fc" id="L35">class LogFunction(</span>
+<span class="fc" id="L36">class LogFunction(</span>
 //    private val templateSupplier: HttpTemplateSupplier
-<span class="fc" id="L37">    private val execLogService: ExecLogService</span>
-<span class="fc" id="L38">) : Function2In1Out&lt;StringType, StringType, ErrorType&gt;(</span>
-<span class="fc" id="L39">    FunctionInput2Schema(StringType::class, StringType::class),</span>
-<span class="fc" id="L40">    FunctionOutput1Schema(ErrorType::class)</span>
+<span class="fc" id="L38">    private val execLogService: ExecLogService</span>
+<span class="fc" id="L39">) : Function2In1Out&lt;StringType, StringType, ErrorType&gt;(</span>
+<span class="fc" id="L40">    FunctionInput2Schema(StringType::class, StringType::class),</span>
+<span class="fc" id="L41">    FunctionOutput1Schema(ErrorType::class)</span>
 ) {
 
     override fun invoke(ctx: FunctionContext, arg1: StringType, arg2: StringType): ErrorType? {
-<span class="fc" id="L44">        val level = ExecLogLevel.valueOf(arg1.value)</span>
-<span class="fc" id="L45">        val message = ExecLogMessage(arg2.value)</span>
+<span class="fc" id="L45">        val level = ExecLogLevel.valueOf(arg1.value)</span>
+<span class="fc" id="L46">        val message = ExecLogMessage(arg2.value)</span>
 
-<span class="fc bfc" id="L47" title="All 2 branches covered.">        if (level == ExecLogLevel.Info) {</span>
-<span class="fc" id="L48">            log.info(message.value)</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">        if (level == ExecLogLevel.Info) {</span>
+<span class="fc" id="L49">            log.info(message.value)</span>
         }
 
-<span class="fc" id="L51">        execLogService.append(</span>
-<span class="fc" id="L52">            ctx[ExecId::class],</span>
-<span class="fc" id="L53">            AppendExecLogCmd(</span>
-<span class="fc" id="L54">                level = level,</span>
-<span class="fc" id="L55">                message = message,</span>
-<span class="fc" id="L56">                localAt = LocalAt.now()</span>
+<span class="fc" id="L52">        execLogService.append(</span>
+<span class="fc" id="L53">            ctx[ExecId::class],</span>
+<span class="fc" id="L54">            AppendExecLogCmd(</span>
+<span class="fc" id="L55">                level = level,</span>
+<span class="fc" id="L56">                message = message,</span>
+<span class="fc" id="L57">                localAt = LocalAt.now()</span>
             )
         )
 
-<span class="fc" id="L60">        return null</span>
+<span class="fc" id="L61">        return null</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

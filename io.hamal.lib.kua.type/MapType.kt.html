@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MapType.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.kua.type</a> &gt; <span class="el_source">MapType.kt</span></div><h1>MapType.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.kua.type
+
+import io.hamal.lib.common.SnowflakeId
+import io.hamal.lib.common.domain.DomainId
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.MapSerializer
+import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import kotlin.reflect.KClass
+
+<span class="pc bnc" id="L15" title="All 9 branches missed.">@Serializable</span>
+<span class="fc" id="L16">data class MapType(</span>
+<span class="fc" id="L17">    @Serializable(with = Serializer::class)</span>
+<span class="pc bnc" id="L18" title="All 4 branches missed.">    val entries: MutableMap&lt;String, SerializableType&gt; = mutableMapOf(),</span>
+) : SerializableType {
+
+<span class="fc" id="L21">    val size get() = entries.size</span>
+
+<span class="nc bnc" id="L23" title="All 2 branches missed.">    operator fun get(key: String): SerializableType = entries[key] ?: NilType</span>
+
+<span class="nc" id="L25">    fun unset(key: StringType) = unset(key.value)</span>
+<span class="nc" id="L26">    operator fun set(key: String, value: NilType) = unset(key)</span>
+<span class="nc" id="L27">    operator fun set(key: StringType, value: NilType) = unset(key.value)</span>
+    fun unset(key: String): Int {
+<span class="nc" id="L29">        entries.remove(key)</span>
+<span class="nc" id="L30">        return size</span>
+    }
+
+<span class="nc" id="L33">    fun getBooleanValue(key: StringType) = getBooleanValue(key.value)</span>
+<span class="nc" id="L34">    fun getBoolean(key: String): Boolean = getBooleanValue(key).value</span>
+<span class="nc" id="L35">    fun getBoolean(key: StringType): Boolean = getBoolean(key.value)</span>
+    fun getBooleanValue(key: String): BooleanType {
+<span class="nc" id="L37">        checkExpectedType(key, BooleanType::class)</span>
+<span class="nc" id="L38">        return entries[key]!! as BooleanType</span>
+    }
+
+<span class="nc" id="L41">    operator fun set(key: StringType, value: BooleanType) = set(key, value.value)</span>
+<span class="nc" id="L42">    operator fun set(key: StringType, value: Boolean) = set(key.value, booleanOf(value))</span>
+<span class="nc" id="L43">    operator fun set(key: String, value: Boolean) = set(key, booleanOf(value))</span>
+    operator fun set(key: String, value: BooleanType): Int {
+<span class="nc" id="L45">        entries[key] = value</span>
+<span class="nc" id="L46">        return size</span>
+    }
+
+
+<span class="nc" id="L50">    operator fun set(key: StringType, value: CodeType) = set(key.value, value)</span>
+    operator fun set(key: String, value: CodeType): Int {
+<span class="fc" id="L52">        entries[key] = value</span>
+<span class="fc" id="L53">        return size</span>
+    }
+
+<span class="fc" id="L56">    operator fun set(key: String, value: DomainId) = set(key, value.value.value.toString(16))</span>
+<span class="nc" id="L57">    operator fun set(key: StringType, value: DomainId) = set(key.value, value.value.value.toString(16))</span>
+<span class="fc" id="L58">    operator fun set(key: String, value: SnowflakeId) = set(key, value.value.toString(16))</span>
+<span class="nc" id="L59">    operator fun set(key: StringType, value: SnowflakeId) = set(key.value, value.value.toString(16))</span>
+
+<span class="nc" id="L61">    fun getInt(key: String): Int = getNumberValue(key).value.toInt()</span>
+<span class="nc" id="L62">    fun getInt(key: StringType) = getInt(key.value)</span>
+<span class="nc" id="L63">    fun getLong(key: String): Long = getNumberValue(key).value.toLong()</span>
+<span class="nc" id="L64">    fun getLong(key: StringType): Long = getLong(key.value)</span>
+<span class="nc" id="L65">    fun getFloat(key: String): Float = getNumberValue(key).value.toFloat()</span>
+<span class="nc" id="L66">    fun getFloat(key: StringType): Float = getFloat(key.value)</span>
+<span class="nc" id="L67">    fun getDouble(key: String): Double = getNumberValue(key).value</span>
+<span class="nc" id="L68">    fun getDouble(key: StringType): Double = getDouble(key.value)</span>
+<span class="nc" id="L69">    fun getNumberValue(key: StringType): NumberType = getNumberValue(key.value)</span>
+    fun getNumberValue(key: String): NumberType {
+<span class="nc" id="L71">        checkExpectedType(key, NumberType::class)</span>
+<span class="nc" id="L72">        return entries[key]!! as NumberType</span>
+    }
+
+<span class="nc" id="L75">    operator fun set(key: String, value: Int) = set(key, value.toDouble())</span>
+<span class="nc" id="L76">    operator fun set(key: String, value: Long) = set(key, value.toDouble())</span>
+<span class="nc" id="L77">    operator fun set(key: String, value: Float) = set(key, value.toDouble())</span>
+<span class="nc" id="L78">    operator fun set(key: String, value: Double) = set(key, NumberType(value))</span>
+<span class="nc" id="L79">    operator fun set(key: StringType, value: NumberType) = set(key.value, value.value)</span>
+    operator fun set(key: String, value: NumberType): Int {
+<span class="nc" id="L81">        entries[key] = value</span>
+<span class="nc" id="L82">        return size</span>
+    }
+
+    operator fun set(key: String, value: MapType): Int {
+<span class="fc" id="L86">        entries[key] = value</span>
+<span class="fc" id="L87">        return size</span>
+    }
+
+<span class="nc" id="L90">    fun getStringValue(key: StringType) = getStringValue(key.value)</span>
+<span class="fc" id="L91">    fun getString(key: String): String = getStringValue(key).value</span>
+<span class="nc" id="L92">    fun getString(key: StringType): String = getString(key.value)</span>
+    fun getStringValue(key: String): StringType {
+<span class="fc" id="L94">        checkExpectedType(key, StringType::class)</span>
+<span class="fc" id="L95">        return entries[key]!! as StringType</span>
+    }
+
+<span class="fc" id="L98">    operator fun set(key: String, value: String) = set(key, StringType(value))</span>
+<span class="nc" id="L99">    operator fun set(key: StringType, value: StringType) = set(key.value, value.value)</span>
+    operator fun set(key: String, value: StringType): Int {
+<span class="fc" id="L101">        entries[key] = value</span>
+<span class="fc" id="L102">        return size</span>
+    }
+
+    fun type(key: String): KClass&lt;out Type&gt; {
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">        return entries[key]?.let { it::class } ?: NilType::class</span>
+    }
+
+    object Serializer : KSerializer&lt;MutableMap&lt;String, SerializableType&gt;&gt; {
+<span class="fc" id="L110">        private val delegate = MapSerializer(String.serializer(), SerializableType.serializer())</span>
+
+        @OptIn(ExperimentalSerializationApi::class)
+<span class="fc" id="L113">        override val descriptor = SerialDescriptor(&quot;MapType&quot;, delegate.descriptor)</span>
+
+        override fun deserialize(decoder: Decoder): MutableMap&lt;String, SerializableType&gt; {
+<span class="nc" id="L116">            return delegate.deserialize(decoder).toMutableMap()</span>
+        }
+
+        override fun serialize(encoder: Encoder, value: MutableMap&lt;String, SerializableType&gt;) {
+<span class="nc" id="L120">            return delegate.serialize(encoder, value)</span>
+        }
+    }
+<span class="fc" id="L123">}</span>
+
+internal fun MapType.checkExpectedType(key: String, expected: KClass&lt;out Type&gt;) {
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">    check(type(key) == expected) {</span>
+<span class="nc" id="L127">        &quot;Expected type to be $expected but was $this&quot;</span>
+    }
+<span class="fc" id="L129">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TableMap.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.kua.table</a> &gt; <span class="el_source">TableMap.kt</span></div><h1>TableMap.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.kua.table
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TableProxyMap.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.kua.table</a> &gt; <span class="el_source">TableProxyMap.kt</span></div><h1>TableProxyMap.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.kua.table
 
 import io.hamal.lib.common.SnowflakeId
 import io.hamal.lib.common.domain.DomainId
@@ -7,7 +7,7 @@ import io.hamal.lib.kua.type.*
 import kotlin.reflect.KClass
 
 //FIXME fix this interface
-interface TableTypeMap : TableProxy {
+interface TableProxyMap : TableProxy {
     fun unset(key: String): Int
 <span class="nc" id="L12">    fun unset(key: StringType) = unset(key.value)</span>
 <span class="nc" id="L13">    operator fun set(key: String, value: NilType) = unset(key)</span>
@@ -25,7 +25,7 @@ interface TableTypeMap : TableProxy {
 <span class="nc" id="L25">    operator fun set(key: String, value: Float) = set(key, value.toDouble())</span>
     operator fun set(key: String, value: Double): Int
 <span class="nc" id="L27">    operator fun set(key: String, value: NumberType) = set(key, value.value)</span>
-<span class="nc" id="L28">    operator fun set(key: StringType, value: NumberType) = set(key.value, value.value)</span>
+<span class="fc" id="L28">    operator fun set(key: StringType, value: NumberType) = set(key.value, value.value)</span>
 
 <span class="fc" id="L30">    operator fun set(key: String, value: DomainId) = set(key, value.value.value.toString(16))</span>
 <span class="nc" id="L31">    operator fun set(key: StringType, value: DomainId) = set(key.value, value.value.value.toString(16))</span>
@@ -34,13 +34,13 @@ interface TableTypeMap : TableProxy {
 
     operator fun set(key: String, value: String): Int
 <span class="fc" id="L36">    operator fun set(key: String, value: StringType) = set(key, value.value)</span>
-<span class="nc" id="L37">    operator fun set(key: StringType, value: StringType) = set(key.value, value.value)</span>
+<span class="fc" id="L37">    operator fun set(key: StringType, value: StringType) = set(key.value, value.value)</span>
 
     operator fun set(key: String, value: FunctionType&lt;*, *, *, *&gt;): Int
 <span class="nc" id="L40">    operator fun set(key: StringType, value: FunctionType&lt;*, *, *, *&gt;) = set(key.value, value)</span>
 
-    operator fun set(key: String, value: TableTypeMap): Int
-    operator fun set(key: String, value: TableTypeArray): Int
+    operator fun set(key: String, value: TableProxyMap): Int
+    operator fun set(key: String, value: TableProxyArray): Int
 
     fun getBooleanValue(key: String): BooleanType
 <span class="nc" id="L46">    fun getBooleanValue(key: StringType): BooleanType = getBooleanValue(key.value)</span>
@@ -66,7 +66,7 @@ interface TableTypeMap : TableProxy {
 <span class="fc" id="L66">    fun getString(key: String): String = getStringValue(key).value</span>
 <span class="nc" id="L67">    fun getString(key: StringType): String = getString(key.value)</span>
 
-    fun getTableMap(key: String): TableTypeMap
+    fun getTableMap(key: String): TableProxyMap
 
     fun type(key: String): KClass&lt;out Type&gt;
 }

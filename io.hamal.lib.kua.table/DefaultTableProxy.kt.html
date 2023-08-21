@@ -23,7 +23,7 @@ interface TableProxy : Type {
 <span class="fc" id="L23">    override val index: Int,</span>
 <span class="pc" id="L24">    val state: State,</span>
 <span class="pc" id="L25">    override val mode: TableProxy.Mode</span>
-) : TableTypeMap, TableTypeArray {
+) : TableProxyMap, TableProxyArray {
 
     override fun unset(key: String): Int {
 <span class="nc" id="L29">        native.pushString(key)</span>
@@ -39,9 +39,9 @@ interface TableProxy : Type {
 
 
     override fun set(key: String, value: Double): Int {
-<span class="nc" id="L42">        native.pushString(key)</span>
-<span class="nc" id="L43">        native.pushNumber(value)</span>
-<span class="nc" id="L44">        return state.tableSetRaw(index)</span>
+<span class="fc" id="L42">        native.pushString(key)</span>
+<span class="fc" id="L43">        native.pushNumber(value)</span>
+<span class="fc" id="L44">        return state.tableSetRaw(index)</span>
     }
 
     override fun set(key: String, value: String): Int {
@@ -56,16 +56,16 @@ interface TableProxy : Type {
 <span class="fc" id="L56">        return state.tableSetRaw(index)</span>
     }
 
-    override fun set(key: String, value: TableTypeMap): Int {
+    override fun set(key: String, value: TableProxyMap): Int {
 <span class="fc" id="L60">        state.pushString(key)</span>
 <span class="fc" id="L61">        state.pushTable(value)</span>
 <span class="fc" id="L62">        return state.tableSetRaw(index)</span>
     }
 
-    override fun set(key: String, value: TableTypeArray): Int {
-<span class="nc" id="L66">        state.pushString(key)</span>
-<span class="nc" id="L67">        state.pushTable(value)</span>
-<span class="nc" id="L68">        return state.tableSetRaw(index)</span>
+    override fun set(key: String, value: TableProxyArray): Int {
+<span class="fc" id="L66">        state.pushString(key)</span>
+<span class="fc" id="L67">        state.pushTable(value)</span>
+<span class="fc" id="L68">        return state.tableSetRaw(index)</span>
     }
 
     override fun getBooleanValue(key: String): BooleanType {
@@ -96,7 +96,7 @@ interface TableProxy : Type {
 <span class="fc" id="L96">        return StringType(native.toString(state.top.value)).also { native.pop(1) }</span>
     }
 
-    override fun getTableMap(key: String): TableTypeMap {
+    override fun getTableMap(key: String): TableProxyMap {
 <span class="nc" id="L100">        state.pushString(key)</span>
 <span class="nc" id="L101">        val type = state.tableGetRaw(index)</span>
 <span class="nc" id="L102">        type.checkExpectedType(TableType::class)</span>
@@ -125,12 +125,12 @@ interface TableProxy : Type {
 <span class="fc" id="L125">        return state.tableAppend(index)</span>
     }
 
-    override fun append(value: TableTypeMap): Int {
+    override fun append(value: TableProxyMap): Int {
 <span class="fc" id="L129">        state.pushTable(value)</span>
 <span class="fc" id="L130">        return state.tableAppend(index)</span>
     }
 
-    override fun append(value: TableTypeArray): Int {
+    override fun append(value: TableProxyArray): Int {
 <span class="nc" id="L134">        state.pushTable(value)</span>
 <span class="nc" id="L135">        return state.tableAppend(index)</span>
     }
@@ -148,13 +148,13 @@ interface TableProxy : Type {
     override fun getNumberValue(idx: Int): NumberType {
 <span class="fc" id="L149">        val type = state.tableGetRawIdx(index, idx)</span>
 <span class="fc" id="L150">        type.checkExpectedType(NumberType::class)</span>
-<span class="fc" id="L151">        return state.getNumberValue(-1)</span>
+<span class="fc" id="L151">        return state.getNumberType(-1)</span>
     }
 
     override fun getStringValue(idx: Int): StringType {
 <span class="fc" id="L155">        val type = state.tableGetRawIdx(index, idx)</span>
 <span class="fc" id="L156">        type.checkExpectedType(StringType::class)</span>
-<span class="fc" id="L157">        return state.getStringValue(-1)</span>
+<span class="fc" id="L157">        return state.getStringType(-1)</span>
     }
 
 <span class="fc" id="L160">    private val native = state.native</span>

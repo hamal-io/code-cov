@@ -45,8 +45,8 @@ internal object BuildDirLoader : Loader {
 <span class="nc" id="L45">        return once {</span>
 <span class="nc" id="L46">            val baseDir = System.getProperty(&quot;user.dir&quot;)</span>
 <span class="nc" id="L47">            try {</span>
-<span class="nc" id="L48">                System.load(&quot;$baseDir/lib/kua/native/cmake-build-debug/lua/liblua.so&quot;)</span>
-<span class="nc" id="L49">                System.load(&quot;$baseDir/lib/kua/native/cmake-build-debug/kua/libkua.so&quot;)</span>
+<span class="nc" id="L48">                System.load(&quot;$baseDir/lib/kua/native/cmake-build-debug/lua/$luaFile&quot;)</span>
+<span class="nc" id="L49">                System.load(&quot;$baseDir/lib/kua/native/cmake-build-debug/kua/$kuaFile&quot;)</span>
 <span class="nc" id="L50">                true</span>
 <span class="nc" id="L51">            } catch (t: Throwable) {</span>
 <span class="nc" id="L52">                false</span>
@@ -67,11 +67,11 @@ internal object ResourcesLoader : Loader {
     override fun load(): Boolean {
 <span class="fc" id="L68">        return once {</span>
 <span class="fc" id="L69">            val classloader = Thread.currentThread().contextClassLoader</span>
-<span class="fc" id="L70">            val result = classloader.getResource(&quot;./liblua.so&quot;)</span>
+<span class="fc" id="L70">            val result = classloader.getResource(&quot;./$luaFile&quot;)</span>
 <span class="fc bfc" id="L71" title="All 2 branches covered.">                ?.let { System.load(it.file); true }</span>
 <span class="fc" id="L72">                ?: false</span>
 <span class="fc bfc" id="L73" title="All 2 branches covered.">            if (result) {</span>
-<span class="fc" id="L74">                classloader.getResource(&quot;./libkua.so&quot;)</span>
+<span class="fc" id="L74">                classloader.getResource(&quot;./${kuaFile}&quot;)</span>
 <span class="pc bpc" id="L75" title="1 of 2 branches missed.">                    ?.let { System.load(it.file); true }</span>
 <span class="nc" id="L76">                    ?: false</span>
             } else {
@@ -89,8 +89,8 @@ internal object JarLoader : Loader {
     override fun load(): Boolean {
 <span class="fc" id="L90">        return once {</span>
 <span class="fc" id="L91">            try {</span>
-<span class="fc" id="L92">                NativeUtils.loadLibraryFromJar(&quot;/liblua.so&quot;)</span>
-<span class="fc" id="L93">                NativeUtils.loadLibraryFromJar(&quot;/libkua.so&quot;)</span>
+<span class="fc" id="L92">                NativeUtils.loadLibraryFromJar(&quot;/$luaFile&quot;)</span>
+<span class="fc" id="L93">                NativeUtils.loadLibraryFromJar(&quot;/$kuaFile&quot;)</span>
 <span class="fc" id="L94">                true</span>
 <span class="nc" id="L95">            } catch (t: Throwable) {</span>
 <span class="pc" id="L96">                false</span>
@@ -100,5 +100,33 @@ internal object JarLoader : Loader {
 
     @JvmStatic
 <span class="fc" id="L102">    private val once = Once.default&lt;Boolean&gt;()</span>
+}
+
+<span class="fc" id="L105">private val kuaFile by lazy {</span>
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">    when (detectSystem()) {</span>
+<span class="fc" id="L107">        HostSystem.Linux64 -&gt; &quot;libkua.so&quot;</span>
+<span class="nc" id="L108">        HostSystem.MacArm64 -&gt; &quot;libkua.dylib&quot;</span>
+    }
+}
+
+<span class="fc" id="L112">private val luaFile by lazy {</span>
+<span class="pc bpc" id="L113" title="1 of 2 branches missed.">    when (detectSystem()) {</span>
+<span class="fc" id="L114">        HostSystem.Linux64 -&gt; &quot;liblua.so&quot;</span>
+<span class="nc" id="L115">        HostSystem.MacArm64 -&gt; &quot;liblua.dylib&quot;</span>
+    }
+}
+
+enum class HostSystem {
+<span class="fc" id="L120">    Linux64,</span>
+<span class="fc" id="L121">    MacArm64</span>
+}
+
+private fun detectSystem(): HostSystem {
+<span class="fc" id="L125">    val os = System.getProperty(&quot;os.name&quot;).lowercase()</span>
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">    return if (os.startsWith(&quot;mac&quot;)) {</span>
+<span class="nc" id="L127">        HostSystem.MacArm64</span>
+    } else {
+<span class="fc" id="L129">        HostSystem.Linux64</span>
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

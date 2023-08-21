@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TableProxyIterator.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.kua.table</a> &gt; <span class="el_source">TableProxyIterator.kt</span></div><h1>TableProxyIterator.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.kua.table
+
+import io.hamal.lib.kua.State
+import io.hamal.lib.kua.type.Type
+import kotlin.collections.Map.Entry
+
+<span class="fc" id="L7">class TableEntryIterator&lt;KEY : Type, TYPE : Type&gt;(</span>
+    index: Int,
+<span class="fc" id="L9">    val state: State,</span>
+<span class="fc" id="L10">    val keyExtractor: (State, Int) -&gt; KEY,</span>
+<span class="fc" id="L11">    val valueExtractor: (State, Int) -&gt; TYPE</span>
+) : Iterator&lt;Entry&lt;KEY, TYPE&gt;&gt; {
+
+<span class="fc" id="L14">    private val index = state.absIndex(index)</span>
+<span class="fc" id="L15">    private var hasNext: Boolean = true</span>
+    private var nextTableEntry: Entry&lt;KEY, TYPE&gt;? = null
+
+<span class="fc" id="L18">    init {</span>
+<span class="fc" id="L19">        state.pushNil()</span>
+<span class="fc" id="L20">    }</span>
+
+    override fun hasNext(): Boolean {
+<span class="fc" id="L23">        hasNext = state.native.tableNext(index)</span>
+<span class="fc bfc" id="L24" title="All 2 branches covered.">        return if (hasNext) {</span>
+<span class="fc" id="L25">            nextTableEntry = object : Entry&lt;KEY, TYPE&gt; {</span>
+<span class="fc" id="L26">                override val key = keyExtractor(state, state.absIndex(-2))</span>
+<span class="fc" id="L27">                override val value = valueExtractor(state, state.absIndex(-1))</span>
+            }
+<span class="fc" id="L29">            state.native.pop(1)</span>
+<span class="fc" id="L30">            true</span>
+        } else {
+<span class="fc" id="L32">            nextTableEntry = null</span>
+<span class="fc" id="L33">            false</span>
+        }
+    }
+
+    override fun next(): Entry&lt;KEY, TYPE&gt; {
+<span class="pc bpc" id="L38" title="1 of 2 branches missed.">        return nextTableEntry ?: throw NoSuchElementException(&quot;Iterator exhausted&quot;)</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

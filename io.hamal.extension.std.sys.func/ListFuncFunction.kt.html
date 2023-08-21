@@ -4,16 +4,16 @@ import io.hamal.lib.http.HttpTemplate
 import io.hamal.lib.kua.function.Function0In2Out
 import io.hamal.lib.kua.function.FunctionContext
 import io.hamal.lib.kua.function.FunctionOutput2Schema
-import io.hamal.lib.kua.table.TableTypeArray
+import io.hamal.lib.kua.table.TableProxyArray
 import io.hamal.lib.kua.type.ErrorType
 import io.hamal.lib.sdk.domain.ApiFuncList
 
 <span class="fc" id="L11">class ListFuncFunction(</span>
 <span class="fc" id="L12">    private val templateSupplier: () -&gt; HttpTemplate</span>
-<span class="fc" id="L13">) : Function0In2Out&lt;ErrorType, TableTypeArray&gt;(</span>
-<span class="fc" id="L14">    FunctionOutput2Schema(ErrorType::class, TableTypeArray::class)</span>
+<span class="fc" id="L13">) : Function0In2Out&lt;ErrorType, TableProxyArray&gt;(</span>
+<span class="fc" id="L14">    FunctionOutput2Schema(ErrorType::class, TableProxyArray::class)</span>
 ) {
-    override fun invoke(ctx: FunctionContext): Pair&lt;ErrorType?, TableTypeArray?&gt; {
+    override fun invoke(ctx: FunctionContext): Pair&lt;ErrorType?, TableProxyArray?&gt; {
 <span class="fc" id="L17">        val funcs = try {</span>
 <span class="fc" id="L18">            templateSupplier()</span>
 <span class="fc" id="L19">                .get(&quot;/v1/funcs&quot;)</span>

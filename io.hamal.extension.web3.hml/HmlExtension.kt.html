@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HmlExtension.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.extension.web3.hml</a> &gt; <span class="el_source">HmlExtension.kt</span></div><h1>HmlExtension.kt</h1><pre class="source lang-java linenums">package io.hamal.extension.web3.hml
 
+import io.hamal.lib.kua.Sandbox
 import io.hamal.lib.kua.extension.ExtensionConfig
 import io.hamal.lib.kua.extension.ScriptExtension
 import io.hamal.lib.kua.extension.ScriptExtensionFactory
 import io.hamal.lib.kua.type.StringType
 
-<span class="nc" id="L8">class HmlExtensionFactory : ScriptExtensionFactory {</span>
-<span class="nc" id="L9">    val config = ExtensionConfig(</span>
-<span class="nc" id="L10">        mutableMapOf(</span>
-<span class="nc" id="L11">            &quot;host&quot; to StringType(&quot;http://localhost:8000&quot;)</span>
+<span class="nc" id="L9">class HmlExtensionFactory : ScriptExtensionFactory {</span>
+<span class="nc" id="L10">    val config = ExtensionConfig(</span>
+<span class="nc" id="L11">        mutableMapOf(</span>
+<span class="nc" id="L12">            &quot;host&quot; to StringType(&quot;http://localhost:8000&quot;)</span>
         )
     )
 
-    override fun create(): ScriptExtension {
-<span class="nc" id="L16">        return ScriptExtension(</span>
-<span class="nc" id="L17">            name = &quot;web3.hml&quot;,</span>
-<span class="nc" id="L18">            config = config,</span>
-<span class="nc" id="L19">            internals = mapOf(</span>
-<span class="nc" id="L20">                &quot;execute&quot; to HmlExecuteFunction(config),</span>
+    override fun create(sandbox: Sandbox): ScriptExtension {
+<span class="nc" id="L17">        return ScriptExtension(</span>
+<span class="nc" id="L18">            name = &quot;web3.hml&quot;,</span>
+<span class="nc" id="L19">            config = config,</span>
+<span class="nc" id="L20">            internals = mapOf(</span>
+<span class="nc" id="L21">                &quot;execute&quot; to HmlExecuteFunction(config),</span>
             )
         )
     }

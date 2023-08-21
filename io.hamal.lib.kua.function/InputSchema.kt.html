@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InputSchema.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.kua.function</a> &gt; <span class="el_source">InputSchema.kt</span></div><h1>InputSchema.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.kua.function
 
 import io.hamal.lib.kua.table.DefaultTableProxy
-import io.hamal.lib.kua.table.TableTypeArray
-import io.hamal.lib.kua.table.TableTypeMap
 import io.hamal.lib.kua.table.TableProxy
-import io.hamal.lib.kua.type.AnyType
-import io.hamal.lib.kua.type.NumberType
-import io.hamal.lib.kua.type.StringType
-import io.hamal.lib.kua.type.Type
+import io.hamal.lib.kua.table.TableProxyArray
+import io.hamal.lib.kua.table.TableProxyMap
+import io.hamal.lib.kua.type.*
 import kotlin.reflect.KClass
 
 sealed interface FunctionInputSchema&lt;INPUT : FunctionInput&lt;*, *&gt;&gt; {
@@ -16,46 +13,48 @@ sealed interface FunctionInputSchema&lt;INPUT : FunctionInput&lt;*, *&gt;&gt; {
 }
 
 object FunctionInput0Schema : FunctionInputSchema&lt;FunctionInput0&gt; {
-<span class="nc" id="L19">    override val size = 0</span>
+<span class="nc" id="L16">    override val size = 0</span>
     override fun createInput(ctx: FunctionContext): FunctionInput0 {
-<span class="fc" id="L21">        return FunctionInput0</span>
+<span class="fc" id="L18">        return FunctionInput0</span>
     }
 }
 
-<span class="fc" id="L25">data class FunctionInput1Schema&lt;ARG_1 : Type&gt;(</span>
-<span class="pc" id="L26">    val arg1Class: KClass&lt;ARG_1&gt;</span>
+<span class="fc" id="L22">data class FunctionInput1Schema&lt;ARG_1 : Type&gt;(</span>
+<span class="pc" id="L23">    val arg1Class: KClass&lt;ARG_1&gt;</span>
 ) : FunctionInputSchema&lt;FunctionInput1&lt;ARG_1&gt;&gt; {
-<span class="pc" id="L28">    override val size = 1</span>
+<span class="pc" id="L25">    override val size = 1</span>
     override fun createInput(ctx: FunctionContext): FunctionInput1&lt;ARG_1&gt; {
-<span class="fc" id="L30">        return FunctionInput1(</span>
-<span class="fc" id="L31">            arg1Class.extract(ctx, 1)</span>
+<span class="fc" id="L27">        return FunctionInput1(</span>
+<span class="fc" id="L28">            arg1Class.extract(ctx, 1)</span>
         )
     }
 }
 
-<span class="fc" id="L36">data class FunctionInput2Schema&lt;ARG_1 : Type, ARG_2 : Type&gt;(</span>
-<span class="pc" id="L37">    val arg1Class: KClass&lt;ARG_1&gt;,</span>
-<span class="pc" id="L38">    val arg2Class: KClass&lt;ARG_2&gt;</span>
+<span class="fc" id="L33">data class FunctionInput2Schema&lt;ARG_1 : Type, ARG_2 : Type&gt;(</span>
+<span class="pc" id="L34">    val arg1Class: KClass&lt;ARG_1&gt;,</span>
+<span class="pc" id="L35">    val arg2Class: KClass&lt;ARG_2&gt;</span>
 ) : FunctionInputSchema&lt;FunctionInput2&lt;ARG_1, ARG_2&gt;&gt; {
-<span class="pc" id="L40">    override val size = 1</span>
+<span class="pc" id="L37">    override val size = 1</span>
     override fun createInput(ctx: FunctionContext): FunctionInput2&lt;ARG_1, ARG_2&gt; {
-<span class="fc" id="L42">        return FunctionInput2(</span>
-<span class="fc" id="L43">            arg1Class.extract(ctx, 1),</span>
-<span class="fc" id="L44">            arg2Class.extract(ctx, 2)</span>
+<span class="fc" id="L39">        return FunctionInput2(</span>
+<span class="fc" id="L40">            arg1Class.extract(ctx, 1),</span>
+<span class="fc" id="L41">            arg2Class.extract(ctx, 2)</span>
         )
     }
 }
 
 fun &lt;ARG : Type&gt; KClass&lt;ARG&gt;.extract(ctx: FunctionContext, idx: Int): ARG {
     @Suppress(&quot;UNCHECKED_CAST&quot;)
-<span class="fc" id="L51">    return when (this) {</span>
-<span class="fc bfc" id="L52" title="All 2 branches covered.">        AnyType::class -&gt; ctx.getAny(idx) as ARG</span>
-<span class="fc bfc" id="L53" title="All 2 branches covered.">        NumberType::class -&gt; ctx.getNumberValue(idx) as ARG</span>
-<span class="fc bfc" id="L54" title="All 2 branches covered.">        StringType::class -&gt; ctx.getStringValue(idx) as ARG</span>
-<span class="pc bpc" id="L55" title="1 of 2 branches missed.">        Type::class -&gt; TODO() //FIXME loads the entire table from lua -- maybe some form of readonly table value and table value is interface?!</span>
-<span class="fc bfc" id="L56" title="All 2 branches covered.">        TableTypeMap::class -&gt; DefaultTableProxy(idx, ctx.state, TableProxy.Mode.Map) as ARG</span>
-<span class="pc bpc" id="L57" title="1 of 2 branches missed.">        TableTypeArray::class -&gt; DefaultTableProxy(idx, ctx.state, TableProxy.Mode.Array) as ARG</span>
-<span class="nc" id="L58">        else -&gt; TODO()</span>
+<span class="fc" id="L48">    return when (this) {</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        AnyType::class -&gt; ctx.getAny(idx) as ARG</span>
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">        ArrayType::class -&gt; ctx.getArrayType(idx) as ARG</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        MapType::class -&gt; ctx.getMapType(idx) as ARG</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        NumberType::class -&gt; ctx.getNumberType(idx) as ARG</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        StringType::class -&gt; ctx.getStringType(idx) as ARG</span>
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">        Type::class -&gt; TODO() //FIXME loads the entire table from lua -- maybe some form of readonly table value and table value is interface?!</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        TableProxyMap::class -&gt; DefaultTableProxy(idx, ctx.state, TableProxy.Mode.Map) as ARG</span>
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">        TableProxyArray::class -&gt; DefaultTableProxy(idx, ctx.state, TableProxy.Mode.Array) as ARG</span>
+<span class="nc" id="L57">        else -&gt; TODO()</span>
     }
 }
 

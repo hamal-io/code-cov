@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OutputSchema.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.kua.function</a> &gt; <span class="el_source">OutputSchema.kt</span></div><h1>OutputSchema.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.kua.function
 
-import io.hamal.lib.kua.table.TableTypeArray
-import io.hamal.lib.kua.table.TableTypeMap
+import io.hamal.lib.kua.StackTop
+import io.hamal.lib.kua.table.TableProxyArray
+import io.hamal.lib.kua.table.TableProxyMap
 import io.hamal.lib.kua.type.*
 import kotlin.reflect.KClass
 
@@ -11,38 +12,67 @@ sealed interface FunctionOutputSchema&lt;OUTPUT : FunctionOutput&lt;*, *&gt;&gt;
 }
 
 object FunctionOutput0Schema : FunctionOutputSchema&lt;FunctionOutput0&gt; {
-<span class="nc" id="L14">    override val size = 0</span>
-<span class="fc" id="L15">    override fun pushResult(ctx: FunctionContext, output: FunctionOutput0) {}</span>
+<span class="nc" id="L15">    override val size = 0</span>
+<span class="fc" id="L16">    override fun pushResult(ctx: FunctionContext, output: FunctionOutput0) {}</span>
 }
 
-<span class="fc" id="L18">data class FunctionOutput1Schema&lt;ARG_1 : Type&gt;(</span>
-<span class="pc" id="L19">    val arg1: KClass&lt;ARG_1&gt;</span>
+<span class="fc" id="L19">data class FunctionOutput1Schema&lt;ARG_1 : Type&gt;(</span>
+<span class="pc" id="L20">    val arg1: KClass&lt;ARG_1&gt;</span>
 ) : FunctionOutputSchema&lt;FunctionOutput1&lt;ARG_1&gt;&gt; {
-<span class="pc" id="L21">    override val size = 1</span>
+<span class="pc" id="L22">    override val size = 1</span>
     override fun pushResult(ctx: FunctionContext, output: FunctionOutput1&lt;ARG_1&gt;) {
-<span class="fc bfc" id="L23" title="All 2 branches covered.">        ctx.push(output.arg1 ?: NilType)</span>
-<span class="fc" id="L24">    }</span>
+<span class="fc bfc" id="L24" title="All 2 branches covered.">        ctx.push(output.arg1 ?: NilType)</span>
+<span class="fc" id="L25">    }</span>
 }
 
-<span class="fc" id="L27">data class FunctionOutput2Schema&lt;ARG_1 : Type, ARG_2 : Type&gt;(</span>
-<span class="pc" id="L28">    val arg1: KClass&lt;ARG_1&gt;,</span>
-<span class="pc" id="L29">    val arg2: KClass&lt;ARG_2&gt;</span>
+<span class="fc" id="L28">data class FunctionOutput2Schema&lt;ARG_1 : Type, ARG_2 : Type&gt;(</span>
+<span class="pc" id="L29">    val arg1: KClass&lt;ARG_1&gt;,</span>
+<span class="pc" id="L30">    val arg2: KClass&lt;ARG_2&gt;</span>
 ) : FunctionOutputSchema&lt;FunctionOutput2&lt;ARG_1, ARG_2&gt;&gt; {
-<span class="pc" id="L31">    override val size = 2</span>
+<span class="pc" id="L32">    override val size = 2</span>
     override fun pushResult(ctx: FunctionContext, output: FunctionOutput2&lt;ARG_1, ARG_2&gt;) {
-<span class="fc bfc" id="L33" title="All 2 branches covered.">        ctx.push(output.arg1 ?: NilType)</span>
-<span class="fc bfc" id="L34" title="All 2 branches covered.">        ctx.push(output.arg2 ?: NilType)</span>
-<span class="fc" id="L35">    }</span>
+<span class="fc bfc" id="L34" title="All 2 branches covered.">        ctx.push(output.arg1 ?: NilType)</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        ctx.push(output.arg2 ?: NilType)</span>
+<span class="fc" id="L36">    }</span>
 }
 
-<span class="fc" id="L38">fun &lt;VALUE : Type&gt; FunctionContext.push(value: VALUE) = when (value) {</span>
-<span class="fc bfc" id="L39" title="All 2 branches covered.">    is NilType -&gt; pushNil()</span>
-<span class="fc bfc" id="L40" title="All 2 branches covered.">    is NumberType -&gt; pushNumber(value)</span>
-<span class="fc bfc" id="L41" title="All 2 branches covered.">    is StringType -&gt; pushString(value)</span>
-<span class="fc bfc" id="L42" title="All 2 branches covered.">    is TableTypeArray -&gt; pushTop(value.index)</span>
-<span class="pc bpc" id="L43" title="1 of 2 branches missed.">    is TableTypeMap -&gt; pushTop(value.index)</span>
-<span class="fc bfc" id="L44" title="All 2 branches covered.">    is AnyType -&gt; pushAny(value)</span>
-<span class="pc bpc" id="L45" title="1 of 2 branches missed.">    is ErrorType -&gt; pushError(value)</span>
-<span class="nc" id="L46">    else -&gt; throw NotImplementedError(&quot;${value::class.simpleName} not implemented yet&quot;)</span>
-<span class="fc" id="L47">}</span>
+<span class="fc" id="L39">fun &lt;VALUE : Type&gt; FunctionContext.push(value: VALUE) = when (value) {</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">    is NilType -&gt; pushNil()</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">    is NumberType -&gt; pushNumber(value)</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">    is StringType -&gt; pushString(value)</span>
+<span class="pc bpc" id="L43" title="1 of 2 branches missed.">    is ArrayType -&gt; {</span>
+<span class="nc" id="L44">        val t = tableCreateArray(0)</span>
+<span class="nc" id="L45">        value.entries.forEach { (arrayIdx, arrayValue) -&gt;</span>
+<span class="nc" id="L46">            when (arrayValue) {</span>
+//                is NilType -&gt; t.append(NilType)
+<span class="nc bnc" id="L48" title="All 2 branches missed.">                is NumberType -&gt; t.append(arrayValue)</span>
+<span class="nc bnc" id="L49" title="All 2 branches missed.">                is StringType -&gt; t.append(arrayValue)</span>
+<span class="nc" id="L50">                else -&gt; TODO(&quot;$arrayValue&quot;)</span>
+            }
+<span class="nc" id="L52">        }</span>
+
+<span class="nc" id="L54">        StackTop(t.index)</span>
+    }
+
+<span class="fc bfc" id="L57" title="All 2 branches covered.">    is MapType -&gt; {</span>
+<span class="fc" id="L58">        val t = tableCreateMap(0)</span>
+<span class="fc" id="L59">        value.entries.forEach { (mapKey, mapValue) -&gt;</span>
+<span class="fc" id="L60">            when (mapValue) {</span>
+<span class="pc bpc" id="L61" title="1 of 2 branches missed.">                is NilType -&gt; t[mapKey] = NilType</span>
+<span class="pc bpc" id="L62" title="1 of 2 branches missed.">                is NumberType -&gt; t[mapKey] = mapValue</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">                is StringType -&gt; t[mapKey] = mapValue</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">                is CodeType -&gt; t[mapKey] = StringType(mapValue.value)</span>
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">                is MapType -&gt; t[mapKey] = t //FIXME</span>
+<span class="nc" id="L66">                else -&gt; TODO(&quot;$mapValue&quot;)</span>
+            }
+<span class="fc" id="L68">        }</span>
+<span class="fc" id="L69">        StackTop(t.index)</span>
+    }
+
+<span class="fc bfc" id="L72" title="All 2 branches covered.">    is TableProxyArray -&gt; pushTop(value.index)</span>
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">    is TableProxyMap -&gt; pushTop(value.index)</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">    is AnyType -&gt; pushAny(value)</span>
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">    is ErrorType -&gt; pushError(value)</span>
+<span class="nc" id="L76">    else -&gt; throw NotImplementedError(&quot;${value::class.simpleName} not implemented yet&quot;)</span>
+<span class="fc" id="L77">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

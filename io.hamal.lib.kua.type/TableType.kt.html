@@ -58,70 +58,72 @@ typealias TableEntry = Entry&lt;StringType, SerializableType&gt;
     }
 
 
+<span class="fc" id="L61">    fun getStringType(key: String) = entries[(StringType(key))]!! as StringType</span>
+
     fun remove(key: Int) {
-<span class="nc" id="L62">        remove(NumberType(key))</span>
-<span class="nc" id="L63">    }</span>
+<span class="nc" id="L64">        remove(NumberType(key))</span>
+<span class="nc" id="L65">    }</span>
 
     fun remove(key: Type) {
-<span class="nc" id="L66">        entries.remove(key)</span>
-<span class="nc" id="L67">    }</span>
+<span class="nc" id="L68">        entries.remove(key)</span>
+<span class="nc" id="L69">    }</span>
 
-<span class="nc" id="L69">    override val size: Int get() = entries.size</span>
+<span class="fc" id="L71">    override val size: Int get() = entries.size</span>
 
-<span class="nc" id="L71">    override fun isEmpty() = entries.isEmpty()</span>
+<span class="nc" id="L73">    override fun isEmpty() = entries.isEmpty()</span>
 
     override fun iterator(): Iterator&lt;TableEntry&gt; {
-<span class="fc" id="L74">        return entries.asIterable().iterator()</span>
+<span class="fc" id="L76">        return entries.asIterable().iterator()</span>
     }
 
-<span class="nc" id="L77">    override fun containsAll(elements: Collection&lt;TableEntry&gt;) = elements.all(::contains)</span>
-<span class="nc" id="L78">    override fun contains(element: TableEntry) = TODO() // store.containsKey(element.first)</span>
+<span class="nc" id="L79">    override fun containsAll(elements: Collection&lt;TableEntry&gt;) = elements.all(::contains)</span>
+<span class="nc" id="L80">    override fun contains(element: TableEntry) = TODO() // store.containsKey(element.first)</span>
     override fun equals(other: Any?): Boolean {
-<span class="pc bpc" id="L80" title="1 of 2 branches missed.">        if (this === other) return true</span>
-<span class="pc bpc" id="L81" title="2 of 4 branches missed.">        if (javaClass != other?.javaClass) return false</span>
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">        if (this === other) return true</span>
+<span class="pc bpc" id="L83" title="2 of 4 branches missed.">        if (javaClass != other?.javaClass) return false</span>
 
-<span class="fc" id="L83">        other as TableType</span>
+<span class="fc" id="L85">        other as TableType</span>
 
-<span class="fc" id="L85">        return entries == other.entries</span>
+<span class="fc" id="L87">        return entries == other.entries</span>
     }
 
     override fun hashCode(): Int {
-<span class="nc" id="L89">        return entries.hashCode()</span>
+<span class="nc" id="L91">        return entries.hashCode()</span>
     }
 
     override fun toString(): String {
-<span class="nc" id="L93">        val valueString = entries.map { &quot;(${it.key},${it.value})&quot; }.joinToString(&quot;,&quot;)</span>
-<span class="nc" id="L94">        return &quot;{$valueString}&quot;</span>
+<span class="nc" id="L95">        val valueString = entries.map { &quot;(${it.key},${it.value})&quot; }.joinToString(&quot;,&quot;)</span>
+<span class="nc" id="L96">        return &quot;{$valueString}&quot;</span>
     }
 
     object Serializer : KSerializer&lt;MutableMap&lt;StringType, SerializableType&gt;&gt; {
-<span class="fc" id="L98">        private val delegate = MapSerializer(KeySerializer, SerializableType.serializer())</span>
+<span class="fc" id="L100">        private val delegate = MapSerializer(KeySerializer, SerializableType.serializer())</span>
 
         @OptIn(ExperimentalSerializationApi::class)
-<span class="fc" id="L101">        override val descriptor = SerialDescriptor(&quot;TableType&quot;, delegate.descriptor)</span>
+<span class="fc" id="L103">        override val descriptor = SerialDescriptor(&quot;TableType&quot;, delegate.descriptor)</span>
 
         override fun deserialize(decoder: Decoder): MutableMap&lt;StringType, SerializableType&gt; {
-<span class="fc" id="L104">            return delegate.deserialize(decoder).toMutableMap()</span>
+<span class="fc" id="L106">            return delegate.deserialize(decoder).toMutableMap()</span>
         }
 
         override fun serialize(encoder: Encoder, value: MutableMap&lt;StringType, SerializableType&gt;) {
-<span class="fc" id="L108">            return delegate.serialize(encoder, value)</span>
+<span class="fc" id="L110">            return delegate.serialize(encoder, value)</span>
         }
     }
 
     object KeySerializer : KSerializer&lt;StringType&gt; {
-<span class="fc" id="L113">        override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(&quot;KeyValue&quot;, PrimitiveKind.STRING)</span>
+<span class="fc" id="L115">        override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(&quot;KeyValue&quot;, PrimitiveKind.STRING)</span>
 
         override fun deserialize(decoder: Decoder): StringType {
-<span class="fc" id="L116">            return StringType(decoder.decodeString())</span>
+<span class="fc" id="L118">            return StringType(decoder.decodeString())</span>
         }
 
         override fun serialize(encoder: Encoder, value: StringType) {
-<span class="fc" id="L120">            return encoder.encodeString(value.value)</span>
+<span class="fc" id="L122">            return encoder.encodeString(value.value)</span>
         }
     }
-<span class="fc" id="L123">}</span>
+<span class="fc" id="L125">}</span>
 
-<span class="nc" id="L125">infix fun String.to(that: String): Pair&lt;String, StringType&gt; = Pair(this, StringType(that))</span>
-<span class="nc" id="L126">infix fun String.to(that: Number): Pair&lt;String, NumberType&gt; = Pair(this, NumberType(that.toDouble()))</span>
+<span class="nc" id="L127">infix fun String.to(that: String): Pair&lt;String, StringType&gt; = Pair(this, StringType(that))</span>
+<span class="nc" id="L128">infix fun String.to(that: Number): Pair&lt;String, NumberType&gt; = Pair(this, NumberType(that.toDouble()))</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

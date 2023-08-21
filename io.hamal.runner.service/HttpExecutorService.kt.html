@@ -35,7 +35,8 @@ import kotlin.time.toJavaDuration
 <span class="fc" id="L35">                        inputs = uow.inputs,</span>
 <span class="fc" id="L36">                        state = uow.state,</span>
 <span class="fc" id="L37">                        code = uow.code,</span>
-<span class="fc" id="L38">                        correlation = uow.correlation</span>
+<span class="fc" id="L38">                        invocation = uow.invocation,</span>
+<span class="fc" id="L39">                        correlation = uow.correlation</span>
                     )
                 )
 
@@ -159,12 +160,12 @@ import kotlin.time.toJavaDuration
 //                        log.debug(&quot;Failed exec: {}&quot;, unitOfWork.id)
 //                    }
 //                }
-<span class="fc" id="L162">            }</span>
-<span class="fc" id="L163">        }, 1.milliseconds.toJavaDuration())</span>
-<span class="fc" id="L164">    }</span>
+<span class="fc" id="L163">            }</span>
+<span class="fc" id="L164">        }, 1.milliseconds.toJavaDuration())</span>
+<span class="fc" id="L165">    }</span>
 
     companion object {
-<span class="fc" id="L167">        private val log = LoggerFactory.getLogger(HttpExecutorService::class.java)</span>
+<span class="fc" id="L168">        private val log = LoggerFactory.getLogger(HttpExecutorService::class.java)</span>
     }
 }
 
