@@ -2,72 +2,149 @@
 
 import io.hamal.lib.common.SnowflakeId
 import io.hamal.lib.common.domain.DomainId
+import io.hamal.lib.kua.State
 import io.hamal.lib.kua.function.FunctionType
 import io.hamal.lib.kua.type.*
 import kotlin.reflect.KClass
 
-//FIXME fix this interface
-interface TableProxyMap : TableProxy {
-    fun unset(key: String): Int
-<span class="nc" id="L12">    fun unset(key: StringType) = unset(key.value)</span>
-<span class="nc" id="L13">    operator fun set(key: String, value: NilType) = unset(key)</span>
-<span class="nc" id="L14">    operator fun set(key: StringType, value: NilType) = unset(key.value)</span>
+<span class="fc" id="L10">class TableProxyMap(</span>
+<span class="fc" id="L11">    val index: Int,</span>
+<span class="pc" id="L12">    val state: State</span>
+) : Type { //FIXME not a type
 
-    operator fun set(key: String, value: Boolean): Int
-<span class="nc" id="L17">    operator fun set(key: String, value: BooleanType) = set(key, value.value)</span>
-<span class="nc" id="L18">    operator fun set(key: StringType, value: BooleanType) = set(key.value, value.value)</span>
+<span class="nc" id="L15">    val length get() = state.native.tableGetLength(index)</span>
 
-<span class="fc" id="L20">    operator fun set(key: String, value: CodeType) = set(key, value.value)</span>
-<span class="nc" id="L21">    operator fun set(key: StringType, value: CodeType) = set(key.value, value)</span>
+<span class="nc" id="L17">    fun unset(key: StringType) = unset(key.value)</span>
+<span class="nc" id="L18">    operator fun set(key: String, value: NilType) = unset(key)</span>
+<span class="nc" id="L19">    operator fun set(key: StringType, value: NilType) = unset(key.value)</span>
+    fun unset(key: String): Int {
+<span class="nc" id="L21">        state.pushString(key)</span>
+<span class="nc" id="L22">        state.pushNil()</span>
+<span class="nc" id="L23">        return state.tableSetRaw(index)</span>
+    }
 
-<span class="nc" id="L23">    operator fun set(key: String, value: Int) = set(key, value.toDouble())</span>
-<span class="nc" id="L24">    operator fun set(key: String, value: Long) = set(key, value.toDouble())</span>
-<span class="nc" id="L25">    operator fun set(key: String, value: Float) = set(key, value.toDouble())</span>
-    operator fun set(key: String, value: Double): Int
-<span class="nc" id="L27">    operator fun set(key: String, value: NumberType) = set(key, value.value)</span>
-<span class="fc" id="L28">    operator fun set(key: StringType, value: NumberType) = set(key.value, value.value)</span>
 
-<span class="fc" id="L30">    operator fun set(key: String, value: DomainId) = set(key, value.value.value.toString(16))</span>
-<span class="nc" id="L31">    operator fun set(key: StringType, value: DomainId) = set(key.value, value.value.value.toString(16))</span>
-<span class="fc" id="L32">    operator fun set(key: String, value: SnowflakeId) = set(key, value.value.toString(16))</span>
-<span class="nc" id="L33">    operator fun set(key: StringType, value: SnowflakeId) = set(key.value, value.value.toString(16))</span>
+<span class="nc" id="L27">    operator fun set(key: String, value: BooleanType) = set(key, value.value)</span>
+<span class="nc" id="L28">    operator fun set(key: StringType, value: BooleanType) = set(key.value, value.value)</span>
+    operator fun set(key: String, value: Boolean): Int {
+<span class="nc" id="L30">        state.pushString(key)</span>
+<span class="nc" id="L31">        state.pushBoolean(value)</span>
+<span class="nc" id="L32">        return state.tableSetRaw(index)</span>
+    }
 
-    operator fun set(key: String, value: String): Int
-<span class="fc" id="L36">    operator fun set(key: String, value: StringType) = set(key, value.value)</span>
-<span class="fc" id="L37">    operator fun set(key: StringType, value: StringType) = set(key.value, value.value)</span>
+<span class="fc" id="L35">    operator fun set(key: String, value: CodeType) = set(key, value.value)</span>
+<span class="nc" id="L36">    operator fun set(key: StringType, value: CodeType) = set(key.value, value)</span>
 
-    operator fun set(key: String, value: FunctionType&lt;*, *, *, *&gt;): Int
-<span class="nc" id="L40">    operator fun set(key: StringType, value: FunctionType&lt;*, *, *, *&gt;) = set(key.value, value)</span>
+<span class="nc" id="L38">    operator fun set(key: String, value: Int) = set(key, value.toDouble())</span>
+<span class="nc" id="L39">    operator fun set(key: String, value: Long) = set(key, value.toDouble())</span>
+<span class="nc" id="L40">    operator fun set(key: String, value: Float) = set(key, value.toDouble())</span>
+<span class="fc" id="L41">    operator fun set(key: String, value: NumberType) = set(key, value.value)</span>
+<span class="nc" id="L42">    operator fun set(key: StringType, value: NumberType) = set(key.value, value.value)</span>
+    operator fun set(key: String, value: Double): Int {
+<span class="fc" id="L44">        state.pushString(key)</span>
+<span class="fc" id="L45">        state.pushNumber(value)</span>
+<span class="fc" id="L46">        return state.tableSetRaw(index)</span>
+    }
 
-    operator fun set(key: String, value: TableProxyMap): Int
-    operator fun set(key: String, value: TableProxyArray): Int
+<span class="fc" id="L49">    operator fun set(key: String, value: DomainId) = set(key, value.value.value.toString(16))</span>
+<span class="nc" id="L50">    operator fun set(key: StringType, value: DomainId) = set(key.value, value.value.value.toString(16))</span>
+<span class="fc" id="L51">    operator fun set(key: String, value: SnowflakeId) = set(key, value.value.toString(16))</span>
+<span class="nc" id="L52">    operator fun set(key: StringType, value: SnowflakeId) = set(key.value, value.value.toString(16))</span>
 
-    fun getBooleanValue(key: String): BooleanType
-<span class="nc" id="L46">    fun getBooleanValue(key: StringType): BooleanType = getBooleanValue(key.value)</span>
-<span class="nc" id="L47">    fun getBoolean(key: String): Boolean = getBooleanValue(key).value</span>
-<span class="nc" id="L48">    fun getBoolean(key: StringType): Boolean = getBoolean(key.value)</span>
+<span class="fc" id="L54">    operator fun set(key: String, value: StringType) = set(key, value.value)</span>
+<span class="nc" id="L55">    operator fun set(key: StringType, value: StringType) = set(key.value, value.value)</span>
+    operator fun set(key: String, value: String): Int {
+<span class="fc" id="L57">        state.pushString(key)</span>
+<span class="fc" id="L58">        state.pushString(value)</span>
+<span class="fc" id="L59">        return state.tableSetRaw(index)</span>
+    }
 
-    fun getCode(key: String): CodeType
-<span class="nc" id="L51">    fun getCode(key: StringType): CodeType = getCode(key.value)</span>
+<span class="nc" id="L62">    operator fun set(key: StringType, value: FunctionType&lt;*, *, *, *&gt;) = set(key.value, value)</span>
+    operator fun set(key: String, value: FunctionType&lt;*, *, *, *&gt;): Int {
+<span class="fc" id="L64">        state.pushString(key)</span>
+<span class="fc" id="L65">        state.pushFunction(value)</span>
+<span class="fc" id="L66">        return state.tableSetRaw(index)</span>
+    }
 
-    fun getNumberValue(key: String): NumberType
-<span class="nc" id="L54">    fun getNumberValue(key: StringType): NumberType = getNumberValue(key.value)</span>
-<span class="fc" id="L55">    fun getInt(key: String): Int = getNumberValue(key).value.toInt()</span>
-<span class="nc" id="L56">    fun getInt(key: StringType) = getInt(key.value)</span>
-<span class="nc" id="L57">    fun getLong(key: String): Long = getNumberValue(key).value.toLong()</span>
-<span class="nc" id="L58">    fun getLong(key: StringType): Long = getLong(key.value)</span>
-<span class="nc" id="L59">    fun getFloat(key: String): Float = getNumberValue(key).value.toFloat()</span>
-<span class="nc" id="L60">    fun getFloat(key: StringType): Float = getFloat(key.value)</span>
-<span class="nc" id="L61">    fun getDouble(key: String): Double = getNumberValue(key).value</span>
-<span class="nc" id="L62">    fun getDouble(key: StringType): Double = getDouble(key.value)</span>
+    operator fun set(key: String, value: TableProxyMap): Int {
+<span class="fc" id="L70">        state.pushString(key)</span>
+<span class="fc" id="L71">        state.pushTable(value)</span>
+<span class="fc" id="L72">        return state.tableSetRaw(index)</span>
+    }
 
-    fun getStringValue(key: String): StringType
-<span class="nc" id="L65">    fun getStringValue(key: StringType): StringType = getStringValue(key.value)</span>
-<span class="fc" id="L66">    fun getString(key: String): String = getStringValue(key).value</span>
-<span class="nc" id="L67">    fun getString(key: StringType): String = getString(key.value)</span>
+    fun getTableMap(key: String): TableProxyMap {
+<span class="nc" id="L76">        state.pushString(key)</span>
+<span class="nc" id="L77">        val type = state.tableGetRaw(index)</span>
+<span class="nc" id="L78">        type.checkExpectedType(TableType::class)</span>
+<span class="nc" id="L79">        return state.getTableMapProxy(state.top.value)</span>
+    }
 
-    fun getTableMap(key: String): TableProxyMap
+    fun getTableArray(key: String): TableProxyArray {
+<span class="nc" id="L83">        state.pushString(key)</span>
+<span class="nc" id="L84">        val type = state.tableGetRaw(index)</span>
+<span class="nc" id="L85">        type.checkExpectedType(TableType::class)</span>
+<span class="nc" id="L86">        return state.getTableArrayProxy(state.top.value)</span>
+    }
 
-    fun type(key: String): KClass&lt;out Type&gt;
+    operator fun set(key: String, value: TableProxyArray): Int {
+<span class="fc" id="L90">        state.pushString(key)</span>
+<span class="fc" id="L91">        state.pushTable(value)</span>
+<span class="fc" id="L92">        return state.tableSetRaw(index)</span>
+    }
+
+<span class="nc" id="L95">    fun getBooleanType(key: StringType): BooleanType = getBooleanType(key.value)</span>
+<span class="nc" id="L96">    fun getBoolean(key: String): Boolean = getBooleanType(key).value</span>
+<span class="nc" id="L97">    fun getBoolean(key: StringType): Boolean = getBoolean(key.value)</span>
+    fun getBooleanType(key: String): BooleanType {
+<span class="nc" id="L99">        state.pushString(key)</span>
+<span class="nc" id="L100">        val type = state.tableGetRaw(index)</span>
+<span class="nc" id="L101">        type.checkExpectedType(BooleanType::class)</span>
+<span class="nc" id="L102">        return booleanOf(state.native.toBoolean(state.top.value)).also { state.native.pop(1) }</span>
+    }
+
+<span class="nc" id="L105">    fun getCode(key: StringType): CodeType = getCode(key.value)</span>
+    fun getCode(key: String): CodeType {
+<span class="fc" id="L107">        state.pushString(key)</span>
+<span class="fc" id="L108">        val type = state.tableGetRaw(index)</span>
+<span class="fc" id="L109">        type.checkExpectedType(StringType::class)</span>
+<span class="fc" id="L110">        return CodeType(state.getString(state.top.value)).also { state.native.pop(1) }</span>
+    }
+
+<span class="nc" id="L113">    fun getNumberType(key: StringType): NumberType = getNumberType(key.value)</span>
+<span class="fc" id="L114">    fun getInt(key: String): Int = getNumberType(key).value.toInt()</span>
+<span class="nc" id="L115">    fun getInt(key: StringType) = getInt(key.value)</span>
+<span class="nc" id="L116">    fun getLong(key: String): Long = getNumberType(key).value.toLong()</span>
+<span class="nc" id="L117">    fun getLong(key: StringType): Long = getLong(key.value)</span>
+<span class="nc" id="L118">    fun getFloat(key: String): Float = getNumberType(key).value.toFloat()</span>
+<span class="nc" id="L119">    fun getFloat(key: StringType): Float = getFloat(key.value)</span>
+<span class="nc" id="L120">    fun getDouble(key: String): Double = getNumberType(key).value</span>
+<span class="nc" id="L121">    fun getDouble(key: StringType): Double = getDouble(key.value)</span>
+    fun getNumberType(key: String): NumberType {
+<span class="fc" id="L123">        state.pushString(key)</span>
+<span class="fc" id="L124">        val type = state.tableGetRaw(index)</span>
+<span class="fc" id="L125">        type.checkExpectedType(NumberType::class)</span>
+<span class="fc" id="L126">        return NumberType(state.native.toNumber(state.top.value)).also { state.native.pop(1) }</span>
+    }
+
+<span class="nc" id="L129">    fun getStringType(key: StringType): StringType = getStringType(key.value)</span>
+<span class="fc" id="L130">    fun getString(key: String): String = getStringType(key).value</span>
+<span class="nc" id="L131">    fun getString(key: StringType): String = getString(key.value)</span>
+    fun getStringType(key: String): StringType {
+<span class="fc" id="L133">        state.pushString(key)</span>
+<span class="fc" id="L134">        val type = state.tableGetRaw(index)</span>
+<span class="fc" id="L135">        type.checkExpectedType(StringType::class)</span>
+<span class="fc" id="L136">        return StringType(state.native.toString(state.top.value)).also { state.native.pop(1) }</span>
+    }
+
+    fun type(key: String): KClass&lt;out Type&gt; {
+<span class="fc" id="L140">        state.pushString(key)</span>
+<span class="fc" id="L141">        return state.tableGetRaw(index)</span>
+    }
 }
+
+private fun KClass&lt;out Type&gt;.checkExpectedType(expected: KClass&lt;out Type&gt;) {
+<span class="pc bpc" id="L146" title="1 of 2 branches missed.">    check(this == expected) {</span>
+<span class="nc" id="L147">        &quot;Expected type to be $expected but was $this&quot;</span>
+    }
+<span class="fc" id="L149">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

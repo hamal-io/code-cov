@@ -8,7 +8,7 @@ import io.hamal.lib.kua.extension.ScriptExtension
 import io.hamal.lib.kua.extension.ScriptExtensionFactory
 import io.hamal.lib.kua.table.TableProxyArray
 import io.hamal.lib.kua.type.StringType
-import io.hamal.lib.kua.type.toTableProxyMap
+import io.hamal.lib.kua.type.toProxyMap
 import io.hamal.runner.extension.ctx.function.EmitFunction
 
 <span class="fc" id="L14">class RunnerContextFactory(</span>
@@ -28,7 +28,7 @@ import io.hamal.runner.extension.ctx.function.EmitFunction
 
 <span class="fc bfc" id="L29" title="All 2 branches covered.">private fun Sandbox.invocationEvents(invocation: Invocation): TableProxyArray = if (invocation is EventInvocation) {</span>
 <span class="fc" id="L30">    tableCreateArray(invocation.events.size).let { result -&gt;</span>
-<span class="fc" id="L31">        invocation.events.map { toTableProxyMap(it.value) }.forEach(result::append)</span>
+<span class="fc" id="L31">        invocation.events.map { toProxyMap(it.value) }.forEach(result::append)</span>
 <span class="fc" id="L32">        result</span>
     }
 } else {

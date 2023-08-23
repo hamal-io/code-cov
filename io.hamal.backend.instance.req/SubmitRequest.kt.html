@@ -153,7 +153,7 @@ import org.springframework.stereotype.Component
 <span class="fc" id="L153">            reqId = generateDomainId(::ReqId),</span>
 <span class="fc" id="L154">            status = Submitted,</span>
 <span class="fc" id="L155">            id = appendEvent.topicId,</span>
-<span class="fc" id="L156">            event = appendEvent.event</span>
+<span class="fc" id="L156">            payload = appendEvent.payload</span>
 <span class="fc" id="L157">        ).also(reqCmdRepository::queue)</span>
 
     operator fun invoke(setStateReq: SetStateReq) =

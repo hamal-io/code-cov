@@ -4,6 +4,7 @@ import io.hamal.lib.common.SnowflakeId
 import io.hamal.lib.common.domain.DomainId
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
@@ -12,102 +13,114 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlin.reflect.KClass
 
-<span class="pc bnc" id="L15" title="All 9 branches missed.">@Serializable</span>
-<span class="nc" id="L16">data class ArrayType(</span>
-<span class="nc" id="L17">    @Serializable(with = Serializer::class)</span>
-<span class="nc bnc" id="L18" title="All 4 branches missed.">    val entries: MutableMap&lt;Int, SerializableType&gt; = mutableMapOf(),</span>
-) : SerializableType {
+<span class="pc bnc" id="L16" title="All 9 branches missed.">@Serializable</span>
+@SerialName(&quot;ArrayType&quot;)
+<span class="fc" id="L18">data class ArrayType(</span>
+<span class="fc" id="L19">    @Serializable(with = Serializer::class)</span>
+<span class="pc bnc" id="L20" title="All 4 branches missed.">    val entries: MutableMap&lt;Int, SerializableType&gt; = mutableMapOf(),</span>
+) : TableType {
 
-<span class="nc" id="L21">    val size get() = entries.size</span>
+<span class="fc" id="L23">    val size get() = entries.size</span>
 
     fun append(value: ArrayType): Int {
-<span class="nc" id="L24">        entries[entries.size + 1] = value</span>
-<span class="nc" id="L25">        return size</span>
+<span class="nc" id="L26">        entries[entries.size + 1] = value</span>
+<span class="nc" id="L27">        return size</span>
     }
 
     fun append(value: SerializableType): Int {
-<span class="nc" id="L29">        entries[entries.size + 1] = value</span>
-<span class="nc" id="L30">        return size</span>
+<span class="fc" id="L31">        entries[entries.size + 1] = value</span>
+<span class="fc" id="L32">        return size</span>
     }
 
     operator fun get(idx: Int): SerializableType {
-<span class="nc" id="L34">        return entries[idx]!!</span>
+<span class="nc" id="L36">        return entries[idx]!!</span>
     }
 
-<span class="nc" id="L37">    fun getBoolean(idx: Int) = getBooleanValue(idx) == TrueValue</span>
+<span class="nc" id="L39">    fun getBoolean(idx: Int) = getBooleanValue(idx) == TrueValue</span>
     fun getBooleanValue(idx: Int): BooleanType {
-<span class="nc" id="L39">        checkExpectedType(idx, BooleanType::class)</span>
-<span class="nc" id="L40">        return entries[idx]!! as BooleanType</span>
+<span class="nc" id="L41">        checkExpectedType(idx, BooleanType::class)</span>
+<span class="nc" id="L42">        return entries[idx]!! as BooleanType</span>
     }
 
-<span class="nc" id="L43">    fun append(value: Boolean) = append(booleanOf(value))</span>
+<span class="nc" id="L45">    fun append(value: Boolean) = append(booleanOf(value))</span>
     fun append(value: BooleanType): Int {
-<span class="nc" id="L45">        entries[entries.size + 1] = value</span>
-<span class="nc" id="L46">        return size</span>
+<span class="nc" id="L47">        entries[entries.size + 1] = value</span>
+<span class="nc" id="L48">        return size</span>
     }
 
 
-<span class="nc" id="L50">    fun getInt(idx: Int) = getNumberType(idx).value.toInt()</span>
-<span class="nc" id="L51">    fun getLong(idx: Int) = getNumberType(idx).value.toLong()</span>
-<span class="nc" id="L52">    fun getFloat(idx: Int) = getNumberType(idx).value.toFloat()</span>
-<span class="nc" id="L53">    fun getDouble(idx: Int) = getNumberType(idx).value.toDouble()</span>
+<span class="fc" id="L52">    fun getInt(idx: Int) = getNumberType(idx).value.toInt()</span>
+<span class="nc" id="L53">    fun getLong(idx: Int) = getNumberType(idx).value.toLong()</span>
+<span class="nc" id="L54">    fun getFloat(idx: Int) = getNumberType(idx).value.toFloat()</span>
+<span class="nc" id="L55">    fun getDouble(idx: Int) = getNumberType(idx).value.toDouble()</span>
     fun getNumberType(idx: Int): NumberType {
-<span class="nc" id="L55">        checkExpectedType(idx, NumberType::class)</span>
-<span class="nc" id="L56">        return entries[idx]!! as NumberType</span>
+<span class="fc" id="L57">        checkExpectedType(idx, NumberType::class)</span>
+<span class="fc" id="L58">        return entries[idx]!! as NumberType</span>
     }
 
 
-<span class="nc" id="L60">    fun append(value: Int) = append(value.toDouble())</span>
-<span class="nc" id="L61">    fun append(value: Long) = append(value.toDouble())</span>
-<span class="nc" id="L62">    fun append(value: Float) = append(value.toDouble())</span>
-<span class="nc" id="L63">    fun append(value: Double) = append(NumberType(value))</span>
+<span class="nc" id="L62">    fun append(value: Int) = append(value.toDouble())</span>
+<span class="nc" id="L63">    fun append(value: Long) = append(value.toDouble())</span>
+<span class="nc" id="L64">    fun append(value: Float) = append(value.toDouble())</span>
+<span class="nc" id="L65">    fun append(value: Double) = append(NumberType(value))</span>
     fun append(value: NumberType): Int {
-<span class="nc" id="L65">        entries[entries.size + 1] = value</span>
-<span class="nc" id="L66">        return size</span>
+<span class="nc" id="L67">        entries[entries.size + 1] = value</span>
+<span class="nc" id="L68">        return size</span>
     }
 
-<span class="nc" id="L69">    fun append(value: SnowflakeId) = append(value.value.toString(16))</span>
-<span class="nc" id="L70">    fun append(value: DomainId) = append(value.value.value)</span>
-
-    //
-//    fun getString(idx: Int) = getStringValue(idx).value
-//    fun getStringValue(idx: Int): StringType
+<span class="nc" id="L71">    fun append(value: SnowflakeId) = append(value.value.toString(16))</span>
+<span class="nc" id="L72">    fun append(value: DomainId) = append(value.value.value)</span>
 
     fun append(value: MapType): Int {
-<span class="nc" id="L77">        entries[entries.size + 1] = value</span>
-<span class="nc" id="L78">        return size</span>
+<span class="nc" id="L75">        entries[entries.size + 1] = value</span>
+<span class="nc" id="L76">        return size</span>
     }
 
+    fun getMap(idx: Int): MapType {
+<span class="nc" id="L80">        checkExpectedType(idx, MapType::class)</span>
+<span class="nc" id="L81">        return entries[idx]!! as MapType</span>
+    }
 
-<span class="nc" id="L82">    fun append(value: String) = append(StringType(value))</span>
+    fun getArray(idx: Int): ArrayType {
+<span class="nc" id="L85">        checkExpectedType(idx, ArrayType::class)</span>
+<span class="nc" id="L86">        return entries[idx]!! as ArrayType</span>
+    }
+
+<span class="fc" id="L89">    fun getString(idx: Int) = getStringType(idx).value</span>
+    fun getStringType(idx: Int): StringType {
+<span class="fc" id="L91">        checkExpectedType(idx, StringType::class)</span>
+<span class="fc" id="L92">        return entries[idx]!! as StringType</span>
+    }
+
+<span class="nc" id="L95">    fun append(value: String) = append(StringType(value))</span>
     fun append(value: StringType): Int {
-<span class="nc" id="L84">        entries[entries.size + 1] = value</span>
-<span class="nc" id="L85">        return size</span>
+<span class="nc" id="L97">        entries[entries.size + 1] = value</span>
+<span class="nc" id="L98">        return size</span>
     }
 
     fun type(idx: Int): KClass&lt;out Type&gt; {
-<span class="nc bnc" id="L89" title="All 2 branches missed.">        return entries[idx]?.let { it::class } ?: NilType::class</span>
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">        return entries[idx]?.let { it::class } ?: NilType::class</span>
     }
 
     object Serializer : KSerializer&lt;MutableMap&lt;Int, SerializableType&gt;&gt; {
-<span class="fc" id="L93">        private val delegate = MapSerializer(Int.serializer(), SerializableType.serializer())</span>
+<span class="fc" id="L106">        private val delegate = MapSerializer(Int.serializer(), SerializableType.serializer())</span>
 
         @OptIn(ExperimentalSerializationApi::class)
-<span class="fc" id="L96">        override val descriptor = SerialDescriptor(&quot;ArrayType&quot;, delegate.descriptor)</span>
+<span class="fc" id="L109">        override val descriptor = SerialDescriptor(&quot;ArrayType&quot;, delegate.descriptor)</span>
 
         override fun deserialize(decoder: Decoder): MutableMap&lt;Int, SerializableType&gt; {
-<span class="nc" id="L99">            return delegate.deserialize(decoder).toMutableMap()</span>
+<span class="nc" id="L112">            return delegate.deserialize(decoder).toMutableMap()</span>
         }
 
         override fun serialize(encoder: Encoder, value: MutableMap&lt;Int, SerializableType&gt;) {
-<span class="nc" id="L103">            return delegate.serialize(encoder, value)</span>
+<span class="nc" id="L116">            return delegate.serialize(encoder, value)</span>
         }
     }
-<span class="pc" id="L106">}</span>
+<span class="fc" id="L119">}</span>
 
 internal fun ArrayType.checkExpectedType(idx: Int, expected: KClass&lt;out Type&gt;) {
-<span class="nc bnc" id="L109" title="All 2 branches missed.">    check(type(idx) == expected) {</span>
-<span class="nc" id="L110">        &quot;Expected type to be $expected but was $this&quot;</span>
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">    check(type(idx) == expected) {</span>
+<span class="nc" id="L123">        &quot;Expected type to be $expected but was $this&quot;</span>
     }
-<span class="nc" id="L112">}</span>
+<span class="fc" id="L125">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

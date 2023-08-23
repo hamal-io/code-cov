@@ -39,42 +39,43 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 <span class="fc" id="L39">        registry.addConverter(LimitConverter)</span>
 <span class="fc" id="L40">        registry.addConverter(ReqIdConverter)</span>
 <span class="fc" id="L41">        registry.addConverter(TopicIdConverter)</span>
-<span class="fc" id="L42">        registry.addConverter(TriggerIdConverter)</span>
-<span class="fc" id="L43">    }</span>
+<span class="fc" id="L42">        registry.addConverter(TopicNameConverter)</span>
+<span class="fc" id="L43">        registry.addConverter(TriggerIdConverter)</span>
+<span class="fc" id="L44">    }</span>
 
 
-<span class="fc" id="L46">    @ControllerAdvice</span>
+<span class="fc" id="L47">    @ControllerAdvice</span>
     @Order(Ordered.HIGHEST_PRECEDENCE)
-<span class="fc" id="L48">    class ErrorHandler {</span>
+<span class="fc" id="L49">    class ErrorHandler {</span>
 
         @ExceptionHandler(Exception::class)
         fun handle(e: Exception): ResponseEntity&lt;ApiError&gt; {
-<span class="fc" id="L52">            return when (e) {</span>
-<span class="fc bfc" id="L53" title="All 2 branches covered.">                is IllegalArgumentException -&gt; ResponseEntity(</span>
-<span class="fc" id="L54">                    ApiError(</span>
-<span class="fc" id="L55">                        message = e.message</span>
-<span class="fc" id="L56">                    ), HttpStatus.BAD_REQUEST</span>
+<span class="fc" id="L53">            return when (e) {</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">                is IllegalArgumentException -&gt; ResponseEntity(</span>
+<span class="fc" id="L55">                    ApiError(</span>
+<span class="fc" id="L56">                        message = e.message</span>
+<span class="fc" id="L57">                    ), HttpStatus.BAD_REQUEST</span>
                 )
 
-<span class="pc bpc" id="L59" title="1 of 2 branches missed.">                is NoSuchElementException -&gt; ResponseEntity(</span>
-<span class="fc" id="L60">                    ApiError(</span>
-<span class="fc" id="L61">                        message = e.message</span>
-<span class="fc" id="L62">                    ), HttpStatus.NOT_FOUND</span>
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">                is NoSuchElementException -&gt; ResponseEntity(</span>
+<span class="fc" id="L61">                    ApiError(</span>
+<span class="fc" id="L62">                        message = e.message</span>
+<span class="fc" id="L63">                    ), HttpStatus.NOT_FOUND</span>
                 )
 
-<span class="nc bnc" id="L65" title="All 2 branches missed.">                is IllegalStateException -&gt; ResponseEntity(</span>
-<span class="nc" id="L66">                    ApiError(</span>
-<span class="nc" id="L67">                        message = e.message</span>
-<span class="nc" id="L68">                    ), HttpStatus.INTERNAL_SERVER_ERROR</span>
+<span class="nc bnc" id="L66" title="All 2 branches missed.">                is IllegalStateException -&gt; ResponseEntity(</span>
+<span class="nc" id="L67">                    ApiError(</span>
+<span class="nc" id="L68">                        message = e.message</span>
+<span class="nc" id="L69">                    ), HttpStatus.INTERNAL_SERVER_ERROR</span>
                 )
 
-<span class="nc bnc" id="L71" title="All 2 branches missed.">                is MethodArgumentTypeMismatchException -&gt; ResponseEntity(</span>
-<span class="nc" id="L72">                    ApiError(</span>
-<span class="nc bnc" id="L73" title="All 2 branches missed.">                        message = e.cause?.message</span>
-<span class="nc" id="L74">                    ), HttpStatus.BAD_REQUEST</span>
+<span class="nc bnc" id="L72" title="All 2 branches missed.">                is MethodArgumentTypeMismatchException -&gt; ResponseEntity(</span>
+<span class="nc" id="L73">                    ApiError(</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">                        message = e.cause?.message</span>
+<span class="nc" id="L75">                    ), HttpStatus.BAD_REQUEST</span>
                 )
 
-<span class="nc" id="L77">                else -&gt; ResponseEntity(ApiError(e.message), HttpStatus.INTERNAL_SERVER_ERROR)</span>
+<span class="nc" id="L78">                else -&gt; ResponseEntity(ApiError(e.message), HttpStatus.INTERNAL_SERVER_ERROR)</span>
             }
         }
     }

@@ -5,10 +5,10 @@ import java.security.MessageDigest
 
 
 object HashUtils {
-<span class="fc" id="L8">    fun sha256(value: String): String = sha256(value.toByteArray(Charset.defaultCharset()))</span>
+<span class="nc" id="L8">    fun sha256(value: String): String = sha256(value.toByteArray(Charset.defaultCharset()))</span>
     fun sha256(bytes: ByteArray): String {
-<span class="fc" id="L10">        val digest = MessageDigest.getInstance(&quot;SHA-256&quot;)</span>
-<span class="fc" id="L11">        return apply(bytes, digest)</span>
+<span class="nc" id="L10">        val digest = MessageDigest.getInstance(&quot;SHA-256&quot;)</span>
+<span class="nc" id="L11">        return apply(bytes, digest)</span>
     }
 
 <span class="fc" id="L14">    fun md5(value: String): String = md5(value.toByteArray(Charset.defaultCharset()))</span>

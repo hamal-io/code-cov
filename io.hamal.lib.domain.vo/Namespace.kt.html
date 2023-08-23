@@ -7,7 +7,7 @@ import io.hamal.lib.common.domain.DomainName
 import io.hamal.lib.common.domain.DomainNameSerializer
 import io.hamal.lib.domain.vo.base.Inputs
 import io.hamal.lib.domain.vo.base.InputsSerializer
-import io.hamal.lib.kua.type.TableType
+import io.hamal.lib.kua.type.MapType
 import kotlinx.serialization.Serializable
 
 <span class="nc" id="L13">@Serializable(with = NamespaceId.Serializer::class)</span>
@@ -39,7 +39,7 @@ import kotlinx.serialization.Serializable
 }
 
 <span class="nc" id="L41">@Serializable(with = NamespaceInputs.Serializer::class)</span>
-<span class="fc" id="L42">class NamespaceInputs(override val value: TableType = TableType()) : Inputs() {</span>
+<span class="fc" id="L42">class NamespaceInputs(override val value: MapType = MapType()) : Inputs() {</span>
 <span class="fc" id="L43">    internal object Serializer : InputsSerializer&lt;NamespaceInputs&gt;(::NamespaceInputs)</span>
 <span class="fc" id="L44">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

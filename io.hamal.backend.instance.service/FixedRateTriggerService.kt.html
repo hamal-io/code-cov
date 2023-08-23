@@ -16,62 +16,61 @@ import io.hamal.lib.domain.vo.CorrelationId
 import io.hamal.lib.domain.vo.ExecId
 import io.hamal.lib.domain.vo.InvocationInputs
 import io.hamal.lib.domain.vo.TriggerId
-import io.hamal.lib.kua.type.TableType
 import jakarta.annotation.PostConstruct
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.time.Instant
 import java.util.concurrent.TimeUnit
 
-<span class="fc" id="L26">@Service</span>
-<span class="fc" id="L27">class FixedRateTriggerService(</span>
-<span class="pc" id="L28">    internal val triggerQueryRepository: TriggerQueryRepository,</span>
-<span class="pc" id="L29">    internal val eventEmitter: SystemEventEmitter,</span>
-<span class="pc" id="L30">    internal val submitRequest: SubmitRequest,</span>
-<span class="pc" id="L31">    internal val generateDomainId: GenerateDomainId,</span>
-<span class="pc" id="L32">    internal val funcQueryRepository: FuncQueryRepository</span>
+<span class="fc" id="L25">@Service</span>
+<span class="fc" id="L26">class FixedRateTriggerService(</span>
+<span class="pc" id="L27">    internal val triggerQueryRepository: TriggerQueryRepository,</span>
+<span class="pc" id="L28">    internal val eventEmitter: SystemEventEmitter,</span>
+<span class="pc" id="L29">    internal val submitRequest: SubmitRequest,</span>
+<span class="pc" id="L30">    internal val generateDomainId: GenerateDomainId,</span>
+<span class="pc" id="L31">    internal val funcQueryRepository: FuncQueryRepository</span>
 ) {
 
-<span class="fc" id="L35">    private val plannedInvocations = mutableMapOf&lt;Trigger, Instant&gt;()</span>
+<span class="fc" id="L34">    private val plannedInvocations = mutableMapOf&lt;Trigger, Instant&gt;()</span>
 
     @PostConstruct
     fun setup() {
-<span class="fc" id="L39">        triggerQueryRepository.list {</span>
-<span class="fc" id="L40">            afterId = TriggerId(SnowflakeId(Long.MAX_VALUE))</span>
-<span class="fc" id="L41">            limit = Limit(10)</span>
-<span class="fc" id="L42">        }.filterIsInstance&lt;FixedRateTrigger&gt;().forEach {</span>
-<span class="nc" id="L43">            plannedInvocations[it] = now().plusMillis(it.duration.inWholeSeconds)</span>
-<span class="nc" id="L44">        }</span>
-<span class="fc" id="L45">    }</span>
+<span class="fc" id="L38">        triggerQueryRepository.list {</span>
+<span class="fc" id="L39">            afterId = TriggerId(SnowflakeId(Long.MAX_VALUE))</span>
+<span class="fc" id="L40">            limit = Limit(10)</span>
+<span class="fc" id="L41">        }.filterIsInstance&lt;FixedRateTrigger&gt;().forEach {</span>
+<span class="nc" id="L42">            plannedInvocations[it] = now().plusMillis(it.duration.inWholeSeconds)</span>
+<span class="nc" id="L43">        }</span>
+<span class="fc" id="L44">    }</span>
 
     fun triggerAdded(fixedRateTrigger: FixedRateTrigger) {
-<span class="fc" id="L48">        plannedInvocations.putIfAbsent(</span>
-<span class="fc" id="L49">            fixedRateTrigger,</span>
-<span class="fc" id="L50">            now().plusSeconds(fixedRateTrigger.duration.inWholeSeconds)</span>
+<span class="fc" id="L47">        plannedInvocations.putIfAbsent(</span>
+<span class="fc" id="L48">            fixedRateTrigger,</span>
+<span class="fc" id="L49">            now().plusSeconds(fixedRateTrigger.duration.inWholeSeconds)</span>
         )
-<span class="fc" id="L52">    }</span>
+<span class="fc" id="L51">    }</span>
 
 
     @Scheduled(fixedRate = 1, timeUnit = TimeUnit.SECONDS)
     fun run() {
-<span class="pc" id="L57">        plannedInvocations.filter { now().isAfter(it.value) }.forEach { (trigger, _) -&gt;</span>
-<span class="nc bnc" id="L58" title="All 2 branches missed.">            require(trigger is FixedRateTrigger)</span>
-<span class="nc" id="L59">            plannedInvocations[trigger] = now().plusSeconds(trigger.duration.inWholeSeconds)</span>
-<span class="nc" id="L60">            requestInvocation(trigger)</span>
-<span class="nc" id="L61">        }</span>
-<span class="fc" id="L62">    }</span>
+<span class="pc" id="L56">        plannedInvocations.filter { now().isAfter(it.value) }.forEach { (trigger, _) -&gt;</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">            require(trigger is FixedRateTrigger)</span>
+<span class="nc" id="L58">            plannedInvocations[trigger] = now().plusSeconds(trigger.duration.inWholeSeconds)</span>
+<span class="nc" id="L59">            requestInvocation(trigger)</span>
+<span class="nc" id="L60">        }</span>
+<span class="fc" id="L61">    }</span>
 }
 
 internal fun FixedRateTriggerService.requestInvocation(trigger: FixedRateTrigger) {
-<span class="nc" id="L66">    submitRequest(</span>
-<span class="nc" id="L67">        InvokeExec(</span>
-<span class="nc" id="L68">            execId = generateDomainId(::ExecId),</span>
-<span class="nc" id="L69">            funcId = trigger.funcId,</span>
-<span class="nc bnc" id="L70" title="All 2 branches missed.">            correlationId = trigger.correlationId ?: CorrelationId(&quot;__default__&quot;),</span>
-<span class="nc" id="L71">            inputs = InvocationInputs(TableType()),</span>
-<span class="nc" id="L72">            invocation = FixedRateInvocation(),</span>
-<span class="nc" id="L73">            code = funcQueryRepository.get(trigger.funcId).code</span>
+<span class="nc" id="L65">    submitRequest(</span>
+<span class="nc" id="L66">        InvokeExec(</span>
+<span class="nc" id="L67">            execId = generateDomainId(::ExecId),</span>
+<span class="nc" id="L68">            funcId = trigger.funcId,</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">            correlationId = trigger.correlationId ?: CorrelationId(&quot;__default__&quot;),</span>
+<span class="nc" id="L70">            inputs = InvocationInputs(),</span>
+<span class="nc" id="L71">            invocation = FixedRateInvocation(),</span>
+<span class="nc" id="L72">            code = funcQueryRepository.get(trigger.funcId).code</span>
         )
     )
-<span class="nc" id="L76">}</span>
+<span class="nc" id="L75">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

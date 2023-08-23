@@ -70,7 +70,7 @@ object FunctionOutput0Schema : FunctionOutputSchema&lt;FunctionOutput0&gt; {
     }
 
 <span class="fc bfc" id="L72" title="All 2 branches covered.">    is TableProxyArray -&gt; pushTop(value.index)</span>
-<span class="pc bpc" id="L73" title="1 of 2 branches missed.">    is TableProxyMap -&gt; pushTop(value.index)</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">    is TableProxyMap -&gt; pushTop(value.index)</span>
 <span class="fc bfc" id="L74" title="All 2 branches covered.">    is AnyType -&gt; pushAny(value)</span>
 <span class="pc bpc" id="L75" title="1 of 2 branches missed.">    is ErrorType -&gt; pushError(value)</span>
 <span class="nc" id="L76">    else -&gt; throw NotImplementedError(&quot;${value::class.simpleName} not implemented yet&quot;)</span>

@@ -5,7 +5,7 @@ import io.hamal.lib.common.domain.DomainId
 import io.hamal.lib.common.domain.DomainIdSerializer
 import io.hamal.lib.domain.vo.base.Inputs
 import io.hamal.lib.domain.vo.base.InputsSerializer
-import io.hamal.lib.kua.type.TableType
+import io.hamal.lib.kua.type.MapType
 import kotlinx.serialization.Serializable
 
 <span class="nc" id="L11">@Serializable(with = ExecId.Serializer::class)</span>
@@ -16,7 +16,7 @@ import kotlinx.serialization.Serializable
 }
 
 <span class="nc" id="L18">@Serializable(with = ExecInputs.Serializer::class)</span>
-<span class="fc" id="L19">class ExecInputs(override val value: TableType = TableType()) : Inputs() {</span>
+<span class="fc" id="L19">class ExecInputs(override val value: MapType = MapType()) : Inputs() {</span>
 <span class="fc" id="L20">    internal object Serializer : InputsSerializer&lt;ExecInputs&gt;(::ExecInputs)</span>
 <span class="fc" id="L21">}</span>
 

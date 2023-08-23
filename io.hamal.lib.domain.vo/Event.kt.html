@@ -5,25 +5,34 @@ import io.hamal.lib.common.domain.DomainId
 import io.hamal.lib.common.domain.DomainIdSerializer
 import io.hamal.lib.common.domain.DomainName
 import io.hamal.lib.common.domain.DomainNameSerializer
+import io.hamal.lib.domain.vo.base.Inputs
+import io.hamal.lib.domain.vo.base.InputsSerializer
+import io.hamal.lib.kua.type.MapType
 import kotlinx.serialization.Serializable
 
-<span class="nc" id="L10">@Serializable(with = EventId.Serializer::class)</span>
-<span class="fc" id="L11">data class EventId(override val value: SnowflakeId) : DomainId() {</span>
-<span class="fc" id="L12">    constructor(value: Int) : this(SnowflakeId(value.toLong()))</span>
-
-<span class="fc" id="L14">    internal object Serializer : DomainIdSerializer&lt;EventId&gt;(::EventId)</span>
+<span class="nc" id="L13">@Serializable(with = EventId.Serializer::class)</span>
+<span class="fc" id="L14">data class EventId(override val value: SnowflakeId) : DomainId() {</span>
+<span class="fc" id="L15">    constructor(value: Int) : this(SnowflakeId(value.toLong()))</span>
+<span class="fc" id="L16">    internal object Serializer : DomainIdSerializer&lt;EventId&gt;(::EventId)</span>
 }
 
 
-<span class="nc" id="L18">@Serializable(with = TopicId.Serializer::class)</span>
-<span class="fc" id="L19">data class TopicId(override val value: SnowflakeId) : DomainId() {</span>
-<span class="fc" id="L20">    constructor(value: Int) : this(SnowflakeId(value.toLong()))</span>
 
-<span class="fc" id="L22">    internal object Serializer : DomainIdSerializer&lt;TopicId&gt;(::TopicId)</span>
+<span class="fc" id="L21">@Serializable(with = EventPayload.Serializer::class)</span>
+<span class="pc" id="L22">class EventPayload(override val value: MapType = MapType()) : Inputs() {</span>
+<span class="fc" id="L23">    internal object Serializer : InputsSerializer&lt;EventPayload&gt;(::EventPayload)</span>
+<span class="nc" id="L24">}</span>
+
+
+<span class="nc" id="L27">@Serializable(with = TopicId.Serializer::class)</span>
+<span class="fc" id="L28">data class TopicId(override val value: SnowflakeId) : DomainId() {</span>
+<span class="fc" id="L29">    constructor(value: Int) : this(SnowflakeId(value.toLong()))</span>
+
+<span class="fc" id="L31">    internal object Serializer : DomainIdSerializer&lt;TopicId&gt;(::TopicId)</span>
 }
 
-<span class="nc" id="L25">@Serializable(with = TopicName.Serializer::class)</span>
-<span class="fc" id="L26">class TopicName(override val value: String) : DomainName() {</span>
-<span class="fc" id="L27">    internal object Serializer : DomainNameSerializer&lt;TopicName&gt;(::TopicName)</span>
+<span class="nc" id="L34">@Serializable(with = TopicName.Serializer::class)</span>
+<span class="fc" id="L35">class TopicName(override val value: String) : DomainName() {</span>
+<span class="fc" id="L36">    internal object Serializer : DomainNameSerializer&lt;TopicName&gt;(::TopicName)</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

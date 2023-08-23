@@ -8,25 +8,30 @@ interface HamalSdk {
     val awaitService: AwaitService
     fun execService(): ExecService
     val execLogService: ExecLogService
+    val topicService: TopicService
 }
 
-<span class="fc" id="L13">data class DefaultHamalSdk(</span>
-<span class="fc" id="L14">    val httpTemplate: HttpTemplate</span>
+<span class="fc" id="L14">data class DefaultHamalSdk(</span>
+<span class="fc" id="L15">    val httpTemplate: HttpTemplate</span>
 ) : HamalSdk {
     override fun adhocService(): AdhocService {
-<span class="fc" id="L17">        return DefaultAdhocService(httpTemplate)</span>
+<span class="fc" id="L18">        return DefaultAdhocService(httpTemplate)</span>
     }
 
-<span class="fc" id="L20">    override val awaitService by lazy {</span>
-<span class="fc" id="L21">        DefaultAwaitService(httpTemplate)</span>
+<span class="fc" id="L21">    override val awaitService by lazy {</span>
+<span class="fc" id="L22">        DefaultAwaitService(httpTemplate)</span>
     }
 
     override fun execService(): ExecService {
-<span class="fc" id="L25">        return DefaultExecService(httpTemplate)</span>
+<span class="fc" id="L26">        return DefaultExecService(httpTemplate)</span>
     }
 
-<span class="fc" id="L28">    override val execLogService by lazy {</span>
-<span class="fc" id="L29">        DefaultExecLogService(httpTemplate)</span>
+<span class="fc" id="L29">    override val execLogService by lazy {</span>
+<span class="fc" id="L30">        DefaultExecLogService(httpTemplate)</span>
+    }
+
+<span class="pc" id="L33">    override val topicService by lazy {</span>
+<span class="nc" id="L34">        DefaultTopicService(httpTemplate)</span>
     }
 }
 

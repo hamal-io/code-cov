@@ -28,7 +28,7 @@ import io.hamal.lib.web3.hml.http.HmlHttpBatchService
 <span class="nc" id="L28">            ctx.pushNil()</span>
 <span class="nc bnc" id="L29" title="All 2 branches missed.">            while (ctx.state.native.tableNext(arg1.index)) {</span>
 //                val i = ctx.state.getNumber(-2)
-<span class="nc" id="L31">                val v = ctx.state.getTableMap(-1)</span>
+<span class="nc" id="L31">                val v = ctx.state.getTableMapProxy(-1)</span>
 
 <span class="nc" id="L33">                when (v.getString(&quot;type&quot;)) {</span>
 <span class="nc bnc" id="L34" title="All 2 branches missed.">                    &quot;get_block&quot; -&gt; {</span>

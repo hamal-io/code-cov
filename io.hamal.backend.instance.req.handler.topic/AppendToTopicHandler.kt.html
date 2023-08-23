@@ -5,7 +5,7 @@ import io.hamal.backend.instance.req.handler.cmdId
 import io.hamal.backend.repository.api.log.LogBrokerRepository
 import io.hamal.backend.repository.api.log.ProtobufAppender
 import io.hamal.backend.repository.api.submitted_req.SubmittedAppendToTopicReq
-import io.hamal.lib.domain.Event
+import io.hamal.lib.domain.vo.EventPayload
 import org.springframework.stereotype.Component
 
 @Component
@@ -15,9 +15,9 @@ import org.springframework.stereotype.Component
 
     override fun invoke(req: SubmittedAppendToTopicReq) {
 <span class="fc" id="L17">        val topic = eventBrokerRepository.getTopic(req.id)</span>
-<span class="fc" id="L18">        appender.append(req.cmdId(), topic, req.event)</span>
+<span class="fc" id="L18">        appender.append(req.cmdId(), topic, req.payload)</span>
 <span class="fc" id="L19">    }</span>
 
-<span class="fc" id="L21">    private val appender = ProtobufAppender(Event::class, eventBrokerRepository)</span>
+<span class="fc" id="L21">    private val appender = ProtobufAppender(EventPayload::class, eventBrokerRepository)</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

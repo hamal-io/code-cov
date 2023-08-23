@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AppendToTopicFunction.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.extension.std.sys.topic</a> &gt; <span class="el_source">AppendToTopicFunction.kt</span></div><h1>AppendToTopicFunction.kt</h1><pre class="source lang-java linenums">package io.hamal.extension.std.sys.topic
+
+import io.hamal.lib.domain.vo.EventPayload
+import io.hamal.lib.http.HttpTemplate
+import io.hamal.lib.http.body
+import io.hamal.lib.kua.function.Function2In2Out
+import io.hamal.lib.kua.function.FunctionContext
+import io.hamal.lib.kua.function.FunctionInput2Schema
+import io.hamal.lib.kua.function.FunctionOutput2Schema
+import io.hamal.lib.kua.type.ErrorType
+import io.hamal.lib.kua.type.MapType
+import io.hamal.lib.kua.type.StringType
+import io.hamal.lib.sdk.domain.ApiSubmittedReqWithId
+
+<span class="fc" id="L15">class AppendToTopicFunction(</span>
+<span class="fc" id="L16">    private val templateSupplier: () -&gt; HttpTemplate</span>
+<span class="fc" id="L17">) : Function2In2Out&lt;StringType, MapType, ErrorType, MapType&gt;(</span>
+<span class="fc" id="L18">    FunctionInput2Schema(StringType::class, MapType::class),</span>
+<span class="fc" id="L19">    FunctionOutput2Schema(ErrorType::class, MapType::class)</span>
+) {
+
+    override fun invoke(ctx: FunctionContext, arg1: StringType, arg2: MapType): Pair&lt;ErrorType?, MapType?&gt; {
+<span class="nc" id="L23">        try {</span>
+<span class="nc" id="L24">            val res = templateSupplier()</span>
+<span class="nc" id="L25">                .post(&quot;/v1/topics/{topicId}/events&quot;)</span>
+<span class="nc" id="L26">                .path(&quot;topicId&quot;, arg1.value)</span>
+<span class="nc" id="L27">                .body(EventPayload(arg2))</span>
+<span class="nc" id="L28">                .execute(ApiSubmittedReqWithId::class)</span>
+
+<span class="nc" id="L30">            return null to MapType().also {</span>
+<span class="nc" id="L31">                it[&quot;req_id&quot;] = res.reqId</span>
+<span class="nc" id="L32">                it[&quot;status&quot;] = res.status.name</span>
+<span class="nc" id="L33">                it[&quot;id&quot;] = res.id</span>
+<span class="nc" id="L34">            }</span>
+<span class="nc" id="L35">        } catch (t: Throwable) {</span>
+<span class="nc" id="L36">            t.printStackTrace()</span>
+<span class="nc" id="L37">            throw t</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -56,8 +56,8 @@ import org.springframework.stereotype.Component
 <span class="nc" id="L56">internal fun InvocationInputs.toExecInputs() = ExecInputs(this.value)</span>
 internal fun merge(funcInputs: FuncInputs, invocationInputs: InvocationInputs): ExecInputs {
 <span class="fc" id="L58">    val result = ExecInputs()</span>
-<span class="fc" id="L59">    funcInputs.value.forEach { result.value[it.key] = it.value }</span>
-<span class="fc" id="L60">    invocationInputs.value.forEach { result.value[it.key] = it.value }</span>
+<span class="fc" id="L59">    funcInputs.value.entries.forEach { result.value[it.key] = it.value }</span>
+<span class="fc" id="L60">    invocationInputs.value.entries.forEach { result.value[it.key] = it.value }</span>
 <span class="fc" id="L61">    return result</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
