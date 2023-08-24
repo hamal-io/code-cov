@@ -213,9 +213,9 @@ internal fun DefaultNamedPreparedStatement.ensureAllParametersSet() {
 
                 }
 
-<span class="pc bpc" id="L216" title="1 of 2 branches missed.">                current == '\'' -&gt; {</span>
-<span class="nc" id="L217">                    advance()</span>
-<span class="nc" id="L218">                    advanceUntil('\'')</span>
+<span class="fc bfc" id="L216" title="All 2 branches covered.">                current == '\'' -&gt; {</span>
+<span class="fc" id="L217">                    advance()</span>
+<span class="fc" id="L218">                    advanceUntil('\'')</span>
                 }
 
 <span class="pc bpc" id="L221" title="1 of 2 branches missed.">                current == '\&quot;' -&gt; {</span>
@@ -256,14 +256,14 @@ internal fun DefaultNamedPreparedStatement.ensureAllParametersSet() {
 <span class="fc" id="L256">    }</span>
 
     private fun advanceUntil(marker: Char) {
-<span class="nc bnc" id="L259" title="All 2 branches missed.">        while (!isAtEnd()) {</span>
-<span class="nc bnc" id="L260" title="All 2 branches missed.">            if (peek() == marker) {</span>
-<span class="nc" id="L261">                advance()</span>
-<span class="nc" id="L262">                break</span>
+<span class="pc bpc" id="L259" title="1 of 2 branches missed.">        while (!isAtEnd()) {</span>
+<span class="fc bfc" id="L260" title="All 2 branches covered.">            if (peek() == marker) {</span>
+<span class="fc" id="L261">                advance()</span>
+<span class="fc" id="L262">                break</span>
             }
-<span class="nc" id="L264">            advance()</span>
+<span class="fc" id="L264">            advance()</span>
         }
-<span class="nc" id="L266">    }</span>
+<span class="fc" id="L266">    }</span>
 
     private fun skipUntil(marker: Char) {
 <span class="nc bnc" id="L269" title="All 2 branches missed.">        while (!isAtEnd()) {</span>

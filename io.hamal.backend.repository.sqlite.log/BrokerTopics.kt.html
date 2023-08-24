@@ -47,73 +47,120 @@ import java.util.concurrent.ConcurrentHashMap
 <span class="fc" id="L47">    }</span>
 
     override fun create(cmdId: CmdId, toCreate: BrokerTopicsRepository.TopicToCreate): LogTopic {
-<span class="fc" id="L50">        return connection.execute&lt;LogTopic&gt;(&quot;INSERT INTO topics(id, name, instant) VALUES (:id, :name, :now) RETURNING id,name&quot;) {</span>
-<span class="fc" id="L51">            query {</span>
-<span class="fc" id="L52">                set(&quot;id&quot;, toCreate.id)</span>
-<span class="fc" id="L53">                set(&quot;name&quot;, toCreate.name)</span>
-<span class="fc" id="L54">                set(&quot;now&quot;, TimeUtils.now())</span>
+<span class="fc" id="L50">        try {</span>
+<span class="fc" id="L51">            return connection.execute&lt;LogTopic&gt;(&quot;INSERT INTO topics(id, name, instant) VALUES (:id, :name, :now) RETURNING id,name&quot;) {</span>
+<span class="fc" id="L52">                query {</span>
+<span class="fc" id="L53">                    set(&quot;id&quot;, toCreate.id)</span>
+<span class="fc" id="L54">                    set(&quot;name&quot;, toCreate.name)</span>
+<span class="fc" id="L55">                    set(&quot;now&quot;, TimeUtils.now())</span>
+                }
+<span class="fc" id="L57">                map { rs -&gt;</span>
+<span class="fc" id="L58">                    LogTopic(</span>
+<span class="fc" id="L59">                        id = rs.getDomainId(&quot;id&quot;, ::TopicId),</span>
+<span class="fc" id="L60">                        name = TopicName(rs.getString(&quot;name&quot;)),</span>
+                    )
+                }
+            }!!
+<span class="nc" id="L64">        } catch (t: Throwable) {</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">            if (t.message!!.contains(&quot;(UNIQUE constraint failed: topics.name)&quot;)) {</span>
+<span class="nc" id="L66">                throw IllegalArgumentException(&quot;Topic already exists&quot;)</span>
             }
-<span class="fc" id="L56">            map { rs -&gt;</span>
-<span class="fc" id="L57">                LogTopic(</span>
-<span class="fc" id="L58">                    id = rs.getDomainId(&quot;id&quot;, ::TopicId),</span>
-<span class="fc" id="L59">                    name = TopicName(rs.getString(&quot;name&quot;)),</span>
-                )
-            }
-        }!!
+<span class="nc" id="L68">            throw t</span>
+        }
     }
 
     override fun find(name: TopicName): LogTopic? =
-<span class="fc bfc" id="L66" title="All 2 branches covered.">        topicMapping[name] ?: connection.executeQueryOne(&quot;SELECT id, name FROM topics WHERE name = :name&quot;) {</span>
-<span class="fc" id="L67">            query {</span>
-<span class="fc" id="L68">                set(&quot;name&quot;, name.value)</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        topicMapping[name] ?: connection.executeQueryOne(&quot;SELECT id, name FROM topics WHERE name = :name&quot;) {</span>
+<span class="fc" id="L74">            query {</span>
+<span class="fc" id="L75">                set(&quot;name&quot;, name.value)</span>
             }
-<span class="fc" id="L70">            map { rs -&gt;</span>
-<span class="fc" id="L71">                LogTopic(</span>
-<span class="fc" id="L72">                    id = rs.getDomainId(&quot;id&quot;, ::TopicId),</span>
-<span class="fc" id="L73">                    name = TopicName(rs.getString(&quot;name&quot;))</span>
+<span class="fc" id="L77">            map { rs -&gt;</span>
+<span class="fc" id="L78">                LogTopic(</span>
+<span class="fc" id="L79">                    id = rs.getDomainId(&quot;id&quot;, ::TopicId), name = TopicName(rs.getString(&quot;name&quot;))</span>
                 )
             }
-<span class="fc bfc" id="L76" title="All 2 branches covered.">        }?.also { topicMapping[it.name] = it }</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">        }?.also { topicMapping[it.name] = it }</span>
 
-    override fun find(id: TopicId): LogTopic? =
-<span class="fc bfc" id="L79" title="All 6 branches covered.">        topicMapping.values.find { it.id == id }</span>
-<span class="fc" id="L80">            ?: connection.executeQueryOne(&quot;SELECT id,name FROM topics WHERE id = :id&quot;) {</span>
-<span class="fc" id="L81">                query {</span>
-<span class="fc" id="L82">                    set(&quot;id&quot;, id)</span>
-                }
-<span class="fc" id="L84">                map { rs -&gt;</span>
-<span class="fc" id="L85">                    LogTopic(</span>
-<span class="fc" id="L86">                        id = rs.getDomainId(&quot;id&quot;, ::TopicId),</span>
-<span class="fc" id="L87">                        name = TopicName(rs.getString(&quot;name&quot;))</span>
-                    )
-                }
-<span class="fc bfc" id="L90" title="All 2 branches covered.">            }?.also { topicMapping[it.name] = it }</span>
+<span class="fc bfc" id="L84" title="All 6 branches covered.">    override fun find(id: TopicId): LogTopic? = topicMapping.values.find { it.id == id }</span>
+<span class="fc" id="L85">        ?: connection.executeQueryOne(&quot;SELECT id,name FROM topics WHERE id = :id&quot;) {</span>
+<span class="fc" id="L86">            query {</span>
+<span class="fc" id="L87">                set(&quot;id&quot;, id)</span>
+            }
+<span class="fc" id="L89">            map { rs -&gt;</span>
+<span class="fc" id="L90">                LogTopic(</span>
+<span class="fc" id="L91">                    id = rs.getDomainId(&quot;id&quot;, ::TopicId), name = TopicName(rs.getString(&quot;name&quot;))</span>
+                )
+            }
+<span class="fc bfc" id="L94" title="All 2 branches covered.">        }?.also { topicMapping[it.name] = it }</span>
 
     override fun list(block: TopicQuery.() -&gt; Unit): List&lt;LogTopic&gt; {
-<span class="fc" id="L93">        return connection.executeQuery&lt;LogTopic&gt;(&quot;SELECT id,name FROM topics&quot;) {</span>
-<span class="fc" id="L94">            map { rs -&gt;</span>
-<span class="fc" id="L95">                LogTopic(</span>
-<span class="fc" id="L96">                    id = rs.getDomainId(&quot;id&quot;, ::TopicId),</span>
-<span class="fc" id="L97">                    name = TopicName(rs.getString(&quot;name&quot;))</span>
+<span class="fc" id="L97">        val query = TopicQuery().also(block)</span>
+<span class="fc" id="L98">        return connection.executeQuery&lt;LogTopic&gt;(</span>
+            &quot;&quot;&quot;
+                SELECT
+                    id, name 
+                FROM 
+                    topics
+                WHERE
+                    id &lt; :afterId
+<span class="fc" id="L106">                    ${query.names()}</span>
+                ORDER BY id DESC
+                LIMIT :limit
+<span class="fc" id="L109">            &quot;&quot;&quot;.trimIndent()</span>
+        ) {
+<span class="fc" id="L111">            query {</span>
+<span class="fc" id="L112">                set(&quot;afterId&quot;, query.afterId)</span>
+<span class="fc" id="L113">                set(&quot;limit&quot;, query.limit)</span>
+            }
+<span class="fc" id="L115">            map { rs -&gt;</span>
+<span class="fc" id="L116">                LogTopic(</span>
+<span class="fc" id="L117">                    id = rs.getDomainId(&quot;id&quot;, ::TopicId), name = TopicName(rs.getString(&quot;name&quot;))</span>
                 )
             }
         }
     }
 
+    override fun count(block: TopicQuery.() -&gt; Unit): ULong {
+<span class="nc" id="L124">        val query = TopicQuery().also(block)</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">        return connection.executeQueryOne(</span>
+            &quot;&quot;&quot;
+            SELECT 
+                COUNT(*) as count 
+            FROM 
+                topics
+            WHERE
+                id &lt; :afterId
+<span class="nc" id="L133">                ${query.names()}</span>
+            ORDER BY id DESC
+<span class="nc" id="L135">        &quot;&quot;&quot;.trimIndent()</span>
+        ) {
+<span class="nc" id="L137">            query {</span>
+<span class="nc" id="L138">                set(&quot;afterId&quot;, query.afterId)</span>
+            }
+<span class="nc" id="L140">            map {</span>
+<span class="nc" id="L141">                it.getLong(&quot;count&quot;).toULong()</span>
+            }
+<span class="nc" id="L143">        } ?: 0UL</span>
+    }
+
     override fun clear() {
-<span class="fc" id="L104">        connection.tx {</span>
-<span class="fc" id="L105">            execute(&quot;DELETE FROM topics&quot;)</span>
-<span class="fc" id="L106">        }</span>
-<span class="fc" id="L107">    }</span>
+<span class="fc" id="L147">        connection.tx {</span>
+<span class="fc" id="L148">            execute(&quot;DELETE FROM topics&quot;)</span>
+<span class="fc" id="L149">        }</span>
+<span class="fc" id="L150">    }</span>
 
     override fun close() {
-<span class="fc" id="L110">        connection.close()</span>
-<span class="fc" id="L111">    }</span>
+<span class="fc" id="L153">        connection.close()</span>
+<span class="fc" id="L154">    }</span>
 
-<span class="nc bnc" id="L113" title="All 2 branches missed.">    override fun count() = connection.executeQueryOne(&quot;SELECT COUNT(*) as count from topics&quot;) {</span>
-<span class="nc" id="L114">        map {</span>
-<span class="nc" id="L115">            it.getLong(&quot;count&quot;).toULong()</span>
+
+    private fun TopicQuery.names(): String {
+<span class="fc bfc" id="L158" title="All 2 branches covered.">        return if (names.isEmpty()) {</span>
+<span class="fc" id="L159">            &quot;&quot;</span>
+        } else {
+<span class="fc" id="L161">            &quot;AND name IN (${names.joinToString(&quot;,&quot;) { &quot;'${it.value}'&quot; }})&quot;</span>
         }
-<span class="nc" id="L117">    } ?: 0UL</span>
+    }
+
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -2,6 +2,7 @@
 
 import io.hamal.backend.repository.api.log.LogBrokerRepository
 import io.hamal.lib.common.domain.Limit
+import io.hamal.lib.domain.vo.TopicId
 import io.hamal.lib.domain.vo.TopicName
 import io.hamal.lib.sdk.domain.ApiTopicList
 import io.hamal.lib.sdk.domain.ApiTopicList.Topic
@@ -10,25 +11,27 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
-<span class="fc" id="L13">@RestController</span>
-<span class="fc" id="L14">class ListTopicsRoute(</span>
-<span class="fc" id="L15">    private val eventBrokerRepository: LogBrokerRepository</span>
+<span class="fc" id="L14">@RestController</span>
+<span class="fc" id="L15">class ListTopicsRoute(</span>
+<span class="fc" id="L16">    private val eventBrokerRepository: LogBrokerRepository</span>
 ) {
     @GetMapping(&quot;/v1/topics&quot;)
     fun listTopics(
+        @RequestParam(required = false, name = &quot;after_id&quot;, defaultValue = &quot;7FFFFFFFFFFFFFFF&quot;) afterId: TopicId,
         @RequestParam(required = false, name = &quot;names&quot;, defaultValue = &quot;&quot;) topicNames: List&lt;TopicName&gt;,
         @RequestParam(required = false, name = &quot;limit&quot;, defaultValue = &quot;100&quot;) limit: Limit
     ): ResponseEntity&lt;ApiTopicList&gt; {
-<span class="fc" id="L22">        val topics = eventBrokerRepository.listTopics {</span>
-<span class="nc" id="L23">            this.names = topicNames</span>
-<span class="nc" id="L24">            this.limit = limit</span>
-<span class="nc" id="L25">        }</span>
-<span class="fc" id="L26">        return ResponseEntity.ok(</span>
-<span class="fc" id="L27">            ApiTopicList(</span>
-<span class="fc" id="L28">                topics = topics.map { topic -&gt;</span>
-<span class="fc" id="L29">                    Topic(</span>
-<span class="fc" id="L30">                        id = topic.id,</span>
-<span class="fc" id="L31">                        name = topic.name</span>
+<span class="fc" id="L24">        val topics = eventBrokerRepository.listTopics {</span>
+<span class="fc" id="L25">            this.afterId = afterId</span>
+<span class="fc" id="L26">            this.names = topicNames</span>
+<span class="fc" id="L27">            this.limit = limit</span>
+<span class="fc" id="L28">        }</span>
+<span class="fc" id="L29">        return ResponseEntity.ok(</span>
+<span class="fc" id="L30">            ApiTopicList(</span>
+<span class="fc" id="L31">                topics = topics.map { topic -&gt;</span>
+<span class="fc" id="L32">                    Topic(</span>
+<span class="fc" id="L33">                        id = topic.id,</span>
+<span class="fc" id="L34">                        name = topic.name</span>
                     )
                 }
             )

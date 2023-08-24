@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BrokerTopics.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.repository.memory.log</a> &gt; <span class="el_source">BrokerTopics.kt</span></div><h1>BrokerTopics.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.repository.memory.log
 
 import io.hamal.backend.repository.api.log.BrokerTopicsRepository
+import io.hamal.backend.repository.api.log.BrokerTopicsRepository.TopicQuery
 import io.hamal.backend.repository.api.log.BrokerTopicsRepository.TopicToCreate
 import io.hamal.backend.repository.api.log.LogTopic
 import io.hamal.lib.common.domain.CmdId
@@ -10,45 +11,65 @@ import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
 
-<span class="fc" id="L13">class MemoryBrokerTopicsRepository : BrokerTopicsRepository {</span>
+<span class="fc" id="L14">class MemoryBrokerTopicsRepository : BrokerTopicsRepository {</span>
 
-<span class="fc" id="L15">    private val lock = ReentrantLock()</span>
-<span class="fc" id="L16">    private val topicMapping = mutableMapOf&lt;TopicName, LogTopic&gt;()</span>
+<span class="fc" id="L16">    private val lock = ReentrantLock()</span>
+<span class="fc" id="L17">    private val topicMapping = mutableMapOf&lt;TopicName, LogTopic&gt;()</span>
+<span class="fc" id="L18">    private val topics = mutableMapOf&lt;TopicId, LogTopic&gt;()</span>
+
     override fun create(cmdId: CmdId, toCreate: TopicToCreate): LogTopic {
-<span class="fc" id="L18">        return lock.withLock {</span>
-<span class="fc bfc" id="L19" title="All 2 branches covered.">            require(topicMapping.values.none { it.id == toCreate.id }) { &quot;Topic already exists&quot; }</span>
-<span class="fc bfc" id="L20" title="All 4 branches covered.">            require(!topicMapping.containsKey(toCreate.name)) { &quot;Topic already exists&quot; }</span>
-<span class="fc" id="L21">            topicMapping[toCreate.name] = LogTopic(</span>
-<span class="fc" id="L22">                id = toCreate.id,</span>
-<span class="fc" id="L23">                name = toCreate.name</span>
+<span class="fc" id="L21">        return lock.withLock {</span>
+<span class="fc bfc" id="L22" title="All 2 branches covered.">            require(topicMapping.values.none { it.id == toCreate.id }) { &quot;Topic already exists&quot; }</span>
+<span class="fc bfc" id="L23" title="All 4 branches covered.">            require(!topicMapping.containsKey(toCreate.name)) { &quot;Topic already exists&quot; }</span>
+<span class="fc" id="L24">            topicMapping[toCreate.name] = LogTopic(</span>
+<span class="fc" id="L25">                id = toCreate.id,</span>
+<span class="fc" id="L26">                name = toCreate.name</span>
             )
-<span class="fc" id="L25">            topicMapping[toCreate.name]!!</span>
+<span class="fc" id="L28">            topics[toCreate.id] = topicMapping[toCreate.name]!!</span>
+<span class="fc" id="L29">            topicMapping[toCreate.name]!!</span>
         }
     }
 
     override fun find(name: TopicName): LogTopic? {
-<span class="fc" id="L30">        return lock.withLock {</span>
-<span class="fc" id="L31">            topicMapping[name]</span>
+<span class="fc" id="L34">        return lock.withLock {</span>
+<span class="fc" id="L35">            topicMapping[name]</span>
         }
     }
 
-<span class="fc" id="L35">    override fun find(id: TopicId): LogTopic? = lock.withLock {</span>
-<span class="fc bfc" id="L36" title="All 4 branches covered.">        topicMapping.values.find { it.id == id }</span>
-<span class="fc" id="L37">    }</span>
-
-<span class="fc" id="L39">    override fun list(block: BrokerTopicsRepository.TopicQuery.() -&gt; Unit): List&lt;LogTopic&gt; = lock.withLock {</span>
-<span class="fc" id="L40">        topicMapping.values.toList()</span>
+<span class="fc" id="L39">    override fun find(id: TopicId): LogTopic? = lock.withLock {</span>
+<span class="fc" id="L40">        topics[id]</span>
 <span class="fc" id="L41">    }</span>
 
-    override fun count(): ULong {
-<span class="nc" id="L44">        return lock.withLock { topicMapping.size.toULong() }</span>
+    override fun list(block: TopicQuery.() -&gt; Unit): List&lt;LogTopic&gt; {
+<span class="fc" id="L44">        val query = TopicQuery().also(block)</span>
+<span class="fc" id="L45">        return lock.withLock {</span>
+<span class="fc" id="L46">            topics.entries.sortedBy { it.key }</span>
+<span class="fc" id="L47">                .reversed()</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">                .filter { if (query.names.isEmpty()) true else query.names.contains(it.value.name) }</span>
+<span class="pc bpc" id="L49" title="1 of 2 branches missed.">                .dropWhile { it.key &gt;= query.afterId }</span>
+<span class="fc" id="L50">                .take(query.limit.value)</span>
+<span class="fc" id="L51">                .map { it.value }</span>
+        }
+    }
+
+    override fun count(block: TopicQuery.() -&gt; Unit): ULong {
+<span class="nc" id="L56">        val query = TopicQuery().also(block)</span>
+<span class="nc" id="L57">        return lock.withLock {</span>
+<span class="nc" id="L58">            topics.entries.sortedBy { it.key }</span>
+<span class="nc" id="L59">                .reversed()</span>
+<span class="nc bnc" id="L60" title="All 2 branches missed.">                .filter { if (query.names.isEmpty()) true else query.names.contains(it.value.name) }</span>
+<span class="nc bnc" id="L61" title="All 2 branches missed.">                .dropWhile { it.key &gt;= query.afterId }</span>
+<span class="nc" id="L62">                .count()</span>
+<span class="nc" id="L63">                .toULong()</span>
+        }
     }
 
     fun clear() {
-<span class="fc" id="L48">        topicMapping.clear()</span>
-<span class="fc" id="L49">    }</span>
+<span class="fc" id="L68">        topicMapping.clear()</span>
+<span class="fc" id="L69">        topics.clear()</span>
+<span class="fc" id="L70">    }</span>
 
     override fun close() {
-<span class="fc" id="L52">    }</span>
+<span class="fc" id="L73">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

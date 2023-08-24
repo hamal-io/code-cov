@@ -4,20 +4,25 @@ import io.hamal.lib.common.KeyedOnce
 import io.hamal.lib.domain.vo.TopicId
 import io.hamal.lib.domain.vo.TopicName
 import io.hamal.lib.http.HttpTemplate
+import io.hamal.lib.sdk.domain.ApiTopicList
 
 interface TopicService {
     fun resolve(topicName: TopicName): TopicId
 }
 
-<span class="nc" id="L12">class DefaultTopicService(</span>
-<span class="nc" id="L13">    val template: HttpTemplate,</span>
-<span class="nc" id="L14">    val topicNameCache: KeyedOnce&lt;TopicName, TopicId&gt; = KeyedOnce.default()</span>
+<span class="fc" id="L13">class DefaultTopicService(</span>
+<span class="fc" id="L14">    val httpTemplate: HttpTemplate,</span>
+<span class="fc" id="L15">    private val topicNameCache: KeyedOnce&lt;TopicName, TopicId&gt; = KeyedOnce.default()</span>
 ) : TopicService {
     override fun resolve(topicName: TopicName): TopicId {
-<span class="nc" id="L17">        return topicNameCache(topicName) {</span>
-<span class="nc" id="L18">            TODO()</span>
+<span class="fc" id="L18">        return topicNameCache(topicName) {</span>
+<span class="pc bpc" id="L19" title="1 of 2 branches missed.">            httpTemplate.get(&quot;/v1/topics&quot;)</span>
+<span class="fc" id="L20">                .parameter(&quot;names&quot;, topicName.value)</span>
+<span class="fc" id="L21">                .execute(ApiTopicList::class)</span>
+<span class="fc" id="L22">                .topics</span>
+<span class="fc bfc" id="L23" title="All 2 branches covered.">                .firstOrNull()?.id</span>
+<span class="fc" id="L24">                ?: throw NoSuchElementException(&quot;Topic not found&quot;)</span>
         }
     }
-
-<span class="nc" id="L22">}</span>
+<span class="fc" id="L27">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

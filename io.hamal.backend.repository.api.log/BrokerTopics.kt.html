@@ -12,16 +12,16 @@ interface BrokerTopicsRepository : Closeable {
     fun find(name: TopicName): LogTopic?
     fun find(id: TopicId): LogTopic?
     fun list(block: TopicQuery.() -&gt; Unit): List&lt;LogTopic&gt;
-    fun count(): ULong
+    fun count(block: TopicQuery.() -&gt; Unit): ULong
 <span class="fc" id="L16">    data class TopicToCreate(</span>
 <span class="fc" id="L17">        val id: TopicId,</span>
 <span class="fc" id="L18">        val name: TopicName</span>
     )
 
-<span class="nc" id="L21">    data class TopicQuery(</span>
-<span class="nc" id="L22">        var afterId: TopicId = TopicId(SnowflakeId(Long.MAX_VALUE)),</span>
-<span class="nc" id="L23">        var names: List&lt;TopicName&gt;,</span>
-<span class="nc" id="L24">        var limit: Limit = Limit(1)</span>
-<span class="nc" id="L25">    )</span>
+<span class="fc" id="L21">    data class TopicQuery(</span>
+<span class="fc" id="L22">        var afterId: TopicId = TopicId(SnowflakeId(Long.MAX_VALUE)),</span>
+<span class="fc" id="L23">        var names: List&lt;TopicName&gt; = listOf(),</span>
+<span class="fc" id="L24">        var limit: Limit = Limit(1)</span>
+<span class="fc" id="L25">    )</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
