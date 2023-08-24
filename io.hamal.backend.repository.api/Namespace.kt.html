@@ -9,6 +9,8 @@ import io.hamal.lib.domain.vo.NamespaceInputs
 import io.hamal.lib.domain.vo.NamespaceName
 import kotlinx.serialization.Serializable
 
+<span class="fc" id="L12">interface NamespaceRepository : NamespaceCmdRepository, NamespaceQueryRepository</span>
+
 interface NamespaceCmdRepository {
     fun create(cmd: CreateCmd): Namespace
 
@@ -16,23 +18,23 @@ interface NamespaceCmdRepository {
 
     fun clear()
 
-<span class="fc" id="L19">    data class CreateCmd(</span>
-<span class="fc" id="L20">        val id: CmdId,</span>
-<span class="fc" id="L21">        val namespaceId: NamespaceId,</span>
-<span class="fc" id="L22">        val name: NamespaceName,</span>
-<span class="fc" id="L23">        val inputs: NamespaceInputs</span>
+<span class="fc" id="L21">    data class CreateCmd(</span>
+<span class="fc" id="L22">        val id: CmdId,</span>
+<span class="fc" id="L23">        val namespaceId: NamespaceId,</span>
+<span class="fc" id="L24">        val name: NamespaceName,</span>
+<span class="fc" id="L25">        val inputs: NamespaceInputs</span>
     )
 
-<span class="fc" id="L26">    data class UpdateCmd(</span>
-<span class="fc" id="L27">        val id: CmdId,</span>
-<span class="fc" id="L28">        val name: NamespaceName,</span>
-<span class="fc" id="L29">        val inputs: NamespaceInputs</span>
+<span class="fc" id="L28">    data class UpdateCmd(</span>
+<span class="fc" id="L29">        val id: CmdId,</span>
+<span class="fc" id="L30">        val name: NamespaceName,</span>
+<span class="fc" id="L31">        val inputs: NamespaceInputs</span>
     )
 }
 
 interface NamespaceQueryRepository {
-<span class="fc bfc" id="L34" title="All 2 branches covered.">    fun get(namespaceId: NamespaceId) = find(namespaceId) ?: throw NoSuchElementException(&quot;Namespace not found&quot;)</span>
-<span class="pc bpc" id="L35" title="1 of 2 branches missed.">    fun get(namespaceName: NamespaceName) = find(namespaceName) ?: throw NoSuchElementException(&quot;Namespace not found&quot;)</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">    fun get(namespaceId: NamespaceId) = find(namespaceId) ?: throw NoSuchElementException(&quot;Namespace not found&quot;)</span>
+<span class="pc bpc" id="L37" title="1 of 2 branches missed.">    fun get(namespaceName: NamespaceName) = find(namespaceName) ?: throw NoSuchElementException(&quot;Namespace not found&quot;)</span>
 
     fun find(namespaceId: NamespaceId): Namespace?
     fun find(namespaceName: NamespaceName): Namespace?
@@ -40,21 +42,21 @@ interface NamespaceQueryRepository {
     fun list(block: NamespaceQuery.() -&gt; Unit): List&lt;Namespace&gt;
     fun list(namespaceIds: List&lt;NamespaceId&gt;): List&lt;Namespace&gt; {
         //FIXME single query
-<span class="fc" id="L43">        return namespaceIds.mapNotNull(::find)</span>
+<span class="fc" id="L45">        return namespaceIds.mapNotNull(::find)</span>
     }
 
-<span class="fc" id="L46">    data class NamespaceQuery(</span>
-<span class="fc" id="L47">        var afterId: NamespaceId = NamespaceId(SnowflakeId(Long.MAX_VALUE)),</span>
-<span class="fc" id="L48">        var limit: Limit = Limit(1)</span>
-<span class="fc" id="L49">    )</span>
+<span class="fc" id="L48">    data class NamespaceQuery(</span>
+<span class="fc" id="L49">        var afterId: NamespaceId = NamespaceId(SnowflakeId(Long.MAX_VALUE)),</span>
+<span class="fc" id="L50">        var limit: Limit = Limit(1)</span>
+<span class="fc" id="L51">    )</span>
 }
 
-<span class="pc bpc" id="L52" title="2 of 10 branches missed.">@Serializable</span>
-<span class="fc" id="L53">data class Namespace(</span>
-<span class="pc" id="L54">    val cmdId: CmdId,</span>
-<span class="fc" id="L55">    override val id: NamespaceId,</span>
-<span class="fc" id="L56">    val name: NamespaceName,</span>
-<span class="fc" id="L57">    val inputs: NamespaceInputs</span>
-<span class="fc" id="L58">) : DomainObject&lt;NamespaceId&gt;</span>
+<span class="pc bpc" id="L54" title="2 of 10 branches missed.">@Serializable</span>
+<span class="fc" id="L55">data class Namespace(</span>
+<span class="pc" id="L56">    val cmdId: CmdId,</span>
+<span class="fc" id="L57">    override val id: NamespaceId,</span>
+<span class="fc" id="L58">    val name: NamespaceName,</span>
+<span class="fc" id="L59">    val inputs: NamespaceInputs</span>
+<span class="fc" id="L60">) : DomainObject&lt;NamespaceId&gt;</span>
 
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

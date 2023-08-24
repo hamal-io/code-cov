@@ -6,15 +6,17 @@ import io.hamal.lib.domain._enum.ExecLogLevel
 import io.hamal.lib.domain.vo.*
 import kotlinx.serialization.Serializable
 
+interface ExecLogRepository : ExecLogCmdRepository, ExecLogQueryRepository
+
 interface ExecLogCmdRepository {
     fun append(cmd: LogCmd): ExecLog
     fun clear()
-<span class="nc" id="L12">    data class LogCmd(</span>
-<span class="nc" id="L13">        val id: ExecLogId,</span>
-<span class="nc" id="L14">        val level: ExecLogLevel,</span>
-<span class="nc" id="L15">        val execId: ExecId,</span>
-<span class="nc" id="L16">        val message: ExecLogMessage,</span>
-<span class="nc" id="L17">        val localAt: LocalAt</span>
+<span class="nc" id="L14">    data class LogCmd(</span>
+<span class="nc" id="L15">        val id: ExecLogId,</span>
+<span class="nc" id="L16">        val level: ExecLogLevel,</span>
+<span class="nc" id="L17">        val execId: ExecId,</span>
+<span class="nc" id="L18">        val message: ExecLogMessage,</span>
+<span class="nc" id="L19">        val localAt: LocalAt</span>
     )
 }
 
@@ -23,19 +25,19 @@ interface ExecLogQueryRepository {
 
     fun list(block: ExecLogQuery.() -&gt; Unit): List&lt;ExecLog&gt;
 
-<span class="nc" id="L26">    data class ExecLogQuery(</span>
-<span class="nc" id="L27">        var afterId: ExecLogId = ExecLogId(SnowflakeId(Long.MAX_VALUE)),</span>
-<span class="nc" id="L28">        var limit: Limit = Limit(1)</span>
-<span class="nc" id="L29">    )</span>
+<span class="nc" id="L28">    data class ExecLogQuery(</span>
+<span class="nc" id="L29">        var afterId: ExecLogId = ExecLogId(SnowflakeId(Long.MAX_VALUE)),</span>
+<span class="nc" id="L30">        var limit: Limit = Limit(1)</span>
+<span class="nc" id="L31">    )</span>
 }
 
-<span class="nc bnc" id="L32" title="All 12 branches missed.">@Serializable</span>
-<span class="nc" id="L33">data class ExecLog(</span>
-<span class="nc" id="L34">    val id: ExecLogId,</span>
-<span class="nc" id="L35">    val execId: ExecId,</span>
-<span class="nc" id="L36">    val level: ExecLogLevel,</span>
-<span class="nc" id="L37">    val message: ExecLogMessage,</span>
-<span class="nc" id="L38">    val localAt: LocalAt,</span>
-<span class="nc" id="L39">    val remoteAt: RemoteAt</span>
-<span class="nc" id="L40">)</span>
+<span class="nc bnc" id="L34" title="All 12 branches missed.">@Serializable</span>
+<span class="nc" id="L35">data class ExecLog(</span>
+<span class="nc" id="L36">    val id: ExecLogId,</span>
+<span class="nc" id="L37">    val execId: ExecId,</span>
+<span class="nc" id="L38">    val level: ExecLogLevel,</span>
+<span class="nc" id="L39">    val message: ExecLogMessage,</span>
+<span class="nc" id="L40">    val localAt: LocalAt,</span>
+<span class="nc" id="L41">    val remoteAt: RemoteAt</span>
+<span class="nc" id="L42">)</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

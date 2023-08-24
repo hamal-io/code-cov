@@ -3,8 +3,8 @@
 import io.hamal.backend.repository.api.Namespace
 import io.hamal.backend.repository.api.NamespaceCmdRepository
 import io.hamal.backend.repository.api.NamespaceCmdRepository.CreateCmd
-import io.hamal.backend.repository.api.NamespaceQueryRepository
 import io.hamal.backend.repository.api.NamespaceQueryRepository.NamespaceQuery
+import io.hamal.backend.repository.api.NamespaceRepository
 import io.hamal.backend.repository.record.CreateDomainObject
 import io.hamal.backend.repository.record.namespace.Entity
 import io.hamal.backend.repository.record.namespace.NamespaceCreationRecord
@@ -43,7 +43,7 @@ internal object CreateNamespace : CreateDomainObject&lt;NamespaceId, NamespaceRe
 <span class="fc" id="L43">    createDomainObject = CreateNamespace,</span>
     recordClass = NamespaceRecord::class,
 <span class="fc" id="L45">    projections = listOf(ProjectionCurrent, ProjectionUniqueName)</span>
-), NamespaceCmdRepository, NamespaceQueryRepository {
+), NamespaceRepository {
 
 <span class="fc" id="L48">    data class Config(</span>
 <span class="fc" id="L49">        override val path: Path</span>

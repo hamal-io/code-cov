@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BrokerTopics.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.backend.repository.sqlite.log</a> &gt; <span class="el_source">BrokerTopics.kt</span></div><h1>BrokerTopics.kt</h1><pre class="source lang-java linenums">package io.hamal.backend.repository.sqlite.log
 
-import io.hamal.backend.repository.api.log.LogBrokerTopicsRepository
-import io.hamal.backend.repository.api.log.LogBrokerTopicsRepository.TopicQuery
+import io.hamal.backend.repository.api.log.BrokerTopicsRepository
+import io.hamal.backend.repository.api.log.BrokerTopicsRepository.TopicQuery
 import io.hamal.backend.repository.api.log.LogTopic
 import io.hamal.lib.common.domain.CmdId
 import io.hamal.lib.common.util.TimeUtils
@@ -16,12 +16,12 @@ import java.util.concurrent.ConcurrentHashMap
 <span class="fc" id="L16">    val path: Path</span>
 )
 
-<span class="fc" id="L19">class SqliteLogBrokerTopicsRepository(</span>
+<span class="fc" id="L19">class SqliteBrokerTopicsRepository(</span>
 <span class="pc" id="L20">    internal val brokerTopics: SqliteBrokerTopics,</span>
 <span class="fc" id="L21">) : BaseSqliteRepository(object : Config {</span>
 <span class="fc" id="L22">    override val path: Path get() = brokerTopics.path</span>
 <span class="fc" id="L23">    override val filename: String get() = &quot;topics.db&quot;</span>
-}), LogBrokerTopicsRepository {
+}), BrokerTopicsRepository {
 
 <span class="fc" id="L26">    private val topicMapping = ConcurrentHashMap&lt;TopicName, LogTopic&gt;()</span>
     override fun setupConnection(connection: Connection) {
@@ -46,7 +46,7 @@ import java.util.concurrent.ConcurrentHashMap
 <span class="fc" id="L46">        }</span>
 <span class="fc" id="L47">    }</span>
 
-    override fun create(cmdId: CmdId, toCreate: LogBrokerTopicsRepository.TopicToCreate): LogTopic {
+    override fun create(cmdId: CmdId, toCreate: BrokerTopicsRepository.TopicToCreate): LogTopic {
 <span class="fc" id="L50">        return connection.execute&lt;LogTopic&gt;(&quot;INSERT INTO topics(id, name, instant) VALUES (:id, :name, :now) RETURNING id,name&quot;) {</span>
 <span class="fc" id="L51">            query {</span>
 <span class="fc" id="L52">                set(&quot;id&quot;, toCreate.id)</span>

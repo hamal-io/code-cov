@@ -3,55 +3,56 @@
 import io.hamal.backend.repository.api.ExecLog
 import io.hamal.backend.repository.api.ExecLogCmdRepository
 import io.hamal.backend.repository.api.ExecLogQueryRepository
+import io.hamal.backend.repository.api.ExecLogRepository
 import io.hamal.lib.domain.vo.ExecId
 import io.hamal.lib.domain.vo.RemoteAt
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 
-object MemoryExecLogRepository : ExecLogCmdRepository, ExecLogQueryRepository {
-<span class="fc" id="L13">    private val lock = ReentrantReadWriteLock()</span>
-<span class="fc" id="L14">    private val store = mutableListOf&lt;ExecLog&gt;()</span>
+object MemoryExecLogRepository : ExecLogRepository {
+<span class="fc" id="L14">    private val lock = ReentrantReadWriteLock()</span>
+<span class="fc" id="L15">    private val store = mutableListOf&lt;ExecLog&gt;()</span>
 
     override fun append(cmd: ExecLogCmdRepository.LogCmd): ExecLog {
-<span class="nc bnc" id="L17" title="All 6 branches missed.">        return lock.write {</span>
-<span class="nc" id="L18">            ExecLog(</span>
-<span class="nc" id="L19">                id = cmd.id,</span>
-<span class="nc" id="L20">                execId = cmd.execId,</span>
-<span class="nc" id="L21">                level = cmd.level,</span>
-<span class="nc" id="L22">                message = cmd.message,</span>
-<span class="nc" id="L23">                localAt = cmd.localAt,</span>
-<span class="nc" id="L24">                remoteAt = RemoteAt.now()</span>
-<span class="nc" id="L25">            ).also { store.add(it) }</span>
+<span class="nc bnc" id="L18" title="All 6 branches missed.">        return lock.write {</span>
+<span class="nc" id="L19">            ExecLog(</span>
+<span class="nc" id="L20">                id = cmd.id,</span>
+<span class="nc" id="L21">                execId = cmd.execId,</span>
+<span class="nc" id="L22">                level = cmd.level,</span>
+<span class="nc" id="L23">                message = cmd.message,</span>
+<span class="nc" id="L24">                localAt = cmd.localAt,</span>
+<span class="nc" id="L25">                remoteAt = RemoteAt.now()</span>
+<span class="nc" id="L26">            ).also { store.add(it) }</span>
         }
     }
 
     override fun clear() {
-<span class="nc bnc" id="L30" title="All 6 branches missed.">        lock.write { store.clear() }</span>
-<span class="nc" id="L31">    }</span>
+<span class="nc bnc" id="L31" title="All 6 branches missed.">        lock.write { store.clear() }</span>
+<span class="nc" id="L32">    }</span>
 
     override fun list(execId: ExecId, block: ExecLogQueryRepository.ExecLogQuery.() -&gt; Unit): List&lt;ExecLog&gt; {
-<span class="nc" id="L34">        val query = ExecLogQueryRepository.ExecLogQuery().also(block)</span>
-<span class="nc" id="L35">        return lock.read {</span>
-<span class="nc" id="L36">            store.reversed()</span>
-<span class="nc" id="L37">                .asSequence()</span>
-<span class="nc" id="L38">                .filter {</span>
-<span class="nc" id="L39">                    it.execId == execId</span>
+<span class="nc" id="L35">        val query = ExecLogQueryRepository.ExecLogQuery().also(block)</span>
+<span class="nc" id="L36">        return lock.read {</span>
+<span class="nc" id="L37">            store.reversed()</span>
+<span class="nc" id="L38">                .asSequence()</span>
+<span class="nc" id="L39">                .filter {</span>
+<span class="nc" id="L40">                    it.execId == execId</span>
                 }
-<span class="nc bnc" id="L41" title="All 2 branches missed.">                .dropWhile { it.id &gt;= query.afterId }</span>
-<span class="nc" id="L42">                .take(query.limit.value)</span>
-<span class="nc" id="L43">                .toList()</span>
+<span class="nc bnc" id="L42" title="All 2 branches missed.">                .dropWhile { it.id &gt;= query.afterId }</span>
+<span class="nc" id="L43">                .take(query.limit.value)</span>
+<span class="nc" id="L44">                .toList()</span>
         }
     }
 
     override fun list(block: ExecLogQueryRepository.ExecLogQuery.() -&gt; Unit): List&lt;ExecLog&gt; {
-<span class="nc" id="L48">        val query = ExecLogQueryRepository.ExecLogQuery().also(block)</span>
-<span class="nc" id="L49">        return lock.read {</span>
-<span class="nc" id="L50">            store.reversed()</span>
-<span class="nc" id="L51">                .asSequence()</span>
-<span class="nc bnc" id="L52" title="All 2 branches missed.">                .dropWhile { it.id &gt;= query.afterId }</span>
-<span class="nc" id="L53">                .take(query.limit.value)</span>
-<span class="nc" id="L54">                .toList()</span>
+<span class="nc" id="L49">        val query = ExecLogQueryRepository.ExecLogQuery().also(block)</span>
+<span class="nc" id="L50">        return lock.read {</span>
+<span class="nc" id="L51">            store.reversed()</span>
+<span class="nc" id="L52">                .asSequence()</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">                .dropWhile { it.id &gt;= query.afterId }</span>
+<span class="nc" id="L54">                .take(query.limit.value)</span>
+<span class="nc" id="L55">                .toList()</span>
         }
     }
 }

@@ -41,7 +41,7 @@ internal object CreateTrigger : CreateDomainObject&lt;TriggerId, TriggerRecord, 
 <span class="fc" id="L41">    createDomainObject = CreateTrigger,</span>
     recordClass = TriggerRecord::class,
 <span class="fc" id="L43">    projections = listOf(ProjectionCurrent, ProjectionUniqueName)</span>
-), TriggerCmdRepository, TriggerQueryRepository {
+), TriggerRepository {
 
 <span class="fc" id="L46">    data class Config(</span>
 <span class="fc" id="L47">        override val path: Path,</span>

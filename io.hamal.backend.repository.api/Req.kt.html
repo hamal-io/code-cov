@@ -4,6 +4,8 @@ import io.hamal.backend.repository.api.submitted_req.SubmittedReq
 import io.hamal.lib.common.domain.Limit
 import io.hamal.lib.domain.ReqId
 
+<span class="fc" id="L7">interface ReqRepository : ReqCmdRepository, ReqQueryRepository</span>
+
 interface ReqCmdRepository {
     fun queue(req: SubmittedReq)
     fun next(limit: Int): List&lt;SubmittedReq&gt;
@@ -13,12 +15,12 @@ interface ReqCmdRepository {
 }
 
 interface ReqQueryRepository {
-<span class="fc bfc" id="L16" title="All 2 branches covered.">    fun get(reqId: ReqId) = find(reqId) ?: throw NoSuchElementException(&quot;Req not found&quot;)</span>
+<span class="fc bfc" id="L18" title="All 2 branches covered.">    fun get(reqId: ReqId) = find(reqId) ?: throw NoSuchElementException(&quot;Req not found&quot;)</span>
     fun find(reqId: ReqId): SubmittedReq?
     fun list(block: Query.() -&gt; Unit): List&lt;SubmittedReq&gt;
-<span class="fc" id="L19">    data class Query(</span>
-<span class="fc" id="L20">        var afterId: ReqId = ReqId(0),</span>
-<span class="fc" id="L21">        var limit: Limit = Limit(1)</span>
-<span class="fc" id="L22">    )</span>
+<span class="fc" id="L21">    data class Query(</span>
+<span class="fc" id="L22">        var afterId: ReqId = ReqId(0),</span>
+<span class="fc" id="L23">        var limit: Limit = Limit(1)</span>
+<span class="fc" id="L24">    )</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

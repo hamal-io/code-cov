@@ -2,8 +2,8 @@
 
 import io.hamal.backend.repository.api.Func
 import io.hamal.backend.repository.api.FuncCmdRepository
-import io.hamal.backend.repository.api.FuncQueryRepository
 import io.hamal.backend.repository.api.FuncQueryRepository.FuncQuery
+import io.hamal.backend.repository.api.FuncRepository
 import io.hamal.backend.repository.record.func.FuncCreationRecord
 import io.hamal.backend.repository.record.func.FuncRecord
 import io.hamal.backend.repository.record.func.FuncUpdatedRecord
@@ -19,7 +19,7 @@ internal object CurrentFuncProjection {
 <span class="fc" id="L19">    private val projection = mutableMapOf&lt;FuncId, Func&gt;()</span>
     fun apply(func: Func) {
 
-        
+
 <span class="fc" id="L23">        val values = projection.values.groupBy({ it.namespaceId }, { it.name }).toMutableMap()</span>
 <span class="pc bpc" id="L24" title="1 of 4 branches missed.">        values[func.namespaceId] = values[func.namespaceId]?.plus(func.name) ?: listOf(func.name)</span>
 <span class="fc bfc" id="L25" title="All 2 branches covered.">        val unique = values.all { it.value.size == it.value.toSet().size }</span>
@@ -43,7 +43,7 @@ internal object CurrentFuncProjection {
 <span class="fc" id="L43">    }</span>
 }
 
-<span class="fc" id="L46">object MemoryFuncRepository : BaseRecordRepository&lt;FuncId, FuncRecord&gt;(), FuncCmdRepository, FuncQueryRepository {</span>
+<span class="fc" id="L46">object MemoryFuncRepository : BaseRecordRepository&lt;FuncId, FuncRecord&gt;(), FuncRepository {</span>
 <span class="fc" id="L47">    private val lock = ReentrantLock()</span>
     override fun create(cmd: FuncCmdRepository.CreateCmd): Func {
 <span class="fc" id="L49">        return lock.withLock {</span>
