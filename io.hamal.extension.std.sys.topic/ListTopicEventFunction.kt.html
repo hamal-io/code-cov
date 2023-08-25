@@ -18,20 +18,20 @@ import io.hamal.lib.sdk.domain.ApiTopicEventList
 <span class="fc" id="L18">    FunctionOutput2Schema(ErrorType::class, ArrayType::class)</span>
 ) {
     override fun invoke(ctx: FunctionContext, arg1: StringType): Pair&lt;ErrorType?, ArrayType?&gt; {
-<span class="nc" id="L21">        val eventList = try {</span>
-<span class="nc" id="L22">            templateSupplier()</span>
-<span class="nc" id="L23">                .get(&quot;/v1/topics/{topicId}/events&quot;)</span>
-<span class="nc" id="L24">                .path(&quot;topicId&quot;, arg1.value)</span>
-<span class="nc" id="L25">                .execute(ApiTopicEventList::class)</span>
-<span class="nc" id="L26">                .events</span>
+<span class="fc" id="L21">        val eventList = try {</span>
+<span class="fc" id="L22">            templateSupplier()</span>
+<span class="fc" id="L23">                .get(&quot;/v1/topics/{topicId}/events&quot;)</span>
+<span class="fc" id="L24">                .path(&quot;topicId&quot;, arg1.value)</span>
+<span class="fc" id="L25">                .execute(ApiTopicEventList::class)</span>
+<span class="fc" id="L26">                .events</span>
 <span class="nc" id="L27">        } catch (t: Throwable) {</span>
 <span class="nc" id="L28">            t.printStackTrace()</span>
 <span class="nc" id="L29">            listOf&lt;EventWithId&gt;()</span>
         }
 
-<span class="nc" id="L32">        return null to ArrayType(eventList.mapIndexed { index, event -&gt;</span>
-<span class="nc" id="L33">            index to event.value</span>
-<span class="nc" id="L34">        }.toMap().toMutableMap())</span>
+<span class="fc" id="L32">        return null to ArrayType(eventList.mapIndexed { index, event -&gt;</span>
+<span class="fc" id="L33">            index to event.value</span>
+<span class="fc" id="L34">        }.toMap().toMutableMap())</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -20,18 +20,18 @@ import io.hamal.lib.sdk.domain.ApiSubmittedReqWithId
 ) {
 
     override fun invoke(ctx: FunctionContext, arg1: StringType, arg2: MapType): Pair&lt;ErrorType?, MapType?&gt; {
-<span class="nc" id="L23">        try {</span>
-<span class="nc" id="L24">            val res = templateSupplier()</span>
-<span class="nc" id="L25">                .post(&quot;/v1/topics/{topicId}/events&quot;)</span>
-<span class="nc" id="L26">                .path(&quot;topicId&quot;, arg1.value)</span>
-<span class="nc" id="L27">                .body(EventPayload(arg2))</span>
-<span class="nc" id="L28">                .execute(ApiSubmittedReqWithId::class)</span>
+<span class="fc" id="L23">        try {</span>
+<span class="fc" id="L24">            val res = templateSupplier()</span>
+<span class="fc" id="L25">                .post(&quot;/v1/topics/{topicId}/events&quot;)</span>
+<span class="fc" id="L26">                .path(&quot;topicId&quot;, arg1.value)</span>
+<span class="fc" id="L27">                .body(EventPayload(arg2))</span>
+<span class="fc" id="L28">                .execute(ApiSubmittedReqWithId::class)</span>
 
-<span class="nc" id="L30">            return null to MapType(</span>
-<span class="nc" id="L31">                mutableMapOf(</span>
-<span class="nc" id="L32">                    &quot;req_id&quot; to StringType(res.reqId.value.value.toString(16)),</span>
-<span class="nc" id="L33">                    &quot;status&quot; to StringType(res.status.name),</span>
-<span class="nc" id="L34">                    &quot;id&quot; to StringType(res.id.value.toString(16))</span>
+<span class="fc" id="L30">            return null to MapType(</span>
+<span class="fc" id="L31">                mutableMapOf(</span>
+<span class="fc" id="L32">                    &quot;req_id&quot; to StringType(res.reqId.value.value.toString(16)),</span>
+<span class="fc" id="L33">                    &quot;status&quot; to StringType(res.status.name),</span>
+<span class="fc" id="L34">                    &quot;id&quot; to StringType(res.id.value.toString(16))</span>
                 )
             )
 <span class="nc" id="L37">        } catch (t: Throwable) {</span>

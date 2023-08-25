@@ -34,9 +34,9 @@ interface ExecService {
 <span class="fc" id="L34">    }</span>
 
     override fun fail(execId: ExecId, error: ErrorType) {
-<span class="fc" id="L37">        template.post(&quot;/v1/execs/{execId}/fail&quot;)</span>
-<span class="fc" id="L38">            .path(&quot;execId&quot;, execId)</span>
-<span class="fc" id="L39">            .body(FailExecReq(error))</span>
+<span class="nc" id="L37">        template.post(&quot;/v1/execs/{execId}/fail&quot;)</span>
+<span class="nc" id="L38">            .path(&quot;execId&quot;, execId)</span>
+<span class="nc" id="L39">            .body(FailExecReq(error))</span>
 <span class="nc" id="L40">            .execute()</span>
 <span class="nc" id="L41">    }</span>
 }
