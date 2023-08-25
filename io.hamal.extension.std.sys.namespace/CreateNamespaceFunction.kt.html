@@ -9,38 +9,41 @@ import io.hamal.lib.kua.function.Function1In2Out
 import io.hamal.lib.kua.function.FunctionContext
 import io.hamal.lib.kua.function.FunctionInput1Schema
 import io.hamal.lib.kua.function.FunctionOutput2Schema
-import io.hamal.lib.kua.table.TableProxyMap
 import io.hamal.lib.kua.type.ErrorType
+import io.hamal.lib.kua.type.MapType
+import io.hamal.lib.kua.type.StringType
 import io.hamal.lib.sdk.domain.ApiSubmittedReqWithId
 
-<span class="fc" id="L16">class CreateNamespaceFunction(</span>
-<span class="fc" id="L17">    private val templateSupplier: () -&gt; HttpTemplate</span>
-<span class="fc" id="L18">) : Function1In2Out&lt;TableProxyMap, ErrorType, TableProxyMap&gt;(</span>
-<span class="fc" id="L19">    FunctionInput1Schema(TableProxyMap::class),</span>
-<span class="fc" id="L20">    FunctionOutput2Schema(ErrorType::class, TableProxyMap::class)</span>
+<span class="fc" id="L17">class CreateNamespaceFunction(</span>
+<span class="fc" id="L18">    private val templateSupplier: () -&gt; HttpTemplate</span>
+<span class="fc" id="L19">) : Function1In2Out&lt;MapType, ErrorType, MapType&gt;(</span>
+<span class="fc" id="L20">    FunctionInput1Schema(MapType::class),</span>
+<span class="fc" id="L21">    FunctionOutput2Schema(ErrorType::class, MapType::class)</span>
 ) {
-    override fun invoke(ctx: FunctionContext, arg1: TableProxyMap): Pair&lt;ErrorType?, TableProxyMap&gt; {
-<span class="fc" id="L23">        try {</span>
+    override fun invoke(ctx: FunctionContext, arg1: MapType): Pair&lt;ErrorType?, MapType&gt; {
+<span class="fc" id="L24">        try {</span>
 
-<span class="fc" id="L25">            val r = CreateNamespaceReq(</span>
-<span class="fc" id="L26">                name = NamespaceName(arg1.getString(&quot;name&quot;)),</span>
-<span class="fc" id="L27">                inputs = NamespaceInputs(),</span>
+<span class="fc" id="L26">            val r = CreateNamespaceReq(</span>
+<span class="fc" id="L27">                name = NamespaceName(arg1.getString(&quot;name&quot;)),</span>
+<span class="fc" id="L28">                inputs = NamespaceInputs(),</span>
             )
 
-<span class="fc" id="L30">            val res = templateSupplier()</span>
-<span class="fc" id="L31">                .post(&quot;/v1/namespaces&quot;)</span>
-<span class="fc" id="L32">                .body(r)</span>
-<span class="fc" id="L33">                .execute(ApiSubmittedReqWithId::class)</span>
+<span class="fc" id="L31">            val res = templateSupplier()</span>
+<span class="fc" id="L32">                .post(&quot;/v1/namespaces&quot;)</span>
+<span class="fc" id="L33">                .body(r)</span>
+<span class="fc" id="L34">                .execute(ApiSubmittedReqWithId::class)</span>
 
-<span class="fc" id="L35">            return null to ctx.tableCreateMap(1).also {</span>
-<span class="fc" id="L36">                it[&quot;req_id&quot;] = res.reqId</span>
-<span class="fc" id="L37">                it[&quot;status&quot;] = res.status.name</span>
-<span class="fc" id="L38">                it[&quot;id&quot;] = res.id</span>
-<span class="fc" id="L39">            }</span>
+<span class="fc" id="L36">            return null to MapType(</span>
+<span class="fc" id="L37">                mutableMapOf(</span>
+<span class="fc" id="L38">                    &quot;req_id&quot; to StringType(res.reqId.value.value.toString(16)),</span>
+<span class="fc" id="L39">                    &quot;status&quot; to StringType(res.status.name),</span>
+<span class="fc" id="L40">                    &quot;id&quot; to StringType(res.id.value.toString(16))</span>
+                )
+            )
 
-<span class="nc" id="L41">        } catch (t: Throwable) {</span>
-<span class="nc" id="L42">            t.printStackTrace()</span>
-<span class="nc" id="L43">            throw t</span>
+<span class="nc" id="L44">        } catch (t: Throwable) {</span>
+<span class="nc" id="L45">            t.printStackTrace()</span>
+<span class="nc" id="L46">            throw t</span>
         }
     }
 }

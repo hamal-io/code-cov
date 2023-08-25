@@ -4,74 +4,87 @@ import io.hamal.lib.http.HttpTemplate
 import io.hamal.lib.kua.function.Function0In2Out
 import io.hamal.lib.kua.function.FunctionContext
 import io.hamal.lib.kua.function.FunctionOutput2Schema
-import io.hamal.lib.kua.table.TableProxyArray
+import io.hamal.lib.kua.type.ArrayType
 import io.hamal.lib.kua.type.ErrorType
+import io.hamal.lib.kua.type.MapType
+import io.hamal.lib.kua.type.StringType
 import io.hamal.lib.sdk.domain.ApiSimpleEventTrigger
 import io.hamal.lib.sdk.domain.ApiSimpleFixedRateTrigger
 import io.hamal.lib.sdk.domain.ApiSimpleTrigger
 import io.hamal.lib.sdk.domain.ApiTriggerList
 
-<span class="fc" id="L14">class ListTriggerFunction(</span>
-<span class="fc" id="L15">    private val templateSupplier: () -&gt; HttpTemplate</span>
-<span class="fc" id="L16">) : Function0In2Out&lt;ErrorType, TableProxyArray&gt;(</span>
-<span class="fc" id="L17">    FunctionOutput2Schema(ErrorType::class, TableProxyArray::class)</span>
+<span class="fc" id="L16">class ListTriggerFunction(</span>
+<span class="fc" id="L17">    private val templateSupplier: () -&gt; HttpTemplate</span>
+<span class="fc" id="L18">) : Function0In2Out&lt;ErrorType, ArrayType&gt;(</span>
+<span class="fc" id="L19">    FunctionOutput2Schema(ErrorType::class, ArrayType::class)</span>
 ) {
-    override fun invoke(ctx: FunctionContext): Pair&lt;ErrorType?, TableProxyArray?&gt; {
-<span class="fc" id="L20">        val triggers = try {</span>
-<span class="fc" id="L21">            templateSupplier()</span>
-<span class="fc" id="L22">                .get(&quot;/v1/triggers&quot;)</span>
-<span class="fc" id="L23">                .execute(ApiTriggerList::class)</span>
-<span class="fc" id="L24">                .triggers</span>
-<span class="nc" id="L25">        } catch (t: Throwable) {</span>
-<span class="nc" id="L26">            t.printStackTrace()</span>
-<span class="nc" id="L27">            listOf&lt;ApiSimpleTrigger&gt;()</span>
+    override fun invoke(ctx: FunctionContext): Pair&lt;ErrorType?, ArrayType?&gt; {
+<span class="fc" id="L22">        val triggers = try {</span>
+<span class="fc" id="L23">            templateSupplier()</span>
+<span class="fc" id="L24">                .get(&quot;/v1/triggers&quot;)</span>
+<span class="fc" id="L25">                .execute(ApiTriggerList::class)</span>
+<span class="fc" id="L26">                .triggers</span>
+<span class="nc" id="L27">        } catch (t: Throwable) {</span>
+<span class="nc" id="L28">            t.printStackTrace()</span>
+<span class="nc" id="L29">            listOf&lt;ApiSimpleTrigger&gt;()</span>
         }
 
-<span class="fc" id="L30">        return null to ctx.tableCreateArray().also { rs -&gt;</span>
-<span class="fc" id="L31">            triggers.forEach { trigger -&gt;</span>
-
-<span class="fc" id="L33">                when (val t = trigger) {</span>
-<span class="fc bfc" id="L34" title="All 2 branches covered.">                    is ApiSimpleFixedRateTrigger -&gt; {</span>
-<span class="fc" id="L35">                        val inner = ctx.tableCreateMap(6)</span>
-<span class="fc" id="L36">                        inner[&quot;id&quot;] = t.id</span>
-<span class="fc" id="L37">                        inner[&quot;type&quot;] = &quot;FixedRate&quot;</span>
-<span class="fc" id="L38">                        inner[&quot;name&quot;] = t.name.value</span>
-<span class="fc" id="L39">                        inner[&quot;func&quot;] = ctx.tableCreateMap(2).also { nt -&gt;</span>
-<span class="fc" id="L40">                            nt[&quot;id&quot;] = t.func.id</span>
-<span class="fc" id="L41">                            nt[&quot;name&quot;] = t.func.name.value</span>
-<span class="fc" id="L42">                        }</span>
-<span class="fc" id="L43">                        inner[&quot;namespace&quot;] = ctx.tableCreateMap(2).also { nt -&gt;</span>
-<span class="fc" id="L44">                            nt[&quot;id&quot;] = t.namespace.id</span>
-<span class="fc" id="L45">                            nt[&quot;name&quot;] = t.namespace.name.value</span>
-<span class="fc" id="L46">                        }</span>
-<span class="fc" id="L47">                        inner[&quot;duration&quot;] = t.duration.toIsoString()</span>
-<span class="fc" id="L48">                        rs.append(inner)</span>
+<span class="fc" id="L32">        return null to ArrayType(</span>
+<span class="fc" id="L33">            triggers.mapIndexed { index, trigger -&gt;</span>
+<span class="fc" id="L34">                index to when (val t = trigger) {</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">                    is ApiSimpleFixedRateTrigger -&gt; {</span>
+<span class="fc" id="L36">                        MapType(</span>
+<span class="fc" id="L37">                            mutableMapOf(</span>
+<span class="fc" id="L38">                                &quot;id&quot; to StringType(t.id.value.value.toString(16)),</span>
+<span class="fc" id="L39">                                &quot;type&quot; to StringType(&quot;FixedRate&quot;),</span>
+<span class="fc" id="L40">                                &quot;name&quot; to StringType(t.name.value),</span>
+<span class="fc" id="L41">                                &quot;namespace&quot; to MapType(</span>
+<span class="fc" id="L42">                                    mutableMapOf(</span>
+<span class="fc" id="L43">                                        &quot;id&quot; to StringType(t.namespace.id.value.value.toString(16)),</span>
+<span class="fc" id="L44">                                        &quot;name&quot; to StringType(t.namespace.name.value)</span>
+                                    )
+                                ),
+<span class="fc" id="L47">                                &quot;func&quot; to MapType(</span>
+<span class="fc" id="L48">                                    mutableMapOf(</span>
+<span class="fc" id="L49">                                        &quot;id&quot; to StringType(t.func.id.value.value.toString(16)),</span>
+<span class="fc" id="L50">                                        &quot;name&quot; to StringType(t.func.name.value)</span>
+                                    )
+                                ),
+<span class="fc" id="L53">                                &quot;duration&quot; to StringType(t.duration.toIsoString())</span>
+                            )
+                        )
                     }
 
-<span class="pc bpc" id="L51" title="1 of 2 branches missed.">                    is ApiSimpleEventTrigger -&gt; {</span>
-<span class="fc" id="L52">                        val inner = ctx.tableCreateMap(6)</span>
-<span class="fc" id="L53">                        inner[&quot;id&quot;] = t.id</span>
-<span class="fc" id="L54">                        inner[&quot;type&quot;] = &quot;Event&quot;</span>
-<span class="fc" id="L55">                        inner[&quot;name&quot;] = t.name.value</span>
-<span class="fc" id="L56">                        inner[&quot;func&quot;] = ctx.tableCreateMap(2).also { nt -&gt;</span>
-<span class="fc" id="L57">                            nt[&quot;id&quot;] = t.func.id</span>
-<span class="fc" id="L58">                            nt[&quot;name&quot;] = t.func.name.value</span>
-<span class="fc" id="L59">                        }</span>
-<span class="fc" id="L60">                        inner[&quot;namespace&quot;] = ctx.tableCreateMap(2).also { nt -&gt;</span>
-<span class="fc" id="L61">                            nt[&quot;id&quot;] = t.namespace.id</span>
-<span class="fc" id="L62">                            nt[&quot;name&quot;] = t.namespace.name.value</span>
-<span class="fc" id="L63">                        }</span>
-<span class="fc" id="L64">                        inner[&quot;topic&quot;] = ctx.tableCreateMap(2).also { nt -&gt;</span>
-<span class="fc" id="L65">                            nt[&quot;id&quot;] = t.topic.id</span>
-<span class="fc" id="L66">                            nt[&quot;name&quot;] = t.topic.name.value</span>
-<span class="fc" id="L67">                        }</span>
-<span class="fc" id="L68">                        rs.append(inner)</span>
+<span class="fc" id="L58">                    is ApiSimpleEventTrigger -&gt; {</span>
+<span class="fc" id="L59">                        MapType(</span>
+<span class="fc" id="L60">                            mutableMapOf(</span>
+<span class="fc" id="L61">                                &quot;id&quot; to StringType(t.id.value.value.toString(16)),</span>
+<span class="fc" id="L62">                                &quot;type&quot; to StringType(&quot;Event&quot;),</span>
+<span class="fc" id="L63">                                &quot;name&quot; to StringType(t.name.value),</span>
+<span class="fc" id="L64">                                &quot;namespace&quot; to MapType(</span>
+<span class="fc" id="L65">                                    mutableMapOf(</span>
+<span class="fc" id="L66">                                        &quot;id&quot; to StringType(t.namespace.id.value.value.toString(16)),</span>
+<span class="fc" id="L67">                                        &quot;name&quot; to StringType(t.namespace.name.value)</span>
+                                    )
+                                ),
+<span class="fc" id="L70">                                &quot;func&quot; to MapType(</span>
+<span class="fc" id="L71">                                    mutableMapOf(</span>
+<span class="fc" id="L72">                                        &quot;id&quot; to StringType(t.func.id.value.value.toString(16)),</span>
+<span class="fc" id="L73">                                        &quot;name&quot; to StringType(t.func.name.value)</span>
+                                    )
+                                ),
+<span class="fc" id="L76">                                &quot;topic&quot; to MapType(</span>
+<span class="fc" id="L77">                                    mutableMapOf(</span>
+<span class="fc" id="L78">                                        &quot;id&quot; to StringType(t.topic.id.value.value.toString(16)),</span>
+<span class="fc" id="L79">                                        &quot;name&quot; to StringType(t.topic.name.value)</span>
+                                    )
+                                ),
+                            )
+                        )
                     }
-
-<span class="nc" id="L71">                    else -&gt; TODO()</span>
                 }
-<span class="fc" id="L73">            }</span>
-<span class="fc" id="L74">        }</span>
+<span class="fc" id="L86">            }.toMap().toMutableMap()</span>
+        )
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

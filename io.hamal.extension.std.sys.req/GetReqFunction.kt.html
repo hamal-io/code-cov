@@ -7,18 +7,18 @@ import io.hamal.lib.kua.function.Function1In2Out
 import io.hamal.lib.kua.function.FunctionContext
 import io.hamal.lib.kua.function.FunctionInput1Schema
 import io.hamal.lib.kua.function.FunctionOutput2Schema
-import io.hamal.lib.kua.table.TableProxyMap
 import io.hamal.lib.kua.type.ErrorType
+import io.hamal.lib.kua.type.MapType
 import io.hamal.lib.kua.type.StringType
 import io.hamal.lib.sdk.domain.ApiSubmittedReq
 
 <span class="fc" id="L15">class GetReqFunction(</span>
 <span class="fc" id="L16">    private val templateSupplier: () -&gt; HttpTemplate</span>
-<span class="fc" id="L17">) : Function1In2Out&lt;StringType, ErrorType, TableProxyMap&gt;(</span>
+<span class="fc" id="L17">) : Function1In2Out&lt;StringType, ErrorType, MapType&gt;(</span>
 <span class="fc" id="L18">    FunctionInput1Schema(StringType::class),</span>
-<span class="fc" id="L19">    FunctionOutput2Schema(ErrorType::class, TableProxyMap::class)</span>
+<span class="fc" id="L19">    FunctionOutput2Schema(ErrorType::class, MapType::class)</span>
 ) {
-    override fun invoke(ctx: FunctionContext, arg1: StringType): Pair&lt;ErrorType?, TableProxyMap?&gt; {
+    override fun invoke(ctx: FunctionContext, arg1: StringType): Pair&lt;ErrorType?, MapType?&gt; {
 <span class="fc" id="L22">        val response = templateSupplier()</span>
 <span class="fc" id="L23">            .get(&quot;/v1/reqs/{reqId}&quot;)</span>
 <span class="fc" id="L24">            .path(&quot;reqId&quot;, arg1.value)</span>
@@ -27,19 +27,21 @@ import io.hamal.lib.sdk.domain.ApiSubmittedReq
 <span class="pc bpc" id="L27" title="1 of 2 branches missed.">        if (response is SuccessHttpResponse) {</span>
 <span class="fc" id="L28">            return null to response.result(ApiSubmittedReq::class)</span>
 <span class="fc" id="L29">                .let { exec -&gt;</span>
-<span class="fc" id="L30">                    ctx.tableCreateMap(2).also {</span>
-<span class="fc" id="L31">                        it[&quot;reqId&quot;] = exec.reqId</span>
-<span class="fc" id="L32">                        it[&quot;status&quot;] = StringType(exec.status.name)</span>
-<span class="fc" id="L33">                    }</span>
+<span class="fc" id="L30">                    MapType(</span>
+<span class="fc" id="L31">                        mutableMapOf(</span>
+<span class="fc" id="L32">                            &quot;reqId&quot; to StringType(exec.reqId.value.value.toString(16)),</span>
+<span class="fc" id="L33">                            &quot;status&quot; to StringType(exec.status.name)</span>
+                        )
+                    )
                 }
         } else {
-<span class="nc bnc" id="L36" title="All 2 branches missed.">            require(response is ErrorHttpResponse)</span>
+<span class="nc bnc" id="L38" title="All 2 branches missed.">            require(response is ErrorHttpResponse)</span>
 //            return response.error(HamalError::class)
 //                .let { error -&gt;
 //                    ErrorValue(error.message ?: &quot;An unknown error occurred&quot;)
 //                }
 
-<span class="nc" id="L42">            TODO()</span>
+<span class="nc" id="L44">            TODO()</span>
         }
 //
     }

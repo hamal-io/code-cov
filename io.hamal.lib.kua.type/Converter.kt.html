@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Converter.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.kua.type</a> &gt; <span class="el_source">Converter.kt</span></div><h1>Converter.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.kua.type
+
+import io.hamal.lib.kua.State
+import io.hamal.lib.kua.table.TableEntryIterator
+import io.hamal.lib.kua.table.TableProxyArray
+import io.hamal.lib.kua.table.TableProxyMap
+
+fun State.toArrayType(array: TableProxyArray): ArrayType {
+<span class="fc" id="L9">    val result = ArrayType()</span>
+<span class="fc" id="L10">    TableEntryIterator(</span>
+<span class="fc" id="L11">        index = array.index,</span>
+<span class="fc" id="L12">        state = this,</span>
+<span class="fc" id="L13">        keyExtractor = { state, index -&gt; state.getNumberType(index) },</span>
+        valueExtractor = { state, index -&gt;
+<span class="fc" id="L15">            when (val value = state.getAny(index).value) {</span>
+<span class="pc bpc" id="L16" title="1 of 2 branches missed.">                is ArrayType,</span>
+<span class="pc bpc" id="L17" title="1 of 2 branches missed.">                is BooleanType,</span>
+<span class="pc bpc" id="L18" title="1 of 2 branches missed.">                is MapType,</span>
+<span class="fc bfc" id="L19" title="All 2 branches covered.">                is NumberType,</span>
+<span class="pc bpc" id="L20" title="1 of 2 branches missed.">                is StringType -&gt; value as SerializableType</span>
+
+<span class="nc bnc" id="L22" title="All 2 branches missed.">                is TableProxyMap -&gt; toMapType(value)</span>
+<span class="nc bnc" id="L23" title="All 2 branches missed.">                is TableProxyArray -&gt; toArrayType(value)</span>
+<span class="nc" id="L24">                else -&gt; TODO(&quot;$value&quot;)</span>
+            }
+        }
+<span class="fc" id="L27">    ).forEach { (_, value) -&gt; result.append(value) }</span>
+
+<span class="fc" id="L29">    return result</span>
+}
+
+fun State.toProxyArray(array: ArrayType): TableProxyArray {
+<span class="fc" id="L33">    return tableCreateArray(array.size).also {</span>
+        // FIXME probably instead of of appending it should be set to keep the index
+<span class="fc" id="L35">        array.entries.forEach { (_, value) -&gt;</span>
+<span class="fc" id="L36">            when (value) {</span>
+<span class="pc bpc" id="L37" title="1 of 2 branches missed.">                is BooleanType -&gt; it.append(value)</span>
+<span class="fc bfc" id="L38" title="All 2 branches covered.">                is NumberType -&gt; it.append(value)</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">                is StringType -&gt; it.append(value)</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">                is MapType -&gt; {</span>
+<span class="fc" id="L41">                    it.append(toProxyMap(value)); pop(1)</span>
+                }
+
+<span class="pc bpc" id="L44" title="1 of 2 branches missed.">                is ArrayType -&gt; {</span>
+<span class="fc" id="L45">                    it.append(toProxyArray(value)); pop(1)</span>
+                }
+
+<span class="nc" id="L48">                else -&gt; TODO(&quot;$value&quot;)</span>
+            }
+<span class="fc" id="L50">        }</span>
+<span class="fc" id="L51">    }</span>
+}
+
+fun State.toMapType(map: TableProxyMap): MapType {
+<span class="fc" id="L55">    val store = mutableMapOf&lt;String, SerializableType&gt;()</span>
+
+<span class="fc" id="L57">    TableEntryIterator(</span>
+<span class="fc" id="L58">        index = map.index,</span>
+<span class="fc" id="L59">        state = this,</span>
+<span class="fc" id="L60">        keyExtractor = { state, index -&gt; state.getStringType(index) },</span>
+        valueExtractor = { state, index -&gt;
+<span class="fc" id="L62">            when (val value = state.getAny(index).value) {</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">                is ArrayType,</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">                is BooleanType,</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">                is MapType,</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">                is NumberType,</span>
+<span class="pc bpc" id="L67" title="1 of 2 branches missed.">                is StringType -&gt; value as SerializableType</span>
+
+<span class="nc bnc" id="L69" title="All 2 branches missed.">                is TableProxyMap -&gt; toMapType(value)</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">                is TableProxyArray -&gt; toArrayType(value)</span>
+<span class="nc" id="L71">                else -&gt; TODO(&quot;$value&quot;)</span>
+            }
+        }
+<span class="fc" id="L74">    ).forEach { (key, value) -&gt; store[key.value] = value }</span>
+
+<span class="fc" id="L76">    return MapType(store)</span>
+}
+
+fun State.toProxyMap(map: MapType): TableProxyMap {
+<span class="fc" id="L80">    return tableCreateMap(map.size).also {</span>
+<span class="fc" id="L81">        map.entries.forEach { (key, value) -&gt;</span>
+<span class="fc" id="L82">            when (value) {</span>
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">                is BooleanType -&gt; it[key] = value</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">                is NumberType -&gt; it[key] = value</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">                is StringType -&gt; it[key] = value</span>
+<span class="pc bpc" id="L86" title="1 of 2 branches missed.">                is MapType -&gt; {</span>
+<span class="fc" id="L87">                    it[key] = toProxyMap(value); pop(1)</span>
+                }
+
+<span class="nc bnc" id="L90" title="All 2 branches missed.">                is ArrayType -&gt; {</span>
+<span class="nc" id="L91">                    it[key] = toProxyArray(value); pop(1)</span>
+                }
+
+<span class="nc" id="L94">                else -&gt; TODO(&quot;$value&quot;)</span>
+            }
+<span class="fc" id="L96">        }</span>
+<span class="fc" id="L97">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

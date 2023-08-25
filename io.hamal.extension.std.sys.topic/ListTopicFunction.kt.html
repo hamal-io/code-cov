@@ -4,34 +4,38 @@ import io.hamal.lib.http.HttpTemplate
 import io.hamal.lib.kua.function.Function0In2Out
 import io.hamal.lib.kua.function.FunctionContext
 import io.hamal.lib.kua.function.FunctionOutput2Schema
-import io.hamal.lib.kua.table.TableProxyArray
+import io.hamal.lib.kua.type.ArrayType
 import io.hamal.lib.kua.type.ErrorType
+import io.hamal.lib.kua.type.MapType
+import io.hamal.lib.kua.type.StringType
 import io.hamal.lib.sdk.domain.ApiTopicList
 
-<span class="fc" id="L11">class ListTopicFunction(</span>
-<span class="fc" id="L12">    private val templateSupplier: () -&gt; HttpTemplate</span>
-<span class="fc" id="L13">) : Function0In2Out&lt;ErrorType, TableProxyArray&gt;(</span>
-<span class="fc" id="L14">    FunctionOutput2Schema(ErrorType::class, TableProxyArray::class)</span>
+<span class="fc" id="L13">class ListTopicFunction(</span>
+<span class="fc" id="L14">    private val templateSupplier: () -&gt; HttpTemplate</span>
+<span class="fc" id="L15">) : Function0In2Out&lt;ErrorType, ArrayType&gt;(</span>
+<span class="fc" id="L16">    FunctionOutput2Schema(ErrorType::class, ArrayType::class)</span>
 ) {
-    override fun invoke(ctx: FunctionContext): Pair&lt;ErrorType?, TableProxyArray?&gt; {
-<span class="fc" id="L17">        val topicList = try {</span>
-<span class="fc" id="L18">            templateSupplier()</span>
-<span class="fc" id="L19">                .get(&quot;/v1/topics&quot;)</span>
-<span class="fc" id="L20">                .execute(ApiTopicList::class)</span>
-<span class="fc" id="L21">                .topics</span>
-<span class="nc" id="L22">        } catch (t: Throwable) {</span>
-<span class="nc" id="L23">            t.printStackTrace()</span>
-<span class="nc" id="L24">            listOf&lt;ApiTopicList.Topic&gt;()</span>
+    override fun invoke(ctx: FunctionContext): Pair&lt;ErrorType?, ArrayType?&gt; {
+<span class="fc" id="L19">        val topicList = try {</span>
+<span class="fc" id="L20">            templateSupplier()</span>
+<span class="fc" id="L21">                .get(&quot;/v1/topics&quot;)</span>
+<span class="fc" id="L22">                .execute(ApiTopicList::class)</span>
+<span class="fc" id="L23">                .topics</span>
+<span class="nc" id="L24">        } catch (t: Throwable) {</span>
+<span class="nc" id="L25">            t.printStackTrace()</span>
+<span class="nc" id="L26">            listOf&lt;ApiTopicList.Topic&gt;()</span>
         }
 
-<span class="fc" id="L27">        return null to ctx.tableCreateArray().also { rs -&gt;</span>
-<span class="fc" id="L28">            topicList.forEach { topic -&gt;</span>
-<span class="fc" id="L29">                val inner = ctx.tableCreateMap(2)</span>
-<span class="fc" id="L30">                inner[&quot;id&quot;] = topic.id</span>
-<span class="fc" id="L31">                inner[&quot;name&quot;] = topic.name.value</span>
-<span class="fc" id="L32">                rs.append(inner)</span>
-<span class="fc" id="L33">            }</span>
-<span class="fc" id="L34">        }</span>
+<span class="fc" id="L29">        return null to ArrayType(</span>
+<span class="fc" id="L30">            topicList.mapIndexed { index, topic -&gt;</span>
+<span class="fc" id="L31">                index to MapType(</span>
+<span class="fc" id="L32">                    mutableMapOf(</span>
+<span class="fc" id="L33">                        &quot;id&quot; to StringType(topic.id.value.value.toString(16)),</span>
+<span class="fc" id="L34">                        &quot;name&quot; to StringType(topic.name.value),</span>
+                    )
+                )
+<span class="fc" id="L37">            }.toMap().toMutableMap()</span>
+        )
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

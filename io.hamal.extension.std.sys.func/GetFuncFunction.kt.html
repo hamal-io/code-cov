@@ -7,19 +7,19 @@ import io.hamal.lib.kua.function.Function1In2Out
 import io.hamal.lib.kua.function.FunctionContext
 import io.hamal.lib.kua.function.FunctionInput1Schema
 import io.hamal.lib.kua.function.FunctionOutput2Schema
-import io.hamal.lib.kua.table.TableProxyMap
 import io.hamal.lib.kua.type.ErrorType
+import io.hamal.lib.kua.type.MapType
 import io.hamal.lib.kua.type.StringType
 import io.hamal.lib.sdk.domain.ApiError
 import io.hamal.lib.sdk.domain.ApiFunc
 
 <span class="fc" id="L16">class GetFuncFunction(</span>
 <span class="fc" id="L17">    private val templateSupplier: () -&gt; HttpTemplate</span>
-<span class="fc" id="L18">) : Function1In2Out&lt;StringType, ErrorType, TableProxyMap&gt;(</span>
+<span class="fc" id="L18">) : Function1In2Out&lt;StringType, ErrorType, MapType&gt;(</span>
 <span class="fc" id="L19">    FunctionInput1Schema(StringType::class),</span>
-<span class="fc" id="L20">    FunctionOutput2Schema(ErrorType::class, TableProxyMap::class)</span>
+<span class="fc" id="L20">    FunctionOutput2Schema(ErrorType::class, MapType::class)</span>
 ) {
-    override fun invoke(ctx: FunctionContext, arg1: StringType): Pair&lt;ErrorType?, TableProxyMap?&gt; {
+    override fun invoke(ctx: FunctionContext, arg1: StringType): Pair&lt;ErrorType?, MapType?&gt; {
 <span class="fc" id="L23">        val response = templateSupplier()</span>
 <span class="fc" id="L24">            .get(&quot;/v1/funcs/${arg1.value}&quot;)</span>
 <span class="fc" id="L25">            .execute()</span>
@@ -27,24 +27,26 @@ import io.hamal.lib.sdk.domain.ApiFunc
 <span class="fc bfc" id="L27" title="All 2 branches covered.">        if (response is SuccessHttpResponse) {</span>
 <span class="fc" id="L28">            return null to response.result(ApiFunc::class)</span>
 <span class="fc" id="L29">                .let { func -&gt;</span>
-<span class="fc" id="L30">                    ctx.tableCreateMap(0).also {</span>
-<span class="fc" id="L31">                        it[&quot;id&quot;] = func.id</span>
-<span class="fc" id="L32">                        it[&quot;namespace&quot;] = ctx.tableCreateMap(2).also { nt -&gt;</span>
-<span class="fc" id="L33">                            nt[&quot;id&quot;] = func.namespace.id</span>
-<span class="fc" id="L34">                            nt[&quot;name&quot;] = func.namespace.name.value</span>
-<span class="fc" id="L35">                        }</span>
-<span class="fc" id="L36">                        it[&quot;name&quot;] = func.name.value</span>
-//                        it[&quot;inputs&quot;] = exec.inputs.value
-<span class="fc" id="L38">                        it[&quot;code&quot;] = func.code</span>
-<span class="fc" id="L39">                    }</span>
-
+<span class="fc" id="L30">                    MapType(</span>
+<span class="fc" id="L31">                        mutableMapOf(</span>
+<span class="fc" id="L32">                            &quot;id&quot; to StringType(func.id.value.value.toString(16)),</span>
+<span class="fc" id="L33">                            &quot;namespace&quot; to MapType(</span>
+<span class="fc" id="L34">                                mutableMapOf(</span>
+<span class="fc" id="L35">                                    &quot;id&quot; to StringType(func.namespace.id.value.value.toString(16)),</span>
+<span class="fc" id="L36">                                    &quot;name&quot; to StringType(func.namespace.name.value)</span>
+                                )
+                            ),
+<span class="fc" id="L39">                            &quot;name&quot; to StringType(func.name.value),</span>
+<span class="fc" id="L40">                            &quot;code&quot; to StringType(func.code.value)</span>
+                        )
+                    )
                 }
         } else {
-<span class="pc bpc" id="L43" title="1 of 2 branches missed.">            require(response is ErrorHttpResponse)</span>
-<span class="fc" id="L44">            return response.error(ApiError::class)</span>
-<span class="fc" id="L45">                .let { error -&gt;</span>
-<span class="pc bpc" id="L46" title="1 of 2 branches missed.">                    ErrorType(error.message ?: &quot;An unknown error occurred&quot;)</span>
-<span class="fc" id="L47">                } to null</span>
+<span class="pc bpc" id="L45" title="1 of 2 branches missed.">            require(response is ErrorHttpResponse)</span>
+<span class="fc" id="L46">            return response.error(ApiError::class)</span>
+<span class="fc" id="L47">                .let { error -&gt;</span>
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">                    ErrorType(error.message ?: &quot;An unknown error occurred&quot;)</span>
+<span class="fc" id="L49">                } to null</span>
         }
     }
 }

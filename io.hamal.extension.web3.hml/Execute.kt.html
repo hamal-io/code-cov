@@ -6,79 +6,71 @@ import io.hamal.lib.kua.function.Function1In2Out
 import io.hamal.lib.kua.function.FunctionContext
 import io.hamal.lib.kua.function.FunctionInput1Schema
 import io.hamal.lib.kua.function.FunctionOutput2Schema
-import io.hamal.lib.kua.table.TableProxyArray
+import io.hamal.lib.kua.type.ArrayType
 import io.hamal.lib.kua.type.ErrorType
-import io.hamal.lib.kua.type.NumberType
+import io.hamal.lib.kua.type.MapType
 import io.hamal.lib.kua.type.StringType
 import io.hamal.lib.web3.eth.abi.type.EthUint64
 import io.hamal.lib.web3.hml.domain.HmlCallResponse
 import io.hamal.lib.web3.hml.domain.HmlGetBlockResponse
 import io.hamal.lib.web3.hml.http.HmlHttpBatchService
+import logger
+
+<span class="nc" id="L19">private val log = logger(HmlExecuteFunction::class)</span>
 
 
-<span class="nc" id="L19">class HmlExecuteFunction(</span>
-<span class="nc" id="L20">    private val config: ExtensionConfig</span>
-<span class="nc" id="L21">) : Function1In2Out&lt;TableProxyArray, ErrorType, TableProxyArray&gt;(</span>
-<span class="nc" id="L22">    FunctionInput1Schema(TableProxyArray::class),</span>
-<span class="nc" id="L23">    FunctionOutput2Schema(ErrorType::class, TableProxyArray::class)</span>
+<span class="nc" id="L22">class HmlExecuteFunction(</span>
+<span class="nc" id="L23">    private val config: ExtensionConfig</span>
+<span class="nc" id="L24">) : Function1In2Out&lt;ArrayType, ErrorType, ArrayType&gt;(</span>
+<span class="nc" id="L25">    FunctionInput1Schema(ArrayType::class),</span>
+<span class="nc" id="L26">    FunctionOutput2Schema(ErrorType::class, ArrayType::class)</span>
 ) {
-    override fun invoke(ctx: FunctionContext, arg1: TableProxyArray): Pair&lt;ErrorType?, TableProxyArray?&gt; {
-<span class="nc" id="L26">        try {</span>
-<span class="nc" id="L27">            val batchService = HmlHttpBatchService(HttpTemplate((config.value[&quot;host&quot;] as StringType).value))</span>
-<span class="nc" id="L28">            ctx.pushNil()</span>
-<span class="nc bnc" id="L29" title="All 2 branches missed.">            while (ctx.state.native.tableNext(arg1.index)) {</span>
-//                val i = ctx.state.getNumber(-2)
-<span class="nc" id="L31">                val v = ctx.state.getTableMapProxy(-1)</span>
+    override fun invoke(ctx: FunctionContext, arg1: ArrayType): Pair&lt;ErrorType?, ArrayType?&gt; {
+<span class="nc" id="L29">        try {</span>
+<span class="nc" id="L30">            val batchService = HmlHttpBatchService(HttpTemplate((config.value[&quot;host&quot;] as StringType).value))</span>
 
-<span class="nc" id="L33">                when (v.getString(&quot;type&quot;)) {</span>
-<span class="nc bnc" id="L34" title="All 2 branches missed.">                    &quot;get_block&quot; -&gt; {</span>
-<span class="nc" id="L35">                        batchService.getBlock(</span>
-<span class="nc" id="L36">                            EthUint64(</span>
-<span class="nc" id="L37">                                v.getLong(&quot;block&quot;)</span>
-                            )
-                        )
+<span class="nc" id="L32">            arg1.entries.forEach { entry -&gt;</span>
+<span class="nc" id="L33">                println(entry.key)</span>
+<span class="nc" id="L34">                println(entry.value)</span>
+
+<span class="nc" id="L36">                val v = entry.value</span>
+<span class="nc bnc" id="L37" title="All 2 branches missed.">                require(v is MapType)</span>
+
+<span class="nc" id="L39">                when (v.getString(&quot;type&quot;)) {</span>
+<span class="nc bnc" id="L40" title="All 2 branches missed.">                    &quot;get_block&quot; -&gt; {</span>
+<span class="nc" id="L41">                        val block = v.getLong(&quot;block&quot;)</span>
+<span class="nc" id="L42">                        batchService.getBlock(EthUint64(block))</span>
+<span class="nc" id="L43">                        log.trace(&quot;Requesting block $block&quot;)</span>
                     }
+
+<span class="nc" id="L46">                    else -&gt; TODO()</span>
                 }
-<span class="nc" id="L42">                ctx.state.native.pop(1)</span>
+<span class="nc" id="L48">            }</span>
+
+<span class="nc" id="L50">            return null to batchService.execute().let {</span>
+<span class="nc" id="L51">                val result = ArrayType()</span>
+<span class="nc" id="L52">                it.forEach { ethRes -&gt;</span>
+<span class="nc" id="L53">                    when (ethRes) {</span>
+<span class="nc bnc" id="L54" title="All 2 branches missed.">                        is HmlGetBlockResponse -&gt; {</span>
+<span class="nc" id="L55">                            val res = MapType()</span>
+<span class="nc" id="L56">                            res[&quot;id&quot;] = ethRes.result.number.value.toLong()</span>
+<span class="nc" id="L57">                            res[&quot;hash&quot;] = ethRes.result.hash.toPrefixedHexString().value</span>
+<span class="nc" id="L58">                            res[&quot;gas_used&quot;] = ethRes.result.gasUsed.value.toLong()</span>
+<span class="nc" id="L59">                            res[&quot;gas_limit&quot;] = ethRes.result.gasLimit.value.toLong()</span>
+<span class="nc" id="L60">                            result.append(res)</span>
+<span class="nc" id="L61">                            log.trace(&quot;${ethRes.id} - block response: $res&quot;)</span>
+                        }
+
+<span class="nc bnc" id="L64" title="All 2 branches missed.">                        is HmlCallResponse -&gt; TODO()</span>
+                    }
+<span class="nc" id="L66">                }</span>
+<span class="nc" id="L67">                result</span>
             }
 
-<span class="nc" id="L45">            val result = ctx.tableCreateArray(0)</span>
-<span class="nc" id="L46">            batchService.execute().forEach { r -&gt;</span>
-<span class="nc" id="L47">                when (r) {</span>
-<span class="nc bnc" id="L48" title="All 2 branches missed.">                    is HmlGetBlockResponse -&gt; {</span>
-<span class="nc" id="L49">                        val res = ctx.tableCreateMap()</span>
-<span class="nc" id="L50">                        res[&quot;id&quot;] = r.result.number.value.toLong()</span>
-<span class="nc" id="L51">                        res[&quot;hash&quot;] = r.result.hash.toPrefixedHexString().value</span>
-<span class="nc" id="L52">                        res[&quot;gas_used&quot;] = r.result.gasUsed.value.toLong()</span>
-<span class="nc" id="L53">                        res[&quot;gas_limit&quot;] = r.result.gasLimit.value.toLong()</span>
 
-<span class="nc" id="L55">                        val txs = ctx.tableCreateArray(r.result.transactions.size)</span>
-<span class="nc" id="L56">                        r.result.transactions.forEach {</span>
-<span class="nc" id="L57">                            val tx = ctx.tableCreateMap()</span>
-<span class="nc" id="L58">                            tx[&quot;type&quot;] = NumberType(it.type.value.toDouble())</span>
-<span class="nc" id="L59">                            tx[&quot;from&quot;] = StringType(it.from.toPrefixedHexString().value)</span>
-<span class="nc" id="L60">                            tx[&quot;fromId&quot;] = NumberType(it.fromId.value.toDouble())</span>
-//FIXME                            tx[&quot;to&quot;] = it.to?.let { StringValue(it.toPrefixedHexString().value) } ?: NilValue
-<span class="nc bnc" id="L62" title="All 2 branches missed.">                            tx[&quot;to&quot;] = it.to?.let { StringType(it.toPrefixedHexString().value) } ?: StringType(&quot;&quot;)</span>
-<span class="nc" id="L63">                            tx[&quot;input&quot;] = StringType(it.input.value)</span>
-<span class="nc" id="L64">                            tx[&quot;value&quot;] = NumberType(it.value.value.toDouble()) // FIXME decimal value</span>
-<span class="nc" id="L65">                            tx[&quot;gas&quot;] = NumberType(it.gas.value.toDouble()) // FIXME decimal value</span>
-<span class="nc" id="L66">                            txs.append(tx)</span>
-<span class="nc" id="L67">                        }</span>
-
-<span class="nc" id="L69">                        res[&quot;transactions&quot;] = txs</span>
-<span class="nc" id="L70">                        result.append(res)</span>
-                    }
-
-<span class="nc bnc" id="L73" title="All 2 branches missed.">                    is HmlCallResponse -&gt; {</span>
-<span class="nc" id="L74">                        result.append(r.result.value)</span>
-                    }
-                }
-<span class="nc" id="L77">            }</span>
-<span class="nc" id="L78">            return null to result</span>
-<span class="nc" id="L79">        } catch (t: Throwable) {</span>
-<span class="nc" id="L80">            t.printStackTrace()</span>
-<span class="nc bnc" id="L81" title="All 2 branches missed.">            return ErrorType(t.message ?: &quot;Unknown error&quot;) to null</span>
+<span class="nc" id="L71">        } catch (t: Throwable) {</span>
+<span class="nc" id="L72">            t.printStackTrace()</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">            return ErrorType(t.message ?: &quot;Unknown error&quot;) to null</span>
         }
     }
 }

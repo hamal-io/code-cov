@@ -10,19 +10,19 @@ import io.hamal.lib.kua.function.Function1In2Out
 import io.hamal.lib.kua.function.FunctionContext
 import io.hamal.lib.kua.function.FunctionInput1Schema
 import io.hamal.lib.kua.function.FunctionOutput2Schema
-import io.hamal.lib.kua.table.TableProxyMap
 import io.hamal.lib.kua.type.ErrorType
+import io.hamal.lib.kua.type.MapType
 import io.hamal.lib.kua.type.StringType
 import io.hamal.lib.sdk.domain.ApiSubmittedReqWithId
 import kotlin.time.Duration
 
 <span class="fc" id="L19">class CreateTriggerFunction(</span>
 <span class="fc" id="L20">    private val templateSupplier: () -&gt; HttpTemplate</span>
-<span class="fc" id="L21">) : Function1In2Out&lt;TableProxyMap, ErrorType, TableProxyMap&gt;(</span>
-<span class="fc" id="L22">    FunctionInput1Schema(TableProxyMap::class),</span>
-<span class="fc" id="L23">    FunctionOutput2Schema(ErrorType::class, TableProxyMap::class)</span>
+<span class="fc" id="L21">) : Function1In2Out&lt;MapType, ErrorType, MapType&gt;(</span>
+<span class="fc" id="L22">    FunctionInput1Schema(MapType::class),</span>
+<span class="fc" id="L23">    FunctionOutput2Schema(ErrorType::class, MapType::class)</span>
 ) {
-    override fun invoke(ctx: FunctionContext, arg1: TableProxyMap): Pair&lt;ErrorType?, TableProxyMap&gt; {
+    override fun invoke(ctx: FunctionContext, arg1: MapType): Pair&lt;ErrorType?, MapType&gt; {
 <span class="fc" id="L26">        try {</span>
 
 <span class="fc" id="L28">            val type = TriggerType.valueOf(arg1.getString(&quot;type&quot;))</span>
@@ -60,15 +60,17 @@ import kotlin.time.Duration
 <span class="fc" id="L60">                .body(r)</span>
 <span class="fc" id="L61">                .execute(ApiSubmittedReqWithId::class)</span>
 
-<span class="fc" id="L63">            return null to ctx.tableCreateMap(1).also {</span>
-<span class="fc" id="L64">                it[&quot;req_id&quot;] = res.reqId</span>
-<span class="fc" id="L65">                it[&quot;status&quot;] = res.status.name</span>
-<span class="fc" id="L66">                it[&quot;id&quot;] = res.id</span>
-<span class="fc" id="L67">            }</span>
+<span class="fc" id="L63">            return null to MapType(</span>
+<span class="fc" id="L64">                mutableMapOf(</span>
+<span class="fc" id="L65">                    &quot;req_id&quot; to StringType(res.reqId.value.value.toString(16)),</span>
+<span class="fc" id="L66">                    &quot;status&quot; to StringType(res.status.name),</span>
+<span class="fc" id="L67">                    &quot;id&quot; to StringType(res.id.value.toString(16))</span>
+                )
+            )
 
-<span class="nc" id="L69">        } catch (t: Throwable) {</span>
-<span class="nc" id="L70">            t.printStackTrace()</span>
-<span class="nc" id="L71">            throw t</span>
+<span class="nc" id="L71">        } catch (t: Throwable) {</span>
+<span class="nc" id="L72">            t.printStackTrace()</span>
+<span class="nc" id="L73">            throw t</span>
         }
     }
 }

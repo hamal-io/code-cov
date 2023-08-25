@@ -4,39 +4,44 @@ import io.hamal.lib.http.HttpTemplate
 import io.hamal.lib.kua.function.Function0In2Out
 import io.hamal.lib.kua.function.FunctionContext
 import io.hamal.lib.kua.function.FunctionOutput2Schema
-import io.hamal.lib.kua.table.TableProxyArray
+import io.hamal.lib.kua.type.ArrayType
 import io.hamal.lib.kua.type.ErrorType
+import io.hamal.lib.kua.type.MapType
+import io.hamal.lib.kua.type.StringType
 import io.hamal.lib.sdk.domain.ApiFuncList
 
-<span class="fc" id="L11">class ListFuncFunction(</span>
-<span class="fc" id="L12">    private val templateSupplier: () -&gt; HttpTemplate</span>
-<span class="fc" id="L13">) : Function0In2Out&lt;ErrorType, TableProxyArray&gt;(</span>
-<span class="fc" id="L14">    FunctionOutput2Schema(ErrorType::class, TableProxyArray::class)</span>
+<span class="fc" id="L13">class ListFuncFunction(</span>
+<span class="fc" id="L14">    private val templateSupplier: () -&gt; HttpTemplate</span>
+<span class="fc" id="L15">) : Function0In2Out&lt;ErrorType, ArrayType&gt;(</span>
+<span class="fc" id="L16">    FunctionOutput2Schema(ErrorType::class, ArrayType::class)</span>
 ) {
-    override fun invoke(ctx: FunctionContext): Pair&lt;ErrorType?, TableProxyArray?&gt; {
-<span class="fc" id="L17">        val funcs = try {</span>
-<span class="fc" id="L18">            templateSupplier()</span>
-<span class="fc" id="L19">                .get(&quot;/v1/funcs&quot;)</span>
-<span class="fc" id="L20">                .execute(ApiFuncList::class)</span>
-<span class="fc" id="L21">                .funcs</span>
-<span class="nc" id="L22">        } catch (t: Throwable) {</span>
-<span class="nc" id="L23">            t.printStackTrace()</span>
-<span class="nc" id="L24">            listOf&lt;ApiFuncList.ApiSimpleFunc&gt;()</span>
+    override fun invoke(ctx: FunctionContext): Pair&lt;ErrorType?, ArrayType?&gt; {
+<span class="fc" id="L19">        val funcs = try {</span>
+<span class="fc" id="L20">            templateSupplier()</span>
+<span class="fc" id="L21">                .get(&quot;/v1/funcs&quot;)</span>
+<span class="fc" id="L22">                .execute(ApiFuncList::class)</span>
+<span class="fc" id="L23">                .funcs</span>
+<span class="nc" id="L24">        } catch (t: Throwable) {</span>
+<span class="nc" id="L25">            t.printStackTrace()</span>
+<span class="nc" id="L26">            listOf&lt;ApiFuncList.ApiSimpleFunc&gt;()</span>
         }
 
-
-<span class="fc" id="L28">        return null to ctx.tableCreateArray().also { rs -&gt;</span>
-<span class="fc" id="L29">            funcs.forEach { func -&gt;</span>
-<span class="fc" id="L30">                val inner = ctx.tableCreateMap(2)</span>
-<span class="fc" id="L31">                inner[&quot;id&quot;] = func.id</span>
-<span class="fc" id="L32">                inner[&quot;name&quot;] = func.name.value</span>
-<span class="fc" id="L33">                inner[&quot;namespace&quot;] = ctx.tableCreateMap(2).also { nt -&gt;</span>
-<span class="fc" id="L34">                    nt[&quot;id&quot;] = func.namespace.id</span>
-<span class="fc" id="L35">                    nt[&quot;name&quot;] = func.namespace.name.value</span>
-<span class="fc" id="L36">                }</span>
-<span class="fc" id="L37">                rs.append(inner)</span>
-<span class="fc" id="L38">            }</span>
-<span class="fc" id="L39">        }</span>
+<span class="fc" id="L29">        return null to ArrayType(</span>
+<span class="fc" id="L30">            funcs.mapIndexed { index, func -&gt;</span>
+<span class="fc" id="L31">                index to MapType(</span>
+<span class="fc" id="L32">                    mutableMapOf(</span>
+<span class="fc" id="L33">                        &quot;id&quot; to StringType(func.id.value.value.toString(16)),</span>
+<span class="fc" id="L34">                        &quot;namespace&quot; to MapType(</span>
+<span class="fc" id="L35">                            mutableMapOf(</span>
+<span class="fc" id="L36">                                &quot;id&quot; to StringType(func.namespace.id.value.value.toString(16)),</span>
+<span class="fc" id="L37">                                &quot;name&quot; to StringType(func.namespace.name.value)</span>
+                            )
+                        ),
+<span class="fc" id="L40">                        &quot;name&quot; to StringType(func.name.value),</span>
+                    )
+                )
+<span class="fc" id="L43">            }.toMap().toMutableMap()</span>
+        )
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

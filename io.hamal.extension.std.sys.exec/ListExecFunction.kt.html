@@ -4,35 +4,39 @@ import io.hamal.lib.http.HttpTemplate
 import io.hamal.lib.kua.function.Function0In2Out
 import io.hamal.lib.kua.function.FunctionContext
 import io.hamal.lib.kua.function.FunctionOutput2Schema
-import io.hamal.lib.kua.table.TableProxyArray
+import io.hamal.lib.kua.type.ArrayType
 import io.hamal.lib.kua.type.ErrorType
+import io.hamal.lib.kua.type.MapType
+import io.hamal.lib.kua.type.StringType
 import io.hamal.lib.sdk.domain.ApiExecList
 
-<span class="fc" id="L11">class ListExecFunction(</span>
-<span class="fc" id="L12">    private val templateSupplier: () -&gt; HttpTemplate</span>
-<span class="fc" id="L13">) : Function0In2Out&lt;ErrorType, TableProxyArray&gt;(</span>
-<span class="fc" id="L14">    FunctionOutput2Schema(ErrorType::class, TableProxyArray::class)</span>
+<span class="fc" id="L13">class ListExecFunction(</span>
+<span class="fc" id="L14">    private val templateSupplier: () -&gt; HttpTemplate</span>
+<span class="fc" id="L15">) : Function0In2Out&lt;ErrorType, ArrayType&gt;(</span>
+<span class="fc" id="L16">    FunctionOutput2Schema(ErrorType::class, ArrayType::class)</span>
 ) {
-    override fun invoke(ctx: FunctionContext): Pair&lt;ErrorType?, TableProxyArray?&gt; {
-<span class="fc" id="L17">        val execs = try {</span>
-<span class="fc" id="L18">            templateSupplier()</span>
-<span class="fc" id="L19">                .get(&quot;/v1/execs&quot;)</span>
-<span class="fc" id="L20">                .execute(ApiExecList::class)</span>
-<span class="fc" id="L21">                .execs</span>
-<span class="nc" id="L22">        } catch (t: Throwable) {</span>
-<span class="nc" id="L23">            t.printStackTrace()</span>
-<span class="nc" id="L24">            listOf&lt;ApiExecList.SimpleExec&gt;()</span>
+    override fun invoke(ctx: FunctionContext): Pair&lt;ErrorType?, ArrayType?&gt; {
+<span class="fc" id="L19">        val execs = try {</span>
+<span class="fc" id="L20">            templateSupplier()</span>
+<span class="fc" id="L21">                .get(&quot;/v1/execs&quot;)</span>
+<span class="fc" id="L22">                .execute(ApiExecList::class)</span>
+<span class="fc" id="L23">                .execs</span>
+<span class="nc" id="L24">        } catch (t: Throwable) {</span>
+<span class="nc" id="L25">            t.printStackTrace()</span>
+<span class="nc" id="L26">            listOf()</span>
         }
 
-<span class="fc" id="L27">        return null to ctx.tableCreateArray().also { rs -&gt;</span>
-<span class="fc" id="L28">            execs.forEach { exec -&gt;</span>
-<span class="fc" id="L29">                val inner = ctx.tableCreateMap(2)</span>
-<span class="fc" id="L30">                inner[&quot;id&quot;] = exec.id</span>
-<span class="fc" id="L31">                inner[&quot;status&quot;] = exec.status.toString()</span>
+<span class="fc" id="L29">        return null to ArrayType(</span>
+<span class="fc" id="L30">            execs.mapIndexed { index, exec -&gt;</span>
+<span class="fc" id="L31">                index to MapType(</span>
+<span class="fc" id="L32">                    mutableMapOf(</span>
+<span class="fc" id="L33">                        &quot;id&quot; to StringType(exec.id.value.value.toString(16)),</span>
+<span class="fc" id="L34">                        &quot;status&quot; to StringType(exec.status.toString())</span>
+                    )
+                )
+<span class="fc" id="L37">            }.toMap().toMutableMap()</span>
+        )
 
-<span class="fc" id="L33">                rs.append(inner)</span>
-<span class="fc" id="L34">            }</span>
-<span class="fc" id="L35">        }</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

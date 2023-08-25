@@ -53,84 +53,86 @@ import kotlin.reflect.KClass
     }
 
 
-<span class="nc" id="L56">    operator fun set(key: StringType, value: CodeType) = set(key.value, value)</span>
+<span class="fc" id="L56">    fun getCodeType(key: String) = CodeType(getString(key))</span>
+<span class="nc" id="L57">    fun getCodeType(key: StringType) = getCodeType(key.value)</span>
+<span class="nc" id="L58">    operator fun set(key: StringType, value: CodeType) = set(key.value, value)</span>
     operator fun set(key: String, value: CodeType): Int {
-<span class="fc" id="L58">        entries[key] = value</span>
-<span class="fc" id="L59">        return size</span>
+<span class="fc" id="L60">        entries[key] = StringType(value.value)</span>
+<span class="fc" id="L61">        return size</span>
     }
 
-<span class="fc" id="L62">    operator fun set(key: String, value: DomainId) = set(key, value.value.value.toString(16))</span>
-<span class="nc" id="L63">    operator fun set(key: StringType, value: DomainId) = set(key.value, value.value.value.toString(16))</span>
-<span class="fc" id="L64">    operator fun set(key: String, value: SnowflakeId) = set(key, value.value.toString(16))</span>
-<span class="nc" id="L65">    operator fun set(key: StringType, value: SnowflakeId) = set(key.value, value.value.toString(16))</span>
+<span class="fc" id="L64">    operator fun set(key: String, value: DomainId) = set(key, value.value.value.toString(16))</span>
+<span class="nc" id="L65">    operator fun set(key: StringType, value: DomainId) = set(key.value, value.value.value.toString(16))</span>
+<span class="fc" id="L66">    operator fun set(key: String, value: SnowflakeId) = set(key, value.value.toString(16))</span>
+<span class="nc" id="L67">    operator fun set(key: StringType, value: SnowflakeId) = set(key.value, value.value.toString(16))</span>
 
-<span class="nc" id="L67">    fun getInt(key: String): Int = getNumberValue(key).value.toInt()</span>
-<span class="nc" id="L68">    fun getInt(key: StringType) = getInt(key.value)</span>
-<span class="nc" id="L69">    fun getLong(key: String): Long = getNumberValue(key).value.toLong()</span>
-<span class="nc" id="L70">    fun getLong(key: StringType): Long = getLong(key.value)</span>
-<span class="nc" id="L71">    fun getFloat(key: String): Float = getNumberValue(key).value.toFloat()</span>
-<span class="nc" id="L72">    fun getFloat(key: StringType): Float = getFloat(key.value)</span>
-<span class="nc" id="L73">    fun getDouble(key: String): Double = getNumberValue(key).value</span>
-<span class="nc" id="L74">    fun getDouble(key: StringType): Double = getDouble(key.value)</span>
-<span class="nc" id="L75">    fun getNumberValue(key: StringType): NumberType = getNumberValue(key.value)</span>
+<span class="nc" id="L69">    fun getInt(key: String): Int = getNumberValue(key).value.toInt()</span>
+<span class="nc" id="L70">    fun getInt(key: StringType) = getInt(key.value)</span>
+<span class="nc" id="L71">    fun getLong(key: String): Long = getNumberValue(key).value.toLong()</span>
+<span class="nc" id="L72">    fun getLong(key: StringType): Long = getLong(key.value)</span>
+<span class="nc" id="L73">    fun getFloat(key: String): Float = getNumberValue(key).value.toFloat()</span>
+<span class="nc" id="L74">    fun getFloat(key: StringType): Float = getFloat(key.value)</span>
+<span class="nc" id="L75">    fun getDouble(key: String): Double = getNumberValue(key).value</span>
+<span class="nc" id="L76">    fun getDouble(key: StringType): Double = getDouble(key.value)</span>
+<span class="nc" id="L77">    fun getNumberValue(key: StringType): NumberType = getNumberValue(key.value)</span>
     fun getNumberValue(key: String): NumberType {
-<span class="nc" id="L77">        checkExpectedType(key, NumberType::class)</span>
-<span class="nc" id="L78">        return entries[key]!! as NumberType</span>
+<span class="nc" id="L79">        checkExpectedType(key, NumberType::class)</span>
+<span class="nc" id="L80">        return entries[key]!! as NumberType</span>
     }
 
-<span class="nc" id="L81">    operator fun set(key: String, value: Int) = set(key, value.toDouble())</span>
-<span class="nc" id="L82">    operator fun set(key: String, value: Long) = set(key, value.toDouble())</span>
-<span class="nc" id="L83">    operator fun set(key: String, value: Float) = set(key, value.toDouble())</span>
-<span class="nc" id="L84">    operator fun set(key: String, value: Double) = set(key, NumberType(value))</span>
-<span class="nc" id="L85">    operator fun set(key: StringType, value: NumberType) = set(key.value, value.value)</span>
+<span class="nc" id="L83">    operator fun set(key: String, value: Int) = set(key, value.toDouble())</span>
+<span class="nc" id="L84">    operator fun set(key: String, value: Long) = set(key, value.toDouble())</span>
+<span class="nc" id="L85">    operator fun set(key: String, value: Float) = set(key, value.toDouble())</span>
+<span class="nc" id="L86">    operator fun set(key: String, value: Double) = set(key, NumberType(value))</span>
+<span class="nc" id="L87">    operator fun set(key: StringType, value: NumberType) = set(key.value, value.value)</span>
     operator fun set(key: String, value: NumberType): Int {
-<span class="nc" id="L87">        entries[key] = value</span>
-<span class="nc" id="L88">        return size</span>
+<span class="nc" id="L89">        entries[key] = value</span>
+<span class="nc" id="L90">        return size</span>
     }
 
     operator fun set(key: String, value: MapType): Int {
-<span class="fc" id="L92">        entries[key] = value</span>
-<span class="fc" id="L93">        return size</span>
+<span class="fc" id="L94">        entries[key] = value</span>
+<span class="fc" id="L95">        return size</span>
     }
 
-<span class="nc" id="L96">    fun getStringType(key: StringType) = getStringType(key.value)</span>
-<span class="fc" id="L97">    fun getString(key: String): String = getStringType(key).value</span>
-<span class="nc" id="L98">    fun getString(key: StringType): String = getString(key.value)</span>
+<span class="nc" id="L98">    fun getStringType(key: StringType) = getStringType(key.value)</span>
+<span class="fc" id="L99">    fun getString(key: String): String = getStringType(key).value</span>
+<span class="nc" id="L100">    fun getString(key: StringType): String = getString(key.value)</span>
     fun getStringType(key: String): StringType {
-<span class="fc" id="L100">        checkExpectedType(key, StringType::class)</span>
-<span class="fc" id="L101">        return entries[key]!! as StringType</span>
+<span class="fc" id="L102">        checkExpectedType(key, StringType::class)</span>
+<span class="fc" id="L103">        return entries[key]!! as StringType</span>
     }
 
-<span class="fc" id="L104">    operator fun set(key: String, value: String) = set(key, StringType(value))</span>
-<span class="nc" id="L105">    operator fun set(key: StringType, value: StringType) = set(key.value, value.value)</span>
+<span class="fc" id="L106">    operator fun set(key: String, value: String) = set(key, StringType(value))</span>
+<span class="nc" id="L107">    operator fun set(key: StringType, value: StringType) = set(key.value, value.value)</span>
     operator fun set(key: String, value: StringType): Int {
-<span class="fc" id="L107">        entries[key] = value</span>
-<span class="fc" id="L108">        return size</span>
+<span class="fc" id="L109">        entries[key] = value</span>
+<span class="fc" id="L110">        return size</span>
     }
 
     fun type(key: String): KClass&lt;out Type&gt; {
-<span class="pc bpc" id="L112" title="1 of 2 branches missed.">        return entries[key]?.let { it::class } ?: NilType::class</span>
+<span class="fc bfc" id="L114" title="All 2 branches covered.">        return entries[key]?.let { it::class } ?: NilType::class</span>
     }
 
     object Serializer : KSerializer&lt;MutableMap&lt;String, SerializableType&gt;&gt; {
-<span class="fc" id="L116">        private val delegate = MapSerializer(String.serializer(), SerializableType.serializer())</span>
+<span class="fc" id="L118">        private val delegate = MapSerializer(String.serializer(), SerializableType.serializer())</span>
 
         @OptIn(ExperimentalSerializationApi::class)
-<span class="fc" id="L119">        override val descriptor = SerialDescriptor(&quot;MapType&quot;, delegate.descriptor)</span>
+<span class="fc" id="L121">        override val descriptor = SerialDescriptor(&quot;MapType&quot;, delegate.descriptor)</span>
 
         override fun deserialize(decoder: Decoder): MutableMap&lt;String, SerializableType&gt; {
-<span class="fc" id="L122">            return delegate.deserialize(decoder).toMutableMap()</span>
+<span class="fc" id="L124">            return delegate.deserialize(decoder).toMutableMap()</span>
         }
 
         override fun serialize(encoder: Encoder, value: MutableMap&lt;String, SerializableType&gt;) {
-<span class="fc" id="L126">            return delegate.serialize(encoder, value)</span>
+<span class="fc" id="L128">            return delegate.serialize(encoder, value)</span>
         }
     }
-<span class="fc" id="L129">}</span>
+<span class="fc" id="L131">}</span>
 
 internal fun MapType.checkExpectedType(key: String, expected: KClass&lt;out Type&gt;) {
-<span class="pc bpc" id="L132" title="1 of 2 branches missed.">    check(type(key) == expected) {</span>
-<span class="nc" id="L133">        &quot;Expected type to be $expected but was $this&quot;</span>
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">    check(type(key) == expected) {</span>
+<span class="nc" id="L135">        &quot;Expected type to be $expected but was $this&quot;</span>
     }
-<span class="fc" id="L135">}</span>
+<span class="fc" id="L137">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -7,8 +7,8 @@ import io.hamal.lib.kua.function.Function1In2Out
 import io.hamal.lib.kua.function.FunctionContext
 import io.hamal.lib.kua.function.FunctionInput1Schema
 import io.hamal.lib.kua.function.FunctionOutput2Schema
-import io.hamal.lib.kua.table.TableProxyMap
 import io.hamal.lib.kua.type.ErrorType
+import io.hamal.lib.kua.type.MapType
 import io.hamal.lib.kua.type.StringType
 import io.hamal.lib.sdk.domain.ApiError
 import io.hamal.lib.sdk.domain.ApiEventTrigger
@@ -17,11 +17,11 @@ import io.hamal.lib.sdk.domain.ApiTrigger
 
 <span class="fc" id="L18">class GetTriggerFunction(</span>
 <span class="fc" id="L19">    private val templateSupplier: () -&gt; HttpTemplate</span>
-<span class="fc" id="L20">) : Function1In2Out&lt;StringType, ErrorType, TableProxyMap&gt;(</span>
+<span class="fc" id="L20">) : Function1In2Out&lt;StringType, ErrorType, MapType&gt;(</span>
 <span class="fc" id="L21">    FunctionInput1Schema(StringType::class),</span>
-<span class="fc" id="L22">    FunctionOutput2Schema(ErrorType::class, TableProxyMap::class)</span>
+<span class="fc" id="L22">    FunctionOutput2Schema(ErrorType::class, MapType::class)</span>
 ) {
-    override fun invoke(ctx: FunctionContext, arg1: StringType): Pair&lt;ErrorType?, TableProxyMap?&gt; {
+    override fun invoke(ctx: FunctionContext, arg1: StringType): Pair&lt;ErrorType?, MapType?&gt; {
 <span class="fc" id="L25">        val response = templateSupplier()</span>
 <span class="fc" id="L26">            .get(&quot;/v1/triggers/${arg1.value}&quot;)</span>
 <span class="fc" id="L27">            .execute()</span>
@@ -32,52 +32,64 @@ import io.hamal.lib.sdk.domain.ApiTrigger
 
 <span class="fc" id="L33">                    when (val t = trigger) {</span>
 <span class="fc bfc" id="L34" title="All 2 branches covered.">                        is ApiFixedRateTrigger -&gt;</span>
-<span class="fc" id="L35">                            ctx.tableCreateMap(6).also {</span>
-<span class="fc" id="L36">                                it[&quot;id&quot;] = t.id</span>
-<span class="fc" id="L37">                                it[&quot;type&quot;] = &quot;FixedRate&quot;</span>
-<span class="fc" id="L38">                                it[&quot;name&quot;] = t.name.value</span>
-<span class="fc" id="L39">                                it[&quot;namespace&quot;] = ctx.tableCreateMap(2).also { nt -&gt;</span>
-<span class="fc" id="L40">                                    nt[&quot;id&quot;] = t.namespace.id</span>
-<span class="fc" id="L41">                                    nt[&quot;name&quot;] = t.namespace.name.value</span>
-<span class="fc" id="L42">                                }</span>
-<span class="fc" id="L43">                                it[&quot;func&quot;] = ctx.tableCreateMap(2).also { nt -&gt;</span>
-<span class="fc" id="L44">                                    nt[&quot;id&quot;] = t.func.id</span>
-<span class="fc" id="L45">                                    nt[&quot;name&quot;] = t.func.name.value</span>
-<span class="fc" id="L46">                                }</span>
-<span class="fc" id="L47">                                it[&quot;duration&quot;] = t.duration.toIsoString()</span>
-<span class="fc" id="L48">                            }</span>
+<span class="fc" id="L35">                            MapType(</span>
+<span class="fc" id="L36">                                mutableMapOf(</span>
+<span class="fc" id="L37">                                    &quot;id&quot; to StringType(t.id.value.value.toString(16)),</span>
+<span class="fc" id="L38">                                    &quot;type&quot; to StringType(&quot;FixedRate&quot;),</span>
+<span class="fc" id="L39">                                    &quot;name&quot; to StringType(t.name.value),</span>
+<span class="fc" id="L40">                                    &quot;namespace&quot; to MapType(</span>
+<span class="fc" id="L41">                                        mutableMapOf(</span>
+<span class="fc" id="L42">                                            &quot;id&quot; to StringType(t.namespace.id.value.value.toString(16)),</span>
+<span class="fc" id="L43">                                            &quot;name&quot; to StringType(t.namespace.name.value)</span>
+                                        )
+                                    ),
+<span class="fc" id="L46">                                    &quot;func&quot; to MapType(</span>
+<span class="fc" id="L47">                                        mutableMapOf(</span>
+<span class="fc" id="L48">                                            &quot;id&quot; to StringType(t.func.id.value.value.toString(16)),</span>
+<span class="fc" id="L49">                                            &quot;name&quot; to StringType(t.func.name.value)</span>
+                                        )
+                                    ),
+<span class="fc" id="L52">                                    &quot;duration&quot; to StringType(t.duration.toIsoString())</span>
+                                )
+                            )
 
-<span class="pc bpc" id="L50" title="1 of 2 branches missed.">                        is ApiEventTrigger -&gt; {</span>
-<span class="fc" id="L51">                            ctx.tableCreateMap(6).also {</span>
-<span class="fc" id="L52">                                it[&quot;id&quot;] = t.id</span>
-<span class="fc" id="L53">                                it[&quot;type&quot;] = &quot;Event&quot;</span>
-<span class="fc" id="L54">                                it[&quot;name&quot;] = t.name.value</span>
-<span class="fc" id="L55">                                it[&quot;namespace&quot;] = ctx.tableCreateMap(2).also { nt -&gt;</span>
-<span class="fc" id="L56">                                    nt[&quot;id&quot;] = t.namespace.id</span>
-<span class="fc" id="L57">                                    nt[&quot;name&quot;] = t.namespace.name.value</span>
-<span class="fc" id="L58">                                }</span>
-<span class="fc" id="L59">                                it[&quot;func&quot;] = ctx.tableCreateMap(2).also { nt -&gt;</span>
-<span class="fc" id="L60">                                    nt[&quot;id&quot;] = t.func.id</span>
-<span class="fc" id="L61">                                    nt[&quot;name&quot;] = t.func.name.value</span>
-<span class="fc" id="L62">                                }</span>
-<span class="fc" id="L63">                                it[&quot;topic&quot;] = ctx.tableCreateMap(2).also { nt -&gt;</span>
-<span class="fc" id="L64">                                    nt[&quot;id&quot;] = t.topic.id</span>
-<span class="fc" id="L65">                                    nt[&quot;name&quot;] = t.topic.name.value</span>
-<span class="fc" id="L66">                                }</span>
-<span class="fc" id="L67">                            }</span>
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">                        is ApiEventTrigger -&gt; {</span>
+<span class="fc" id="L57">                            MapType(</span>
+<span class="fc" id="L58">                                mutableMapOf(</span>
+<span class="fc" id="L59">                                    &quot;id&quot; to StringType(t.id.value.value.toString(16)),</span>
+<span class="fc" id="L60">                                    &quot;type&quot; to StringType(&quot;Event&quot;),</span>
+<span class="fc" id="L61">                                    &quot;name&quot; to StringType(t.name.value),</span>
+<span class="fc" id="L62">                                    &quot;namespace&quot; to MapType(</span>
+<span class="fc" id="L63">                                        mutableMapOf(</span>
+<span class="fc" id="L64">                                            &quot;id&quot; to StringType(t.namespace.id.value.value.toString(16)),</span>
+<span class="fc" id="L65">                                            &quot;name&quot; to StringType(t.namespace.name.value)</span>
+                                        )
+                                    ),
+<span class="fc" id="L68">                                    &quot;func&quot; to MapType(</span>
+<span class="fc" id="L69">                                        mutableMapOf(</span>
+<span class="fc" id="L70">                                            &quot;id&quot; to StringType(t.func.id.value.value.toString(16)),</span>
+<span class="fc" id="L71">                                            &quot;name&quot; to StringType(t.func.name.value)</span>
+                                        )
+                                    ),
+<span class="fc" id="L74">                                    &quot;topic&quot; to MapType(</span>
+<span class="fc" id="L75">                                        mutableMapOf(</span>
+<span class="fc" id="L76">                                            &quot;id&quot; to StringType(t.topic.id.value.value.toString(16)),</span>
+<span class="fc" id="L77">                                            &quot;name&quot; to StringType(t.topic.name.value)</span>
+                                        )
+                                    ),
+                                )
+                            )
                         }
 
-<span class="nc" id="L70">                        else -&gt; TODO()</span>
+<span class="nc" id="L84">                        else -&gt; TODO()</span>
                     }
-
-
                 }
         } else {
-<span class="nc bnc" id="L76" title="All 2 branches missed.">            require(response is ErrorHttpResponse)</span>
-<span class="nc" id="L77">            return response.error(ApiError::class)</span>
-<span class="nc" id="L78">                .let { error -&gt;</span>
-<span class="nc bnc" id="L79" title="All 2 branches missed.">                    ErrorType(error.message ?: &quot;An unknown error occurred&quot;)</span>
-<span class="nc" id="L80">                } to null</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">            require(response is ErrorHttpResponse)</span>
+<span class="nc" id="L89">            return response.error(ApiError::class)</span>
+<span class="nc" id="L90">                .let { error -&gt;</span>
+<span class="nc bnc" id="L91" title="All 2 branches missed.">                    ErrorType(error.message ?: &quot;An unknown error occurred&quot;)</span>
+<span class="nc" id="L92">                } to null</span>
         }
     }
 }

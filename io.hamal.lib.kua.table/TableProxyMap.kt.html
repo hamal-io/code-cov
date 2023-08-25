@@ -32,7 +32,7 @@ import kotlin.reflect.KClass
 <span class="nc" id="L32">        return state.tableSetRaw(index)</span>
     }
 
-<span class="fc" id="L35">    operator fun set(key: String, value: CodeType) = set(key, value.value)</span>
+<span class="nc" id="L35">    operator fun set(key: String, value: CodeType) = set(key, value.value)</span>
 <span class="nc" id="L36">    operator fun set(key: StringType, value: CodeType) = set(key.value, value)</span>
 
 <span class="nc" id="L38">    operator fun set(key: String, value: Int) = set(key, value.toDouble())</span>
@@ -46,9 +46,9 @@ import kotlin.reflect.KClass
 <span class="fc" id="L46">        return state.tableSetRaw(index)</span>
     }
 
-<span class="fc" id="L49">    operator fun set(key: String, value: DomainId) = set(key, value.value.value.toString(16))</span>
+<span class="nc" id="L49">    operator fun set(key: String, value: DomainId) = set(key, value.value.value.toString(16))</span>
 <span class="nc" id="L50">    operator fun set(key: StringType, value: DomainId) = set(key.value, value.value.value.toString(16))</span>
-<span class="fc" id="L51">    operator fun set(key: String, value: SnowflakeId) = set(key, value.value.toString(16))</span>
+<span class="nc" id="L51">    operator fun set(key: String, value: SnowflakeId) = set(key, value.value.toString(16))</span>
 <span class="nc" id="L52">    operator fun set(key: StringType, value: SnowflakeId) = set(key.value, value.value.toString(16))</span>
 
 <span class="fc" id="L54">    operator fun set(key: String, value: StringType) = set(key, value.value)</span>
@@ -104,10 +104,10 @@ import kotlin.reflect.KClass
 
 <span class="nc" id="L105">    fun getCode(key: StringType): CodeType = getCode(key.value)</span>
     fun getCode(key: String): CodeType {
-<span class="fc" id="L107">        state.pushString(key)</span>
-<span class="fc" id="L108">        val type = state.tableGetRaw(index)</span>
-<span class="fc" id="L109">        type.checkExpectedType(StringType::class)</span>
-<span class="fc" id="L110">        return CodeType(state.getString(state.top.value)).also { state.native.pop(1) }</span>
+<span class="nc" id="L107">        state.pushString(key)</span>
+<span class="nc" id="L108">        val type = state.tableGetRaw(index)</span>
+<span class="nc" id="L109">        type.checkExpectedType(StringType::class)</span>
+<span class="nc" id="L110">        return CodeType(state.getString(state.top.value)).also { state.native.pop(1) }</span>
     }
 
 <span class="nc" id="L113">    fun getNumberType(key: StringType): NumberType = getNumberType(key.value)</span>
@@ -137,8 +137,8 @@ import kotlin.reflect.KClass
     }
 
     fun type(key: String): KClass&lt;out Type&gt; {
-<span class="fc" id="L140">        state.pushString(key)</span>
-<span class="fc" id="L141">        return state.tableGetRaw(index)</span>
+<span class="nc" id="L140">        state.pushString(key)</span>
+<span class="nc" id="L141">        return state.tableGetRaw(index)</span>
     }
 }
 

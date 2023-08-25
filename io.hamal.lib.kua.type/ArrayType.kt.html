@@ -98,29 +98,31 @@ import kotlin.reflect.KClass
 <span class="nc" id="L98">        return size</span>
     }
 
+<span class="nc" id="L101">    fun getCodeType(idx: Int) = CodeType(getString(idx))</span>
+
     fun type(idx: Int): KClass&lt;out Type&gt; {
-<span class="pc bpc" id="L102" title="1 of 2 branches missed.">        return entries[idx]?.let { it::class } ?: NilType::class</span>
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">        return entries[idx]?.let { it::class } ?: NilType::class</span>
     }
 
     object Serializer : KSerializer&lt;MutableMap&lt;Int, SerializableType&gt;&gt; {
-<span class="fc" id="L106">        private val delegate = MapSerializer(Int.serializer(), SerializableType.serializer())</span>
+<span class="fc" id="L108">        private val delegate = MapSerializer(Int.serializer(), SerializableType.serializer())</span>
 
         @OptIn(ExperimentalSerializationApi::class)
-<span class="fc" id="L109">        override val descriptor = SerialDescriptor(&quot;ArrayType&quot;, delegate.descriptor)</span>
+<span class="fc" id="L111">        override val descriptor = SerialDescriptor(&quot;ArrayType&quot;, delegate.descriptor)</span>
 
         override fun deserialize(decoder: Decoder): MutableMap&lt;Int, SerializableType&gt; {
-<span class="nc" id="L112">            return delegate.deserialize(decoder).toMutableMap()</span>
+<span class="nc" id="L114">            return delegate.deserialize(decoder).toMutableMap()</span>
         }
 
         override fun serialize(encoder: Encoder, value: MutableMap&lt;Int, SerializableType&gt;) {
-<span class="nc" id="L116">            return delegate.serialize(encoder, value)</span>
+<span class="nc" id="L118">            return delegate.serialize(encoder, value)</span>
         }
     }
-<span class="fc" id="L119">}</span>
+<span class="fc" id="L121">}</span>
 
 internal fun ArrayType.checkExpectedType(idx: Int, expected: KClass&lt;out Type&gt;) {
-<span class="pc bpc" id="L122" title="1 of 2 branches missed.">    check(type(idx) == expected) {</span>
-<span class="nc" id="L123">        &quot;Expected type to be $expected but was $this&quot;</span>
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">    check(type(idx) == expected) {</span>
+<span class="nc" id="L125">        &quot;Expected type to be $expected but was $this&quot;</span>
     }
-<span class="fc" id="L125">}</span>
+<span class="fc" id="L127">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

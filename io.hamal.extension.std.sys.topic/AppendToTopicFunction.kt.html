@@ -27,14 +27,16 @@ import io.hamal.lib.sdk.domain.ApiSubmittedReqWithId
 <span class="nc" id="L27">                .body(EventPayload(arg2))</span>
 <span class="nc" id="L28">                .execute(ApiSubmittedReqWithId::class)</span>
 
-<span class="nc" id="L30">            return null to MapType().also {</span>
-<span class="nc" id="L31">                it[&quot;req_id&quot;] = res.reqId</span>
-<span class="nc" id="L32">                it[&quot;status&quot;] = res.status.name</span>
-<span class="nc" id="L33">                it[&quot;id&quot;] = res.id</span>
-<span class="nc" id="L34">            }</span>
-<span class="nc" id="L35">        } catch (t: Throwable) {</span>
-<span class="nc" id="L36">            t.printStackTrace()</span>
-<span class="nc" id="L37">            throw t</span>
+<span class="nc" id="L30">            return null to MapType(</span>
+<span class="nc" id="L31">                mutableMapOf(</span>
+<span class="nc" id="L32">                    &quot;req_id&quot; to StringType(res.reqId.value.value.toString(16)),</span>
+<span class="nc" id="L33">                    &quot;status&quot; to StringType(res.status.name),</span>
+<span class="nc" id="L34">                    &quot;id&quot; to StringType(res.id.value.toString(16))</span>
+                )
+            )
+<span class="nc" id="L37">        } catch (t: Throwable) {</span>
+<span class="nc" id="L38">            t.printStackTrace()</span>
+<span class="nc" id="L39">            throw t</span>
         }
     }
 }

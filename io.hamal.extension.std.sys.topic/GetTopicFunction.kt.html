@@ -7,19 +7,19 @@ import io.hamal.lib.kua.function.Function1In2Out
 import io.hamal.lib.kua.function.FunctionContext
 import io.hamal.lib.kua.function.FunctionInput1Schema
 import io.hamal.lib.kua.function.FunctionOutput2Schema
-import io.hamal.lib.kua.table.TableProxyMap
 import io.hamal.lib.kua.type.ErrorType
+import io.hamal.lib.kua.type.MapType
 import io.hamal.lib.kua.type.StringType
 import io.hamal.lib.sdk.domain.ApiError
 import io.hamal.lib.sdk.domain.ApiTopic
 
 <span class="fc" id="L16">class GetTopicFunction(</span>
 <span class="fc" id="L17">    private val templateSupplier: () -&gt; HttpTemplate</span>
-<span class="fc" id="L18">) : Function1In2Out&lt;StringType, ErrorType, TableProxyMap&gt;(</span>
+<span class="fc" id="L18">) : Function1In2Out&lt;StringType, ErrorType, MapType&gt;(</span>
 <span class="fc" id="L19">    FunctionInput1Schema(StringType::class),</span>
-<span class="fc" id="L20">    FunctionOutput2Schema(ErrorType::class, TableProxyMap::class)</span>
+<span class="fc" id="L20">    FunctionOutput2Schema(ErrorType::class, MapType::class)</span>
 ) {
-    override fun invoke(ctx: FunctionContext, arg1: StringType): Pair&lt;ErrorType?, TableProxyMap?&gt; {
+    override fun invoke(ctx: FunctionContext, arg1: StringType): Pair&lt;ErrorType?, MapType?&gt; {
 <span class="fc" id="L23">        val response = templateSupplier()</span>
 <span class="fc" id="L24">            .get(&quot;/v1/topics/${arg1.value}&quot;)</span>
 <span class="fc" id="L25">            .execute()</span>
@@ -27,15 +27,17 @@ import io.hamal.lib.sdk.domain.ApiTopic
 <span class="fc bfc" id="L27" title="All 2 branches covered.">        if (response is SuccessHttpResponse) {</span>
 <span class="fc" id="L28">            return null to response.result(ApiTopic::class)</span>
 <span class="fc" id="L29">                .let { topic -&gt;</span>
-<span class="fc" id="L30">                    ctx.tableCreateMap(2).also {</span>
-<span class="fc" id="L31">                        it[&quot;id&quot;] = topic.id</span>
-<span class="fc" id="L32">                        it[&quot;name&quot;] = topic.name.value</span>
-<span class="fc" id="L33">                    }</span>
+<span class="fc" id="L30">                    MapType(</span>
+<span class="fc" id="L31">                        mutableMapOf(</span>
+<span class="fc" id="L32">                            &quot;id&quot; to StringType(topic.id.value.value.toString(16)),</span>
+<span class="fc" id="L33">                            &quot;name&quot; to StringType(topic.name.value),</span>
+                        )
+                    )
                 }
         } else {
-<span class="pc bpc" id="L36" title="1 of 2 branches missed.">            require(response is ErrorHttpResponse)</span>
-<span class="fc" id="L37">            return response.error(ApiError::class)</span>
-<span class="pc bpc" id="L38" title="1 of 2 branches missed.">                .let { error -&gt; ErrorType(error.message ?: &quot;An unknown error occurred&quot;) } to null</span>
+<span class="pc bpc" id="L38" title="1 of 2 branches missed.">            require(response is ErrorHttpResponse)</span>
+<span class="fc" id="L39">            return response.error(ApiError::class)</span>
+<span class="pc bpc" id="L40" title="1 of 2 branches missed.">                .let { error -&gt; ErrorType(error.message ?: &quot;An unknown error occurred&quot;) } to null</span>
         }
     }
 }
