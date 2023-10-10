@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Group.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.repository.api</a> &gt; <span class="el_source">Group.kt</span></div><h1>Group.kt</h1><pre class="source lang-java linenums">package io.hamal.repository.api
+
+import io.hamal.lib.common.SnowflakeId
+import io.hamal.lib.common.domain.CmdId
+import io.hamal.lib.common.domain.DomainObject
+import io.hamal.lib.common.domain.Limit
+import io.hamal.lib.domain.vo.AccountId
+import io.hamal.lib.domain.vo.GroupId
+import io.hamal.lib.domain.vo.GroupName
+import kotlinx.serialization.Serializable
+
+
+<span class="pc bnc" id="L13" title="All 10 branches missed.">@Serializable</span>
+<span class="fc" id="L14">data class Group(</span>
+<span class="fc" id="L15">    override val id: GroupId,</span>
+<span class="pc" id="L16">    val cmdId: CmdId,</span>
+<span class="pc" id="L17">    val name: GroupName,</span>
+<span class="pc" id="L18">    val creatorId: AccountId</span>
+<span class="nc" id="L19">) : DomainObject&lt;GroupId&gt;</span>
+
+
+<span class="nc" id="L22">interface GroupRepository : GroupCmdRepository, GroupQueryRepository</span>
+
+interface GroupCmdRepository : CmdRepository {
+
+    fun create(cmd: CreateCmd): Group
+
+<span class="fc" id="L28">    data class CreateCmd(</span>
+<span class="fc" id="L29">        val id: CmdId,</span>
+<span class="fc" id="L30">        val groupId: GroupId,</span>
+<span class="fc" id="L31">        val name: GroupName,</span>
+<span class="fc" id="L32">        val creatorId: AccountId</span>
+    )
+}
+
+interface GroupQueryRepository {
+<span class="nc bnc" id="L37" title="All 2 branches missed.">    fun get(groupId: GroupId) = find(groupId) ?: throw NoSuchElementException(&quot;Group not found&quot;)</span>
+    fun find(groupId: GroupId): Group?
+<span class="nc" id="L39">    fun list(groupIds: List&lt;GroupId&gt;): List&lt;Group&gt; = list(</span>
+<span class="nc" id="L40">        GroupQuery(</span>
+<span class="nc" id="L41">            limit = Limit.all,</span>
+<span class="nc" id="L42">            groupIds = groupIds,</span>
+        )
+<span class="nc" id="L44">    )</span>
+
+    fun list(query: GroupQuery): List&lt;Group&gt;
+    fun count(query: GroupQuery): ULong
+<span class="nc" id="L48">    data class GroupQuery(</span>
+<span class="nc" id="L49">        var afterId: GroupId = GroupId(SnowflakeId(Long.MAX_VALUE)),</span>
+<span class="nc" id="L50">        var limit: Limit = Limit(1),</span>
+<span class="nc" id="L51">        var groupIds: List&lt;GroupId&gt;</span>
+<span class="nc" id="L52">    )</span>
+}
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

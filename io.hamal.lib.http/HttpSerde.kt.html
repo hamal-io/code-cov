@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HttpSerde.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.http</a> &gt; <span class="el_source">HttpSerde.kt</span></div><h1>HttpSerde.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.http
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HttpSerde.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.http</a> &gt; <span class="el_source">HttpSerde.kt</span></div><h1>HttpSerde.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.http
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.InternalSerializationApi
@@ -28,10 +28,8 @@ interface HttpErrorDeserializer {
 object DefaultErrorDeserializer : HttpErrorDeserializer {
     @OptIn(InternalSerializationApi::class, ExperimentalSerializationApi::class)
     override fun &lt;ERROR : Any&gt; deserialize(inputStream: InputStream, clazz: KClass&lt;ERROR&gt;): ERROR {
-<span class="fc" id="L31">        return delegate.decodeFromStream(clazz.serializer(), inputStream)</span>
+<span class="fc" id="L31">        return jsonDelegate.decodeFromStream(clazz.serializer(), inputStream)</span>
     }
-
-<span class="fc" id="L34">    private val delegate = Json { ignoreUnknownKeys = true }</span>
 }
 
 interface HttpContentDeserializer {
@@ -42,15 +40,13 @@ interface HttpContentDeserializer {
 object KotlinJsonHttpContentDeserializer : HttpContentDeserializer {
     @OptIn(InternalSerializationApi::class, ExperimentalSerializationApi::class)
     override fun &lt;VALUE : Any&gt; deserialize(inputStream: InputStream, clazz: KClass&lt;VALUE&gt;): VALUE {
-<span class="fc" id="L45">        return delegate.decodeFromStream(clazz.serializer(), inputStream)</span>
+<span class="fc" id="L43">        return jsonDelegate.decodeFromStream(clazz.serializer(), inputStream)</span>
     }
 
     @OptIn(InternalSerializationApi::class, ExperimentalSerializationApi::class)
     override fun &lt;VALUE : Any&gt; deserializeList(inputStream: InputStream, clazz: KClass&lt;VALUE&gt;): List&lt;VALUE&gt; {
-<span class="nc" id="L50">        return delegate.decodeFromStream(ArraySerializer(clazz, clazz.serializer()), inputStream).toList()</span>
+<span class="nc" id="L48">        return jsonDelegate.decodeFromStream(ArraySerializer(clazz, clazz.serializer()), inputStream).toList()</span>
     }
-
-<span class="fc" id="L53">    private val delegate = Json { ignoreUnknownKeys = true }</span>
 }
 
 interface HttpContentSerializer {
@@ -60,9 +56,15 @@ interface HttpContentSerializer {
 object KotlinJsonHttpContentSerializer : HttpContentSerializer {
     @OptIn(InternalSerializationApi::class)
     override fun &lt;VALUE : Any&gt; serialize(value: VALUE, clazz: KClass&lt;VALUE&gt;): String {
-<span class="fc" id="L63">        return delegate.encodeToString(clazz.serializer(), value)</span>
+<span class="fc" id="L59">        return jsonDelegate.encodeToString(clazz.serializer(), value)</span>
     }
-
-<span class="fc" id="L66">    private val delegate = Json { ignoreUnknownKeys = true }</span>
 }
+
+
+@OptIn(ExperimentalSerializationApi::class)
+<span class="fc" id="L65">private val jsonDelegate = Json {</span>
+<span class="fc" id="L66">    explicitNulls = false</span>
+<span class="fc" id="L67">    ignoreUnknownKeys = true</span>
+<span class="fc" id="L68">    encodeDefaults = true</span>
+<span class="fc" id="L69">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

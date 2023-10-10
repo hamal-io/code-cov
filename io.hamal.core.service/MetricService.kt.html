@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MetricService.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.core.service</a> &gt; <span class="el_source">MetricService.kt</span></div><h1>MetricService.kt</h1><pre class="source lang-java linenums">package io.hamal.core.service
+
+import io.hamal.repository.api.MetricRepository
+import io.hamal.repository.api.SystemEvent
+import io.hamal.repository.api.event.*
+import org.springframework.stereotype.Service
+
+<span class="fc" id="L8">@Service</span>
+<span class="fc" id="L9">class MetricService(private val repo: MetricRepository) {</span>
+
+    fun handleEvent(event: PlatformEvent) {
+<span class="nc" id="L12">        when (event) {</span>
+<span class="nc bnc" id="L13" title="All 2 branches missed.">            is ExecutionCompletedEvent -&gt; repo.update(SystemEvent.ExecutionCompletedEvent)</span>
+<span class="nc bnc" id="L14" title="All 2 branches missed.">            is ExecPlannedEvent -&gt; repo.update(SystemEvent.ExecPlannedEvent)</span>
+<span class="nc bnc" id="L15" title="All 2 branches missed.">            is ExecScheduledEvent -&gt; repo.update(SystemEvent.ExecScheduledEvent)</span>
+<span class="nc bnc" id="L16" title="All 2 branches missed.">            is ExecutionFailedEvent -&gt; repo.update(SystemEvent.ExecutionFailedEvent)</span>
+<span class="nc bnc" id="L17" title="All 2 branches missed.">            is ExecutionQueuedEvent -&gt; repo.update(SystemEvent.ExecutionQueuedEvent)</span>
+<span class="nc bnc" id="L18" title="All 2 branches missed.">            is ExecutionStartedEvent -&gt; repo.update(SystemEvent.ExecutionStartedEvent)</span>
+<span class="nc bnc" id="L19" title="All 2 branches missed.">            is FuncCreatedEvent -&gt; repo.update(SystemEvent.FuncCreatedEvent)</span>
+<span class="nc bnc" id="L20" title="All 2 branches missed.">            is FuncUpdatedEvent -&gt; repo.update(SystemEvent.FuncUpdatedEvent)</span>
+<span class="nc bnc" id="L21" title="All 2 branches missed.">            is NamespaceCreatedEvent -&gt; repo.update(SystemEvent.NamespaceCreatedEvent)</span>
+<span class="nc bnc" id="L22" title="All 2 branches missed.">            is NamespaceUpdatedEvent -&gt; repo.update(SystemEvent.NamespaceUpdatedEvent)</span>
+<span class="nc bnc" id="L23" title="All 2 branches missed.">            is StateUpdatedEvent -&gt; repo.update(SystemEvent.StateUpdatedEvent)</span>
+<span class="nc bnc" id="L24" title="All 2 branches missed.">            is TriggerCreatedEvent -&gt; repo.update(SystemEvent.TriggerCreatedEvent)</span>
+<span class="nc" id="L25">            else -&gt; TODO()</span>
+        }
+<span class="nc" id="L27">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

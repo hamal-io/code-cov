@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Repository.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.repository.memory.record</a> &gt; <span class="el_source">Repository.kt</span></div><h1>Repository.kt</h1><pre class="source lang-java linenums">package io.hamal.repository.memory.record
+
+import io.hamal.lib.common.domain.CmdId
+import io.hamal.lib.common.domain.DomainId
+import io.hamal.lib.common.domain.DomainObject
+import io.hamal.lib.common.util.CollectionUtils.takeWhileInclusive
+import io.hamal.repository.record.CreateDomainObject
+import io.hamal.repository.record.Record
+import io.hamal.repository.record.RecordRepository
+import io.hamal.repository.record.RecordSequence
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
+import kotlin.reflect.KClass
+
+<span class="fc" id="L15">abstract class MemoryRecordRepository&lt;ID : DomainId, RECORD : Record&lt;ID&gt;, OBJ : DomainObject&lt;ID&gt;&gt;(</span>
+<span class="fc" id="L16">    private val createDomainObject: CreateDomainObject&lt;ID, RECORD, OBJ&gt;,</span>
+<span class="fc" id="L17">    private val recordClass: KClass&lt;RECORD&gt;,</span>
+) : RecordRepository&lt;ID, RECORD, OBJ&gt; {
+
+<span class="fc" id="L20">    private val lock = ReentrantLock()</span>
+<span class="fc" id="L21">    private val store = mutableMapOf&lt;ID, MutableList&lt;RECORD&gt;&gt;()</span>
+
+    override fun store(record: RECORD): RECORD {
+<span class="fc" id="L24">        return lock.withLock {</span>
+<span class="fc" id="L25">            val records = store.getOrDefault(record.entityId, mutableListOf())</span>
+<span class="fc" id="L26">            record.apply { sequence = RecordSequence(records.size + 1) }</span>
+<span class="fc" id="L27">            store[record.entityId] = records.apply { add(record) }</span>
+<span class="fc" id="L28">            store[record.entityId]!!.last()</span>
+        }
+    }
+
+    override fun recordsOf(id: ID): List&lt;RECORD&gt; {
+<span class="fc" id="L33">        return lock.withLock { store.getOrDefault(id, listOf()) }</span>
+    }
+
+    override fun lastRecordOf(id: ID): RECORD {
+<span class="pc bpc" id="L37" title="1 of 2 branches missed.">        return recordsOf(id).lastOrNull()</span>
+<span class="nc" id="L38">            ?: throw NoSuchElementException(&quot;${recordClass.simpleName!!.replace(&quot;Record&quot;, &quot;&quot;)} not found&quot;)</span>
+
+    }
+
+    override fun commandAlreadyApplied(cmdId: CmdId, id: ID): Boolean {
+<span class="fc" id="L43">        return recordsOf(id).any { it.cmdId == cmdId }</span>
+    }
+
+    override fun versionOf(id: ID, cmdId: CmdId): OBJ {
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        return createDomainObject(recordsOf(id).takeWhileInclusive { it.cmdId != cmdId })</span>
+    }
+
+    override fun versionOf(id: ID, sequence: RecordSequence): OBJ? {
+<span class="nc" id="L51">        return recordsOf(id)</span>
+<span class="nc" id="L52">            .filter {</span>
+<span class="nc" id="L53">                val seq = it.sequence</span>
+<span class="nc bnc" id="L54" title="All 4 branches missed.">                seq != null &amp;&amp; seq &gt;= sequence</span>
+            }
+<span class="nc bnc" id="L56" title="All 2 branches missed.">            .ifEmpty { null }</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">            ?.let { records -&gt;</span>
+<span class="nc bnc" id="L58" title="All 2 branches missed.">                if (records.none { it.sequence == sequence }) {</span>
+<span class="nc" id="L59">                    null</span>
+                } else {
+<span class="nc" id="L61">                    createDomainObject(records)</span>
+                }
+            }
+    }
+
+    override fun currentVersion(id: ID): OBJ {
+<span class="fc" id="L67">        val lastRecord = lastRecordOf(id)</span>
+<span class="fc" id="L68">        return versionOf(id, lastRecord.cmdId)</span>
+    }
+
+    override fun clear() {
+<span class="fc" id="L72">        lock.withLock {</span>
+<span class="fc" id="L73">            store.clear()</span>
+<span class="fc" id="L74">        }</span>
+<span class="fc" id="L75">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

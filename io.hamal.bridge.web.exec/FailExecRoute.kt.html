@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FailExecRoute.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.bridge.web.exec</a> &gt; <span class="el_source">FailExecRoute.kt</span></div><h1>FailExecRoute.kt</h1><pre class="source lang-java linenums">package io.hamal.bridge.web.exec
+
+import io.hamal.bridge.req.SubmitBridgeRequest
+import io.hamal.lib.domain.vo.ExecId
+import io.hamal.lib.sdk.api.ApiFailExecReq
+import io.hamal.lib.sdk.api.ApiSubmittedReqWithId
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RestController
+
+<span class="fc" id="L14">@RestController</span>
+<span class="fc" id="L15">internal class FailExecRoute(</span>
+<span class="pc" id="L16">    val request: SubmitBridgeRequest</span>
+) {
+    @PostMapping(&quot;/v1/execs/{execId}/fail&quot;)
+    fun failExec(
+        @PathVariable(&quot;execId&quot;) execId: ExecId,
+        @RequestBody fail: ApiFailExecReq
+    ): ResponseEntity&lt;ApiSubmittedReqWithId&gt; {
+<span class="fc" id="L23">        val result = request(execId, fail)</span>
+<span class="fc" id="L24">        return ResponseEntity(result.let {</span>
+<span class="fc" id="L25">            ApiSubmittedReqWithId(</span>
+<span class="fc" id="L26">                reqId = it.reqId,</span>
+<span class="fc" id="L27">                status = it.status,</span>
+<span class="fc" id="L28">                groupId = it.groupId,</span>
+<span class="fc" id="L29">                id = it.id</span>
+            )
+<span class="fc" id="L31">        }, HttpStatus.ACCEPTED)</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

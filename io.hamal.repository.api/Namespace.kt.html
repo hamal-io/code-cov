@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Namespace.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.repository.api</a> &gt; <span class="el_source">Namespace.kt</span></div><h1>Namespace.kt</h1><pre class="source lang-java linenums">package io.hamal.repository.api
+
+import io.hamal.lib.common.SnowflakeId
+import io.hamal.lib.common.domain.CmdId
+import io.hamal.lib.common.domain.DomainObject
+import io.hamal.lib.common.domain.Limit
+import io.hamal.lib.domain.vo.GroupId
+import io.hamal.lib.domain.vo.NamespaceId
+import io.hamal.lib.domain.vo.NamespaceInputs
+import io.hamal.lib.domain.vo.NamespaceName
+import kotlinx.serialization.Serializable
+
+<span class="fc" id="L13">interface NamespaceRepository : NamespaceCmdRepository, NamespaceQueryRepository</span>
+
+interface NamespaceCmdRepository : CmdRepository {
+    fun create(cmd: CreateCmd): Namespace
+
+    fun update(namespaceId: NamespaceId, cmd: UpdateCmd): Namespace
+
+<span class="fc" id="L20">    data class CreateCmd(</span>
+<span class="fc" id="L21">        val id: CmdId,</span>
+<span class="fc" id="L22">        val namespaceId: NamespaceId,</span>
+<span class="fc" id="L23">        val groupId: GroupId,</span>
+<span class="fc" id="L24">        val name: NamespaceName,</span>
+<span class="fc" id="L25">        val inputs: NamespaceInputs</span>
+    )
+
+<span class="pc" id="L28">    data class UpdateCmd(</span>
+<span class="fc" id="L29">        val id: CmdId,</span>
+<span class="pc" id="L30">        val name: NamespaceName? = null,</span>
+<span class="pc" id="L31">        val inputs: NamespaceInputs? = null</span>
+<span class="nc" id="L32">    )</span>
+}
+
+interface NamespaceQueryRepository {
+<span class="fc bfc" id="L36" title="All 2 branches covered.">    fun get(namespaceId: NamespaceId) = find(namespaceId) ?: throw NoSuchElementException(&quot;Namespace not found&quot;)</span>
+<span class="pc bpc" id="L37" title="1 of 2 branches missed.">    fun get(namespaceName: NamespaceName) = find(namespaceName) ?: throw NoSuchElementException(&quot;Namespace not found&quot;)</span>
+
+    fun find(namespaceId: NamespaceId): Namespace?
+    fun find(namespaceName: NamespaceName): Namespace?
+
+    fun list(query: NamespaceQuery): List&lt;Namespace&gt;
+<span class="fc" id="L43">    fun list(namespaceIds: List&lt;NamespaceId&gt;) = list(</span>
+<span class="fc" id="L44">        NamespaceQuery(</span>
+<span class="fc" id="L45">            limit = Limit.all,</span>
+<span class="fc" id="L46">            groupIds = listOf(),</span>
+<span class="fc" id="L47">            namespaceIds = namespaceIds,</span>
+        )
+<span class="fc" id="L49">    )</span>
+
+    fun count(query: NamespaceQuery): ULong
+
+<span class="fc" id="L53">    data class NamespaceQuery(</span>
+<span class="pc" id="L54">        var afterId: NamespaceId = NamespaceId(SnowflakeId(Long.MAX_VALUE)),</span>
+<span class="pc" id="L55">        var limit: Limit = Limit(1),</span>
+<span class="pc" id="L56">        var namespaceIds: List&lt;NamespaceId&gt; = listOf(),</span>
+<span class="pc" id="L57">        var groupIds: List&lt;GroupId&gt;</span>
+<span class="fc" id="L58">    )</span>
+}
+
+<span class="pc bnc" id="L61" title="All 11 branches missed.">@Serializable</span>
+<span class="fc" id="L62">data class Namespace(</span>
+<span class="pc" id="L63">    val cmdId: CmdId,</span>
+<span class="fc" id="L64">    override val id: NamespaceId,</span>
+<span class="fc" id="L65">    val groupId: GroupId,</span>
+<span class="fc" id="L66">    val name: NamespaceName,</span>
+<span class="fc" id="L67">    val inputs: NamespaceInputs</span>
+<span class="fc" id="L68">) : DomainObject&lt;NamespaceId&gt;</span>
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

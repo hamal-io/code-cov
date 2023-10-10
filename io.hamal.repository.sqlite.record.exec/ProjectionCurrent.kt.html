@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProjectionCurrent.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.repository.sqlite.record.exec</a> &gt; <span class="el_source">ProjectionCurrent.kt</span></div><h1>ProjectionCurrent.kt</h1><pre class="source lang-java linenums">package io.hamal.repository.sqlite.record.exec
+
+import io.hamal.lib.domain.vo.ExecId
+import io.hamal.lib.domain.vo.FuncId
+import io.hamal.lib.sqlite.Connection
+import io.hamal.lib.sqlite.Transaction
+import io.hamal.repository.api.Exec
+import io.hamal.repository.api.ExecQueryRepository.ExecQuery
+import io.hamal.repository.record.exec.ExecRecord
+import io.hamal.repository.sqlite.record.SqliteProjection
+import io.hamal.repository.sqlite.record.SqliteRecordTransaction
+import io.hamal.repository.sqlite.record.protobuf
+import kotlinx.serialization.ExperimentalSerializationApi
+
+
+@OptIn(ExperimentalSerializationApi::class)
+internal object ProjectionCurrent : SqliteProjection&lt;ExecId, ExecRecord, Exec&gt; {
+    fun find(connection: Connection, execId: ExecId): Exec? {
+<span class="nc" id="L19">        return connection.executeQueryOne(</span>
+            &quot;&quot;&quot;
+            SELECT 
+                data
+             FROM
+                current
+            WHERE
+                id  = :id
+<span class="nc" id="L27">        &quot;&quot;&quot;.trimIndent()</span>
+        ) {
+<span class="nc" id="L29">            query {</span>
+<span class="nc" id="L30">                set(&quot;id&quot;, execId)</span>
+            }
+<span class="nc" id="L32">            map { rs -&gt;</span>
+<span class="nc" id="L33">                protobuf.decodeFromByteArray(Exec.serializer(), rs.getBytes(&quot;data&quot;))</span>
+            }
+        }
+    }
+
+    fun list(connection: Connection, query: ExecQuery): List&lt;Exec&gt; {
+<span class="nc" id="L39">        return connection.executeQuery&lt;Exec&gt;(</span>
+            &quot;&quot;&quot;
+            SELECT 
+                data
+             FROM
+                current
+            WHERE
+                id &lt; :afterId
+<span class="nc" id="L47">                ${query.ids()}</span>
+<span class="nc" id="L48">                ${query.groupIds()}</span>
+<span class="nc" id="L49">                ${query.funcIds()}</span>
+            ORDER BY id DESC
+            LIMIT :limit
+<span class="nc" id="L52">        &quot;&quot;&quot;.trimIndent()</span>
+        ) {
+<span class="nc" id="L54">            query {</span>
+<span class="nc" id="L55">                set(&quot;afterId&quot;, query.afterId)</span>
+<span class="nc" id="L56">                set(&quot;limit&quot;, query.limit)</span>
+            }
+<span class="nc" id="L58">            map { rs -&gt;</span>
+<span class="nc" id="L59">                protobuf.decodeFromByteArray(Exec.serializer(), rs.getBytes(&quot;data&quot;))</span>
+            }
+        }
+    }
+
+    fun count(connection: Connection, query: ExecQuery): ULong {
+<span class="nc bnc" id="L65" title="All 2 branches missed.">        return connection.executeQueryOne(</span>
+            &quot;&quot;&quot;
+            SELECT 
+                COUNT(*) as count 
+            FROM 
+                current
+            WHERE
+                id &lt; :afterId
+<span class="nc" id="L73">                ${query.ids()}</span>
+<span class="nc" id="L74">                ${query.groupIds()}</span>
+<span class="nc" id="L75">                ${query.funcIds()}</span>
+<span class="nc" id="L76">        &quot;&quot;&quot;.trimIndent()</span>
+        ) {
+<span class="nc" id="L78">            query {</span>
+<span class="nc" id="L79">                set(&quot;afterId&quot;, query.afterId)</span>
+            }
+<span class="nc" id="L81">            map {</span>
+<span class="nc" id="L82">                it.getLong(&quot;count&quot;).toULong()</span>
+            }
+<span class="nc" id="L84">        } ?: 0UL</span>
+    }
+
+
+    override fun upsert(
+        tx: SqliteRecordTransaction&lt;ExecId, ExecRecord, Exec&gt;, obj: Exec
+    ) {
+<span class="nc" id="L91">        tx.execute(</span>
+            &quot;&quot;&quot;
+                INSERT OR REPLACE INTO current
+                    (id,status,group_id,func_id,data) 
+                VALUES
+                    (:id,:status,:groupId,:funcId,:data)
+<span class="nc" id="L97">            &quot;&quot;&quot;.trimIndent()</span>
+        ) {
+<span class="nc" id="L99">            set(&quot;id&quot;, obj.id)</span>
+<span class="nc" id="L100">            set(&quot;status&quot;, obj.status.value)</span>
+<span class="nc" id="L101">            set(&quot;groupId&quot;, obj.groupId)</span>
+<span class="nc bnc" id="L102" title="All 4 branches missed.">            set(&quot;funcId&quot;, obj.correlation?.funcId ?: FuncId(0))</span>
+<span class="nc" id="L103">            set(&quot;data&quot;, protobuf.encodeToByteArray(Exec.serializer(), obj))</span>
+        }
+<span class="nc" id="L105">    }</span>
+
+    override fun setupSchema(connection: Connection) {
+<span class="nc" id="L108">        connection.execute(</span>
+            &quot;&quot;&quot;
+            CREATE TABLE IF NOT EXISTS current (
+                 id             INTEGER NOT NULL,
+                 status         INTEGER NOT NULL,
+                 group_id       INTEGER NOT NULL,
+                 func_id        INTEGER NOT NULL,
+                 data           BLOB NOT NULL,
+                 PRIMARY KEY    (id)
+            );
+<span class="nc" id="L118">        &quot;&quot;&quot;.trimIndent()</span>
+        )
+<span class="nc" id="L120">    }</span>
+
+    override fun clear(tx: Transaction) {
+<span class="nc" id="L123">        tx.execute(&quot;&quot;&quot;DELETE FROM current&quot;&quot;&quot;)</span>
+<span class="nc" id="L124">    }</span>
+
+    private fun ExecQuery.ids(): String {
+<span class="nc bnc" id="L127" title="All 2 branches missed.">        return if (execIds.isEmpty()) {</span>
+<span class="nc" id="L128">            &quot;&quot;</span>
+        } else {
+<span class="nc" id="L130">            &quot;AND id IN (${execIds.joinToString(&quot;,&quot;) { &quot;${it.value.value}&quot; }})&quot;</span>
+        }
+    }
+
+    private fun ExecQuery.groupIds(): String {
+<span class="nc bnc" id="L135" title="All 2 branches missed.">        return if (groupIds.isEmpty()) {</span>
+<span class="nc" id="L136">            &quot;&quot;</span>
+        } else {
+<span class="nc" id="L138">            &quot;AND group_id IN (${groupIds.joinToString(&quot;,&quot;) { &quot;${it.value.value}&quot; }})&quot;</span>
+        }
+    }
+
+    private fun ExecQuery.funcIds(): String {
+<span class="nc bnc" id="L143" title="All 2 branches missed.">        return if (funcIds.isEmpty()) {</span>
+<span class="nc" id="L144">            &quot;&quot;</span>
+        } else {
+<span class="nc" id="L146">            &quot;AND func_id IN (${funcIds.joinToString(&quot;,&quot;) { &quot;${it.value.value}&quot; }})&quot;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

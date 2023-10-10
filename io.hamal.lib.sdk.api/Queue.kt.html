@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Queue.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.sdk.api</a> &gt; <span class="el_source">Queue.kt</span></div><h1>Queue.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.sdk.api
+
+import io.hamal.lib.domain.Correlation
+import io.hamal.lib.domain.Event
+import io.hamal.lib.domain.State
+import io.hamal.lib.domain.vo.CodeValue
+import io.hamal.lib.domain.vo.ExecId
+import io.hamal.lib.domain.vo.ExecInputs
+import io.hamal.lib.domain.vo.GroupId
+import kotlinx.serialization.Serializable
+
+
+<span class="pc bpc" id="L13" title="2 of 7 branches missed.">@Serializable</span>
+<span class="fc" id="L14">data class ApiUnitOfWorkList(</span>
+<span class="fc" id="L15">    val work: List&lt;UnitOfWork&gt;</span>
+) {
+<span class="pc bpc" id="L17" title="3 of 19 branches missed.">    @Serializable</span>
+<span class="pc" id="L18">    data class UnitOfWork(</span>
+<span class="fc" id="L19">        val id: ExecId,</span>
+<span class="pc" id="L20">        val groupId: GroupId,</span>
+<span class="fc" id="L21">        val inputs: ExecInputs,</span>
+<span class="pc" id="L22">        val state: State,</span>
+<span class="fc" id="L23">        val code: CodeValue,</span>
+<span class="pc" id="L24">        val correlation: Correlation? = null,</span>
+<span class="pc" id="L25">        val events: List&lt;Event&gt;</span>
+<span class="pc" id="L26">    )</span>
+<span class="fc" id="L27">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

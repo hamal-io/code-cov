@@ -1,25 +1,40 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Context.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.runner.run</a> &gt; <span class="el_source">Context.kt</span></div><h1>Context.kt</h1><pre class="source lang-java linenums">package io.hamal.runner.run
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Context.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.runner.run</a> &gt; <span class="el_source">Context.kt</span></div><h1>Context.kt</h1><pre class="source lang-java linenums">package io.hamal.runner.run
 
 import io.hamal.lib.domain.Event
+import io.hamal.lib.domain.EventToSubmit
 import io.hamal.lib.kua.SandboxContext
 import kotlin.reflect.KClass
 
-<span class="fc" id="L7">class RunnerSandboxContext : SandboxContext {</span>
-<span class="fc" id="L8">    val runnerEmittedEvents get() : List&lt;Event&gt; = eventsToEmit</span>
+<span class="fc" id="L8">data class RunnerInvocationEvents(</span>
+<span class="fc" id="L9">    val events: List&lt;Event&gt;</span>
+)
+
+<span class="fc" id="L12">class RunnerContext(</span>
+    invocationEvents: RunnerInvocationEvents
+) : SandboxContext {
+
 
     operator fun &lt;OBJ : Any&gt; set(clazz: KClass&lt;OBJ&gt;, obj: OBJ) {
-<span class="fc" id="L11">        store[clazz] = obj</span>
-<span class="fc" id="L12">    }</span>
+<span class="fc" id="L18">        store[clazz] = obj</span>
+<span class="fc" id="L19">    }</span>
 
     override operator fun &lt;OBJ : Any&gt; get(clazz: KClass&lt;OBJ&gt;): OBJ {
-<span class="fc" id="L15">        return store[clazz] as OBJ</span>
+<span class="fc" id="L22">        return store[clazz] as OBJ</span>
     }
 
-    fun emit(evt: Event) {
-<span class="fc" id="L19">        eventsToEmit.add(evt)</span>
-<span class="fc" id="L20">    }</span>
+    fun emit(evt: EventToSubmit) {
+<span class="fc" id="L26">        eventsToSubmit.add(evt)</span>
+<span class="fc" id="L27">    }</span>
 
-<span class="fc" id="L22">    private val store = mutableMapOf&lt;KClass&lt;*&gt;, Any&gt;()</span>
-<span class="fc" id="L23">    private val eventsToEmit = mutableListOf&lt;Event&gt;()</span>
+<span class="fc" id="L29">    private val store = mutableMapOf&lt;KClass&lt;*&gt;, Any&gt;()</span>
+
+<span class="fc" id="L31">    val eventsToSubmit = mutableListOf&lt;EventToSubmit&gt;()</span>
+
+
+<span class="fc" id="L34">    init {</span>
+<span class="fc" id="L35">        this[RunnerInvocationEvents::class] = invocationEvents</span>
+<span class="fc" id="L36">    }</span>
+
 }
+
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

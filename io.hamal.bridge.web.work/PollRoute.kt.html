@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PollRoute.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.bridge.web.work</a> &gt; <span class="el_source">PollRoute.kt</span></div><h1>PollRoute.kt</h1><pre class="source lang-java linenums">package io.hamal.bridge.web.work
+
+import io.hamal.core.event.PlatformEventEmitter
+import io.hamal.lib.common.domain.CmdId
+import io.hamal.lib.domain.State
+import io.hamal.lib.sdk.api.ApiUnitOfWorkList
+import io.hamal.lib.sdk.api.ApiUnitOfWorkList.UnitOfWork
+import io.hamal.repository.api.CodeQueryRepository
+import io.hamal.repository.api.ExecCmdRepository
+import io.hamal.repository.api.ExecCmdRepository.StartCmd
+import io.hamal.repository.api.StateQueryRepository
+import io.hamal.repository.api.event.ExecutionStartedEvent
+import org.springframework.http.HttpStatus.OK
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RestController
+
+<span class="fc" id="L18">@RestController</span>
+<span class="fc" id="L19">internal class PollRoute(</span>
+<span class="fc" id="L20">    private val codeQueryRepository: CodeQueryRepository,</span>
+<span class="fc" id="L21">    private val execCmdRepository: ExecCmdRepository,</span>
+<span class="fc" id="L22">    private val stateQueryRepository: StateQueryRepository,</span>
+<span class="fc" id="L23">    private val eventEmitter: PlatformEventEmitter</span>
+) {
+    @PostMapping(&quot;/v1/dequeue&quot;)
+    fun dequeue(): ResponseEntity&lt;ApiUnitOfWorkList&gt; {
+<span class="fc" id="L27">        val cmdId = CmdId.random()</span>
+<span class="fc" id="L28">        val result = execCmdRepository.start(StartCmd(cmdId)).also {</span>
+<span class="fc" id="L29">            emitEvents(cmdId, it)</span>
+<span class="fc" id="L30">        }</span>
+<span class="fc" id="L31">        return ResponseEntity(</span>
+<span class="fc" id="L32">            ApiUnitOfWorkList(</span>
+<span class="fc" id="L33">                work = result.map { exec -&gt;</span>
+<span class="pc bpc" id="L34" title="2 of 6 branches missed.">                    val state = exec.correlation?.let { stateQueryRepository.find(it)?.value } ?: State()</span>
+
+<span class="pc bpc" id="L36" title="1 of 2 branches missed.">                    val code = exec.code ?: run {</span>
+<span class="nc bnc" id="L37" title="All 2 branches missed.">                        codeQueryRepository.find(exec.codeId!!, exec.codeVersion!!)?.value</span>
+                    }!!
+
+<span class="fc" id="L40">                    UnitOfWork(</span>
+<span class="fc" id="L41">                        id = exec.id,</span>
+<span class="fc" id="L42">                        groupId = exec.groupId,</span>
+<span class="fc" id="L43">                        correlation = exec.correlation,</span>
+<span class="fc" id="L44">                        inputs = exec.inputs,</span>
+<span class="fc" id="L45">                        state = state,</span>
+<span class="fc" id="L46">                        code = code,</span>
+<span class="fc" id="L47">                        events = exec.events</span>
+                    )
+<span class="fc" id="L49">                }), OK</span>
+        )
+    }
+
+    private fun emitEvents(cmdId: CmdId, execs: List&lt;io.hamal.repository.api.StartedExec&gt;) {
+<span class="fc" id="L54">        execs.forEach { eventEmitter.emit(cmdId, ExecutionStartedEvent(it)) }</span>
+<span class="fc" id="L55">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

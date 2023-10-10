@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReqListController.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.api.web.req</a> &gt; <span class="el_source">ReqListController.kt</span></div><h1>ReqListController.kt</h1><pre class="source lang-java linenums">package io.hamal.api.web.req
+
+import io.hamal.core.adapter.ListReqPort
+import io.hamal.lib.common.domain.Limit
+import io.hamal.lib.domain.ReqId
+import io.hamal.lib.sdk.api.ApiReqList
+import io.hamal.repository.api.ReqQueryRepository
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
+
+<span class="fc" id="L13">@RestController</span>
+<span class="fc" id="L14">internal class ReqListController(private val listReqs: ListReqPort) {</span>
+    @GetMapping(&quot;/v1/reqs&quot;)
+    fun listReqs(
+        @RequestParam(required = false, name = &quot;after_id&quot;, defaultValue = &quot;0&quot;) afterId: ReqId,
+        @RequestParam(required = false, name = &quot;limit&quot;, defaultValue = &quot;100&quot;) limit: Limit
+    ): ResponseEntity&lt;ApiReqList&gt; {
+<span class="fc" id="L20">        return listReqs(</span>
+<span class="fc" id="L21">            ReqQueryRepository.ReqQuery(</span>
+<span class="fc" id="L22">                afterId = afterId,</span>
+<span class="fc" id="L23">                limit = limit</span>
+                // groupId = ...
+            ),
+            // assembler
+        ) { reqs -&gt;
+<span class="fc" id="L28">            ResponseEntity.ok(ApiReqList(</span>
+<span class="fc" id="L29">                reqs.map { Assembler.assemble(it) }</span>
+            ))
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

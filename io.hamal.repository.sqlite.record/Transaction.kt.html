@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Transaction.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.repository.sqlite.record</a> &gt; <span class="el_source">Transaction.kt</span></div><h1>Transaction.kt</h1><pre class="source lang-java linenums">package io.hamal.repository.sqlite.record
+
+import io.hamal.lib.common.domain.CmdId
+import io.hamal.lib.common.domain.DomainId
+import io.hamal.lib.common.domain.DomainObject
+import io.hamal.lib.common.util.CollectionUtils.takeWhileInclusive
+import io.hamal.lib.sqlite.NamedPreparedStatementDelegate
+import io.hamal.lib.sqlite.NamedPreparedStatementResultSetDelegate
+import io.hamal.lib.sqlite.Transaction
+import io.hamal.repository.record.CreateDomainObject
+import io.hamal.repository.record.Record
+import io.hamal.repository.record.RecordRepository
+import io.hamal.repository.record.RecordSequence
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.InternalSerializationApi
+import kotlinx.serialization.serializer
+import kotlin.reflect.KClass
+
+
+<span class="nc" id="L20">@OptIn(ExperimentalSerializationApi::class, InternalSerializationApi::class)</span>
+<span class="nc" id="L21">class SqliteRecordTransaction&lt;ID : DomainId, RECORD : Record&lt;ID&gt;, OBJ : DomainObject&lt;ID&gt;&gt;(</span>
+<span class="nc" id="L22">    private val createDomainObject: CreateDomainObject&lt;ID, RECORD, OBJ&gt;,</span>
+<span class="nc" id="L23">    private val recordClass: KClass&lt;RECORD&gt;,</span>
+<span class="nc" id="L24">    private val delegate: Transaction,</span>
+) : RecordRepository&lt;ID, RECORD, OBJ&gt;, Transaction {
+
+    override fun store(record: RECORD): RECORD {
+<span class="nc" id="L28">        execute(</span>
+            &quot;&quot;&quot;
+                INSERT INTO records
+                    (cmd_id, entity_id,  data) 
+                VALUES
+                    (:cmdId, :entityId,  :data)
+<span class="nc" id="L34">            &quot;&quot;&quot;.trimIndent()</span>
+        ) {
+<span class="nc" id="L36">            set(&quot;cmdId&quot;, record.cmdId)</span>
+<span class="nc" id="L37">            set(&quot;entityId&quot;, record.entityId)</span>
+<span class="nc" id="L38">            set(&quot;data&quot;, protobuf.encodeToByteArray(recordClass.serializer(), record))</span>
+        }
+
+<span class="nc" id="L41">        return record</span>
+    }
+
+    override fun recordsOf(id: ID): List&lt;RECORD&gt; {
+<span class="nc" id="L45">        return executeQuery(</span>
+            &quot;&quot;&quot;
+            SELECT data, sequence FROM records WHERE entity_id = :entityId ORDER BY sequence ASC
+<span class="nc" id="L48">        &quot;&quot;&quot;.trimIndent()</span>
+        ) {
+<span class="nc" id="L50">            query {</span>
+<span class="nc" id="L51">                set(&quot;entityId&quot;, id)</span>
+            }
+<span class="nc" id="L53">            map {</span>
+<span class="nc" id="L54">                protobuf.decodeFromByteArray(recordClass.serializer(), it.getBytes(&quot;data&quot;)).also { record -&gt;</span>
+<span class="nc" id="L55">                    record.sequence = RecordSequence(it.getInt(&quot;sequence&quot;))</span>
+<span class="nc" id="L56">                }</span>
+            }
+        }
+    }
+
+    override fun lastRecordOf(id: ID): RECORD {
+<span class="nc bnc" id="L62" title="All 2 branches missed.">        return executeQuery(</span>
+            &quot;&quot;&quot;
+            SELECT data, sequence FROM records WHERE entity_id = :entityId ORDER BY sequence DESC LIMIT 1
+<span class="nc" id="L65">        &quot;&quot;&quot;.trimIndent()</span>
+        ) {
+<span class="nc" id="L67">            query {</span>
+<span class="nc" id="L68">                set(&quot;entityId&quot;, id)</span>
+            }
+<span class="nc" id="L70">            map {</span>
+<span class="nc" id="L71">                protobuf.decodeFromByteArray(recordClass.serializer(), it.getBytes(&quot;data&quot;)).also { record -&gt;</span>
+<span class="nc" id="L72">                    record.sequence = RecordSequence(it.getInt(&quot;sequence&quot;))</span>
+<span class="nc" id="L73">                }</span>
+            }
+<span class="nc" id="L75">        }.lastOrNull()</span>
+<span class="nc" id="L76">            ?: throw NoSuchElementException(&quot;${recordClass.simpleName!!.replace(&quot;Record&quot;, &quot;&quot;)} not found&quot;)</span>
+    }
+
+    override fun commandAlreadyApplied(cmdId: CmdId, id: ID): Boolean {
+<span class="nc" id="L80">        return recordsOf(id).any { it.cmdId == cmdId }</span>
+    }
+
+    override fun versionOf(id: ID, cmdId: CmdId): OBJ {
+<span class="nc bnc" id="L84" title="All 2 branches missed.">        return createDomainObject(recordsOf(id).takeWhileInclusive { it.cmdId != cmdId })</span>
+    }
+
+    override fun versionOf(id: ID, sequence: RecordSequence): OBJ? {
+<span class="nc" id="L88">        return executeQuery(</span>
+            &quot;&quot;&quot;
+            SELECT data, sequence FROM records WHERE 
+            entity_id = :entityId AND sequence &lt;= :sequence ORDER BY sequence ASC
+<span class="nc" id="L92">        &quot;&quot;&quot;.trimIndent()</span>
+        ) {
+<span class="nc" id="L94">            query {</span>
+<span class="nc" id="L95">                set(&quot;entityId&quot;, id)</span>
+<span class="nc" id="L96">                set(&quot;sequence&quot;, sequence.value)</span>
+            }
+<span class="nc" id="L98">            map {</span>
+<span class="nc" id="L99">                protobuf.decodeFromByteArray(recordClass.serializer(), it.getBytes(&quot;data&quot;)).also { record -&gt;</span>
+<span class="nc" id="L100">                    record.sequence = RecordSequence(it.getInt(&quot;sequence&quot;))</span>
+<span class="nc" id="L101">                }</span>
+            }
+<span class="nc bnc" id="L103" title="All 2 branches missed.">        }.ifEmpty { null }</span>
+<span class="nc bnc" id="L104" title="All 2 branches missed.">            ?.let { records -&gt;</span>
+<span class="nc bnc" id="L105" title="All 2 branches missed.">                if (records.none { it.sequence == sequence }) {</span>
+<span class="nc" id="L106">                    null</span>
+                } else {
+<span class="nc" id="L108">                    createDomainObject(records)</span>
+                }
+            }
+    }
+
+    override fun currentVersion(id: ID): OBJ {
+<span class="nc" id="L114">        val lastRecord = lastRecordOf(id)</span>
+<span class="nc" id="L115">        return versionOf(id, lastRecord.cmdId)</span>
+    }
+
+<span class="nc" id="L118">    override fun execute(sql: String) = delegate.execute(sql)</span>
+
+    override fun execute(sql: String, block: NamedPreparedStatementDelegate.() -&gt; NamedPreparedStatementDelegate) =
+<span class="nc" id="L121">        delegate.execute(sql, block)</span>
+
+    override fun &lt;T : Any&gt; execute(
+        sql: String,
+        block: NamedPreparedStatementResultSetDelegate&lt;T&gt;.() -&gt; NamedPreparedStatementResultSetDelegate&lt;T&gt;
+<span class="nc" id="L126">    ) = delegate.execute(sql, block)</span>
+
+<span class="nc" id="L128">    override fun executeUpdate(sql: String) = delegate.executeUpdate(sql)</span>
+    override fun executeUpdate(
+        sql: String,
+        block: NamedPreparedStatementDelegate.() -&gt; NamedPreparedStatementDelegate
+<span class="nc" id="L132">    ) = delegate.executeUpdate(sql, block)</span>
+
+    override fun &lt;T : Any&gt; executeQuery(
+        sql: String,
+        block: NamedPreparedStatementResultSetDelegate&lt;T&gt;.() -&gt; NamedPreparedStatementResultSetDelegate&lt;T&gt;
+<span class="nc" id="L137">    ) = delegate.executeQuery(sql, block)</span>
+
+<span class="nc" id="L139">    override fun abort() = delegate.abort()</span>
+
+    override fun clear() {
+<span class="nc" id="L142">        delegate.execute(&quot;&quot;&quot;DELETE FROM records&quot;&quot;&quot;)</span>
+<span class="nc" id="L143">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

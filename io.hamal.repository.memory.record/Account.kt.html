@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Account.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.repository.memory.record</a> &gt; <span class="el_source">Account.kt</span></div><h1>Account.kt</h1><pre class="source lang-java linenums">package io.hamal.repository.memory.record
+
+import io.hamal.lib.domain.vo.AccountId
+import io.hamal.lib.domain.vo.AccountName
+import io.hamal.repository.api.Account
+import io.hamal.repository.api.AccountCmdRepository.CreateCmd
+import io.hamal.repository.api.AccountQueryRepository.AccountQuery
+import io.hamal.repository.api.AccountRepository
+import io.hamal.repository.record.account.AccountCreationRecord
+import io.hamal.repository.record.account.AccountRecord
+import io.hamal.repository.record.account.CreateAccountFromRecords
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
+
+internal object CurrentAccountProjection {
+<span class="fc" id="L16">    private val projection = mutableMapOf&lt;AccountId, Account&gt;()</span>
+    fun apply(account: Account) {
+
+<span class="pc bpc" id="L19" title="1 of 2 branches missed.">        require(projection.values.asSequence()</span>
+<span class="pc" id="L20">            .map { it.name }</span>
+<span class="pc" id="L21">            .none { it == account.name }</span>
+<span class="nc" id="L22">        ) { &quot;${account.name} already exists&quot; }</span>
+
+<span class="pc bpc" id="L24" title="1 of 2 branches missed.">        if (account.email != null) {</span>
+<span class="pc bpc" id="L25" title="1 of 2 branches missed.">            require(projection.values.asSequence()</span>
+<span class="pc" id="L26">                .map { it.email }</span>
+<span class="pc" id="L27">                .none { it == account.email }</span>
+<span class="nc" id="L28">            ) { &quot;${account.email} already exists&quot; }</span>
+        }
+
+
+<span class="fc" id="L32">        projection[account.id] = account</span>
+<span class="fc" id="L33">    }</span>
+
+<span class="nc" id="L35">    fun find(accountId: AccountId): Account? = projection[accountId]</span>
+
+<span class="nc bnc" id="L37" title="All 4 branches missed.">    fun find(accountName: AccountName): Account? = projection.values.find { it.name == accountName }</span>
+
+    fun list(query: AccountQuery): List&lt;Account&gt; {
+<span class="nc bnc" id="L40" title="All 4 branches missed.">        return projection.filter { query.accountIds.isEmpty() || it.key in query.accountIds }</span>
+<span class="nc" id="L41">            .map { it.value }</span>
+<span class="nc" id="L42">            .reversed()</span>
+<span class="nc" id="L43">            .asSequence()</span>
+<span class="nc bnc" id="L44" title="All 2 branches missed.">            .dropWhile { it.id &gt;= query.afterId }</span>
+<span class="nc" id="L45">            .take(query.limit.value)</span>
+<span class="nc" id="L46">            .toList()</span>
+    }
+
+    fun count(query: AccountQuery): ULong {
+<span class="nc bnc" id="L50" title="All 4 branches missed.">        return projection.filter { query.accountIds.isEmpty() || it.key in query.accountIds }</span>
+<span class="nc" id="L51">            .map { it.value }</span>
+<span class="nc" id="L52">            .reversed()</span>
+<span class="nc" id="L53">            .asSequence()</span>
+<span class="nc bnc" id="L54" title="All 2 branches missed.">            .dropWhile { it.id &gt;= query.afterId }</span>
+<span class="nc" id="L55">            .count()</span>
+<span class="nc" id="L56">            .toULong()</span>
+    }
+
+    fun clear() {
+<span class="fc" id="L60">        projection.clear()</span>
+<span class="fc" id="L61">    }</span>
+}
+
+<span class="pc" id="L64">class MemoryAccountRepository : MemoryRecordRepository&lt;AccountId, AccountRecord, Account&gt;(</span>
+<span class="fc" id="L65">    createDomainObject = CreateAccountFromRecords,</span>
+    recordClass = AccountRecord::class
+), AccountRepository {
+<span class="fc" id="L68">    private val lock = ReentrantLock()</span>
+
+    override fun create(cmd: CreateCmd): Account {
+<span class="fc" id="L71">        return lock.withLock {</span>
+<span class="fc" id="L72">            val accountId = cmd.accountId</span>
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">            if (commandAlreadyApplied(cmd.id, accountId)) {</span>
+<span class="nc" id="L74">                versionOf(accountId, cmd.id)</span>
+            } else {
+<span class="fc" id="L76">                store(</span>
+<span class="fc" id="L77">                    AccountCreationRecord(</span>
+<span class="fc" id="L78">                        cmdId = cmd.id,</span>
+<span class="fc" id="L79">                        entityId = accountId,</span>
+<span class="fc" id="L80">                        type = cmd.accountType,</span>
+<span class="fc" id="L81">                        name = cmd.name,</span>
+<span class="fc" id="L82">                        email = cmd.email,</span>
+<span class="fc" id="L83">                        salt = cmd.salt</span>
+                    )
+                )
+<span class="fc" id="L86">                (currentVersion(accountId)).also(CurrentAccountProjection::apply)</span>
+            }
+        }
+    }
+
+<span class="nc" id="L91">    override fun find(accountId: AccountId): Account? = CurrentAccountProjection.find(accountId)</span>
+
+<span class="nc" id="L93">    override fun find(accountName: AccountName): Account? = CurrentAccountProjection.find(accountName)</span>
+
+    override fun list(query: AccountQuery): List&lt;Account&gt; {
+<span class="nc" id="L96">        return CurrentAccountProjection.list(query)</span>
+    }
+
+    override fun count(query: AccountQuery): ULong {
+<span class="nc" id="L100">        return CurrentAccountProjection.count(query)</span>
+    }
+
+    override fun clear() {
+<span class="fc" id="L104">        super.clear()</span>
+<span class="fc" id="L105">        CurrentAccountProjection.clear()</span>
+<span class="fc" id="L106">    }</span>
+
+    override fun close() {
+<span class="nc" id="L109">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

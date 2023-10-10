@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Exec.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.repository.api</a> &gt; <span class="el_source">Exec.kt</span></div><h1>Exec.kt</h1><pre class="source lang-java linenums">package io.hamal.repository.api
+
+import io.hamal.lib.common.SnowflakeId
+import io.hamal.lib.common.domain.CmdId
+import io.hamal.lib.common.domain.DomainObject
+import io.hamal.lib.common.domain.Limit
+import io.hamal.lib.domain.Correlation
+import io.hamal.lib.domain.Event
+import io.hamal.lib.domain.vo.*
+import io.hamal.lib.kua.type.ErrorType
+import kotlinx.serialization.Serializable
+
+<span class="pc" id="L13">interface ExecRepository : ExecCmdRepository, ExecQueryRepository</span>
+
+interface ExecCmdRepository : CmdRepository {
+    fun plan(cmd: PlanCmd): PlannedExec
+    fun schedule(cmd: ScheduleCmd): ScheduledExec
+    fun queue(cmd: QueueCmd): QueuedExec
+
+    fun complete(cmd: CompleteCmd): CompletedExec
+    fun fail(cmd: FailCmd): FailedExec
+
+    fun start(cmd: StartCmd): List&lt;StartedExec&gt;
+
+<span class="fc" id="L25">    data class PlanCmd(</span>
+<span class="fc" id="L26">        val id: CmdId,</span>
+<span class="fc" id="L27">        val execId: ExecId,</span>
+<span class="fc" id="L28">        val groupId: GroupId,</span>
+<span class="fc" id="L29">        val correlation: Correlation?,</span>
+<span class="fc" id="L30">        val inputs: ExecInputs,</span>
+<span class="fc" id="L31">        val code: CodeValue?,</span>
+<span class="fc" id="L32">        val codeId: CodeId?,</span>
+<span class="fc" id="L33">        val codeVersion: CodeVersion?,</span>
+<span class="fc" id="L34">        val events: List&lt;Event&gt;</span>
+    )
+
+<span class="fc" id="L37">    data class ScheduleCmd(</span>
+<span class="fc" id="L38">        val id: CmdId,</span>
+<span class="fc" id="L39">        val execId: ExecId</span>
+    )
+
+<span class="fc" id="L42">    data class QueueCmd(</span>
+<span class="fc" id="L43">        val id: CmdId,</span>
+<span class="fc" id="L44">        val execId: ExecId</span>
+    )
+
+<span class="fc" id="L47">    data class StartCmd(</span>
+<span class="fc" id="L48">        val id: CmdId,</span>
+    )
+
+<span class="fc" id="L51">    data class CompleteCmd(</span>
+<span class="fc" id="L52">        val id: CmdId,</span>
+<span class="fc" id="L53">        val execId: ExecId</span>
+    )
+
+<span class="fc" id="L56">    data class FailCmd(</span>
+<span class="fc" id="L57">        val id: CmdId,</span>
+<span class="fc" id="L58">        val execId: ExecId,</span>
+<span class="fc" id="L59">        val cause: ErrorType</span>
+    )
+}
+
+interface ExecQueryRepository {
+<span class="fc bfc" id="L64" title="All 2 branches covered.">    fun get(execId: ExecId) = find(execId) ?: throw NoSuchElementException(&quot;Exec not found&quot;)</span>
+    fun find(execId: ExecId): Exec?
+    fun list(query: ExecQuery): List&lt;Exec&gt;
+<span class="nc" id="L67">    fun list(execIds: List&lt;ExecId&gt;): List&lt;Exec&gt; = list(</span>
+<span class="nc" id="L68">        ExecQuery(</span>
+<span class="nc" id="L69">            limit = Limit.all,</span>
+<span class="nc" id="L70">            groupIds = listOf(),</span>
+<span class="nc" id="L71">            execIds = execIds,</span>
+        )
+<span class="nc" id="L73">    )</span>
+
+    fun count(query: ExecQuery): ULong
+<span class="fc" id="L76">    data class ExecQuery(</span>
+<span class="pc" id="L77">        var afterId: ExecId = ExecId(SnowflakeId(Long.MAX_VALUE)),</span>
+<span class="pc" id="L78">        var limit: Limit = Limit(1),</span>
+<span class="pc" id="L79">        var groupIds: List&lt;GroupId&gt;,</span>
+<span class="pc" id="L80">        var funcIds: List&lt;FuncId&gt; = listOf(),</span>
+<span class="pc" id="L81">        var execIds: List&lt;ExecId&gt; = listOf()</span>
+<span class="fc" id="L82">    )</span>
+}
+
+<span class="pc" id="L85">@Serializable</span>
+sealed class Exec : DomainObject&lt;ExecId&gt; {
+    abstract val cmdId: CmdId
+    abstract override val id: ExecId
+    abstract val groupId: GroupId
+    abstract val status: ExecStatus
+
+    abstract val correlation: Correlation?
+    abstract val inputs: ExecInputs
+    abstract val code: CodeValue?
+    abstract val codeId: CodeId?
+    abstract val codeVersion: CodeVersion?
+    abstract val events: List&lt;Event&gt;
+
+    override fun equals(other: Any?): Boolean {
+<span class="nc bnc" id="L100" title="All 2 branches missed.">        if (this === other) return true</span>
+<span class="nc bnc" id="L101" title="All 4 branches missed.">        if (javaClass != other?.javaClass) return false</span>
+
+<span class="nc" id="L103">        other as Exec</span>
+
+<span class="nc bnc" id="L105" title="All 2 branches missed.">        if (id != other.id) return false</span>
+<span class="nc bnc" id="L106" title="All 2 branches missed.">        if (cmdId != other.cmdId) return false</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">        return status == other.status</span>
+    }
+
+    override fun hashCode(): Int {
+<span class="nc" id="L111">        var result = id.hashCode()</span>
+<span class="nc" id="L112">        result = 31 * result + cmdId.hashCode()</span>
+<span class="nc" id="L113">        result = 31 * result + status.hashCode()</span>
+<span class="nc" id="L114">        return result</span>
+    }
+}
+
+<span class="pc bpc" id="L118" title="17 of 18 branches missed.">@Serializable</span>
+<span class="fc" id="L119">class PlannedExec(</span>
+<span class="fc" id="L120">    override val cmdId: CmdId,</span>
+<span class="fc" id="L121">    override val id: ExecId,</span>
+<span class="fc" id="L122">    override val groupId: GroupId,</span>
+<span class="fc" id="L123">    override val correlation: Correlation?,</span>
+<span class="fc" id="L124">    override val inputs: ExecInputs,</span>
+<span class="fc" id="L125">    override val code: CodeValue?,</span>
+<span class="fc" id="L126">    override val codeId: CodeId?,</span>
+<span class="fc" id="L127">    override val codeVersion: CodeVersion?,</span>
+<span class="fc" id="L128">    override val events: List&lt;Event&gt;</span>
+// FIXME    val plannedAt: PlannedAt
+<span class="fc" id="L130">) : Exec() {</span>
+<span class="pc bpc" id="L131" title="2 of 4 branches missed.">    override val status = ExecStatus.Planned</span>
+
+    override fun toString(): String {
+<span class="nc" id="L134">        return &quot;PlannedExec($id)&quot;</span>
+    }
+
+<span class="fc" id="L137">}</span>
+
+<span class="pc bpc" id="L139" title="12 of 13 branches missed.">@Serializable</span>
+<span class="fc" id="L140">class ScheduledExec(</span>
+<span class="fc" id="L141">    override val cmdId: CmdId,</span>
+<span class="fc" id="L142">    override val id: ExecId,</span>
+<span class="pc" id="L143">    val plannedExec: PlannedExec,</span>
+<span class="pc" id="L144">    val scheduledAt: ScheduledAt</span>
+<span class="fc" id="L145">) : Exec() {</span>
+<span class="pc bpc" id="L146" title="2 of 4 branches missed.">    override val status = ExecStatus.Scheduled</span>
+<span class="fc" id="L147">    override val groupId get() = plannedExec.groupId</span>
+<span class="fc" id="L148">    override val correlation get() = plannedExec.correlation</span>
+<span class="fc" id="L149">    override val inputs get() = plannedExec.inputs</span>
+<span class="fc" id="L150">    override val code get() = plannedExec.code</span>
+<span class="nc" id="L151">    override val codeId get() = plannedExec.codeId</span>
+<span class="nc" id="L152">    override val codeVersion get() = plannedExec.codeVersion</span>
+<span class="fc" id="L153">    override val events get() = plannedExec.events</span>
+    override fun toString(): String {
+<span class="nc" id="L155">        return &quot;ScheduledExec($id)&quot;</span>
+    }
+
+<span class="fc" id="L158">}</span>
+
+<span class="pc bpc" id="L160" title="12 of 13 branches missed.">@Serializable</span>
+<span class="fc" id="L161">class QueuedExec(</span>
+<span class="fc" id="L162">    override val cmdId: CmdId,</span>
+<span class="fc" id="L163">    override val id: ExecId,</span>
+<span class="pc" id="L164">    val scheduledExec: ScheduledExec,</span>
+<span class="pc" id="L165">    val queuedAt: QueuedAt</span>
+<span class="fc" id="L166">) : Exec() {</span>
+<span class="pc bpc" id="L167" title="2 of 4 branches missed.">    override val status = ExecStatus.Queued</span>
+<span class="fc" id="L168">    override val groupId get() = scheduledExec.groupId</span>
+<span class="fc" id="L169">    override val correlation get() = scheduledExec.correlation</span>
+<span class="fc" id="L170">    override val inputs get() = scheduledExec.inputs</span>
+<span class="fc" id="L171">    override val code get() = scheduledExec.code</span>
+<span class="nc" id="L172">    override val codeId get() = scheduledExec.codeId</span>
+<span class="nc" id="L173">    override val codeVersion get() = scheduledExec.codeVersion</span>
+<span class="fc" id="L174">    override val events get() = scheduledExec.events</span>
+    override fun toString(): String {
+<span class="nc" id="L176">        return &quot;QueuedExec($id)&quot;</span>
+    }
+<span class="fc" id="L178">}</span>
+
+
+<span class="pc bpc" id="L181" title="11 of 12 branches missed.">@Serializable</span>
+<span class="fc" id="L182">class StartedExec(</span>
+<span class="fc" id="L183">    override val cmdId: CmdId,</span>
+<span class="fc" id="L184">    override val id: ExecId,</span>
+<span class="pc" id="L185">    val queuedExec: QueuedExec</span>
+<span class="fc" id="L186">) : Exec() {</span>
+<span class="pc bpc" id="L187" title="2 of 4 branches missed.">    override val status = ExecStatus.Started</span>
+<span class="fc" id="L188">    override val groupId get() = queuedExec.groupId</span>
+<span class="fc" id="L189">    override val correlation get() = queuedExec.correlation</span>
+<span class="fc" id="L190">    override val inputs get() = queuedExec.inputs</span>
+<span class="fc" id="L191">    override val code get() = queuedExec.code</span>
+<span class="nc" id="L192">    override val codeId get() = queuedExec.codeId</span>
+<span class="nc" id="L193">    override val codeVersion get() = queuedExec.codeVersion</span>
+<span class="fc" id="L194">    override val events get() = queuedExec.events</span>
+    override fun toString(): String {
+<span class="nc" id="L196">        return &quot;StartedExec($id)&quot;</span>
+    }
+<span class="fc" id="L198">}</span>
+
+<span class="pc bpc" id="L200" title="12 of 13 branches missed.">@Serializable</span>
+<span class="fc" id="L201">class CompletedExec(</span>
+<span class="fc" id="L202">    override val cmdId: CmdId,</span>
+<span class="fc" id="L203">    override val id: ExecId,</span>
+<span class="pc" id="L204">    val startedExec: StartedExec,</span>
+<span class="pc" id="L205">    val completedAt: CompletedAt</span>
+<span class="fc" id="L206">) : Exec() {</span>
+<span class="pc bpc" id="L207" title="2 of 4 branches missed.">    override val status = ExecStatus.Completed</span>
+<span class="fc" id="L208">    override val groupId get() = startedExec.groupId</span>
+<span class="fc" id="L209">    override val correlation get() = startedExec.correlation</span>
+<span class="nc" id="L210">    override val inputs get() = startedExec.inputs</span>
+<span class="nc" id="L211">    override val code get() = startedExec.code</span>
+<span class="nc" id="L212">    override val codeId get() = startedExec.codeId</span>
+<span class="nc" id="L213">    override val codeVersion get() = startedExec.codeVersion</span>
+<span class="nc" id="L214">    override val events get() = startedExec.events</span>
+
+    override fun toString(): String {
+<span class="nc" id="L217">        return &quot;CompletedExec($id)&quot;</span>
+    }
+<span class="fc" id="L219">}</span>
+
+<span class="pc bpc" id="L221" title="13 of 14 branches missed.">@Serializable</span>
+<span class="fc" id="L222">class FailedExec(</span>
+<span class="fc" id="L223">    override val cmdId: CmdId,</span>
+<span class="fc" id="L224">    override val id: ExecId,</span>
+<span class="pc" id="L225">    val startedExec: StartedExec,</span>
+    //FIXME failedAt
+<span class="pc" id="L227">    val failedAt: FailedAt,</span>
+<span class="fc" id="L228">    val cause: ErrorType</span>
+<span class="fc" id="L229">) : Exec() {</span>
+<span class="pc bpc" id="L230" title="2 of 4 branches missed.">    override val status = ExecStatus.Failed</span>
+<span class="fc" id="L231">    override val groupId get() = startedExec.groupId</span>
+<span class="fc" id="L232">    override val correlation get() = startedExec.correlation</span>
+<span class="nc" id="L233">    override val inputs get() = startedExec.inputs</span>
+<span class="nc" id="L234">    override val code get() = startedExec.code</span>
+<span class="nc" id="L235">    override val codeId get() = startedExec.codeId</span>
+<span class="nc" id="L236">    override val codeVersion get() = startedExec.codeVersion</span>
+<span class="nc" id="L237">    override val events get() = startedExec.events</span>
+    override fun toString(): String {
+<span class="nc" id="L239">        return &quot;FailedExec($id)&quot;</span>
+    }
+
+<span class="fc" id="L242">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

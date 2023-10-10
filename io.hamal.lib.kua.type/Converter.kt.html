@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Converter.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.kua.type</a> &gt; <span class="el_source">Converter.kt</span></div><h1>Converter.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.kua.type
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Converter.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.kua.type</a> &gt; <span class="el_source">Converter.kt</span></div><h1>Converter.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.kua.type
 
 import io.hamal.lib.kua.State
 import io.hamal.lib.kua.table.TableEntryIterator
@@ -15,7 +15,7 @@ fun State.toArrayType(array: TableProxyArray): ArrayType {
 <span class="fc" id="L15">            when (val value = state.getAny(index).value) {</span>
 <span class="pc bpc" id="L16" title="1 of 2 branches missed.">                is ArrayType,</span>
 <span class="pc bpc" id="L17" title="1 of 2 branches missed.">                is BooleanType,</span>
-<span class="pc bpc" id="L18" title="1 of 2 branches missed.">                is MapType,</span>
+<span class="fc bfc" id="L18" title="All 2 branches covered.">                is MapType,</span>
 <span class="fc bfc" id="L19" title="All 2 branches covered.">                is NumberType,</span>
 <span class="pc bpc" id="L20" title="1 of 2 branches missed.">                is StringType -&gt; value as SerializableType</span>
 
@@ -81,19 +81,21 @@ fun State.toProxyMap(map: MapType): TableProxyMap {
 <span class="fc" id="L81">        map.entries.forEach { (key, value) -&gt;</span>
 <span class="fc" id="L82">            when (value) {</span>
 <span class="pc bpc" id="L83" title="1 of 2 branches missed.">                is BooleanType -&gt; it[key] = value</span>
-<span class="fc bfc" id="L84" title="All 2 branches covered.">                is NumberType -&gt; it[key] = value</span>
-<span class="fc bfc" id="L85" title="All 2 branches covered.">                is StringType -&gt; it[key] = value</span>
-<span class="pc bpc" id="L86" title="1 of 2 branches missed.">                is MapType -&gt; {</span>
-<span class="fc" id="L87">                    it[key] = toProxyMap(value); pop(1)</span>
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">                is CodeType -&gt; it[key] = value</span>
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">                is NilType -&gt; it[key] = NilType</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">                is NumberType -&gt; it[key] = value</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">                is StringType -&gt; it[key] = value</span>
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">                is MapType -&gt; {</span>
+<span class="fc" id="L89">                    it[key] = toProxyMap(value); pop(1)</span>
                 }
 
-<span class="nc bnc" id="L90" title="All 2 branches missed.">                is ArrayType -&gt; {</span>
-<span class="nc" id="L91">                    it[key] = toProxyArray(value); pop(1)</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">                is ArrayType -&gt; {</span>
+<span class="nc" id="L93">                    it[key] = toProxyArray(value); pop(1)</span>
                 }
 
-<span class="nc" id="L94">                else -&gt; TODO(&quot;$value&quot;)</span>
+<span class="nc" id="L96">                else -&gt; TODO(&quot;$value&quot;)</span>
             }
-<span class="fc" id="L96">        }</span>
-<span class="fc" id="L97">    }</span>
+<span class="fc" id="L98">        }</span>
+<span class="fc" id="L99">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

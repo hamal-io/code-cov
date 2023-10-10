@@ -1,35 +1,35 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HttpConnector.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.runner.connector</a> &gt; <span class="el_source">HttpConnector.kt</span></div><h1>HttpConnector.kt</h1><pre class="source lang-java linenums">package io.hamal.runner.connector
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HttpConnector.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.runner.connector</a> &gt; <span class="el_source">HttpConnector.kt</span></div><h1>HttpConnector.kt</h1><pre class="source lang-java linenums">package io.hamal.runner.connector
 
-import io.hamal.lib.domain.AdhocInvocation
-import io.hamal.lib.domain.Event
+import io.hamal.lib.domain.EventToSubmit
 import io.hamal.lib.domain.State
 import io.hamal.lib.domain.vo.ExecId
 import io.hamal.lib.kua.type.ErrorType
-import io.hamal.lib.sdk.HamalSdk
+import io.hamal.lib.sdk.BridgeSdkImpl
 
-<span class="fc" id="L10">class HttpConnector(</span>
-<span class="fc" id="L11">    private val sdk: HamalSdk</span>
+<span class="nc" id="L9">class HttpConnector(</span>
+<span class="nc" id="L10">    private val sdk: BridgeSdkImpl</span>
 ) : Connector {
 
     override fun poll(): List&lt;UnitOfWork&gt; {
-<span class="fc" id="L15">        return sdk.execService().poll().work.map {</span>
-<span class="fc" id="L16">            UnitOfWork(</span>
-<span class="fc" id="L17">                id = it.id,</span>
-<span class="fc" id="L18">                inputs = it.inputs,</span>
-<span class="fc" id="L19">                state = it.state,</span>
-<span class="fc" id="L20">                code = it.code,</span>
-<span class="fc" id="L21">                invocation = AdhocInvocation(),</span>
-<span class="fc" id="L22">                correlation = it.correlation</span>
+<span class="nc" id="L14">        return sdk.exec.poll().work.map {</span>
+<span class="nc" id="L15">            UnitOfWork(</span>
+<span class="nc" id="L16">                id = it.id,</span>
+<span class="nc" id="L17">                groupId = it.groupId,</span>
+<span class="nc" id="L18">                inputs = it.inputs,</span>
+<span class="nc" id="L19">                state = it.state,</span>
+<span class="nc" id="L20">                code = it.code,</span>
+<span class="nc" id="L21">                correlation = it.correlation,</span>
+<span class="nc" id="L22">                events = it.events</span>
             )
         }
     }
 
-    override fun complete(execId: ExecId, state: State, events: List&lt;Event&gt;) {
-<span class="fc" id="L28">        sdk.execService().complete(execId, state, events)</span>
-<span class="fc" id="L29">    }</span>
+    override fun complete(execId: ExecId, state: State, events: List&lt;EventToSubmit&gt;) {
+<span class="nc" id="L28">        sdk.exec.complete(execId, state, events)</span>
+<span class="nc" id="L29">    }</span>
 
     override fun fail(execId: ExecId, error: ErrorType) {
-<span class="nc" id="L32">        sdk.execService().fail(execId, error)</span>
+<span class="nc" id="L32">        sdk.exec.fail(execId, error)</span>
 <span class="nc" id="L33">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

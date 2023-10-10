@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Namespace.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.core.adapter</a> &gt; <span class="el_source">Namespace.kt</span></div><h1>Namespace.kt</h1><pre class="source lang-java linenums">package io.hamal.core.adapter
+
+import io.hamal.core.req.SubmitRequest
+import io.hamal.lib.domain.vo.GroupId
+import io.hamal.lib.domain.vo.NamespaceId
+import io.hamal.repository.api.Namespace
+import io.hamal.repository.api.NamespaceQueryRepository
+import io.hamal.repository.api.NamespaceQueryRepository.NamespaceQuery
+import io.hamal.repository.api.submitted_req.SubmittedReqWithGroupId
+import io.hamal.request.CreateNamespaceReq
+import io.hamal.request.UpdateNamespaceReq
+import org.springframework.stereotype.Component
+
+interface CreateNamespacePort {
+    operator fun &lt;T : Any&gt; invoke(
+        groupId: GroupId,
+        req: CreateNamespaceReq,
+        responseHandler: (SubmittedReqWithGroupId) -&gt; T
+    ): T
+}
+
+interface GetNamespacePort {
+    operator fun &lt;T : Any&gt; invoke(namespaceId: NamespaceId, responseHandler: (Namespace) -&gt; T): T
+}
+
+interface ListNamespacesPort {
+    operator fun &lt;T : Any&gt; invoke(query: NamespaceQuery, responseHandler: (List&lt;Namespace&gt;) -&gt; T): T
+}
+
+
+interface UpdateNamespacePort {
+    operator fun &lt;T : Any&gt; invoke(
+        namespaceId: NamespaceId,
+        req: UpdateNamespaceReq,
+        responseHandler: (SubmittedReqWithGroupId) -&gt; T
+    ): T
+}
+
+interface NamespacePort : CreateNamespacePort, GetNamespacePort, ListNamespacesPort, UpdateNamespacePort
+
+
+<span class="fc" id="L42">@Component</span>
+<span class="fc" id="L43">class NamespaceAdapter(</span>
+<span class="fc" id="L44">    private val namespaceQueryRepository: NamespaceQueryRepository,</span>
+<span class="fc" id="L45">    private val submitRequest: SubmitRequest,</span>
+) : NamespacePort {
+
+    override fun &lt;T : Any&gt; invoke(
+        groupId: GroupId,
+        req: CreateNamespaceReq,
+        responseHandler: (SubmittedReqWithGroupId) -&gt; T
+    ): T =
+<span class="fc" id="L53">        responseHandler(submitRequest(groupId, req))</span>
+
+    override fun &lt;T : Any&gt; invoke(namespaceId: NamespaceId, responseHandler: (Namespace) -&gt; T): T =
+<span class="fc" id="L56">        responseHandler(namespaceQueryRepository.get(namespaceId))</span>
+
+    override fun &lt;T : Any&gt; invoke(query: NamespaceQuery, responseHandler: (List&lt;Namespace&gt;) -&gt; T): T =
+<span class="fc" id="L59">        responseHandler(namespaceQueryRepository.list(query))</span>
+
+    override operator fun &lt;T : Any&gt; invoke(
+        namespaceId: NamespaceId,
+        req: UpdateNamespaceReq,
+        responseHandler: (SubmittedReqWithGroupId) -&gt; T
+    ): T {
+<span class="fc" id="L66">        ensureNamespaceExists(namespaceId)</span>
+<span class="fc" id="L67">        return responseHandler(submitRequest(namespaceId, req))</span>
+    }
+
+    private fun ensureNamespaceExists(namespaceId: NamespaceId) {
+<span class="fc" id="L71">        namespaceQueryRepository.get(namespaceId)</span>
+<span class="fc" id="L72">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

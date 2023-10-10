@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProjectionCurrent.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.repository.sqlite.record.account</a> &gt; <span class="el_source">ProjectionCurrent.kt</span></div><h1>ProjectionCurrent.kt</h1><pre class="source lang-java linenums">package io.hamal.repository.sqlite.record.account
+
+import io.hamal.lib.domain.vo.AccountId
+import io.hamal.lib.sqlite.Connection
+import io.hamal.lib.sqlite.Transaction
+import io.hamal.repository.api.Account
+import io.hamal.repository.api.AccountQueryRepository.AccountQuery
+import io.hamal.repository.record.account.AccountRecord
+import io.hamal.repository.sqlite.record.SqliteProjection
+import io.hamal.repository.sqlite.record.SqliteRecordTransaction
+import io.hamal.repository.sqlite.record.protobuf
+import kotlinx.serialization.ExperimentalSerializationApi
+
+
+@OptIn(ExperimentalSerializationApi::class)
+internal object ProjectionCurrent : SqliteProjection&lt;AccountId, AccountRecord, Account&gt; {
+
+    fun find(connection: Connection, accountId: AccountId): Account? {
+<span class="nc" id="L19">        return connection.executeQueryOne(</span>
+            &quot;&quot;&quot;
+            SELECT 
+                data
+             FROM
+                current
+            WHERE
+                id  = :id
+<span class="nc" id="L27">        &quot;&quot;&quot;.trimIndent()</span>
+        ) {
+<span class="nc" id="L29">            query {</span>
+<span class="nc" id="L30">                set(&quot;id&quot;, accountId)</span>
+            }
+<span class="nc" id="L32">            map { rs -&gt;</span>
+<span class="nc" id="L33">                protobuf.decodeFromByteArray(Account.serializer(), rs.getBytes(&quot;data&quot;))</span>
+            }
+        }
+    }
+
+    fun list(connection: Connection, query: AccountQuery): List&lt;Account&gt; {
+<span class="nc" id="L39">        return connection.executeQuery&lt;Account&gt;(</span>
+            &quot;&quot;&quot;
+            SELECT 
+                data
+             FROM
+                current
+            WHERE
+                id &lt; :afterId
+<span class="nc" id="L47">                ${query.ids()}</span>
+            ORDER BY id DESC
+            LIMIT :limit
+<span class="nc" id="L50">        &quot;&quot;&quot;.trimIndent()</span>
+        ) {
+<span class="nc" id="L52">            query {</span>
+<span class="nc" id="L53">                set(&quot;afterId&quot;, query.afterId)</span>
+<span class="nc" id="L54">                set(&quot;limit&quot;, query.limit)</span>
+            }
+<span class="nc" id="L56">            map { rs -&gt;</span>
+<span class="nc" id="L57">                protobuf.decodeFromByteArray(Account.serializer(), rs.getBytes(&quot;data&quot;))</span>
+            }
+        }
+    }
+
+    fun count(connection: Connection, query: AccountQuery): ULong {
+<span class="nc bnc" id="L63" title="All 2 branches missed.">        return connection.executeQueryOne(</span>
+            &quot;&quot;&quot;
+            SELECT 
+                COUNT(*) as count 
+            FROM 
+                current
+            WHERE
+                id &lt; :afterId
+<span class="nc" id="L71">                ${query.ids()}</span>
+<span class="nc" id="L72">        &quot;&quot;&quot;.trimIndent()</span>
+        ) {
+<span class="nc" id="L74">            query {</span>
+<span class="nc" id="L75">                set(&quot;afterId&quot;, query.afterId)</span>
+            }
+<span class="nc" id="L77">            map {</span>
+<span class="nc" id="L78">                it.getLong(&quot;count&quot;).toULong()</span>
+            }
+<span class="nc" id="L80">        } ?: 0UL</span>
+    }
+
+    override fun upsert(tx: SqliteRecordTransaction&lt;AccountId, AccountRecord, Account&gt;, obj: Account) {
+<span class="nc" id="L84">        tx.execute(</span>
+            &quot;&quot;&quot;
+                INSERT OR REPLACE INTO current
+                    (id, data) 
+                VALUES
+                    (:id, :data)
+<span class="nc" id="L90">            &quot;&quot;&quot;.trimIndent()</span>
+        ) {
+<span class="nc" id="L92">            set(&quot;id&quot;, obj.id)</span>
+<span class="nc" id="L93">            set(&quot;data&quot;, protobuf.encodeToByteArray(Account.serializer(), obj))</span>
+        }
+<span class="nc" id="L95">    }</span>
+
+    override fun setupSchema(connection: Connection) {
+<span class="nc" id="L98">        connection.execute(</span>
+            &quot;&quot;&quot;
+            CREATE TABLE IF NOT EXISTS current (
+                 id             INTEGER NOT NULL,
+                 data           BLOB NOT NULL,
+                 PRIMARY KEY    (id)
+            );
+<span class="nc" id="L105">        &quot;&quot;&quot;.trimIndent()</span>
+        )
+<span class="nc" id="L107">    }</span>
+
+    override fun clear(tx: Transaction) {
+<span class="nc" id="L110">        tx.execute(&quot;&quot;&quot;DELETE FROM current&quot;&quot;&quot;)</span>
+<span class="nc" id="L111">    }</span>
+
+    private fun AccountQuery.ids(): String {
+<span class="nc bnc" id="L114" title="All 2 branches missed.">        return if (accountIds.isEmpty()) {</span>
+<span class="nc" id="L115">            &quot;&quot;</span>
+        } else {
+<span class="nc" id="L117">            &quot;AND id IN (${accountIds.joinToString(&quot;,&quot;) { &quot;${it.value.value}&quot; }})&quot;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

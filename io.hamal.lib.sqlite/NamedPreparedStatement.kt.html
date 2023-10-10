@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NamedPreparedStatement.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.sqlite</a> &gt; <span class="el_source">NamedPreparedStatement.kt</span></div><h1>NamedPreparedStatement.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.sqlite
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NamedPreparedStatement.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.sqlite</a> &gt; <span class="el_source">NamedPreparedStatement.kt</span></div><h1>NamedPreparedStatement.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.sqlite
 
 //Inspired by: https://github.com/axiom-data-science/jdbc-named-parameters/blob/master/src/main/java/com/axiomalaska/jdbc/NamedParameterPreparedStatement.java
 
@@ -213,9 +213,9 @@ internal fun DefaultNamedPreparedStatement.ensureAllParametersSet() {
 
                 }
 
-<span class="fc bfc" id="L216" title="All 2 branches covered.">                current == '\'' -&gt; {</span>
-<span class="fc" id="L217">                    advance()</span>
-<span class="fc" id="L218">                    advanceUntil('\'')</span>
+<span class="pc bpc" id="L216" title="1 of 2 branches missed.">                current == '\'' -&gt; {</span>
+<span class="nc" id="L217">                    advance()</span>
+<span class="nc" id="L218">                    advanceUntil('\'')</span>
                 }
 
 <span class="pc bpc" id="L221" title="1 of 2 branches missed.">                current == '\&quot;' -&gt; {</span>
@@ -256,14 +256,14 @@ internal fun DefaultNamedPreparedStatement.ensureAllParametersSet() {
 <span class="fc" id="L256">    }</span>
 
     private fun advanceUntil(marker: Char) {
-<span class="pc bpc" id="L259" title="1 of 2 branches missed.">        while (!isAtEnd()) {</span>
-<span class="fc bfc" id="L260" title="All 2 branches covered.">            if (peek() == marker) {</span>
-<span class="fc" id="L261">                advance()</span>
-<span class="fc" id="L262">                break</span>
+<span class="nc bnc" id="L259" title="All 2 branches missed.">        while (!isAtEnd()) {</span>
+<span class="nc bnc" id="L260" title="All 2 branches missed.">            if (peek() == marker) {</span>
+<span class="nc" id="L261">                advance()</span>
+<span class="nc" id="L262">                break</span>
             }
-<span class="fc" id="L264">            advance()</span>
+<span class="nc" id="L264">            advance()</span>
         }
-<span class="fc" id="L266">    }</span>
+<span class="nc" id="L266">    }</span>
 
     private fun skipUntil(marker: Char) {
 <span class="nc bnc" id="L269" title="All 2 branches missed.">        while (!isAtEnd()) {</span>

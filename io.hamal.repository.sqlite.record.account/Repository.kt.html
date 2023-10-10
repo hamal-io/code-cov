@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Repository.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.repository.sqlite.record.account</a> &gt; <span class="el_source">Repository.kt</span></div><h1>Repository.kt</h1><pre class="source lang-java linenums">package io.hamal.repository.sqlite.record.account
+
+import io.hamal.lib.domain.vo.AccountId
+import io.hamal.lib.domain.vo.AccountName
+import io.hamal.lib.sqlite.SqliteBaseRepository
+import io.hamal.repository.api.Account
+import io.hamal.repository.api.AccountCmdRepository.CreateCmd
+import io.hamal.repository.api.AccountQueryRepository.AccountQuery
+import io.hamal.repository.api.AccountRepository
+import io.hamal.repository.record.CreateDomainObject
+import io.hamal.repository.record.account.AccountCreationRecord
+import io.hamal.repository.record.account.AccountEntity
+import io.hamal.repository.record.account.AccountRecord
+import io.hamal.repository.sqlite.record.SqliteRecordRepository
+import java.nio.file.Path
+
+internal object CreateAccount : CreateDomainObject&lt;AccountId, AccountRecord, Account&gt; {
+    override fun invoke(recs: List&lt;AccountRecord&gt;): Account {
+<span class="nc bnc" id="L19" title="All 4 branches missed.">        check(recs.isNotEmpty()) { &quot;At least one record is required&quot; }</span>
+<span class="nc" id="L20">        val firstRecord = recs.first()</span>
+<span class="nc bnc" id="L21" title="All 2 branches missed.">        check(firstRecord is AccountCreationRecord)</span>
+
+<span class="nc" id="L23">        var result = AccountEntity(</span>
+<span class="nc" id="L24">            cmdId = firstRecord.cmdId,</span>
+<span class="nc" id="L25">            id = firstRecord.entityId,</span>
+<span class="nc" id="L26">            sequence = firstRecord.sequence(),</span>
+<span class="nc" id="L27">            type = firstRecord.type,</span>
+<span class="nc" id="L28">            name = firstRecord.name,</span>
+<span class="nc" id="L29">            email = firstRecord.email,</span>
+<span class="nc" id="L30">            salt = firstRecord.salt</span>
+        )
+
+<span class="nc" id="L33">        recs.forEach { record -&gt;</span>
+<span class="nc" id="L34">            result = result.apply(record)</span>
+<span class="nc" id="L35">        }</span>
+
+<span class="nc" id="L37">        return result.toDomainObject()</span>
+    }
+}
+
+<span class="nc" id="L41">class SqliteAccountRepository(</span>
+    config: Config
+<span class="nc" id="L43">) : SqliteRecordRepository&lt;AccountId, AccountRecord, Account&gt;(</span>
+<span class="nc" id="L44">    config = config,</span>
+<span class="nc" id="L45">    createDomainObject = CreateAccount,</span>
+    recordClass = AccountRecord::class,
+<span class="nc" id="L47">    projections = listOf(ProjectionCurrent, ProjectionUniqueEmail, ProjectionUniqueName)</span>
+), AccountRepository {
+
+<span class="nc" id="L50">    data class Config(</span>
+<span class="nc" id="L51">        override val path: Path</span>
+    ) : SqliteBaseRepository.Config {
+<span class="nc" id="L53">        override val filename = &quot;account.db&quot;</span>
+    }
+
+    override fun create(cmd: CreateCmd): Account {
+<span class="nc" id="L57">        val accountId = cmd.accountId</span>
+<span class="nc" id="L58">        val cmdId = cmd.id</span>
+<span class="nc" id="L59">        return tx {</span>
+<span class="nc bnc" id="L60" title="All 2 branches missed.">            if (commandAlreadyApplied(cmdId, accountId)) {</span>
+<span class="nc" id="L61">                versionOf(accountId, cmdId)</span>
+            } else {
+<span class="nc" id="L63">                store(</span>
+<span class="nc" id="L64">                    AccountCreationRecord(</span>
+<span class="nc" id="L65">                        cmdId = cmdId,</span>
+<span class="nc" id="L66">                        entityId = accountId,</span>
+<span class="nc" id="L67">                        type = cmd.accountType,</span>
+<span class="nc" id="L68">                        name = cmd.name,</span>
+<span class="nc" id="L69">                        email = cmd.email,</span>
+<span class="nc" id="L70">                        salt = cmd.salt,</span>
+                    )
+                )
+
+<span class="nc" id="L74">                currentVersion(accountId)</span>
+<span class="nc" id="L75">                    .also { ProjectionCurrent.upsert(this, it) }</span>
+<span class="nc" id="L76">                    .also { ProjectionUniqueEmail.upsert(this, it) }</span>
+<span class="nc" id="L77">                    .also { ProjectionUniqueName.upsert(this, it) }</span>
+            }
+        }
+    }
+
+    override fun find(accountId: AccountId): Account? {
+<span class="nc" id="L83">        return ProjectionCurrent.find(connection, accountId)</span>
+    }
+
+    override fun find(accountName: AccountName): Account? {
+<span class="nc bnc" id="L87" title="All 2 branches missed.">        return ProjectionUniqueName.find(connection, accountName)?.let {</span>
+<span class="nc" id="L88">            return ProjectionCurrent.find(connection, it)</span>
+        }
+    }
+
+    override fun list(query: AccountQuery): List&lt;Account&gt; {
+<span class="nc" id="L93">        return ProjectionCurrent.list(connection, query)</span>
+    }
+
+    override fun count(query: AccountQuery): ULong {
+<span class="nc" id="L97">        return ProjectionCurrent.count(connection, query)</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

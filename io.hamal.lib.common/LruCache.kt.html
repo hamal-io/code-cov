@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LruCache.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.common</a> &gt; <span class="el_source">LruCache.kt</span></div><h1>LruCache.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.common
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LruCache.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.common</a> &gt; <span class="el_source">LruCache.kt</span></div><h1>LruCache.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.common
 
 import java.util.concurrent.locks.ReadWriteLock
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -14,7 +14,7 @@ interface LruCache&lt;KEY : Any, VALUE : Any&gt; {
     fun find(key: KEY): VALUE?
 
     operator fun get(key: KEY): VALUE {
-<span class="pc bpc" id="L17" title="1 of 2 branches missed.">        return find(key) ?: throw IllegalArgumentException(&quot;$key&quot;)</span>
+<span class="nc bnc" id="L17" title="All 2 branches missed.">        return find(key) ?: throw IllegalArgumentException(&quot;$key&quot;)</span>
     }
 
     fun computeIfAbsent(key: KEY, mapper: (KEY) -&gt; VALUE?): VALUE?
@@ -26,17 +26,17 @@ interface LruCache&lt;KEY : Any, VALUE : Any&gt; {
     fun clear()
 }
 
-<span class="fc" id="L29">class DefaultLruCache&lt;KEY : Any, VALUE : Any&gt;(capacity: Int) : LruCache&lt;KEY, VALUE&gt; {</span>
+<span class="nc" id="L29">class LruCacheImpl&lt;KEY : Any, VALUE : Any&gt;(capacity: Int) : LruCache&lt;KEY, VALUE&gt; {</span>
     private var store: LinkedHashMap&lt;KEY, VALUE&gt;
-<span class="fc" id="L31">    private val lock: ReadWriteLock = ReentrantReadWriteLock()</span>
+<span class="nc" id="L31">    private val lock: ReadWriteLock = ReentrantReadWriteLock()</span>
 
-<span class="fc" id="L33">    init {</span>
-<span class="fc" id="L34">        store = object : LinkedHashMap&lt;KEY, VALUE&gt;(capacity, 0.75f, true) {</span>
+<span class="nc" id="L33">    init {</span>
+<span class="nc" id="L34">        store = object : LinkedHashMap&lt;KEY, VALUE&gt;(capacity, 0.75f, true) {</span>
             override fun removeEldestEntry(eldest: Map.Entry&lt;KEY, VALUE&gt;): Boolean {
-<span class="pc bpc" id="L36" title="1 of 2 branches missed.">                return size &gt; capacity</span>
+<span class="nc bnc" id="L36" title="All 2 branches missed.">                return size &gt; capacity</span>
             }
         }
-<span class="fc" id="L39">    }</span>
+<span class="nc" id="L39">    }</span>
 
     override fun set(key: KEY, value: VALUE) {
 <span class="nc" id="L42">        lock.writeLock().withLock {</span>
@@ -45,14 +45,14 @@ interface LruCache&lt;KEY : Any, VALUE : Any&gt; {
 <span class="nc" id="L45">    }</span>
 
     override fun setIfAbsent(key: KEY, value: VALUE) {
-<span class="fc" id="L48">        lock.writeLock().withLock {</span>
-<span class="fc" id="L49">            store.putIfAbsent(key, value)</span>
+<span class="nc" id="L48">        lock.writeLock().withLock {</span>
+<span class="nc" id="L49">            store.putIfAbsent(key, value)</span>
         }
-<span class="fc" id="L51">    }</span>
+<span class="nc" id="L51">    }</span>
 
     override fun find(key: KEY): VALUE? {
-<span class="fc" id="L54">        return lock.readLock().withLock {</span>
-<span class="fc" id="L55">            store[key]</span>
+<span class="nc" id="L54">        return lock.readLock().withLock {</span>
+<span class="nc" id="L55">            store[key]</span>
         }
     }
 
@@ -79,10 +79,10 @@ interface LruCache&lt;KEY : Any, VALUE : Any&gt; {
     }
 
     override fun clear() {
-<span class="fc" id="L82">        lock.writeLock()</span>
-<span class="fc" id="L83">            .withLock {</span>
-<span class="fc" id="L84">                store.clear()</span>
-<span class="fc" id="L85">            }</span>
-<span class="fc" id="L86">    }</span>
+<span class="nc" id="L82">        lock.writeLock()</span>
+<span class="nc" id="L83">            .withLock {</span>
+<span class="nc" id="L84">                store.clear()</span>
+<span class="nc" id="L85">            }</span>
+<span class="nc" id="L86">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

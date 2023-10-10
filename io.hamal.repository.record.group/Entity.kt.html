@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Entity.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.repository.record.group</a> &gt; <span class="el_source">Entity.kt</span></div><h1>Entity.kt</h1><pre class="source lang-java linenums">package io.hamal.repository.record.group
+
+import io.hamal.lib.common.domain.CmdId
+import io.hamal.lib.domain.vo.AccountId
+import io.hamal.lib.domain.vo.GroupId
+import io.hamal.lib.domain.vo.GroupName
+import io.hamal.repository.api.Group
+import io.hamal.repository.record.CreateDomainObject
+import io.hamal.repository.record.RecordEntity
+import io.hamal.repository.record.RecordSequence
+
+<span class="fc" id="L12">data class GroupEntity(</span>
+<span class="fc" id="L13">    override val id: GroupId,</span>
+<span class="fc" id="L14">    override val cmdId: CmdId,</span>
+<span class="pc" id="L15">    override val sequence: RecordSequence,</span>
+
+<span class="pc" id="L17">    var name: GroupName?,</span>
+<span class="pc" id="L18">    var creatorId: AccountId?</span>
+
+) : RecordEntity&lt;GroupId, GroupRecord, Group&gt; {
+
+    override fun apply(rec: GroupRecord): GroupEntity {
+<span class="fc" id="L23">        return when (rec) {</span>
+<span class="fc" id="L24">            is GroupCreationRecord -&gt; copy(</span>
+<span class="fc" id="L25">                id = rec.entityId,</span>
+<span class="fc" id="L26">                cmdId = rec.cmdId,</span>
+<span class="fc" id="L27">                sequence = rec.sequence(),</span>
+<span class="fc" id="L28">                name = rec.name,</span>
+<span class="fc" id="L29">                creatorId = rec.creatorId</span>
+            )
+        }
+    }
+
+    override fun toDomainObject(): Group {
+<span class="fc" id="L35">        return Group(</span>
+<span class="fc" id="L36">            cmdId = cmdId,</span>
+<span class="fc" id="L37">            id = id,</span>
+<span class="fc" id="L38">            name = name!!,</span>
+<span class="fc" id="L39">            creatorId = creatorId!!</span>
+        )
+    }
+}
+
+fun List&lt;GroupRecord&gt;.createEntity(): GroupEntity {
+<span class="pc bpc" id="L45" title="2 of 4 branches missed.">    check(isNotEmpty()) { &quot;At least one record is required&quot; }</span>
+<span class="fc" id="L46">    val firstRecord = first()</span>
+<span class="pc bpc" id="L47" title="1 of 2 branches missed.">    check(firstRecord is GroupCreationRecord)</span>
+
+<span class="fc" id="L49">    var result = GroupEntity(</span>
+<span class="fc" id="L50">        id = firstRecord.entityId,</span>
+<span class="fc" id="L51">        cmdId = firstRecord.cmdId,</span>
+<span class="fc" id="L52">        sequence = firstRecord.sequence(),</span>
+<span class="fc" id="L53">        name = firstRecord.name,</span>
+<span class="fc" id="L54">        creatorId = firstRecord.creatorId</span>
+    )
+
+<span class="fc" id="L57">    forEach { record -&gt;</span>
+<span class="fc" id="L58">        result = result.apply(record)</span>
+<span class="fc" id="L59">    }</span>
+
+<span class="fc" id="L61">    return result</span>
+}
+
+object CreateGroupFromRecords : CreateDomainObject&lt;GroupId, GroupRecord, Group&gt; {
+    override fun invoke(recs: List&lt;GroupRecord&gt;): Group {
+<span class="fc" id="L66">        return recs.createEntity().toDomainObject()</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

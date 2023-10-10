@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExecLogListController.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.api.web.exec</a> &gt; <span class="el_source">ExecLogListController.kt</span></div><h1>ExecLogListController.kt</h1><pre class="source lang-java linenums">package io.hamal.api.web.exec
+
+import io.hamal.core.adapter.ListExecLogsPort
+import io.hamal.lib.common.domain.Limit
+import io.hamal.lib.domain.vo.ExecId
+import io.hamal.lib.domain.vo.ExecLogId
+import io.hamal.lib.domain.vo.GroupId
+import io.hamal.lib.sdk.api.ApiExcLogList
+import io.hamal.lib.sdk.api.ApiExecLog
+import io.hamal.repository.api.ExecLogQueryRepository.ExecLogQuery
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
+
+<span class="fc" id="L17">@RestController</span>
+<span class="fc" id="L18">internal class ExecLogListController(</span>
+<span class="fc" id="L19">    private val execLogs: ListExecLogsPort,</span>
+<span class="fc" id="L20">    private val execsLogs: ListExecLogsPort</span>
+) {
+    @GetMapping(&quot;/v1/execs/{execId}/logs&quot;)
+    fun getExecLogs(
+        @PathVariable(&quot;execId&quot;) execId: ExecId,
+        @RequestParam(required = false, name = &quot;after_id&quot;, defaultValue = &quot;7FFFFFFFFFFFFFFF&quot;) afterId: ExecLogId,
+        @RequestParam(required = false, name = &quot;limit&quot;, defaultValue = &quot;100&quot;) limit: Limit
+    ): ResponseEntity&lt;ApiExcLogList&gt; {
+<span class="nc" id="L28">        return execLogs(</span>
+<span class="nc" id="L29">            ExecLogQuery(</span>
+<span class="nc" id="L30">                afterId = afterId,</span>
+<span class="nc" id="L31">                limit = limit,</span>
+<span class="nc" id="L32">                execIds = listOf(execId),</span>
+<span class="nc" id="L33">                groupIds = listOf()</span>
+            )
+        ) { logs -&gt;
+<span class="nc" id="L36">            ResponseEntity.ok(</span>
+<span class="nc" id="L37">                ApiExcLogList(logs.map {</span>
+<span class="nc" id="L38">                    ApiExecLog(</span>
+<span class="nc" id="L39">                        id = it.id,</span>
+<span class="nc" id="L40">                        execId = it.execId,</span>
+<span class="nc" id="L41">                        level = it.level,</span>
+<span class="nc" id="L42">                        message = it.message,</span>
+<span class="nc" id="L43">                        localAt = it.localAt,</span>
+<span class="nc" id="L44">                        remoteAt = it.remoteAt</span>
+                    )
+                })
+            )
+        }
+    }
+
+    @GetMapping(&quot;/v1/groups/{groupId}/exec-logs&quot;)
+    fun getExecLogs(
+        @PathVariable(&quot;groupId&quot;) groupId: GroupId,
+        @RequestParam(required = false, name = &quot;after_id&quot;, defaultValue = &quot;7FFFFFFFFFFFFFFF&quot;) afterId: ExecLogId,
+        @RequestParam(required = false, name = &quot;limit&quot;, defaultValue = &quot;100&quot;) limit: Limit
+    ): ResponseEntity&lt;ApiExcLogList&gt; {
+<span class="nc" id="L57">        return execsLogs(</span>
+<span class="nc" id="L58">            ExecLogQuery(</span>
+<span class="nc" id="L59">                afterId = afterId,</span>
+<span class="nc" id="L60">                limit = limit,</span>
+<span class="nc" id="L61">                groupIds = listOf(groupId)</span>
+            )
+        ) { logs -&gt;
+<span class="nc" id="L64">            ResponseEntity.ok(</span>
+<span class="nc" id="L65">                ApiExcLogList(</span>
+<span class="nc" id="L66">                    logs.map {</span>
+<span class="nc" id="L67">                        ApiExecLog(</span>
+<span class="nc" id="L68">                            id = it.id,</span>
+<span class="nc" id="L69">                            execId = it.execId,</span>
+<span class="nc" id="L70">                            level = it.level,</span>
+<span class="nc" id="L71">                            message = it.message,</span>
+<span class="nc" id="L72">                            localAt = it.localAt,</span>
+<span class="nc" id="L73">                            remoteAt = it.remoteAt</span>
+                        )
+                    }
+                )
+            )
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

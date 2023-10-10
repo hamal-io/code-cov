@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UpdateFuncHandler.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.core.req.handler.func</a> &gt; <span class="el_source">UpdateFuncHandler.kt</span></div><h1>UpdateFuncHandler.kt</h1><pre class="source lang-java linenums">package io.hamal.core.req.handler.func
+
+import io.hamal.core.event.PlatformEventEmitter
+import io.hamal.core.req.ReqHandler
+import io.hamal.core.req.handler.cmdId
+import io.hamal.lib.common.domain.CmdId
+import io.hamal.repository.api.CodeCmdRepository
+import io.hamal.repository.api.Func
+import io.hamal.repository.api.FuncCmdRepository.UpdateCmd
+import io.hamal.repository.api.FuncRepository
+import io.hamal.repository.api.event.FuncCreatedEvent
+import io.hamal.repository.api.submitted_req.SubmittedUpdateFuncReq
+import org.springframework.stereotype.Component
+
+@Component
+<span class="fc" id="L16">class UpdateFuncHandler(</span>
+<span class="fc" id="L17">    val codeCmdRepository: CodeCmdRepository,</span>
+<span class="fc" id="L18">    val funcRepository: FuncRepository,</span>
+<span class="fc" id="L19">    val eventEmitter: PlatformEventEmitter</span>
+<span class="fc" id="L20">) : ReqHandler&lt;SubmittedUpdateFuncReq&gt;(SubmittedUpdateFuncReq::class) {</span>
+
+    override fun invoke(req: SubmittedUpdateFuncReq) {
+<span class="fc" id="L23">        updateFunc(req).also { emitEvent(req.cmdId(), it) }</span>
+<span class="fc" id="L24">    }</span>
+}
+
+private fun UpdateFuncHandler.updateFunc(req: SubmittedUpdateFuncReq): Func {
+<span class="fc" id="L28">    val func = funcRepository.get(req.id)</span>
+<span class="fc" id="L29">    val code = codeCmdRepository.update(</span>
+<span class="fc" id="L30">        func.codeId, CodeCmdRepository.UpdateCmd(</span>
+<span class="fc" id="L31">            id = req.cmdId(),</span>
+<span class="fc" id="L32">            value = req.code</span>
+        )
+    )
+
+<span class="fc" id="L36">    return funcRepository.update(</span>
+<span class="fc" id="L37">        req.id,</span>
+<span class="fc" id="L38">        UpdateCmd(</span>
+<span class="fc" id="L39">            id = req.cmdId(),</span>
+<span class="fc" id="L40">            namespaceId = req.namespaceId,</span>
+<span class="fc" id="L41">            name = req.name,</span>
+<span class="fc" id="L42">            inputs = req.inputs,</span>
+<span class="fc" id="L43">            codeId = code.id,</span>
+<span class="fc" id="L44">            codeVersion = code.version</span>
+        )
+    )
+}
+
+private fun UpdateFuncHandler.emitEvent(cmdId: CmdId, func: Func) {
+<span class="fc" id="L50">    eventEmitter.emit(cmdId, FuncCreatedEvent(func))</span>
+<span class="fc" id="L51">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

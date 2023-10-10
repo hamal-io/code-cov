@@ -1,39 +1,47 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Exec.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.domain.vo</a> &gt; <span class="el_source">Exec.kt</span></div><h1>Exec.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.domain.vo
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Exec.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.domain.vo</a> &gt; <span class="el_source">Exec.kt</span></div><h1>Exec.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.domain.vo
 
 import io.hamal.lib.common.SnowflakeId
 import io.hamal.lib.common.domain.DomainId
 import io.hamal.lib.common.domain.DomainIdSerializer
+import io.hamal.lib.common.domain.StringValueObject
+import io.hamal.lib.common.domain.StringValueObjectSerializer
 import io.hamal.lib.domain.vo.base.Inputs
 import io.hamal.lib.domain.vo.base.InputsSerializer
 import io.hamal.lib.kua.type.MapType
 import kotlinx.serialization.Serializable
 
-<span class="nc" id="L11">@Serializable(with = ExecId.Serializer::class)</span>
-<span class="fc" id="L12">class ExecId(override val value: SnowflakeId) : DomainId() {</span>
-<span class="fc" id="L13">    constructor(value: Int) : this(SnowflakeId(value.toLong()))</span>
+<span class="nc" id="L13">@Serializable(with = ExecId.Serializer::class)</span>
+<span class="fc" id="L14">class ExecId(override val value: SnowflakeId) : DomainId() {</span>
+<span class="fc" id="L15">    constructor(value: Int) : this(SnowflakeId(value.toLong()))</span>
+<span class="nc" id="L16">    constructor(value: String) : this(SnowflakeId(value.toLong(16)))</span>
 
-<span class="fc" id="L15">    internal object Serializer : DomainIdSerializer&lt;ExecId&gt;(::ExecId)</span>
+<span class="fc" id="L18">    internal object Serializer : DomainIdSerializer&lt;ExecId&gt;(::ExecId)</span>
 }
 
-<span class="nc" id="L18">@Serializable(with = ExecInputs.Serializer::class)</span>
-<span class="fc" id="L19">class ExecInputs(override val value: MapType = MapType()) : Inputs() {</span>
-<span class="fc" id="L20">    internal object Serializer : InputsSerializer&lt;ExecInputs&gt;(::ExecInputs)</span>
-<span class="fc" id="L21">}</span>
+<span class="nc" id="L21">@Serializable(with = ExecInputs.Serializer::class)</span>
+<span class="fc" id="L22">class ExecInputs(override val value: MapType = MapType()) : Inputs() {</span>
+<span class="fc" id="L23">    internal object Serializer : InputsSerializer&lt;ExecInputs&gt;(::ExecInputs)</span>
+<span class="fc" id="L24">}</span>
 
-<span class="fc" id="L23">enum class ExecStatus(val value: Int) {</span>
-<span class="fc" id="L24">    Planned(1),</span>
-<span class="fc" id="L25">    Scheduled(2),</span>
-<span class="fc" id="L26">    Queued(3),</span>
-<span class="fc" id="L27">    Started(4),</span>
-<span class="fc" id="L28">    Completed(5),</span>
-<span class="fc" id="L29">    Failed(6);</span>
+<span class="pc" id="L26">enum class ExecStatus(val value: Int) {</span>
+<span class="fc" id="L27">    Planned(1),</span>
+<span class="fc" id="L28">    Scheduled(2),</span>
+<span class="fc" id="L29">    Queued(3),</span>
+<span class="fc" id="L30">    Started(4),</span>
+<span class="fc" id="L31">    Completed(5),</span>
+<span class="fc" id="L32">    Failed(6);</span>
 
     companion object {
-<span class="nc bnc" id="L32" title="All 2 branches missed.">        fun valueOf(value: Int) = requireNotNull(mapped[value]) { &quot;$value is not an exec status&quot; }</span>
+<span class="nc bnc" id="L35" title="All 2 branches missed.">        fun valueOf(value: Int) = requireNotNull(mapped[value]) { &quot;$value is not an exec status&quot; }</span>
 
-<span class="fc" id="L34">        private val mapped = ExecStatus.values()</span>
-<span class="fc" id="L35">            .associateBy { it.value }</span>
+<span class="fc" id="L37">        private val mapped = ExecStatus.values()</span>
+<span class="fc" id="L38">            .associateBy { it.value }</span>
     }
 }
 
+
+<span class="nc" id="L43">@Serializable(with = ExecToken.Serializer::class)</span>
+<span class="pc" id="L44">class ExecToken(override val value: String) : StringValueObject() {</span>
+<span class="nc" id="L45">    internal object Serializer : StringValueObjectSerializer&lt;ExecToken&gt;(::ExecToken)</span>
+}
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

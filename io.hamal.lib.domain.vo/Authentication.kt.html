@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Authentication.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.domain.vo</a> &gt; <span class="el_source">Authentication.kt</span></div><h1>Authentication.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.domain.vo
+
+import io.hamal.lib.common.SnowflakeId
+import io.hamal.lib.common.domain.DomainId
+import io.hamal.lib.common.domain.DomainIdSerializer
+import io.hamal.lib.common.domain.StringValueObject
+import io.hamal.lib.common.domain.StringValueObjectSerializer
+import io.hamal.lib.domain.vo.base.DomainAt
+import io.hamal.lib.domain.vo.base.DomainAtSerializer
+import kotlinx.serialization.Serializable
+import java.time.Instant
+
+<span class="nc" id="L13">@Serializable(with = AuthId.Serializer::class)</span>
+<span class="fc" id="L14">class AuthId(override val value: SnowflakeId) : DomainId() {</span>
+<span class="nc" id="L15">    constructor(value: Int) : this(SnowflakeId(value.toLong()))</span>
+
+<span class="fc" id="L17">    internal object Serializer : DomainIdSerializer&lt;AuthId&gt;(::AuthId)</span>
+}
+
+<span class="nc" id="L20">@Serializable(with = AuthToken.Serializer::class)</span>
+<span class="fc" id="L21">class AuthToken(override val value: String) : StringValueObject() {</span>
+<span class="fc" id="L22">    internal object Serializer : StringValueObjectSerializer&lt;AuthToken&gt;(::AuthToken)</span>
+}
+
+<span class="nc" id="L25">@Serializable(with = AuthTokenExpiresAt.Serializer::class)</span>
+<span class="pc" id="L26">class AuthTokenExpiresAt(override val value: Instant) : DomainAt() {</span>
+<span class="nc" id="L27">    internal object Serializer : DomainAtSerializer&lt;AuthTokenExpiresAt&gt;(::AuthTokenExpiresAt)</span>
+}
+
+<span class="nc" id="L30">@Serializable(with = Password.Serializer::class)</span>
+<span class="fc" id="L31">class Password(override val value: String) : StringValueObject() {</span>
+<span class="nc" id="L32">    internal object Serializer : StringValueObjectSerializer&lt;Password&gt;(::Password)</span>
+}
+
+<span class="nc" id="L35">@Serializable(with = PasswordHash.Serializer::class)</span>
+<span class="fc" id="L36">class PasswordHash(override val value: String) : StringValueObject() {</span>
+<span class="fc" id="L37">    internal object Serializer : StringValueObjectSerializer&lt;PasswordHash&gt;(::PasswordHash)</span>
+}
+
+<span class="nc" id="L40">@Serializable(with = PasswordSalt.Serializer::class)</span>
+<span class="fc" id="L41">class PasswordSalt(override val value: String) : StringValueObject() {</span>
+<span class="fc" id="L42">    internal object Serializer : StringValueObjectSerializer&lt;PasswordSalt&gt;(::PasswordSalt)</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

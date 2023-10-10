@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Submitted.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.repository.api.submitted_req</a> &gt; <span class="el_source">Submitted.kt</span></div><h1>Submitted.kt</h1><pre class="source lang-java linenums">package io.hamal.repository.api.submitted_req
+
+import io.hamal.lib.domain.ReqId
+import io.hamal.lib.domain._enum.ReqStatus
+import io.hamal.lib.domain.vo.GroupId
+import kotlinx.serialization.Serializable
+
+<span class="fc" id="L8">@Serializable</span>
+sealed interface SubmittedReq {
+    val reqId: ReqId
+    var status: ReqStatus
+}
+
+<span class="nc" id="L14">@Serializable</span>
+sealed interface SubmittedReqWithGroupId : SubmittedReq {
+    override val reqId: ReqId
+    override var status: ReqStatus
+    val groupId: GroupId
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

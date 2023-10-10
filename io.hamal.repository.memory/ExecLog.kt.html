@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExecLog.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.repository.memory</a> &gt; <span class="el_source">ExecLog.kt</span></div><h1>ExecLog.kt</h1><pre class="source lang-java linenums">package io.hamal.repository.memory
+
+import io.hamal.lib.domain.vo.RemoteAt
+import io.hamal.repository.api.ExecLog
+import io.hamal.repository.api.ExecLogCmdRepository.AppendCmd
+import io.hamal.repository.api.ExecLogQueryRepository.ExecLogQuery
+import io.hamal.repository.api.ExecLogRepository
+import java.util.concurrent.locks.ReentrantReadWriteLock
+import kotlin.concurrent.read
+import kotlin.concurrent.write
+
+<span class="fc" id="L12">class MemoryExecLogRepository : ExecLogRepository {</span>
+<span class="fc" id="L13">    private val lock = ReentrantReadWriteLock()</span>
+<span class="fc" id="L14">    private val store = mutableListOf&lt;ExecLog&gt;()</span>
+
+    override fun append(cmd: AppendCmd): ExecLog {
+<span class="nc bnc" id="L17" title="All 6 branches missed.">        return lock.write {</span>
+<span class="nc" id="L18">            ExecLog(</span>
+<span class="nc" id="L19">                id = cmd.execLogId,</span>
+<span class="nc" id="L20">                execId = cmd.execId,</span>
+<span class="nc" id="L21">                groupId = cmd.groupId,</span>
+<span class="nc" id="L22">                level = cmd.level,</span>
+<span class="nc" id="L23">                message = cmd.message,</span>
+<span class="nc" id="L24">                localAt = cmd.localAt,</span>
+<span class="nc" id="L25">                remoteAt = RemoteAt.now()</span>
+<span class="nc" id="L26">            ).also { store.add(it) }</span>
+        }
+    }
+
+    override fun clear() {
+<span class="nc bnc" id="L31" title="All 6 branches missed.">        lock.write { store.clear() }</span>
+<span class="nc" id="L32">    }</span>
+
+<span class="nc" id="L34">    override fun close() {}</span>
+
+    override fun list(query: ExecLogQuery): List&lt;ExecLog&gt; {
+<span class="nc" id="L37">        return lock.read {</span>
+<span class="nc" id="L38">            store.reversed()</span>
+<span class="nc" id="L39">                .asSequence()</span>
+<span class="nc bnc" id="L40" title="All 2 branches missed.">                .dropWhile { it.id &gt;= query.afterId }</span>
+<span class="nc bnc" id="L41" title="All 4 branches missed.">                .filter { query.groupIds.isEmpty() || query.groupIds.contains(it.groupId) }</span>
+<span class="nc bnc" id="L42" title="All 4 branches missed.">                .filter { query.execIds.isEmpty() || query.execIds.contains(it.execId) }</span>
+<span class="nc bnc" id="L43" title="All 4 branches missed.">                .filter { query.execLogIds.isEmpty() || query.execLogIds.contains(it.id) }</span>
+<span class="nc" id="L44">                .take(query.limit.value)</span>
+<span class="nc" id="L45">                .toList()</span>
+        }
+    }
+
+    override fun count(query: ExecLogQuery): ULong {
+<span class="nc" id="L50">        return lock.read {</span>
+<span class="nc" id="L51">            store.reversed()</span>
+<span class="nc" id="L52">                .asSequence()</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">                .dropWhile { it.id &gt;= query.afterId }</span>
+<span class="nc bnc" id="L54" title="All 4 branches missed.">                .filter { query.groupIds.isEmpty() || query.groupIds.contains(it.groupId) }</span>
+<span class="nc bnc" id="L55" title="All 4 branches missed.">                .filter { query.execIds.isEmpty() || query.execIds.contains(it.execId) }</span>
+<span class="nc bnc" id="L56" title="All 4 branches missed.">                .filter { query.execLogIds.isEmpty() || query.execLogIds.contains(it.id) }</span>
+<span class="nc" id="L57">                .count()</span>
+<span class="nc" id="L58">                .toULong()</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

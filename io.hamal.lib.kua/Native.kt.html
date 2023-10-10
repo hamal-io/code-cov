@@ -1,10 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Native.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.kua</a> &gt; <span class="el_source">Native.kt</span></div><h1>Native.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.kua
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Native.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.kua</a> &gt; <span class="el_source">Native.kt</span></div><h1>Native.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.kua
 
 import io.hamal.lib.kua.function.FunctionType
+import io.hamal.lib.kua.type.DecimalType
 import io.hamal.lib.kua.type.ErrorType
+import java.math.BigDecimal
 
-<span class="fc" id="L6">class Native(</span>
-<span class="fc" id="L7">    val sandbox: Sandbox</span>
+<span class="fc" id="L8">class Native(</span>
+<span class="fc" id="L9">    val sandbox: Sandbox</span>
 ) : AutoCloseable {
 
     external fun luaVersionNumber(): Int
@@ -20,8 +22,11 @@ import io.hamal.lib.kua.type.ErrorType
     external fun getGlobal(key: String)
 
     external fun pushBoolean(value: Boolean): Int
-    external fun pushFunction(value: FunctionType&lt;*, *, *, *&gt;): Int
+<span class="nc" id="L25">    fun pushDecimal(value: DecimalType): Int = pushDecimal(value.toBigDecimal().toString())</span>
+    external fun pushDecimal(value: String): Int
+<span class="nc" id="L27">    fun pushError(error: ErrorType): Int = pushError(error.message)</span>
     external fun pushError(message: String): Int
+    external fun pushFunction(value: FunctionType&lt;*, *, *, *&gt;): Int
     external fun pushNil(): Int
     external fun pushNumber(value: Double): Int
     external fun pushString(value: String): Int
@@ -29,6 +34,8 @@ import io.hamal.lib.kua.type.ErrorType
     external fun pop(total: Int): Int
 
     external fun toBoolean(idx: Int): Boolean
+<span class="nc" id="L37">    fun toDecimal(idx: Int) = DecimalType(BigDecimal(toDecimalString(idx)))</span>
+    external fun toDecimalString(idx: Int): String
     external fun toError(idx: Int): ErrorType
     external fun toNumber(idx: Int): Double
     external fun toString(idx: Int): String
@@ -52,16 +59,16 @@ import io.hamal.lib.kua.type.ErrorType
     private external fun initConnection()
     private external fun closeConnection()
 
-<span class="fc" id="L55">    init {</span>
-<span class="fc" id="L56">        initConnection()</span>
-<span class="fc" id="L57">    }</span>
+<span class="fc" id="L62">    init {</span>
+<span class="fc" id="L63">        initConnection()</span>
+<span class="fc" id="L64">    }</span>
 
     override fun close() {
-<span class="fc" id="L60">        closeConnection()</span>
-<span class="fc" id="L61">    }</span>
+<span class="fc" id="L67">        closeConnection()</span>
+<span class="fc" id="L68">    }</span>
 
     override fun toString(): String {
-<span class="nc" id="L64">        return &quot;Native&quot;</span>
+<span class="nc" id="L71">        return &quot;Native&quot;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

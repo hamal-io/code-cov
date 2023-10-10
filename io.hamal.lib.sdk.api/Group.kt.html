@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Group.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.sdk.api</a> &gt; <span class="el_source">Group.kt</span></div><h1>Group.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.sdk.api
+
+import io.hamal.lib.domain.vo.GroupId
+import io.hamal.lib.domain.vo.GroupName
+import io.hamal.lib.http.HttpTemplate
+import kotlinx.serialization.Serializable
+
+<span class="nc bnc" id="L8" title="All 7 branches missed.">@Serializable</span>
+<span class="nc" id="L9">data class ApiGroupList(</span>
+<span class="nc" id="L10">    val groups: List&lt;Group&gt;</span>
+) {
+<span class="nc bnc" id="L12" title="All 8 branches missed.">    @Serializable</span>
+<span class="nc" id="L13">    data class Group(</span>
+<span class="nc" id="L14">        val id: GroupId,</span>
+<span class="nc" id="L15">        val name: GroupName</span>
+<span class="nc" id="L16">    )</span>
+<span class="nc" id="L17">}</span>
+
+
+<span class="nc bnc" id="L20" title="All 8 branches missed.">@Serializable</span>
+<span class="nc" id="L21">data class ApiGroup(</span>
+<span class="nc" id="L22">    val id: GroupId,</span>
+<span class="nc" id="L23">    val name: GroupName,</span>
+<span class="nc" id="L24">)</span>
+
+interface ApiGroupService
+
+<span class="nc" id="L28">internal class ApiGroupServiceImpl(</span>
+<span class="nc" id="L29">    private val template: HttpTemplate</span>
+) : ApiGroupService
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BrokerTopics.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.repository.api.log</a> &gt; <span class="el_source">BrokerTopics.kt</span></div><h1>BrokerTopics.kt</h1><pre class="source lang-java linenums">package io.hamal.repository.api.log
+
+import io.hamal.lib.common.SnowflakeId
+import io.hamal.lib.common.domain.CmdId
+import io.hamal.lib.common.domain.Limit
+import io.hamal.lib.domain.vo.GroupId
+import io.hamal.lib.domain.vo.TopicId
+import io.hamal.lib.domain.vo.TopicName
+import io.hamal.repository.api.CmdRepository
+
+interface BrokerTopicsRepository : CmdRepository {
+    fun create(cmdId: CmdId, toCreate: TopicToCreate): Topic
+    fun find(groupId: GroupId, name: TopicName): Topic?
+    fun find(id: TopicId): Topic?
+    fun list(query: TopicQuery): List&lt;Topic&gt;
+    fun count(query: TopicQuery): ULong
+
+<span class="fc" id="L18">    data class TopicToCreate(</span>
+<span class="fc" id="L19">        val id: TopicId,</span>
+<span class="fc" id="L20">        val name: TopicName,</span>
+<span class="fc" id="L21">        val groupId: GroupId</span>
+    )
+
+<span class="fc" id="L24">    data class TopicQuery(</span>
+<span class="pc" id="L25">        var afterId: TopicId = TopicId(SnowflakeId(Long.MAX_VALUE)),</span>
+<span class="pc" id="L26">        var names: List&lt;TopicName&gt; = listOf(),</span>
+<span class="pc" id="L27">        var limit: Limit = Limit(1),</span>
+<span class="pc" id="L28">        var groupIds: List&lt;GroupId&gt;</span>
+<span class="fc" id="L29">    )</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

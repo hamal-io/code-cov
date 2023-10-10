@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MapType.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.kua.type</a> &gt; <span class="el_source">MapType.kt</span></div><h1>MapType.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.kua.type
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MapType.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.kua.type</a> &gt; <span class="el_source">MapType.kt</span></div><h1>MapType.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.kua.type
 
 import io.hamal.lib.common.SnowflakeId
 import io.hamal.lib.common.domain.DomainId
@@ -13,7 +13,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlin.reflect.KClass
 
-<span class="pc bpc" id="L16" title="3 of 9 branches missed.">@Serializable</span>
+<span class="pc bpc" id="L16" title="2 of 9 branches missed.">@Serializable</span>
 @SerialName(&quot;MapType&quot;)
 <span class="fc" id="L18">data class MapType(</span>
 <span class="fc" id="L19">    @Serializable(with = Serializer::class)</span>
@@ -53,17 +53,17 @@ import kotlin.reflect.KClass
     }
 
 
-<span class="fc" id="L56">    fun getCodeType(key: String) = CodeType(getString(key))</span>
+<span class="nc" id="L56">    fun getCodeType(key: String) = CodeType(getString(key))</span>
 <span class="nc" id="L57">    fun getCodeType(key: StringType) = getCodeType(key.value)</span>
 <span class="nc" id="L58">    operator fun set(key: StringType, value: CodeType) = set(key.value, value)</span>
     operator fun set(key: String, value: CodeType): Int {
-<span class="fc" id="L60">        entries[key] = StringType(value.value)</span>
-<span class="fc" id="L61">        return size</span>
+<span class="nc" id="L60">        entries[key] = StringType(value.value)</span>
+<span class="nc" id="L61">        return size</span>
     }
 
-<span class="fc" id="L64">    operator fun set(key: String, value: DomainId) = set(key, value.value.value.toString(16))</span>
+<span class="nc" id="L64">    operator fun set(key: String, value: DomainId) = set(key, value.value.value.toString(16))</span>
 <span class="nc" id="L65">    operator fun set(key: StringType, value: DomainId) = set(key.value, value.value.value.toString(16))</span>
-<span class="fc" id="L66">    operator fun set(key: String, value: SnowflakeId) = set(key, value.value.toString(16))</span>
+<span class="nc" id="L66">    operator fun set(key: String, value: SnowflakeId) = set(key, value.value.toString(16))</span>
 <span class="nc" id="L67">    operator fun set(key: StringType, value: SnowflakeId) = set(key.value, value.value.toString(16))</span>
 
 <span class="nc" id="L69">    fun getInt(key: String): Int = getNumberValue(key).value.toInt()</span>
@@ -86,13 +86,13 @@ import kotlin.reflect.KClass
 <span class="nc" id="L86">    operator fun set(key: String, value: Double) = set(key, NumberType(value))</span>
 <span class="nc" id="L87">    operator fun set(key: StringType, value: NumberType) = set(key.value, value.value)</span>
     operator fun set(key: String, value: NumberType): Int {
-<span class="nc" id="L89">        entries[key] = value</span>
-<span class="nc" id="L90">        return size</span>
+<span class="fc" id="L89">        entries[key] = value</span>
+<span class="fc" id="L90">        return size</span>
     }
 
     operator fun set(key: String, value: MapType): Int {
-<span class="fc" id="L94">        entries[key] = value</span>
-<span class="fc" id="L95">        return size</span>
+<span class="nc" id="L94">        entries[key] = value</span>
+<span class="nc" id="L95">        return size</span>
     }
 
 <span class="nc" id="L98">    fun getStringType(key: StringType) = getStringType(key.value)</span>
@@ -103,15 +103,15 @@ import kotlin.reflect.KClass
 <span class="fc" id="L103">        return entries[key]!! as StringType</span>
     }
 
-<span class="fc" id="L106">    operator fun set(key: String, value: String) = set(key, StringType(value))</span>
+<span class="nc" id="L106">    operator fun set(key: String, value: String) = set(key, StringType(value))</span>
 <span class="nc" id="L107">    operator fun set(key: StringType, value: StringType) = set(key.value, value.value)</span>
     operator fun set(key: String, value: StringType): Int {
-<span class="fc" id="L109">        entries[key] = value</span>
-<span class="fc" id="L110">        return size</span>
+<span class="nc" id="L109">        entries[key] = value</span>
+<span class="nc" id="L110">        return size</span>
     }
 
     fun type(key: String): KClass&lt;out Type&gt; {
-<span class="fc bfc" id="L114" title="All 2 branches covered.">        return entries[key]?.let { it::class } ?: NilType::class</span>
+<span class="pc bpc" id="L114" title="1 of 2 branches missed.">        return entries[key]?.let { it::class } ?: NilType::class</span>
     }
 
     object Serializer : KSerializer&lt;MutableMap&lt;String, SerializableType&gt;&gt; {

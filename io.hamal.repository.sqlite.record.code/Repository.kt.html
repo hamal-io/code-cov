@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Repository.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.repository.sqlite.record.code</a> &gt; <span class="el_source">Repository.kt</span></div><h1>Repository.kt</h1><pre class="source lang-java linenums">package io.hamal.repository.sqlite.record.code
+
+import io.hamal.lib.domain.vo.CodeId
+import io.hamal.lib.domain.vo.CodeVersion
+import io.hamal.lib.sqlite.SqliteBaseRepository
+import io.hamal.repository.api.Code
+import io.hamal.repository.api.CodeCmdRepository.CreateCmd
+import io.hamal.repository.api.CodeCmdRepository.UpdateCmd
+import io.hamal.repository.api.CodeQueryRepository.CodeQuery
+import io.hamal.repository.api.CodeRepository
+import io.hamal.repository.record.CreateDomainObject
+import io.hamal.repository.record.RecordSequence
+import io.hamal.repository.record.code.CodeCreationRecord
+import io.hamal.repository.record.code.CodeEntity
+import io.hamal.repository.record.code.CodeRecord
+import io.hamal.repository.record.code.CodeUpdatedRecord
+import io.hamal.repository.sqlite.record.SqliteRecordRepository
+import java.nio.file.Path
+
+
+internal object CreateCode : CreateDomainObject&lt;CodeId, CodeRecord, Code&gt; {
+    override fun invoke(recs: List&lt;CodeRecord&gt;): Code {
+<span class="nc bnc" id="L23" title="All 4 branches missed.">        check(recs.isNotEmpty()) { &quot;At least one record is required&quot; }</span>
+<span class="nc" id="L24">        val firstRecord = recs.first()</span>
+<span class="nc bnc" id="L25" title="All 2 branches missed.">        check(firstRecord is CodeCreationRecord)</span>
+
+<span class="nc" id="L27">        var result = CodeEntity(</span>
+<span class="nc" id="L28">            cmdId = firstRecord.cmdId,</span>
+<span class="nc" id="L29">            id = firstRecord.entityId,</span>
+<span class="nc" id="L30">            groupId = firstRecord.groupId,</span>
+<span class="nc" id="L31">            sequence = firstRecord.sequence()</span>
+        )
+
+<span class="nc" id="L34">        recs.forEach { record -&gt;</span>
+<span class="nc" id="L35">            result = result.apply(record)</span>
+<span class="nc" id="L36">        }</span>
+
+<span class="nc" id="L38">        return result.toDomainObject()</span>
+    }
+}
+
+<span class="nc" id="L42">class SqliteCodeRepository(</span>
+    config: Config
+<span class="nc" id="L44">) : SqliteRecordRepository&lt;CodeId, CodeRecord, Code&gt;(</span>
+<span class="nc" id="L45">    config = config,</span>
+<span class="nc" id="L46">    createDomainObject = CreateCode,</span>
+    recordClass = CodeRecord::class,
+<span class="nc" id="L48">    projections = listOf(ProjectionCurrent)</span>
+), CodeRepository {
+
+<span class="nc" id="L51">    data class Config(</span>
+<span class="nc" id="L52">        override val path: Path</span>
+    ) : SqliteBaseRepository.Config {
+<span class="nc" id="L54">        override val filename = &quot;code.db&quot;</span>
+    }
+
+    override fun create(cmd: CreateCmd): Code {
+<span class="nc" id="L58">        val codeId = cmd.codeId</span>
+<span class="nc" id="L59">        val cmdId = cmd.id</span>
+<span class="nc" id="L60">        return tx {</span>
+<span class="nc bnc" id="L61" title="All 2 branches missed.">            if (commandAlreadyApplied(cmdId, codeId)) {</span>
+<span class="nc" id="L62">                versionOf(codeId, cmdId)</span>
+            } else {
+<span class="nc" id="L64">                store(</span>
+<span class="nc" id="L65">                    CodeCreationRecord(</span>
+<span class="nc" id="L66">                        cmdId = cmdId,</span>
+<span class="nc" id="L67">                        entityId = codeId,</span>
+<span class="nc" id="L68">                        groupId = cmd.groupId,</span>
+<span class="nc" id="L69">                        value = cmd.value</span>
+                    )
+                )
+
+<span class="nc" id="L73">                currentVersion(codeId)</span>
+<span class="nc" id="L74">                    .also { ProjectionCurrent.upsert(this, it) }</span>
+            }
+        }
+    }
+
+    override fun update(codeId: CodeId, cmd: UpdateCmd): Code {
+<span class="nc" id="L80">        val cmdId = cmd.id</span>
+<span class="nc" id="L81">        return tx {</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">            if (commandAlreadyApplied(cmdId, codeId)) {</span>
+<span class="nc" id="L83">                versionOf(codeId, cmdId)</span>
+            } else {
+<span class="nc" id="L85">                val currentVersion = versionOf(codeId, cmdId)</span>
+<span class="nc" id="L86">                store(</span>
+<span class="nc" id="L87">                    CodeUpdatedRecord(</span>
+<span class="nc" id="L88">                        cmdId = cmdId,</span>
+<span class="nc" id="L89">                        entityId = codeId,</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">                        value = cmd.value ?: currentVersion.value</span>
+                    )
+                )
+<span class="nc" id="L93">                currentVersion(codeId)</span>
+<span class="nc" id="L94">                    .also { ProjectionCurrent.upsert(this, it) }</span>
+
+            }
+        }
+    }
+
+    override fun find(codeId: CodeId): Code? {
+<span class="nc" id="L101">        return ProjectionCurrent.find(connection, codeId)</span>
+    }
+
+    override fun find(codeId: CodeId, codeVersion: CodeVersion): Code? {
+<span class="nc" id="L105">        return tx { versionOf(codeId, RecordSequence(codeVersion.value)) }</span>
+    }
+
+    override fun list(query: CodeQuery): List&lt;Code&gt; {
+<span class="nc" id="L109">        return ProjectionCurrent.list(connection, query)</span>
+    }
+
+    override fun count(query: CodeQuery): ULong {
+<span class="nc" id="L113">        return ProjectionCurrent.count(connection, query)</span>
+    }
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

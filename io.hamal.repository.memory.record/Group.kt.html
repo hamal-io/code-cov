@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Group.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.repository.memory.record</a> &gt; <span class="el_source">Group.kt</span></div><h1>Group.kt</h1><pre class="source lang-java linenums">package io.hamal.repository.memory.record
+
+import io.hamal.lib.domain.vo.GroupId
+import io.hamal.repository.api.Group
+import io.hamal.repository.api.GroupCmdRepository
+import io.hamal.repository.api.GroupQueryRepository.GroupQuery
+import io.hamal.repository.api.GroupRepository
+import io.hamal.repository.record.group.CreateGroupFromRecords
+import io.hamal.repository.record.group.GroupCreationRecord
+import io.hamal.repository.record.group.GroupRecord
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
+
+internal object CurrentGroupProjection {
+<span class="fc" id="L15">    private val projection = mutableMapOf&lt;GroupId, Group&gt;()</span>
+
+    fun apply(group: Group) {
+<span class="fc" id="L18">        val currentGroup = projection[group.id]</span>
+<span class="fc" id="L19">        projection.remove(group.id)</span>
+
+<span class="pc bpc" id="L21" title="1 of 2 branches missed.">        if (projection.values.any { it.name == group.name }) {</span>
+<span class="nc bnc" id="L22" title="All 2 branches missed.">            if (currentGroup != null) {</span>
+<span class="nc" id="L23">                projection[currentGroup.id] = currentGroup</span>
+            }
+<span class="nc" id="L25">            throw IllegalArgumentException(&quot;${group.name} already exists&quot;)</span>
+        }
+
+<span class="fc" id="L28">        projection[group.id] = group</span>
+<span class="fc" id="L29">    }</span>
+
+<span class="nc" id="L31">    fun find(groupId: GroupId): Group? = projection[groupId]</span>
+
+    fun list(query: GroupQuery): List&lt;Group&gt; {
+<span class="nc bnc" id="L34" title="All 4 branches missed.">        return projection.filter { query.groupIds.isEmpty() || it.key in query.groupIds }</span>
+<span class="nc" id="L35">            .map { it.value }</span>
+<span class="nc" id="L36">            .reversed()</span>
+<span class="nc" id="L37">            .asSequence()</span>
+<span class="nc bnc" id="L38" title="All 2 branches missed.">            .dropWhile { it.id &gt;= query.afterId }</span>
+<span class="nc" id="L39">            .take(query.limit.value)</span>
+<span class="nc" id="L40">            .toList()</span>
+    }
+
+    fun count(query: GroupQuery): ULong {
+<span class="nc bnc" id="L44" title="All 4 branches missed.">        return projection.filter { query.groupIds.isEmpty() || it.key in query.groupIds }</span>
+<span class="nc" id="L45">            .map { it.value }</span>
+<span class="nc" id="L46">            .reversed()</span>
+<span class="nc" id="L47">            .asSequence()</span>
+<span class="nc bnc" id="L48" title="All 2 branches missed.">            .dropWhile { it.id &gt;= query.afterId }</span>
+<span class="nc" id="L49">            .count()</span>
+<span class="nc" id="L50">            .toULong()</span>
+    }
+
+    fun clear() {
+<span class="fc" id="L54">        projection.clear()</span>
+<span class="fc" id="L55">    }</span>
+}
+
+<span class="pc" id="L58">class MemoryGroupRepository : MemoryRecordRepository&lt;GroupId, GroupRecord, Group&gt;(</span>
+<span class="fc" id="L59">    createDomainObject = CreateGroupFromRecords,</span>
+    recordClass = GroupRecord::class
+), GroupRepository {
+<span class="fc" id="L62">    private val lock = ReentrantLock()</span>
+    override fun create(cmd: GroupCmdRepository.CreateCmd): Group {
+<span class="fc" id="L64">        return lock.withLock {</span>
+<span class="fc" id="L65">            val groupId = cmd.groupId</span>
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">            if (commandAlreadyApplied(cmd.id, groupId)) {</span>
+<span class="nc" id="L67">                versionOf(groupId, cmd.id)</span>
+            } else {
+<span class="fc" id="L69">                store(</span>
+<span class="fc" id="L70">                    GroupCreationRecord(</span>
+<span class="fc" id="L71">                        entityId = groupId,</span>
+<span class="fc" id="L72">                        cmdId = cmd.id,</span>
+<span class="fc" id="L73">                        name = cmd.name,</span>
+<span class="fc" id="L74">                        creatorId = cmd.creatorId</span>
+                    )
+                )
+<span class="fc" id="L77">                (currentVersion(groupId)).also(CurrentGroupProjection::apply)</span>
+            }
+        }
+    }
+
+<span class="nc" id="L82">    override fun find(groupId: GroupId): Group? = CurrentGroupProjection.find(groupId)</span>
+
+    override fun list(query: GroupQuery): List&lt;Group&gt; {
+<span class="nc" id="L85">        return CurrentGroupProjection.list(query)</span>
+    }
+
+    override fun count(query: GroupQuery): ULong {
+<span class="nc" id="L89">        return CurrentGroupProjection.count(query)</span>
+    }
+
+    override fun clear() {
+<span class="fc" id="L93">        super.clear()</span>
+<span class="fc" id="L94">        CurrentGroupProjection.clear()</span>
+<span class="fc" id="L95">    }</span>
+
+    override fun close() {
+<span class="nc" id="L98">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

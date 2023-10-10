@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Topic.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.sdk.api</a> &gt; <span class="el_source">Topic.kt</span></div><h1>Topic.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.sdk.api
+
+import io.hamal.lib.common.KeyedOnce
+import io.hamal.lib.domain.vo.*
+import io.hamal.lib.http.HttpTemplate
+import io.hamal.lib.http.body
+import io.hamal.lib.sdk.fold
+import io.hamal.request.AppendEntryReq
+import io.hamal.request.CreateTopicReq
+import kotlinx.serialization.Serializable
+
+<span class="pc bpc" id="L12" title="2 of 7 branches missed.">@Serializable</span>
+<span class="fc" id="L13">data class ApiCreateTopicReq(</span>
+<span class="fc" id="L14">    override val name: TopicName</span>
+<span class="fc" id="L15">) : CreateTopicReq</span>
+
+<span class="pc bnc" id="L17" title="All 8 branches missed.">@Serializable</span>
+<span class="fc" id="L18">data class ApiAppendEntryReq(</span>
+<span class="fc" id="L19">    override val topicId: TopicId,</span>
+<span class="fc" id="L20">    override val payload: TopicEntryPayload</span>
+<span class="nc" id="L21">) : AppendEntryReq</span>
+
+<span class="pc bpc" id="L23" title="2 of 9 branches missed.">@Serializable</span>
+<span class="fc" id="L24">data class ApiTopicEntryList(</span>
+<span class="pc" id="L25">    val topicId: TopicId,</span>
+<span class="fc" id="L26">    val topicName: TopicName,</span>
+<span class="fc" id="L27">    val entries: List&lt;Entry&gt;</span>
+) {
+<span class="pc bpc" id="L29" title="2 of 8 branches missed.">    @Serializable</span>
+<span class="fc" id="L30">    data class Entry(</span>
+<span class="fc" id="L31">        val id: TopicEntryId,</span>
+<span class="fc" id="L32">        val payload: TopicEntryPayload</span>
+<span class="fc" id="L33">    )</span>
+<span class="fc" id="L34">}</span>
+
+<span class="pc bpc" id="L36" title="2 of 8 branches missed.">@Serializable</span>
+<span class="fc" id="L37">data class ApiTopic(</span>
+<span class="fc" id="L38">    val id: TopicId,</span>
+<span class="fc" id="L39">    val name: TopicName</span>
+<span class="fc" id="L40">)</span>
+
+<span class="pc bpc" id="L42" title="2 of 7 branches missed.">@Serializable</span>
+<span class="fc" id="L43">data class ApiTopicList(</span>
+<span class="fc" id="L44">    val topics: List&lt;Topic&gt;</span>
+) {
+<span class="pc bpc" id="L46" title="2 of 8 branches missed.">    @Serializable</span>
+<span class="fc" id="L47">    data class Topic(</span>
+<span class="pc" id="L48">        val id: TopicId,</span>
+<span class="fc" id="L49">        val name: TopicName</span>
+<span class="fc" id="L50">    )</span>
+<span class="fc" id="L51">}</span>
+
+
+interface ApiTopicService {
+    fun append(topicId: TopicId, payload: TopicEntryPayload): ApiSubmittedReqWithId
+    fun create(groupId: GroupId, req: ApiCreateTopicReq): ApiSubmittedReqWithId
+    fun list(groupId: GroupId): List&lt;ApiTopicList.Topic&gt;
+    fun entries(topicId: TopicId): List&lt;ApiTopicEntryList.Entry&gt;
+    fun get(topicId: TopicId): ApiTopic
+    fun resolve(groupId: GroupId, topicName: TopicName): TopicId
+}
+
+<span class="nc" id="L63">internal class ApiTopicServiceImpl(</span>
+<span class="nc" id="L64">    private val template: HttpTemplate</span>
+) : ApiTopicService {
+
+    override fun append(topicId: TopicId, payload: TopicEntryPayload) =
+<span class="nc" id="L68">        template.post(&quot;/v1/topics/{topicId}/entries&quot;)</span>
+<span class="nc" id="L69">            .path(&quot;topicId&quot;, topicId)</span>
+<span class="nc" id="L70">            .body(payload)</span>
+<span class="nc" id="L71">            .execute()</span>
+<span class="nc" id="L72">            .fold(ApiSubmittedReqWithId::class)</span>
+
+    override fun create(groupId: GroupId, req: ApiCreateTopicReq) =
+<span class="nc" id="L75">        template.post(&quot;/v1/groups/{groupId}/topics&quot;)</span>
+<span class="nc" id="L76">            .path(&quot;groupId&quot;, groupId)</span>
+<span class="nc" id="L77">            .body(req)</span>
+<span class="nc" id="L78">            .execute()</span>
+<span class="nc" id="L79">            .fold(ApiSubmittedReqWithId::class)</span>
+
+    override fun list(groupId: GroupId) =
+<span class="nc" id="L82">        template.get(&quot;/v1/groups/{groupId}/topics&quot;)</span>
+<span class="nc" id="L83">            .path(&quot;groupId&quot;, groupId)</span>
+<span class="nc" id="L84">            .execute()</span>
+<span class="nc" id="L85">            .fold(ApiTopicList::class)</span>
+<span class="nc" id="L86">            .topics</span>
+
+    override fun entries(topicId: TopicId) =
+<span class="nc" id="L89">        template</span>
+<span class="nc" id="L90">            .get(&quot;/v1/topics/{topicId}/entries&quot;)</span>
+<span class="nc" id="L91">            .path(&quot;topicId&quot;, topicId)</span>
+<span class="nc" id="L92">            .execute()</span>
+<span class="nc" id="L93">            .fold(ApiTopicEntryList::class)</span>
+<span class="nc" id="L94">            .entries</span>
+
+    override fun get(topicId: TopicId) =
+<span class="nc" id="L97">        template.get(&quot;/v1/topics/{topicId}&quot;)</span>
+<span class="nc" id="L98">            .path(&quot;topicId&quot;, topicId)</span>
+<span class="nc" id="L99">            .execute()</span>
+<span class="nc" id="L100">            .fold(ApiTopic::class)</span>
+
+    override fun resolve(groupId: GroupId, topicName: TopicName): TopicId {
+<span class="nc" id="L103">        return topicNameCache(topicName) {</span>
+<span class="nc bnc" id="L104" title="All 2 branches missed.">            template.get(&quot;/v1/groups/{groupId}/topics&quot;)</span>
+<span class="nc" id="L105">                .path(&quot;groupId&quot;, groupId)</span>
+<span class="nc" id="L106">                .parameter(&quot;names&quot;, topicName.value)</span>
+<span class="nc" id="L107">                .execute(ApiTopicList::class)</span>
+<span class="nc" id="L108">                .topics</span>
+<span class="nc bnc" id="L109" title="All 2 branches missed.">                .firstOrNull()?.id</span>
+<span class="nc" id="L110">                ?: throw NoSuchElementException(&quot;Topic not found&quot;)</span>
+        }
+    }
+
+<span class="nc" id="L114">    private val topicNameCache: KeyedOnce&lt;TopicName, TopicId&gt; = KeyedOnce.default()</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

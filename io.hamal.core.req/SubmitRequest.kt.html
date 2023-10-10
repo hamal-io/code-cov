@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SubmitRequest.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.core.req</a> &gt; <span class="el_source">SubmitRequest.kt</span></div><h1>SubmitRequest.kt</h1><pre class="source lang-java linenums">package io.hamal.core.req
+
+import io.hamal.core.component.EncodePassword
+import io.hamal.core.component.GenerateSalt
+import io.hamal.core.component.GenerateToken
+import io.hamal.core.req.req.CreateRootAccountReq
+import io.hamal.lib.domain.CorrelatedState
+import io.hamal.lib.domain.Event
+import io.hamal.lib.domain.GenerateDomainId
+import io.hamal.lib.domain.ReqId
+import io.hamal.lib.domain._enum.ReqStatus.Submitted
+import io.hamal.lib.domain.vo.*
+import io.hamal.lib.domain.vo.AccountType.Root
+import io.hamal.repository.api.*
+import io.hamal.repository.api.log.BrokerRepository
+import io.hamal.repository.api.submitted_req.*
+import io.hamal.request.*
+import org.springframework.stereotype.Component
+
+<span class="nc" id="L20">data class InvokeExecReq(</span>
+<span class="nc" id="L21">    val execId: ExecId,</span>
+<span class="nc" id="L22">    val funcId: FuncId,</span>
+<span class="nc" id="L23">    val correlationId: CorrelationId?,</span>
+<span class="nc" id="L24">    val inputs: InvocationInputs,</span>
+<span class="nc" id="L25">    val code: CodeValue?,</span>
+<span class="nc" id="L26">    val codeId: CodeId?,</span>
+<span class="nc" id="L27">    val codeVersion: CodeVersion?,</span>
+<span class="nc" id="L28">    val events: List&lt;Event&gt;</span>
+)
+
+<span class="fc" id="L31">@Component</span>
+<span class="fc" id="L32">class SubmitRequest(</span>
+<span class="fc" id="L33">    private val generateDomainId: GenerateDomainId,</span>
+<span class="fc" id="L34">    private val reqCmdRepository: ReqCmdRepository,</span>
+<span class="fc" id="L35">    private val funcQueryRepository: FuncQueryRepository,</span>
+<span class="fc" id="L36">    private val namespaceQueryRepository: NamespaceQueryRepository,</span>
+<span class="fc" id="L37">    private val generateSalt: GenerateSalt,</span>
+<span class="fc" id="L38">    private val encodePassword: EncodePassword,</span>
+<span class="fc" id="L39">    private val generateToken: GenerateToken,</span>
+<span class="fc" id="L40">    private val execQueryRepository: ExecQueryRepository,</span>
+<span class="fc" id="L41">    private val eventBrokerRepository: BrokerRepository</span>
+) {
+
+    operator fun invoke(req: CreateRootAccountReq): SubmittedCreateAccountWithPasswordReq {
+<span class="fc" id="L45">        val salt = generateSalt()</span>
+<span class="fc" id="L46">        return SubmittedCreateAccountWithPasswordReq(</span>
+<span class="fc" id="L47">            reqId = generateDomainId(::ReqId),</span>
+<span class="fc" id="L48">            status = Submitted,</span>
+<span class="fc" id="L49">            id = AccountId.root,</span>
+<span class="fc" id="L50">            type = Root,</span>
+<span class="fc" id="L51">            groupId = GroupId.root,</span>
+<span class="fc" id="L52">            namespaceId = generateDomainId(::NamespaceId),</span>
+<span class="fc" id="L53">            name = req.name,</span>
+<span class="fc" id="L54">            email = req.email,</span>
+<span class="fc" id="L55">            authenticationId = generateDomainId(::AuthId),</span>
+<span class="fc" id="L56">            hash = encodePassword(</span>
+<span class="fc" id="L57">                password = req.password, salt = salt</span>
+            ),
+<span class="fc" id="L59">            salt = salt,</span>
+<span class="fc" id="L60">            token = generateToken()</span>
+<span class="fc" id="L61">        ).also(reqCmdRepository::queue)</span>
+    }
+
+    operator fun invoke(req: InvokeExecReq): SubmittedInvokeExecReq {
+<span class="nc" id="L65">        val func = funcQueryRepository.get(req.funcId)</span>
+<span class="nc" id="L66">        return SubmittedInvokeExecReq(</span>
+<span class="nc" id="L67">            reqId = generateDomainId(::ReqId),</span>
+<span class="nc" id="L68">            status = Submitted,</span>
+<span class="nc" id="L69">            id = generateDomainId(::ExecId),</span>
+<span class="nc" id="L70">            groupId = func.groupId,</span>
+<span class="nc" id="L71">            funcId = req.funcId,</span>
+<span class="nc" id="L72">            correlationId = req.correlationId,</span>
+<span class="nc" id="L73">            inputs = req.inputs,</span>
+<span class="nc" id="L74">            code = req.code,</span>
+<span class="nc" id="L75">            codeId = req.codeId,</span>
+<span class="nc" id="L76">            codeVersion = req.codeVersion,</span>
+<span class="nc" id="L77">            events = listOf()</span>
+<span class="nc" id="L78">        ).also(reqCmdRepository::queue)</span>
+    }
+
+    operator fun invoke(account: Account, password: Password): SubmittedSignInWithPasswordReq {
+<span class="nc" id="L82">        val encodedPassword = encodePassword(password, account.salt)</span>
+<span class="nc" id="L83">        return SubmittedSignInWithPasswordReq(</span>
+<span class="nc" id="L84">            reqId = generateDomainId(::ReqId),</span>
+<span class="nc" id="L85">            status = Submitted,</span>
+<span class="nc" id="L86">            authId = generateDomainId(::AuthId),</span>
+<span class="nc" id="L87">            accountId = account.id,</span>
+<span class="nc" id="L88">            hash = encodedPassword,</span>
+<span class="nc" id="L89">            token = generateToken()</span>
+<span class="nc" id="L90">        ).also(reqCmdRepository::queue)</span>
+    }
+
+    operator fun invoke(req: CreateAccountReq): SubmittedCreateAccountWithPasswordReq {
+<span class="nc" id="L94">        val salt = generateSalt()</span>
+<span class="nc" id="L95">        return SubmittedCreateAccountWithPasswordReq(</span>
+<span class="nc" id="L96">            reqId = generateDomainId(::ReqId),</span>
+<span class="nc" id="L97">            status = Submitted,</span>
+<span class="nc" id="L98">            id = generateDomainId(::AccountId),</span>
+<span class="nc" id="L99">            type = AccountType.Enjoyer,</span>
+<span class="nc" id="L100">            groupId = generateDomainId(::GroupId),</span>
+<span class="nc" id="L101">            namespaceId = generateDomainId(::NamespaceId),</span>
+<span class="nc" id="L102">            name = req.name,</span>
+<span class="nc" id="L103">            email = req.email,</span>
+<span class="nc" id="L104">            authenticationId = generateDomainId(::AuthId),</span>
+<span class="nc" id="L105">            hash = encodePassword(</span>
+<span class="nc bnc" id="L106" title="All 2 branches missed.">                password = req.password ?: throw NoSuchElementException(&quot;Account not found&quot;), salt = salt</span>
+            ),
+<span class="nc" id="L108">            salt = salt,</span>
+<span class="nc" id="L109">            token = generateToken()</span>
+<span class="nc" id="L110">        ).also(reqCmdRepository::queue)</span>
+    }
+
+<span class="fc" id="L113">    operator fun invoke(groupId: GroupId, req: InvokeAdhocReq) = SubmittedInvokeExecReq(</span>
+<span class="fc" id="L114">        reqId = generateDomainId(::ReqId),</span>
+<span class="fc" id="L115">        status = Submitted,</span>
+<span class="fc" id="L116">        id = generateDomainId(::ExecId),</span>
+<span class="fc" id="L117">        groupId = groupId,</span>
+<span class="fc" id="L118">        inputs = req.inputs,</span>
+<span class="fc" id="L119">        code = req.code,</span>
+<span class="fc" id="L120">        codeId = null,</span>
+<span class="fc" id="L121">        codeVersion = null,</span>
+<span class="fc" id="L122">        funcId = null,</span>
+<span class="fc" id="L123">        correlationId = null,</span>
+<span class="fc" id="L124">        events = listOf()</span>
+<span class="fc" id="L125">    ).also(reqCmdRepository::queue)</span>
+
+
+    operator fun invoke(funcId: FuncId, req: InvokeFuncReq): SubmittedInvokeExecReq {
+<span class="fc" id="L129">        val func = funcQueryRepository.get(funcId)</span>
+<span class="fc" id="L130">        return SubmittedInvokeExecReq(</span>
+<span class="fc" id="L131">            reqId = generateDomainId(::ReqId),</span>
+<span class="fc" id="L132">            status = Submitted,</span>
+<span class="fc" id="L133">            id = generateDomainId(::ExecId),</span>
+<span class="fc" id="L134">            groupId = func.groupId,</span>
+<span class="fc" id="L135">            funcId = funcId,</span>
+<span class="fc" id="L136">            correlationId = req.correlationId,</span>
+<span class="pc bpc" id="L137" title="1 of 2 branches missed.">            inputs = req.inputs ?: InvocationInputs(),</span>
+<span class="fc" id="L138">            code = null,</span>
+<span class="fc" id="L139">            codeId = func.codeId,</span>
+<span class="fc" id="L140">            codeVersion = func.codeVersion,</span>
+<span class="fc" id="L141">            events = listOf()</span>
+<span class="fc" id="L142">        ).also(reqCmdRepository::queue)</span>
+    }
+
+<span class="nc" id="L145">    operator fun invoke(execId: ExecId, req: CompleteExecReq) = SubmittedCompleteExecReq(</span>
+<span class="nc" id="L146">        reqId = generateDomainId(::ReqId),</span>
+<span class="nc" id="L147">        status = Submitted,</span>
+<span class="nc" id="L148">        groupId = execQueryRepository.get(execId).groupId,</span>
+<span class="nc" id="L149">        id = execId,</span>
+<span class="nc" id="L150">        state = req.state,</span>
+<span class="nc" id="L151">        events = req.events</span>
+<span class="nc" id="L152">    ).also(reqCmdRepository::queue)</span>
+
+<span class="nc" id="L154">    operator fun invoke(execId: ExecId, req: FailExecReq) = SubmittedFailExecReq(</span>
+<span class="nc" id="L155">        reqId = generateDomainId(::ReqId),</span>
+<span class="nc" id="L156">        status = Submitted,</span>
+<span class="nc" id="L157">        groupId = execQueryRepository.get(execId).groupId,</span>
+<span class="nc" id="L158">        id = execId,</span>
+<span class="nc" id="L159">        cause = req.cause</span>
+<span class="nc" id="L160">    ).also(reqCmdRepository::queue)</span>
+
+<span class="fc" id="L162">    operator fun invoke(groupId: GroupId, req: CreateFuncReq) = SubmittedCreateFuncReq(</span>
+<span class="fc" id="L163">        reqId = generateDomainId(::ReqId),</span>
+<span class="fc" id="L164">        status = Submitted,</span>
+<span class="fc" id="L165">        id = generateDomainId(::FuncId),</span>
+<span class="fc" id="L166">        groupId = groupId,</span>
+<span class="fc bfc" id="L167" title="All 2 branches covered.">        namespaceId = req.namespaceId ?: namespaceQueryRepository.find(NamespaceName(&quot;hamal&quot;))!!.id,</span>
+<span class="fc" id="L168">        name = req.name,</span>
+<span class="fc" id="L169">        inputs = req.inputs,</span>
+<span class="fc" id="L170">        code = req.code,</span>
+<span class="fc" id="L171">        codeId = generateDomainId(::CodeId)</span>
+<span class="fc" id="L172">    ).also(reqCmdRepository::queue)</span>
+
+<span class="fc" id="L174">    operator fun invoke(funcId: FuncId, req: UpdateFuncReq) = SubmittedUpdateFuncReq(</span>
+<span class="fc" id="L175">        reqId = generateDomainId(::ReqId),</span>
+<span class="fc" id="L176">        status = Submitted,</span>
+<span class="fc" id="L177">        groupId = funcQueryRepository.get(funcId).groupId,</span>
+<span class="fc" id="L178">        id = funcId,</span>
+<span class="fc" id="L179">        namespaceId = req.namespaceId,</span>
+<span class="fc" id="L180">        name = req.name,</span>
+<span class="fc" id="L181">        inputs = req.inputs,</span>
+<span class="fc" id="L182">        code = req.code,</span>
+
+<span class="fc" id="L184">        ).also(reqCmdRepository::queue)</span>
+
+<span class="fc" id="L186">    operator fun invoke(groupId: GroupId, req: CreateNamespaceReq) = SubmittedCreateNamespaceReq(</span>
+<span class="fc" id="L187">        reqId = generateDomainId(::ReqId),</span>
+<span class="fc" id="L188">        status = Submitted,</span>
+<span class="fc" id="L189">        id = generateDomainId(::NamespaceId),</span>
+<span class="fc" id="L190">        groupId = groupId,</span>
+<span class="fc" id="L191">        name = req.name,</span>
+<span class="fc" id="L192">        inputs = req.inputs</span>
+<span class="fc" id="L193">    ).also(reqCmdRepository::queue)</span>
+
+<span class="fc" id="L195">    operator fun invoke(namespaceId: NamespaceId, req: UpdateNamespaceReq) = SubmittedUpdateNamespaceReq(</span>
+<span class="fc" id="L196">        reqId = generateDomainId(::ReqId),</span>
+<span class="fc" id="L197">        status = Submitted,</span>
+<span class="fc" id="L198">        groupId = namespaceQueryRepository.get(namespaceId).groupId,</span>
+<span class="fc" id="L199">        id = namespaceId,</span>
+<span class="fc" id="L200">        name = req.name,</span>
+<span class="fc" id="L201">        inputs = req.inputs</span>
+<span class="fc" id="L202">    ).also(reqCmdRepository::queue)</span>
+
+    operator fun invoke(req: CreateTriggerReq): SubmittedCreateTriggerReq {
+<span class="fc" id="L205">        val func = funcQueryRepository.get(req.funcId)</span>
+<span class="fc" id="L206">        return SubmittedCreateTriggerReq(</span>
+<span class="fc" id="L207">            type = req.type,</span>
+<span class="fc" id="L208">            reqId = generateDomainId(::ReqId),</span>
+<span class="fc" id="L209">            status = Submitted,</span>
+<span class="fc" id="L210">            id = generateDomainId(::TriggerId),</span>
+<span class="fc" id="L211">            groupId = func.groupId,</span>
+<span class="fc" id="L212">            name = req.name,</span>
+<span class="fc" id="L213">            funcId = func.id,</span>
+<span class="fc" id="L214">            namespaceId = req.namespaceId,</span>
+<span class="fc" id="L215">            inputs = req.inputs,</span>
+<span class="fc" id="L216">            correlationId = req.correlationId,</span>
+<span class="fc" id="L217">            duration = req.duration,</span>
+<span class="fc" id="L218">            topicId = req.topicId</span>
+<span class="fc" id="L219">        ).also(reqCmdRepository::queue)</span>
+    }
+
+<span class="fc" id="L222">    operator fun invoke(groupId: GroupId, req: CreateTopicReq) = SubmittedCreateTopicReq(</span>
+<span class="fc" id="L223">        reqId = generateDomainId(::ReqId),</span>
+<span class="fc" id="L224">        status = Submitted,</span>
+<span class="fc" id="L225">        groupId = groupId,</span>
+<span class="fc" id="L226">        id = generateDomainId(::TopicId),</span>
+<span class="fc" id="L227">        name = req.name</span>
+<span class="fc" id="L228">    ).also(reqCmdRepository::queue)</span>
+
+    operator fun invoke(req: AppendEntryReq): SubmittedAppendToTopicReq {
+<span class="fc" id="L231">        val topic = eventBrokerRepository.getTopic(req.topicId)</span>
+<span class="fc" id="L232">        return SubmittedAppendToTopicReq(</span>
+<span class="fc" id="L233">            reqId = generateDomainId(::ReqId),</span>
+<span class="fc" id="L234">            status = Submitted,</span>
+<span class="fc" id="L235">            groupId = topic.groupId,</span>
+<span class="fc" id="L236">            id = req.topicId,</span>
+<span class="fc" id="L237">            payload = req.payload</span>
+<span class="fc" id="L238">        ).also(reqCmdRepository::queue)</span>
+    }
+
+    operator fun invoke(req: SetStateReq): SubmittedSetStateReq {
+<span class="fc" id="L242">        val func = funcQueryRepository.get(req.correlation.funcId)</span>
+<span class="fc" id="L243">        return SubmittedSetStateReq(</span>
+<span class="fc" id="L244">            reqId = generateDomainId(::ReqId), status = Submitted, groupId = func.groupId, state = CorrelatedState(</span>
+<span class="fc" id="L245">                correlation = req.correlation, value = req.value</span>
+            )
+<span class="fc" id="L247">        ).also(reqCmdRepository::queue)</span>
+    }
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

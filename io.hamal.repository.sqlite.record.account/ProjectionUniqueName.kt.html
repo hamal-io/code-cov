@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProjectionUniqueName.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.repository.sqlite.record.account</a> &gt; <span class="el_source">ProjectionUniqueName.kt</span></div><h1>ProjectionUniqueName.kt</h1><pre class="source lang-java linenums">package io.hamal.repository.sqlite.record.account
+
+import io.hamal.lib.domain.vo.AccountId
+import io.hamal.lib.domain.vo.AccountName
+import io.hamal.lib.sqlite.Connection
+import io.hamal.lib.sqlite.Transaction
+import io.hamal.repository.api.Account
+import io.hamal.repository.record.account.AccountRecord
+import io.hamal.repository.sqlite.record.SqliteProjection
+import io.hamal.repository.sqlite.record.SqliteRecordTransaction
+import org.sqlite.SQLiteException
+
+internal object ProjectionUniqueName : SqliteProjection&lt;AccountId, AccountRecord, Account&gt; {
+
+    fun find(connection: Connection, accountName: AccountName): AccountId? {
+<span class="nc" id="L16">        return connection.executeQueryOne(</span>
+            &quot;&quot;&quot;
+            SELECT 
+                id
+             FROM
+                unique_name
+            WHERE
+                name  = :name
+<span class="nc" id="L24">        &quot;&quot;&quot;.trimIndent()</span>
+        ) {
+<span class="nc" id="L26">            query {</span>
+<span class="nc" id="L27">                set(&quot;name&quot;, accountName)</span>
+            }
+<span class="nc" id="L29">            map { rs -&gt; rs.getDomainId(&quot;id&quot;, ::AccountId) }</span>
+        }
+    }
+
+    override fun upsert(tx: SqliteRecordTransaction&lt;AccountId, AccountRecord, Account&gt;, obj: Account) {
+<span class="nc" id="L34">        try {</span>
+<span class="nc" id="L35">            tx.execute(</span>
+                &quot;&quot;&quot;
+                INSERT INTO unique_name (id, name)  VALUES(:id, :name)
+                    ON CONFLICT(id) DO UPDATE 
+                        SET name=:name;
+<span class="nc" id="L40">            &quot;&quot;&quot;.trimIndent()</span>
+            ) {
+<span class="nc" id="L42">                set(&quot;id&quot;, obj.id)</span>
+<span class="nc" id="L43">                set(&quot;name&quot;, obj.name)</span>
+            }
+<span class="nc" id="L45">        } catch (e: SQLiteException) {</span>
+<span class="nc bnc" id="L46" title="All 2 branches missed.">            if (e.message!!.contains(&quot;(UNIQUE constraint failed: unique_name.name)&quot;)) {</span>
+<span class="nc" id="L47">                throw IllegalArgumentException(&quot;${obj.name} already exists&quot;)</span>
+            }
+<span class="nc" id="L49">            throw e</span>
+        }
+<span class="nc" id="L51">    }</span>
+
+    override fun setupSchema(connection: Connection) {
+<span class="nc" id="L54">        connection.execute(</span>
+            &quot;&quot;&quot;
+            CREATE TABLE IF NOT EXISTS unique_name (
+                 id             INTEGER NOT NULL,
+                 name           VARCHAR(255) UNIQUE NOT NULL,
+                 PRIMARY KEY    (id)
+            );
+<span class="nc" id="L61">        &quot;&quot;&quot;.trimIndent()</span>
+        )
+<span class="nc" id="L63">    }</span>
+
+    override fun clear(tx: Transaction) {
+<span class="nc" id="L66">        tx.execute(&quot;&quot;&quot;DELETE FROM unique_name&quot;&quot;&quot;)</span>
+<span class="nc" id="L67">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

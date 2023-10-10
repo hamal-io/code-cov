@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Code.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.repository.memory.record</a> &gt; <span class="el_source">Code.kt</span></div><h1>Code.kt</h1><pre class="source lang-java linenums">package io.hamal.repository.memory.record
+
+import io.hamal.lib.domain.vo.CodeId
+import io.hamal.lib.domain.vo.CodeVersion
+import io.hamal.repository.api.Code
+import io.hamal.repository.api.CodeCmdRepository.*
+import io.hamal.repository.api.CodeQueryRepository.CodeQuery
+import io.hamal.repository.api.CodeRepository
+import io.hamal.repository.record.RecordSequence
+import io.hamal.repository.record.code.CodeCreationRecord
+import io.hamal.repository.record.code.CodeRecord
+import io.hamal.repository.record.code.CodeUpdatedRecord
+import io.hamal.repository.record.code.CreateCodeFromRecords
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
+
+
+internal object CurrentCodeProjection {
+<span class="fc" id="L19">    private val projection = mutableMapOf&lt;CodeId, Code&gt;()</span>
+    fun apply(code: Code) {
+<span class="fc" id="L21">        projection[code.id] = code</span>
+
+<span class="fc" id="L23">    }</span>
+
+<span class="fc" id="L25">    fun find(codeId: CodeId): Code? = projection[codeId]</span>
+
+    fun list(query: CodeQuery): List&lt;Code&gt; {
+<span class="nc bnc" id="L28" title="All 4 branches missed.">        return projection.filter { query.codeIds.isEmpty() || it.key in query.codeIds }</span>
+<span class="nc" id="L29">            .map { it.value }</span>
+<span class="nc" id="L30">            .reversed()</span>
+<span class="nc" id="L31">            .asSequence()</span>
+<span class="nc" id="L32">            .filter {</span>
+<span class="nc bnc" id="L33" title="All 2 branches missed.">                if (query.groupIds.isEmpty()) true else query.groupIds.contains(it.groupId)</span>
+<span class="nc bnc" id="L34" title="All 2 branches missed.">            }.dropWhile { it.id &gt;= query.afterId }</span>
+<span class="nc" id="L35">            .take(query.limit.value)</span>
+<span class="nc" id="L36">            .toList()</span>
+    }
+
+    fun count(query: CodeQuery): ULong {
+<span class="nc bnc" id="L40" title="All 4 branches missed.">        return projection.filter { query.codeIds.isEmpty() || it.key in query.codeIds }</span>
+<span class="nc" id="L41">            .map { it.value }</span>
+<span class="nc" id="L42">            .reversed()</span>
+<span class="nc" id="L43">            .asSequence()</span>
+<span class="nc" id="L44">            .filter {</span>
+<span class="nc bnc" id="L45" title="All 2 branches missed.">                if (query.groupIds.isEmpty()) true else query.groupIds.contains(it.groupId)</span>
+<span class="nc bnc" id="L46" title="All 2 branches missed.">            }.dropWhile { it.id &gt;= query.afterId }</span>
+<span class="nc" id="L47">            .count()</span>
+<span class="nc" id="L48">            .toULong()</span>
+    }
+
+    fun clear() {
+<span class="nc" id="L52">        projection.clear()</span>
+<span class="nc" id="L53">    }</span>
+}
+
+
+<span class="pc" id="L57">class MemoryCodeRepository : MemoryRecordRepository&lt;CodeId, CodeRecord, Code&gt;(</span>
+<span class="fc" id="L58">    createDomainObject = CreateCodeFromRecords,</span>
+    recordClass = CodeRecord::class
+), CodeRepository {
+<span class="fc" id="L61">    private val lock = ReentrantLock()</span>
+
+    override fun create(cmd: CreateCmd): Code {
+<span class="fc" id="L64">        return lock.withLock {</span>
+<span class="fc" id="L65">            val codeId = cmd.codeId</span>
+<span class="fc" id="L66">            val cmdId = cmd.id</span>
+<span class="pc bpc" id="L67" title="1 of 2 branches missed.">            if (commandAlreadyApplied(cmdId, codeId)) {</span>
+<span class="nc" id="L68">                versionOf(codeId, cmd.id)</span>
+            } else {
+<span class="fc" id="L70">                store(</span>
+<span class="fc" id="L71">                    CodeCreationRecord(</span>
+<span class="fc" id="L72">                        cmdId = cmd.id,</span>
+<span class="fc" id="L73">                        entityId = codeId,</span>
+<span class="fc" id="L74">                        groupId = cmd.groupId,</span>
+<span class="fc" id="L75">                        value = cmd.value</span>
+                    )
+                )
+<span class="fc" id="L78">                (currentVersion(codeId)).also(CurrentCodeProjection::apply)</span>
+            }
+        }
+    }
+
+    override fun update(codeId: CodeId, cmd: UpdateCmd): Code {
+<span class="fc" id="L84">        return lock.withLock {</span>
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">            if (commandAlreadyApplied(cmd.id, codeId)) {</span>
+<span class="nc" id="L86">                versionOf(codeId, cmd.id)</span>
+            } else {
+<span class="fc" id="L88">                val currentVersion = versionOf(codeId, cmd.id)</span>
+<span class="fc" id="L89">                store(</span>
+<span class="fc" id="L90">                    CodeUpdatedRecord(</span>
+<span class="fc" id="L91">                        entityId = codeId,</span>
+<span class="fc" id="L92">                        cmdId = cmd.id,</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">                        value = cmd.value ?: currentVersion.value</span>
+                    )
+                )
+<span class="fc" id="L96">                (currentVersion(codeId)).also(CurrentCodeProjection::apply)</span>
+            }
+        }
+    }
+
+    override fun close() {
+
+<span class="nc" id="L103">    }</span>
+
+<span class="fc" id="L105">    override fun find(codeId: CodeId): Code? = CurrentCodeProjection.find(codeId)</span>
+
+    override fun find(codeId: CodeId, codeVersion: CodeVersion): Code? =
+<span class="nc" id="L108">        versionOf(codeId, RecordSequence(codeVersion.value))</span>
+
+<span class="nc" id="L110">    override fun list(query: CodeQuery): List&lt;Code&gt; = CurrentCodeProjection.list(query)</span>
+
+<span class="nc" id="L112">    override fun count(query: CodeQuery): ULong = CurrentCodeProjection.count(query)</span>
+
+    override fun clear() {
+<span class="nc" id="L115">        super.clear()</span>
+<span class="nc" id="L116">        CurrentCodeProjection.clear()</span>
+<span class="nc" id="L117">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

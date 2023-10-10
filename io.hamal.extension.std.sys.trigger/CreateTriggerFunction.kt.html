@@ -1,11 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CreateTriggerFunction.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.extension.std.sys.trigger</a> &gt; <span class="el_source">CreateTriggerFunction.kt</span></div><h1>CreateTriggerFunction.kt</h1><pre class="source lang-java linenums">package io.hamal.extension.std.sys.trigger
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CreateTriggerFunction.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.extension.std.sys.trigger</a> &gt; <span class="el_source">CreateTriggerFunction.kt</span></div><h1>CreateTriggerFunction.kt</h1><pre class="source lang-java linenums">package io.hamal.extension.std.sys.trigger
 
 import io.hamal.lib.common.SnowflakeId
 import io.hamal.lib.domain._enum.TriggerType
-import io.hamal.lib.domain.req.CreateTriggerReq
 import io.hamal.lib.domain.vo.*
-import io.hamal.lib.http.HttpTemplate
-import io.hamal.lib.http.body
 import io.hamal.lib.kua.function.Function1In2Out
 import io.hamal.lib.kua.function.FunctionContext
 import io.hamal.lib.kua.function.FunctionInput1Schema
@@ -13,64 +10,55 @@ import io.hamal.lib.kua.function.FunctionOutput2Schema
 import io.hamal.lib.kua.type.ErrorType
 import io.hamal.lib.kua.type.MapType
 import io.hamal.lib.kua.type.StringType
-import io.hamal.lib.sdk.domain.ApiSubmittedReqWithId
+import io.hamal.lib.sdk.ApiSdk
+import io.hamal.lib.sdk.api.ApiCreateTriggerReq
 import kotlin.time.Duration
 
-<span class="fc" id="L19">class CreateTriggerFunction(</span>
-<span class="fc" id="L20">    private val templateSupplier: () -&gt; HttpTemplate</span>
-<span class="fc" id="L21">) : Function1In2Out&lt;MapType, ErrorType, MapType&gt;(</span>
-<span class="fc" id="L22">    FunctionInput1Schema(MapType::class),</span>
-<span class="fc" id="L23">    FunctionOutput2Schema(ErrorType::class, MapType::class)</span>
+<span class="nc" id="L17">class CreateTriggerFunction(</span>
+<span class="nc" id="L18">    private val sdk: ApiSdk</span>
+<span class="nc" id="L19">) : Function1In2Out&lt;MapType, ErrorType, MapType&gt;(</span>
+<span class="nc" id="L20">    FunctionInput1Schema(MapType::class),</span>
+<span class="nc" id="L21">    FunctionOutput2Schema(ErrorType::class, MapType::class)</span>
 ) {
-    override fun invoke(ctx: FunctionContext, arg1: MapType): Pair&lt;ErrorType?, MapType&gt; {
-<span class="fc" id="L26">        try {</span>
+    override fun invoke(ctx: FunctionContext, arg1: MapType): Pair&lt;ErrorType?, MapType?&gt; {
+<span class="nc" id="L24">        return try {</span>
+<span class="nc" id="L25">            val res = sdk.trigger.create(</span>
+<span class="nc" id="L26">                ctx[GroupId::class],</span>
+<span class="nc" id="L27">                ApiCreateTriggerReq(</span>
+<span class="nc" id="L28">                    type = TriggerType.valueOf(arg1.getString(&quot;type&quot;)),</span>
+<span class="nc" id="L29">                    funcId = FuncId(SnowflakeId(arg1.getString(&quot;func_id&quot;))),</span>
+<span class="nc" id="L30">                    name = TriggerName(arg1.getString(&quot;name&quot;)),</span>
+<span class="nc" id="L31">                    inputs = TriggerInputs(),</span>
 
-<span class="fc" id="L28">            val type = TriggerType.valueOf(arg1.getString(&quot;type&quot;))</span>
+<span class="nc bnc" id="L33" title="All 2 branches missed.">                    namespaceId = if (arg1.type(&quot;namespace_id&quot;) == StringType::class) {</span>
+<span class="nc" id="L34">                        NamespaceId(arg1.getString(&quot;namespace_id&quot;))</span>
+                    } else {
+<span class="nc" id="L36">                        null</span>
+                    },
 
-<span class="fc bfc" id="L30" title="All 2 branches covered.">            val namespaceId = if (arg1.type(&quot;namespace_id&quot;) == StringType::class) {</span>
-<span class="fc" id="L31">                NamespaceId(SnowflakeId(arg1.getString(&quot;namespace_id&quot;)))</span>
-            } else {
-<span class="fc" id="L33">                null</span>
-            }
-
-<span class="fc bfc" id="L36" title="All 2 branches covered.">            val duration = if (arg1.type(&quot;duration&quot;) == StringType::class) {</span>
-<span class="fc" id="L37">                Duration.parseIsoString(arg1.getString(&quot;duration&quot;))</span>
-            } else {
-<span class="fc" id="L39">                null</span>
-            }
-
-<span class="fc bfc" id="L42" title="All 2 branches covered.">            val topicId = if (arg1.type(&quot;topic_id&quot;) == StringType::class) {</span>
-<span class="fc" id="L43">                TopicId(SnowflakeId(arg1.getString(&quot;topic_id&quot;)))</span>
-            } else {
-<span class="fc" id="L45">                null</span>
-            }
-
-<span class="fc" id="L48">            val r = CreateTriggerReq(</span>
-<span class="fc" id="L49">                type = type,</span>
-<span class="fc" id="L50">                namespaceId = namespaceId,</span>
-<span class="fc" id="L51">                funcId = FuncId(SnowflakeId(arg1.getString(&quot;func_id&quot;))),</span>
-<span class="fc" id="L52">                name = TriggerName(arg1.getString(&quot;name&quot;)),</span>
-<span class="fc" id="L53">                inputs = TriggerInputs(),</span>
-<span class="fc" id="L54">                duration = duration,</span>
-<span class="fc" id="L55">                topicId = topicId</span>
-            )
-
-<span class="fc" id="L58">            val res = templateSupplier()</span>
-<span class="fc" id="L59">                .post(&quot;/v1/triggers&quot;)</span>
-<span class="fc" id="L60">                .body(r)</span>
-<span class="fc" id="L61">                .execute(ApiSubmittedReqWithId::class)</span>
-
-<span class="fc" id="L63">            return null to MapType(</span>
-<span class="fc" id="L64">                mutableMapOf(</span>
-<span class="fc" id="L65">                    &quot;req_id&quot; to StringType(res.reqId.value.value.toString(16)),</span>
-<span class="fc" id="L66">                    &quot;status&quot; to StringType(res.status.name),</span>
-<span class="fc" id="L67">                    &quot;id&quot; to StringType(res.id.value.toString(16))</span>
+<span class="nc bnc" id="L39" title="All 2 branches missed.">                    duration = if (arg1.type(&quot;duration&quot;) == StringType::class) {</span>
+<span class="nc" id="L40">                        Duration.parseIsoString(arg1.getString(&quot;duration&quot;))</span>
+                    } else {
+<span class="nc" id="L42">                        null</span>
+                    },
+<span class="nc bnc" id="L44" title="All 2 branches missed.">                    topicId = if (arg1.type(&quot;topic_id&quot;) == StringType::class) {</span>
+<span class="nc" id="L45">                        TopicId(SnowflakeId(arg1.getString(&quot;topic_id&quot;)))</span>
+                    } else {
+<span class="nc" id="L47">                        null</span>
+                    }
                 )
             )
 
-<span class="nc" id="L71">        } catch (t: Throwable) {</span>
-<span class="nc" id="L72">            t.printStackTrace()</span>
-<span class="nc" id="L73">            throw t</span>
+<span class="nc" id="L52">            null to MapType(</span>
+<span class="nc" id="L53">                mutableMapOf(</span>
+<span class="nc" id="L54">                    &quot;req_id&quot; to StringType(res.reqId.value.value.toString(16)),</span>
+<span class="nc" id="L55">                    &quot;status&quot; to StringType(res.status.name),</span>
+<span class="nc" id="L56">                    &quot;id&quot; to StringType(res.id.value.toString(16))</span>
+                )
+            )
+
+<span class="nc" id="L60">        } catch (t: Throwable) {</span>
+<span class="nc" id="L61">            ErrorType(t.message!!) to null</span>
         }
     }
 }

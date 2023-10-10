@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Entity.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.repository.record.account</a> &gt; <span class="el_source">Entity.kt</span></div><h1>Entity.kt</h1><pre class="source lang-java linenums">package io.hamal.repository.record.account
+
+import io.hamal.lib.common.domain.CmdId
+import io.hamal.lib.domain.vo.*
+import io.hamal.repository.api.Account
+import io.hamal.repository.record.CreateDomainObject
+import io.hamal.repository.record.RecordEntity
+import io.hamal.repository.record.RecordSequence
+
+<span class="fc" id="L10">data class AccountEntity(</span>
+<span class="fc" id="L11">    override val id: AccountId,</span>
+<span class="fc" id="L12">    override val cmdId: CmdId,</span>
+<span class="pc" id="L13">    override val sequence: RecordSequence,</span>
+
+<span class="pc" id="L15">    var type: AccountType?,</span>
+<span class="pc" id="L16">    var name: AccountName?,</span>
+<span class="pc" id="L17">    var email: AccountEmail?,</span>
+<span class="pc" id="L18">    var salt: PasswordSalt?</span>
+
+) : RecordEntity&lt;AccountId, AccountRecord, Account&gt; {
+
+    override fun apply(rec: AccountRecord): AccountEntity {
+<span class="fc" id="L23">        return when (rec) {</span>
+<span class="fc" id="L24">            is AccountCreationRecord -&gt; copy(</span>
+<span class="fc" id="L25">                id = rec.entityId,</span>
+<span class="fc" id="L26">                cmdId = rec.cmdId,</span>
+<span class="fc" id="L27">                sequence = rec.sequence(),</span>
+<span class="fc" id="L28">                type = rec.type,</span>
+<span class="fc" id="L29">                name = rec.name,</span>
+<span class="fc" id="L30">                email = rec.email,</span>
+<span class="fc" id="L31">                salt = rec.salt</span>
+            )
+        }
+    }
+
+    override fun toDomainObject(): Account {
+<span class="fc" id="L37">        return Account(</span>
+<span class="fc" id="L38">            cmdId = cmdId,</span>
+<span class="fc" id="L39">            id = id,</span>
+<span class="fc" id="L40">            type = type!!,</span>
+<span class="fc" id="L41">            name = name!!,</span>
+<span class="fc" id="L42">            email = email,</span>
+<span class="fc" id="L43">            salt = salt!!</span>
+        )
+    }
+}
+
+fun List&lt;AccountRecord&gt;.createEntity(): AccountEntity {
+<span class="pc bpc" id="L49" title="2 of 4 branches missed.">    check(isNotEmpty()) { &quot;At least one record is required&quot; }</span>
+<span class="fc" id="L50">    val firstRecord = first()</span>
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">    check(firstRecord is AccountCreationRecord)</span>
+
+<span class="fc" id="L53">    var result = AccountEntity(</span>
+<span class="fc" id="L54">        id = firstRecord.entityId,</span>
+<span class="fc" id="L55">        cmdId = firstRecord.cmdId,</span>
+<span class="fc" id="L56">        sequence = firstRecord.sequence(),</span>
+<span class="fc" id="L57">        type = firstRecord.type,</span>
+<span class="fc" id="L58">        name = firstRecord.name,</span>
+<span class="fc" id="L59">        email = firstRecord.email,</span>
+<span class="fc" id="L60">        salt = firstRecord.salt</span>
+    )
+
+<span class="fc" id="L63">    forEach { record -&gt;</span>
+<span class="fc" id="L64">        result = result.apply(record)</span>
+<span class="fc" id="L65">    }</span>
+
+<span class="fc" id="L67">    return result</span>
+}
+
+object CreateAccountFromRecords : CreateDomainObject&lt;AccountId, AccountRecord, Account&gt; {
+    override fun invoke(recs: List&lt;AccountRecord&gt;): Account {
+<span class="fc" id="L72">        return recs.createEntity().toDomainObject()</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

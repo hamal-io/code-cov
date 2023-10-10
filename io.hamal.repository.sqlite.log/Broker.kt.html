@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Broker.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.repository.sqlite.log</a> &gt; <span class="el_source">Broker.kt</span></div><h1>Broker.kt</h1><pre class="source lang-java linenums">package io.hamal.repository.sqlite.log
+
+import io.hamal.lib.common.KeyedOnce
+import io.hamal.lib.common.domain.CmdId
+import io.hamal.lib.domain.vo.GroupId
+import io.hamal.lib.domain.vo.TopicId
+import io.hamal.lib.domain.vo.TopicName
+import io.hamal.repository.api.log.*
+import io.hamal.repository.api.log.BrokerTopicsRepository.TopicQuery
+import io.hamal.repository.api.log.BrokerTopicsRepository.TopicToCreate
+import java.nio.file.Path
+
+<span class="fc" id="L13">data class SqliteBroker(</span>
+<span class="fc" id="L14">    val path: Path</span>
+)
+
+<span class="pc" id="L17">class SqliteBrokerRepository(</span>
+<span class="fc" id="L18">    private val broker: SqliteBroker</span>
+) : BrokerRepository {
+
+    private val consumersRepository: SqliteBrokerConsumersRepository
+    private val topicsRepository: SqliteBrokerTopicsRepository
+
+<span class="fc" id="L24">    init {</span>
+<span class="fc" id="L25">        topicsRepository = SqliteBrokerTopicsRepository(</span>
+<span class="fc" id="L26">            SqliteBrokerTopics(</span>
+<span class="fc" id="L27">                path = broker.path</span>
+            )
+        )
+<span class="fc" id="L30">        consumersRepository = SqliteBrokerConsumersRepository(</span>
+<span class="fc" id="L31">            SqliteBrokerConsumers(</span>
+<span class="fc" id="L32">                path = broker.path</span>
+            )
+        )
+<span class="fc" id="L35">    }</span>
+
+<span class="fc" id="L37">    private val topicRepositoryMapping = KeyedOnce.default&lt;Topic, TopicRepository&gt;()</span>
+
+
+    override fun create(cmdId: CmdId, topicToCreate: CreateTopic.TopicToCreate): Topic =
+<span class="fc" id="L41">        topicsRepository.create(</span>
+<span class="fc" id="L42">            cmdId,</span>
+<span class="fc" id="L43">            TopicToCreate(</span>
+<span class="fc" id="L44">                topicToCreate.id,</span>
+<span class="fc" id="L45">                topicToCreate.name,</span>
+<span class="fc" id="L46">                topicToCreate.groupId</span>
+            )
+<span class="fc" id="L48">        )</span>
+
+    override fun append(cmdId: CmdId, topic: Topic, bytes: ByteArray) {
+<span class="fc" id="L51">        resolveRepository(topic).append(cmdId, bytes)</span>
+<span class="fc" id="L52">    }</span>
+
+    override fun close() {
+<span class="fc" id="L55">        topicsRepository.close()</span>
+<span class="fc" id="L56">        consumersRepository.close()</span>
+<span class="fc" id="L57">        topicRepositoryMapping.keys().forEach { topic -&gt;</span>
+<span class="fc" id="L58">            resolveRepository(topic).close()</span>
+<span class="fc" id="L59">        }</span>
+<span class="fc" id="L60">    }</span>
+
+    override fun consume(consumerId: ConsumerId, topic: Topic, limit: Int): List&lt;Chunk&gt; {
+<span class="fc" id="L63">        val nextChunkId = consumersRepository.nextChunkId(consumerId, topic.id)</span>
+<span class="fc" id="L64">        return resolveRepository(topic).read(nextChunkId, limit)</span>
+    }
+
+    override fun commit(consumerId: ConsumerId, topic: Topic, chunkId: ChunkId) {
+<span class="fc" id="L68">        consumersRepository.commit(consumerId, topic.id, chunkId)</span>
+<span class="fc" id="L69">    }</span>
+
+<span class="nc" id="L71">    override fun findTopic(topicId: TopicId) = topicsRepository.find(topicId)</span>
+<span class="fc" id="L72">    override fun findTopic(groupId: GroupId, topicName: TopicName) = topicsRepository.find(groupId, topicName)</span>
+    override fun listTopics(query: TopicQuery): List&lt;Topic&gt; {
+<span class="nc" id="L74">        return topicsRepository.list(query)</span>
+    }
+
+    override fun clear() {
+<span class="nc" id="L78">        topicsRepository.clear()</span>
+<span class="nc" id="L79">        consumersRepository.clear()</span>
+<span class="nc" id="L80">        topicRepositoryMapping.keys().forEach { topic -&gt;</span>
+<span class="nc" id="L81">            resolveRepository(topic).clear()</span>
+<span class="nc" id="L82">        }</span>
+<span class="nc" id="L83">    }</span>
+
+
+    override fun read(firstId: ChunkId, topic: Topic, limit: Int): List&lt;Chunk&gt; {
+<span class="nc" id="L87">        return resolveRepository(topic).read(firstId, limit)</span>
+    }
+
+<span class="fc" id="L90">    private fun resolveRepository(topic: Topic) = topicRepositoryMapping(topic) {</span>
+<span class="fc" id="L91">        SqliteTopicRepository(topic, path = broker.path)</span>
+<span class="fc" id="L92">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

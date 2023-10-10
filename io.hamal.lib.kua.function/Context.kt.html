@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Context.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.kua.function</a> &gt; <span class="el_source">Context.kt</span></div><h1>Context.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.kua.function
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Context.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.kua.function</a> &gt; <span class="el_source">Context.kt</span></div><h1>Context.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.kua.function
 
 import io.hamal.lib.kua.SandboxContext
 import io.hamal.lib.kua.StackTop
@@ -30,7 +30,7 @@ import kotlin.reflect.KClass
 <span class="fc" id="L30">    override fun pushNil() = state.pushNil()</span>
 <span class="fc" id="L31">    override fun pushAny(value: AnyType) = state.pushAny(value)</span>
 <span class="fc" id="L32">    override fun getAny(idx: Int) = state.getAny(idx)</span>
-<span class="nc" id="L33">    override fun getArrayType(idx: Int) = state.getArrayType(idx)</span>
+<span class="fc" id="L33">    override fun getArrayType(idx: Int) = state.getArrayType(idx)</span>
 
 <span class="nc" id="L35">    override fun pushBoolean(value: Boolean) = state.pushBoolean(value)</span>
 <span class="nc" id="L36">    override fun getBoolean(idx: Int) = state.getBoolean(idx)</span>
@@ -46,7 +46,7 @@ import kotlin.reflect.KClass
 <span class="fc" id="L46">    override fun getTableMapProxy(idx: Int) = state.getTableMapProxy(idx)</span>
 <span class="fc" id="L47">    override fun getTableArrayProxy(idx: Int) = state.getTableArrayProxy(idx)</span>
 
-<span class="fc" id="L49">    override fun getMapType(idx: Int): MapType = state.getMapType(idx)</span>
+<span class="nc" id="L49">    override fun getMapType(idx: Int): MapType = state.getMapType(idx)</span>
 
 
 <span class="nc" id="L52">    override fun setGlobal(name: String, value: FunctionType&lt;*, *, *, *&gt;) = state.setGlobal(name, value)</span>
