@@ -6,19 +6,19 @@ import io.hamal.lib.domain.EventToSubmit
 import io.hamal.lib.domain.State
 import io.hamal.lib.domain.vo.*
 import io.hamal.lib.http.HttpTemplate
-import io.hamal.lib.kua.type.ErrorType
 import io.hamal.lib.sdk.fold
 import io.hamal.request.CompleteExecReq
 import io.hamal.request.FailExecReq
 import kotlinx.serialization.Serializable
 
-<span class="pc bpc" id="L15" title="2 of 7 branches missed.">@Serializable</span>
-<span class="fc" id="L16">data class ApiFailExecReq(</span>
-<span class="fc" id="L17">    override val cause: ErrorType</span>
-<span class="fc" id="L18">) : FailExecReq</span>
+<span class="pc bpc" id="L14" title="2 of 7 branches missed.">@Serializable</span>
+<span class="fc" id="L15">data class ApiFailExecReq(</span>
+<span class="fc" id="L16">    override val result: ExecResult</span>
+<span class="fc" id="L17">) : FailExecReq</span>
 
-<span class="pc bpc" id="L20" title="2 of 8 branches missed.">@Serializable</span>
-<span class="fc" id="L21">data class ApiCompleteExecReq(</span>
+<span class="pc bpc" id="L19" title="2 of 9 branches missed.">@Serializable</span>
+<span class="fc" id="L20">data class ApiCompleteExecReq(</span>
+<span class="fc" id="L21">    override val result: ExecResult,</span>
 <span class="fc" id="L22">    override val state: State,</span>
 <span class="fc" id="L23">    override val events: List&lt;EventToSubmit&gt;</span>
 <span class="fc" id="L24">) : CompleteExecReq</span>

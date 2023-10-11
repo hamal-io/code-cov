@@ -3,7 +3,7 @@
 import io.hamal.lib.domain.EventToSubmit
 import io.hamal.lib.domain.State
 import io.hamal.lib.domain.vo.ExecId
-import io.hamal.lib.kua.type.ErrorType
+import io.hamal.lib.domain.vo.ExecResult
 import io.hamal.lib.sdk.BridgeSdkImpl
 
 <span class="nc" id="L9">class HttpConnector(</span>
@@ -24,12 +24,12 @@ import io.hamal.lib.sdk.BridgeSdkImpl
         }
     }
 
-    override fun complete(execId: ExecId, state: State, events: List&lt;EventToSubmit&gt;) {
-<span class="nc" id="L28">        sdk.exec.complete(execId, state, events)</span>
+    override fun complete(execId: ExecId, result: ExecResult, state: State, events: List&lt;EventToSubmit&gt;) {
+<span class="nc" id="L28">        sdk.exec.complete(execId, result, state, events)</span>
 <span class="nc" id="L29">    }</span>
 
-    override fun fail(execId: ExecId, error: ErrorType) {
-<span class="nc" id="L32">        sdk.exec.fail(execId, error)</span>
+    override fun fail(execId: ExecId, result: ExecResult) {
+<span class="nc" id="L32">        sdk.exec.fail(execId, result)</span>
 <span class="nc" id="L33">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

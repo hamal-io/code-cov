@@ -44,4 +44,9 @@ import kotlinx.serialization.Serializable
 <span class="pc" id="L44">class ExecToken(override val value: String) : StringValueObject() {</span>
 <span class="nc" id="L45">    internal object Serializer : StringValueObjectSerializer&lt;ExecToken&gt;(::ExecToken)</span>
 }
+
+<span class="nc" id="L48">@Serializable(with = ExecResult.Serializer::class)</span>
+<span class="fc" id="L49">class ExecResult(override val value: MapType = MapType()) : Inputs() {</span>
+<span class="fc" id="L50">    internal object Serializer : InputsSerializer&lt;ExecResult&gt;(::ExecResult)</span>
+<span class="fc" id="L51">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

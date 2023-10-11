@@ -62,15 +62,15 @@ interface BatchConsumer&lt;VALUE : Any&gt; {
     override fun consumeBatch(batchSize: Int, block: (List&lt;Value&gt;) -&gt; Unit): Int {
 <span class="fc" id="L63">        val chunksToConsume = repository.consume(consumerId, topic, batchSize)</span>
 
-<span class="pc bpc" id="L65" title="1 of 2 branches missed.">        if (chunksToConsume.isEmpty()) {</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        if (chunksToConsume.isEmpty()) {</span>
 <span class="fc" id="L66">            return 0</span>
         }
 
-<span class="nc" id="L69">        val batch = chunksToConsume.map { chunk -&gt; ProtoBuf.decodeFromByteArray(valueClass.serializer(), chunk.bytes) }</span>
+<span class="fc" id="L69">        val batch = chunksToConsume.map { chunk -&gt; ProtoBuf.decodeFromByteArray(valueClass.serializer(), chunk.bytes) }</span>
 
-<span class="nc" id="L71">        block(batch)</span>
-<span class="nc bnc" id="L72" title="All 2 branches missed.">        chunksToConsume.maxByOrNull { chunk -&gt; chunk.id }?.let { repository.commit(consumerId, topic, it.id) }</span>
-<span class="nc" id="L73">        return batch.size</span>
+<span class="fc" id="L71">        block(batch)</span>
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">        chunksToConsume.maxByOrNull { chunk -&gt; chunk.id }?.let { repository.commit(consumerId, topic, it.id) }</span>
+<span class="fc" id="L73">        return batch.size</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

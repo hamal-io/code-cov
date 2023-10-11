@@ -10,10 +10,10 @@ import io.hamal.lib.kua.table.TableProxyMap
 ) {
 
 <span class="pc" id="L12">    val state = sb.state</span>
-<span class="fc" id="L13">    val extensions = mutableMapOf&lt;String, ScriptExtension&gt;()</span>
+<span class="fc" id="L13">    val extensions = mutableMapOf&lt;String, BundleExtension&gt;()</span>
 <span class="pc" id="L14">    val extensionFactories = mutableMapOf&lt;String, TableProxyMap&gt;()</span>
 
-    fun register(extension: ScriptExtension) {
+    fun register(extension: BundleExtension) {
 <span class="fc" id="L17">        extensions[extension.name] = extension</span>
 
         // FIXME load the factory

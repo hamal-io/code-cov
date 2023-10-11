@@ -72,48 +72,50 @@ internal object CurrentCodeProjection {
 <span class="fc" id="L72">                        cmdId = cmd.id,</span>
 <span class="fc" id="L73">                        entityId = codeId,</span>
 <span class="fc" id="L74">                        groupId = cmd.groupId,</span>
-<span class="fc" id="L75">                        value = cmd.value</span>
+<span class="fc" id="L75">                        value = cmd.value,</span>
+<span class="fc" id="L76">                        type = cmd.type</span>
                     )
                 )
-<span class="fc" id="L78">                (currentVersion(codeId)).also(CurrentCodeProjection::apply)</span>
+<span class="fc" id="L79">                (currentVersion(codeId))</span>
+<span class="fc" id="L80">                    .also(CurrentCodeProjection::apply)</span>
             }
         }
     }
 
     override fun update(codeId: CodeId, cmd: UpdateCmd): Code {
-<span class="fc" id="L84">        return lock.withLock {</span>
-<span class="pc bpc" id="L85" title="1 of 2 branches missed.">            if (commandAlreadyApplied(cmd.id, codeId)) {</span>
-<span class="nc" id="L86">                versionOf(codeId, cmd.id)</span>
+<span class="fc" id="L86">        return lock.withLock {</span>
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">            if (commandAlreadyApplied(cmd.id, codeId)) {</span>
+<span class="nc" id="L88">                versionOf(codeId, cmd.id)</span>
             } else {
-<span class="fc" id="L88">                val currentVersion = versionOf(codeId, cmd.id)</span>
-<span class="fc" id="L89">                store(</span>
-<span class="fc" id="L90">                    CodeUpdatedRecord(</span>
-<span class="fc" id="L91">                        entityId = codeId,</span>
-<span class="fc" id="L92">                        cmdId = cmd.id,</span>
-<span class="fc bfc" id="L93" title="All 2 branches covered.">                        value = cmd.value ?: currentVersion.value</span>
+<span class="fc" id="L90">                val currentVersion = versionOf(codeId, cmd.id)</span>
+<span class="fc" id="L91">                store(</span>
+<span class="fc" id="L92">                    CodeUpdatedRecord(</span>
+<span class="fc" id="L93">                        entityId = codeId,</span>
+<span class="fc" id="L94">                        cmdId = cmd.id,</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">                        value = cmd.value ?: currentVersion.value</span>
                     )
                 )
-<span class="fc" id="L96">                (currentVersion(codeId)).also(CurrentCodeProjection::apply)</span>
+<span class="fc" id="L98">                (currentVersion(codeId)).also(CurrentCodeProjection::apply)</span>
             }
         }
     }
 
     override fun close() {
 
-<span class="nc" id="L103">    }</span>
+<span class="nc" id="L105">    }</span>
 
-<span class="fc" id="L105">    override fun find(codeId: CodeId): Code? = CurrentCodeProjection.find(codeId)</span>
+<span class="fc" id="L107">    override fun find(codeId: CodeId): Code? = CurrentCodeProjection.find(codeId)</span>
 
     override fun find(codeId: CodeId, codeVersion: CodeVersion): Code? =
-<span class="nc" id="L108">        versionOf(codeId, RecordSequence(codeVersion.value))</span>
+<span class="nc" id="L110">        versionOf(codeId, RecordSequence(codeVersion.value))</span>
 
-<span class="nc" id="L110">    override fun list(query: CodeQuery): List&lt;Code&gt; = CurrentCodeProjection.list(query)</span>
+<span class="nc" id="L112">    override fun list(query: CodeQuery): List&lt;Code&gt; = CurrentCodeProjection.list(query)</span>
 
-<span class="nc" id="L112">    override fun count(query: CodeQuery): ULong = CurrentCodeProjection.count(query)</span>
+<span class="nc" id="L114">    override fun count(query: CodeQuery): ULong = CurrentCodeProjection.count(query)</span>
 
     override fun clear() {
-<span class="nc" id="L115">        super.clear()</span>
-<span class="nc" id="L116">        CurrentCodeProjection.clear()</span>
-<span class="nc" id="L117">    }</span>
+<span class="nc" id="L117">        super.clear()</span>
+<span class="nc" id="L118">        CurrentCodeProjection.clear()</span>
+<span class="nc" id="L119">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -73,22 +73,24 @@ import java.nio.file.Path
     override fun listTopics(query: TopicQuery): List&lt;Topic&gt; {
 <span class="nc" id="L74">        return topicsRepository.list(query)</span>
     }
+    
+<span class="nc" id="L77">    override fun resolveTopic(groupId: GroupId, name: TopicName) = topicsRepository.find(groupId, name)</span>
 
     override fun clear() {
-<span class="nc" id="L78">        topicsRepository.clear()</span>
-<span class="nc" id="L79">        consumersRepository.clear()</span>
-<span class="nc" id="L80">        topicRepositoryMapping.keys().forEach { topic -&gt;</span>
-<span class="nc" id="L81">            resolveRepository(topic).clear()</span>
-<span class="nc" id="L82">        }</span>
-<span class="nc" id="L83">    }</span>
+<span class="nc" id="L80">        topicsRepository.clear()</span>
+<span class="nc" id="L81">        consumersRepository.clear()</span>
+<span class="nc" id="L82">        topicRepositoryMapping.keys().forEach { topic -&gt;</span>
+<span class="nc" id="L83">            resolveRepository(topic).clear()</span>
+<span class="nc" id="L84">        }</span>
+<span class="nc" id="L85">    }</span>
 
 
     override fun read(firstId: ChunkId, topic: Topic, limit: Int): List&lt;Chunk&gt; {
-<span class="nc" id="L87">        return resolveRepository(topic).read(firstId, limit)</span>
+<span class="nc" id="L89">        return resolveRepository(topic).read(firstId, limit)</span>
     }
 
-<span class="fc" id="L90">    private fun resolveRepository(topic: Topic) = topicRepositoryMapping(topic) {</span>
-<span class="fc" id="L91">        SqliteTopicRepository(topic, path = broker.path)</span>
-<span class="fc" id="L92">    }</span>
+<span class="fc" id="L92">    private fun resolveRepository(topic: Topic) = topicRepositoryMapping(topic) {</span>
+<span class="fc" id="L93">        SqliteTopicRepository(topic, path = broker.path)</span>
+<span class="fc" id="L94">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

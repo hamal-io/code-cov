@@ -3,7 +3,7 @@
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-<span class="fc bfc" id="L6" title="All 2 branches covered.">fun booleanOf(value: Boolean) = if (value) TrueValue else FalseValue</span>
+<span class="fc bfc" id="L6" title="All 2 branches covered.">fun booleanOf(value: Boolean) = if (value) True else False</span>
 
 <span class="pc" id="L8">@Serializable</span>
 @SerialName(&quot;BooleanType&quot;)
@@ -13,13 +13,13 @@ import kotlinx.serialization.Serializable
 
 <span class="pc" id="L14">@Serializable</span>
 @SerialName(&quot;TrueType&quot;)
-<span class="fc" id="L16">object TrueValue : BooleanType(true) {</span>
+<span class="fc" id="L16">object True : BooleanType(true) {</span>
 <span class="nc" id="L17">    override fun toString() = &quot;true&quot;</span>
 }
 
 <span class="pc" id="L20">@Serializable</span>
 @SerialName(&quot;FalseType&quot;)
-<span class="fc" id="L22">object FalseValue : BooleanType(false) {</span>
+<span class="fc" id="L22">object False : BooleanType(false) {</span>
 <span class="nc" id="L23">    override fun toString() = &quot;false&quot;</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

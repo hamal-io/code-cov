@@ -41,33 +41,38 @@ interface FindTopic {
     fun findTopic(groupId: GroupId, topicName: TopicName): Topic?
 }
 
-<span class="fc" id="L44">interface BrokerRepository :</span>
+interface ResolveTopic {
+    fun resolveTopic(groupId: GroupId, name: TopicName): Topic?
+}
+
+<span class="fc" id="L48">interface BrokerRepository :</span>
     CmdRepository,
     CreateTopic,
     AppendToTopic,
     ConsumeFromTopic,
     FindTopic,
-    ReadFromTopic {
+    ReadFromTopic,
+    ResolveTopic {
 
     fun listTopics(query: TopicQuery): List&lt;Topic&gt;
-<span class="pc" id="L53">    fun list(topicIds: List&lt;TopicId&gt;) = topicIds.map(::getTopic) //FIXME as one request  ?!</span>
+<span class="pc" id="L58">    fun list(topicIds: List&lt;TopicId&gt;) = topicIds.map(::getTopic) //FIXME as one request  ?!</span>
 
     @OptIn(ExperimentalSerializationApi::class)
     fun listEntries(topic: Topic, query: TopicEntryQuery): List&lt;TopicEntry&gt; {
-<span class="fc" id="L57">        val firstId = ChunkId(SnowflakeId(query.afterId.value.value + 1))</span>
-<span class="fc" id="L58">        return read(firstId, topic, query.limit.value)</span>
-<span class="fc" id="L59">            .map { chunk -&gt;</span>
-<span class="fc" id="L60">                val payload = ProtoBuf.decodeFromByteArray(TopicEntryPayload.serializer(), chunk.bytes)</span>
-<span class="fc" id="L61">                TopicEntry(</span>
-<span class="fc" id="L62">                    id = TopicEntryId(chunk.id.value),</span>
-<span class="fc" id="L63">                    payload = payload</span>
+<span class="fc" id="L62">        val firstId = ChunkId(SnowflakeId(query.afterId.value.value + 1))</span>
+<span class="fc" id="L63">        return read(firstId, topic, query.limit.value)</span>
+<span class="fc" id="L64">            .map { chunk -&gt;</span>
+<span class="fc" id="L65">                val payload = ProtoBuf.decodeFromByteArray(TopicEntryPayload.serializer(), chunk.bytes)</span>
+<span class="fc" id="L66">                TopicEntry(</span>
+<span class="fc" id="L67">                    id = TopicEntryId(chunk.id.value),</span>
+<span class="fc" id="L68">                    payload = payload</span>
                 )
             }
     }
 
-<span class="pc" id="L68">    data class TopicEntryQuery(</span>
-<span class="pc" id="L69">        var afterId: TopicEntryId = TopicEntryId(0),</span>
-<span class="pc" id="L70">        var limit: Limit = Limit(1)</span>
-<span class="nc" id="L71">    )</span>
-<span class="fc" id="L72">}</span>
+<span class="pc" id="L73">    data class TopicEntryQuery(</span>
+<span class="pc" id="L74">        var afterId: TopicEntryId = TopicEntryId(0),</span>
+<span class="pc" id="L75">        var limit: Limit = Limit(1)</span>
+<span class="nc" id="L76">    )</span>
+<span class="fc" id="L77">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

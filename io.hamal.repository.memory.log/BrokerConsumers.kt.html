@@ -19,11 +19,11 @@ import kotlin.concurrent.withLock
     }
 
     override fun commit(consumerId: ConsumerId, topicId: TopicId, chunkId: ChunkId) {
-<span class="nc" id="L22">        return lock.withLock {</span>
-<span class="nc" id="L23">            store.putIfAbsent(Pair(consumerId, topicId), ChunkId(0))</span>
-<span class="nc" id="L24">            store[Pair(consumerId, topicId)] = ChunkId(SnowflakeId(chunkId.value.value + 1))</span>
-<span class="nc" id="L25">            store[Pair(consumerId, topicId)]</span>
-<span class="nc" id="L26">        }</span>
+<span class="fc" id="L22">        return lock.withLock {</span>
+<span class="fc" id="L23">            store.putIfAbsent(Pair(consumerId, topicId), ChunkId(0))</span>
+<span class="fc" id="L24">            store[Pair(consumerId, topicId)] = ChunkId(SnowflakeId(chunkId.value.value + 1))</span>
+<span class="fc" id="L25">            store[Pair(consumerId, topicId)]</span>
+<span class="fc" id="L26">        }</span>
     }
 
 <span class="fc" id="L29">    override fun close() {}</span>

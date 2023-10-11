@@ -21,9 +21,9 @@ interface NativeExtensionFactory : ExtensionFactory&lt;NativeExtension&gt;
 <span class="fc" id="L21">) : Extension</span>
 
 
-interface ScriptExtensionFactory : ExtensionFactory&lt;ScriptExtension&gt;
+interface BundleExtensionFactory : ExtensionFactory&lt;BundleExtension&gt;
 
-<span class="fc" id="L26">class ScriptExtension(</span>
+<span class="fc" id="L26">class BundleExtension(</span>
 <span class="fc" id="L27">    override val name: String,</span>
 <span class="fc" id="L28">    val init: String = loadInitFromResources(name),</span>
 <span class="fc" id="L29">    val internals: Map&lt;String, Type&gt;,</span>

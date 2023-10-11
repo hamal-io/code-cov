@@ -36,8 +36,8 @@ import io.hamal.repository.api.log.BrokerTopicsRepository.TopicToCreate
     }
 
     override fun commit(consumerId: ConsumerId, topic: Topic, chunkId: ChunkId) {
-<span class="nc" id="L39">        consumersRepository.commit(consumerId, topic.id, chunkId)</span>
-<span class="nc" id="L40">    }</span>
+<span class="fc" id="L39">        consumersRepository.commit(consumerId, topic.id, chunkId)</span>
+<span class="fc" id="L40">    }</span>
 
     override fun clear() {
 <span class="fc" id="L43">        topicsRepository.clear()</span>
@@ -64,12 +64,14 @@ import io.hamal.repository.api.log.BrokerTopicsRepository.TopicToCreate
 <span class="fc" id="L64">        return topicsRepository.list(query)</span>
     }
 
+<span class="fc" id="L67">    override fun resolveTopic(groupId: GroupId, name: TopicName) = topicsRepository.find(groupId, name)</span>
+
     override fun read(firstId: ChunkId, topic: Topic, limit: Int): List&lt;Chunk&gt; {
-<span class="fc" id="L68">        return resolveRepository(topic).read(firstId, limit)</span>
+<span class="fc" id="L70">        return resolveRepository(topic).read(firstId, limit)</span>
     }
 
-<span class="fc" id="L71">    private fun resolveRepository(topic: Topic) = repositoryMapping(topic) {</span>
-<span class="fc" id="L72">        MemoryTopicRepository(topic)</span>
-<span class="fc" id="L73">    }</span>
+<span class="fc" id="L73">    private fun resolveRepository(topic: Topic) = repositoryMapping(topic) {</span>
+<span class="fc" id="L74">        MemoryTopicRepository(topic)</span>
+<span class="fc" id="L75">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

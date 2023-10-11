@@ -36,7 +36,7 @@ import kotlin.reflect.KClass
 <span class="nc" id="L36">        return entries[idx]!!</span>
     }
 
-<span class="nc" id="L39">    fun getBoolean(idx: Int) = getBooleanValue(idx) == TrueValue</span>
+<span class="nc" id="L39">    fun getBoolean(idx: Int) = getBooleanValue(idx) == True</span>
     fun getBooleanValue(idx: Int): BooleanType {
 <span class="nc" id="L41">        checkExpectedType(idx, BooleanType::class)</span>
 <span class="nc" id="L42">        return entries[idx]!! as BooleanType</span>

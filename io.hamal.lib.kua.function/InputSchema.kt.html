@@ -46,7 +46,7 @@ fun &lt;ARG : Type&gt; KClass&lt;ARG&gt;.extract(ctx: FunctionContext, idx: Int)
 <span class="fc" id="L46">    return when (this) {</span>
 <span class="fc bfc" id="L47" title="All 2 branches covered.">        AnyType::class -&gt; ctx.getAny(idx) as ARG</span>
 <span class="fc bfc" id="L48" title="All 2 branches covered.">        ArrayType::class -&gt; ctx.getArrayType(idx) as ARG</span>
-<span class="pc bpc" id="L49" title="1 of 2 branches missed.">        MapType::class -&gt; ctx.getMapType(idx) as ARG</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        MapType::class -&gt; ctx.getMapType(idx) as ARG</span>
 <span class="fc bfc" id="L50" title="All 2 branches covered.">        NumberType::class -&gt; ctx.getNumberType(idx) as ARG</span>
 <span class="fc bfc" id="L51" title="All 2 branches covered.">        StringType::class -&gt; ctx.getStringType(idx) as ARG</span>
 <span class="pc bpc" id="L52" title="1 of 2 branches missed.">        Type::class -&gt; TODO() //FIXME loads the entire table from lua -- maybe some form of readonly table value and table value is interface?!</span>

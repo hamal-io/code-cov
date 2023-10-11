@@ -26,20 +26,21 @@ import org.springframework.stereotype.Component
 <span class="fc" id="L26">            status = ReqStatus.Submitted,</span>
 <span class="fc" id="L27">            id = execId,</span>
 <span class="fc" id="L28">            groupId = exec.groupId,</span>
-<span class="fc" id="L29">            state = req.state,</span>
-<span class="fc" id="L30">            events = req.events</span>
-<span class="fc" id="L31">        ).also(reqCmdRepository::queue)</span>
+<span class="fc" id="L29">            result = req.result,</span>
+<span class="fc" id="L30">            state = req.state,</span>
+<span class="fc" id="L31">            events = req.events</span>
+<span class="fc" id="L32">        ).also(reqCmdRepository::queue)</span>
     }
 
     operator fun invoke(execId: ExecId, req: ApiFailExecReq): SubmittedFailExecReq {
-<span class="fc" id="L35">        val exec = execQueryRepository.get(execId)</span>
-<span class="fc" id="L36">        return SubmittedFailExecReq(</span>
-<span class="fc" id="L37">            reqId = generateDomainId(::ReqId),</span>
-<span class="fc" id="L38">            status = ReqStatus.Submitted,</span>
-<span class="fc" id="L39">            id = execId,</span>
-<span class="fc" id="L40">            groupId = exec.groupId,</span>
-<span class="fc" id="L41">            cause = req.cause</span>
-<span class="fc" id="L42">        ).also(reqCmdRepository::queue)</span>
+<span class="fc" id="L36">        val exec = execQueryRepository.get(execId)</span>
+<span class="fc" id="L37">        return SubmittedFailExecReq(</span>
+<span class="fc" id="L38">            reqId = generateDomainId(::ReqId),</span>
+<span class="fc" id="L39">            status = ReqStatus.Submitted,</span>
+<span class="fc" id="L40">            id = execId,</span>
+<span class="fc" id="L41">            groupId = exec.groupId,</span>
+<span class="fc" id="L42">            result = req.result</span>
+<span class="fc" id="L43">        ).also(reqCmdRepository::queue)</span>
     }
 
 }

@@ -17,8 +17,8 @@ import io.hamal.extension.std.sys.trigger.GetTriggerFunction
 import io.hamal.extension.std.sys.trigger.ListTriggerFunction
 import io.hamal.lib.http.HttpTemplate
 import io.hamal.lib.kua.Sandbox
-import io.hamal.lib.kua.extension.ScriptExtension
-import io.hamal.lib.kua.extension.ScriptExtensionFactory
+import io.hamal.lib.kua.extension.BundleExtension
+import io.hamal.lib.kua.extension.BundleExtensionFactory
 import io.hamal.lib.sdk.ApiSdk
 import io.hamal.lib.sdk.ApiSdkImpl
 
@@ -26,9 +26,9 @@ import io.hamal.lib.sdk.ApiSdkImpl
 <span class="nc" id="L26">class SysExtensionFactory(</span>
 <span class="nc" id="L27">    private val httpTemplate: HttpTemplate,</span>
 <span class="nc" id="L28">    private val sdk: ApiSdk = ApiSdkImpl(httpTemplate)</span>
-) : ScriptExtensionFactory {
-    override fun create(sandbox: Sandbox): ScriptExtension {
-<span class="nc" id="L31">        return ScriptExtension(</span>
+) : BundleExtensionFactory {
+    override fun create(sandbox: Sandbox): BundleExtension {
+<span class="nc" id="L31">        return BundleExtension(</span>
 <span class="nc" id="L32">            name = &quot;sys&quot;,</span>
 <span class="nc" id="L33">            internals = mapOf(</span>
 <span class="nc" id="L34">                &quot;await&quot; to AwaitFunction(httpTemplate),</span>

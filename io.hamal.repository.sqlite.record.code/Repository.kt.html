@@ -66,51 +66,52 @@ internal object CreateCode : CreateDomainObject&lt;CodeId, CodeRecord, Code&gt; 
 <span class="nc" id="L66">                        cmdId = cmdId,</span>
 <span class="nc" id="L67">                        entityId = codeId,</span>
 <span class="nc" id="L68">                        groupId = cmd.groupId,</span>
-<span class="nc" id="L69">                        value = cmd.value</span>
+<span class="nc" id="L69">                        value = cmd.value,</span>
+<span class="nc" id="L70">                        type = cmd.type</span>
                     )
                 )
 
-<span class="nc" id="L73">                currentVersion(codeId)</span>
-<span class="nc" id="L74">                    .also { ProjectionCurrent.upsert(this, it) }</span>
+<span class="nc" id="L74">                currentVersion(codeId)</span>
+<span class="nc" id="L75">                    .also { ProjectionCurrent.upsert(this, it) }</span>
             }
         }
     }
 
     override fun update(codeId: CodeId, cmd: UpdateCmd): Code {
-<span class="nc" id="L80">        val cmdId = cmd.id</span>
-<span class="nc" id="L81">        return tx {</span>
-<span class="nc bnc" id="L82" title="All 2 branches missed.">            if (commandAlreadyApplied(cmdId, codeId)) {</span>
-<span class="nc" id="L83">                versionOf(codeId, cmdId)</span>
+<span class="nc" id="L81">        val cmdId = cmd.id</span>
+<span class="nc" id="L82">        return tx {</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">            if (commandAlreadyApplied(cmdId, codeId)) {</span>
+<span class="nc" id="L84">                versionOf(codeId, cmdId)</span>
             } else {
-<span class="nc" id="L85">                val currentVersion = versionOf(codeId, cmdId)</span>
-<span class="nc" id="L86">                store(</span>
-<span class="nc" id="L87">                    CodeUpdatedRecord(</span>
-<span class="nc" id="L88">                        cmdId = cmdId,</span>
-<span class="nc" id="L89">                        entityId = codeId,</span>
-<span class="nc bnc" id="L90" title="All 2 branches missed.">                        value = cmd.value ?: currentVersion.value</span>
+<span class="nc" id="L86">                val currentVersion = versionOf(codeId, cmdId)</span>
+<span class="nc" id="L87">                store(</span>
+<span class="nc" id="L88">                    CodeUpdatedRecord(</span>
+<span class="nc" id="L89">                        cmdId = cmdId,</span>
+<span class="nc" id="L90">                        entityId = codeId,</span>
+<span class="nc bnc" id="L91" title="All 2 branches missed.">                        value = cmd.value ?: currentVersion.value</span>
                     )
                 )
-<span class="nc" id="L93">                currentVersion(codeId)</span>
-<span class="nc" id="L94">                    .also { ProjectionCurrent.upsert(this, it) }</span>
+<span class="nc" id="L94">                currentVersion(codeId)</span>
+<span class="nc" id="L95">                    .also { ProjectionCurrent.upsert(this, it) }</span>
 
             }
         }
     }
 
     override fun find(codeId: CodeId): Code? {
-<span class="nc" id="L101">        return ProjectionCurrent.find(connection, codeId)</span>
+<span class="nc" id="L102">        return ProjectionCurrent.find(connection, codeId)</span>
     }
 
     override fun find(codeId: CodeId, codeVersion: CodeVersion): Code? {
-<span class="nc" id="L105">        return tx { versionOf(codeId, RecordSequence(codeVersion.value)) }</span>
+<span class="nc" id="L106">        return tx { versionOf(codeId, RecordSequence(codeVersion.value)) }</span>
     }
 
     override fun list(query: CodeQuery): List&lt;Code&gt; {
-<span class="nc" id="L109">        return ProjectionCurrent.list(connection, query)</span>
+<span class="nc" id="L110">        return ProjectionCurrent.list(connection, query)</span>
     }
 
     override fun count(query: CodeQuery): ULong {
-<span class="nc" id="L113">        return ProjectionCurrent.count(connection, query)</span>
+<span class="nc" id="L114">        return ProjectionCurrent.count(connection, query)</span>
     }
 }
 

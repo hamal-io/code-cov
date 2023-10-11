@@ -4,68 +4,66 @@ import io.hamal.lib.common.SnowflakeId
 import io.hamal.lib.common.domain.CmdId
 import io.hamal.lib.common.domain.DomainObject
 import io.hamal.lib.common.domain.Limit
-import io.hamal.lib.domain.vo.CodeId
-import io.hamal.lib.domain.vo.CodeValue
-import io.hamal.lib.domain.vo.CodeVersion
-import io.hamal.lib.domain.vo.GroupId
+import io.hamal.lib.domain.vo.*
 import kotlinx.serialization.Serializable
 
+<span class="pc bnc" id="L10" title="All 12 branches missed.">@Serializable</span>
+<span class="fc" id="L11">data class Code(</span>
+<span class="fc" id="L12">    override val id: CodeId,</span>
+<span class="pc" id="L13">    val groupId: GroupId,</span>
+<span class="pc" id="L14">    val cmdId: CmdId,</span>
+<span class="fc" id="L15">    val version: CodeVersion,</span>
+<span class="fc" id="L16">    val value: CodeValue,</span>
+<span class="pc" id="L17">    var type: CodeType</span>
+<span class="nc" id="L18">) : DomainObject&lt;CodeId&gt;</span>
 
-<span class="pc bnc" id="L14" title="All 11 branches missed.">@Serializable</span>
-<span class="fc" id="L15">data class Code(</span>
-<span class="fc" id="L16">    override val id: CodeId,</span>
-<span class="pc" id="L17">    val groupId: GroupId,</span>
-<span class="pc" id="L18">    val cmdId: CmdId,</span>
-<span class="fc" id="L19">    val version: CodeVersion,</span>
-<span class="fc" id="L20">    val value: CodeValue</span>
-<span class="nc" id="L21">) : DomainObject&lt;CodeId&gt;</span>
 
-
-<span class="pc" id="L24">interface CodeRepository : CodeCmdRepository, CodeQueryRepository</span>
+<span class="pc" id="L21">interface CodeRepository : CodeCmdRepository, CodeQueryRepository</span>
 
 interface CodeCmdRepository : CmdRepository {
     fun create(cmd: CreateCmd): Code
     fun update(codeId: CodeId, cmd: UpdateCmd): Code
 
-<span class="fc" id="L30">    data class CreateCmd(</span>
-<span class="fc" id="L31">        val id: CmdId,</span>
-<span class="fc" id="L32">        val codeId: CodeId,</span>
-<span class="fc" id="L33">        val groupId: GroupId,</span>
-<span class="fc" id="L34">        val value: CodeValue,</span>
-    )
+<span class="fc" id="L27">    data class CreateCmd(</span>
+<span class="fc" id="L28">        val id: CmdId,</span>
+<span class="fc" id="L29">        val codeId: CodeId,</span>
+<span class="fc" id="L30">        val groupId: GroupId,</span>
+<span class="fc" id="L31">        val value: CodeValue,</span>
+<span class="fc" id="L32">        val type: CodeType = CodeType.Lua54</span>
+<span class="fc" id="L33">    )</span>
 
-<span class="pc" id="L37">    data class UpdateCmd(</span>
-<span class="fc" id="L38">        val id: CmdId,</span>
-<span class="pc" id="L39">        val value: CodeValue? = null,</span>
-<span class="nc" id="L40">    )</span>
+<span class="pc" id="L35">    data class UpdateCmd(</span>
+<span class="fc" id="L36">        val id: CmdId,</span>
+<span class="pc" id="L37">        val value: CodeValue? = null,</span>
+<span class="nc" id="L38">    )</span>
 }
 
 interface CodeQueryRepository {
-<span class="pc bpc" id="L44" title="1 of 2 branches missed.">    fun get(codeId: CodeId) = find(codeId)</span>
-<span class="pc" id="L45">        ?: throw NoSuchElementException(&quot;Code not found&quot;)</span>
+<span class="pc bpc" id="L42" title="1 of 2 branches missed.">    fun get(codeId: CodeId) = find(codeId)</span>
+<span class="pc" id="L43">        ?: throw NoSuchElementException(&quot;Code not found&quot;)</span>
 
-<span class="nc bnc" id="L47" title="All 2 branches missed.">    fun get(codeId: CodeId, codeVersion: CodeVersion) = find(codeId, codeVersion)</span>
-<span class="nc" id="L48">        ?: throw NoSuchElementException(&quot;Code not found&quot;)</span>
+<span class="nc bnc" id="L45" title="All 2 branches missed.">    fun get(codeId: CodeId, codeVersion: CodeVersion) = find(codeId, codeVersion)</span>
+<span class="nc" id="L46">        ?: throw NoSuchElementException(&quot;Code not found&quot;)</span>
 
     fun find(codeId: CodeId): Code?
     fun find(codeId: CodeId, codeVersion: CodeVersion): Code?
     fun list(query: CodeQuery): List&lt;Code&gt;
-<span class="nc" id="L53">    fun list(codeIds: List&lt;CodeId&gt;): List&lt;Code&gt; = list(</span>
-<span class="nc" id="L54">        CodeQuery(</span>
-<span class="nc" id="L55">            limit = Limit.all,</span>
-<span class="nc" id="L56">            groupIds = listOf(),</span>
-<span class="nc" id="L57">            codeIds = codeIds,</span>
+<span class="nc" id="L51">    fun list(codeIds: List&lt;CodeId&gt;): List&lt;Code&gt; = list(</span>
+<span class="nc" id="L52">        CodeQuery(</span>
+<span class="nc" id="L53">            limit = Limit.all,</span>
+<span class="nc" id="L54">            groupIds = listOf(),</span>
+<span class="nc" id="L55">            codeIds = codeIds,</span>
         )
-<span class="nc" id="L59">    )</span>
+<span class="nc" id="L57">    )</span>
 
     fun count(query: CodeQuery): ULong
 
-<span class="nc" id="L63">    data class CodeQuery(</span>
-<span class="nc" id="L64">        var afterId: CodeId = CodeId(SnowflakeId(Long.MAX_VALUE)),</span>
-<span class="nc" id="L65">        var limit: Limit = Limit(1),</span>
-<span class="nc" id="L66">        var codeIds: List&lt;CodeId&gt; = listOf(),</span>
-<span class="nc" id="L67">        var groupIds: List&lt;GroupId&gt;</span>
-<span class="nc" id="L68">    )</span>
+<span class="nc" id="L61">    data class CodeQuery(</span>
+<span class="nc" id="L62">        var afterId: CodeId = CodeId(SnowflakeId(Long.MAX_VALUE)),</span>
+<span class="nc" id="L63">        var limit: Limit = Limit(1),</span>
+<span class="nc" id="L64">        var codeIds: List&lt;CodeId&gt; = listOf(),</span>
+<span class="nc" id="L65">        var groupIds: List&lt;GroupId&gt;</span>
+<span class="nc" id="L66">    )</span>
 
 }
 

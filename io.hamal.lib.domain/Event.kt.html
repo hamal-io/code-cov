@@ -37,7 +37,7 @@ import kotlinx.serialization.Serializable
 <span class="fc" id="L37">    internal object Serializer : DomainIdSerializer&lt;EventId&gt;(::EventId)</span>
 }
 
-<span class="nc" id="L40">@Serializable(with = EventPayload.Serializer::class)</span>
+<span class="fc" id="L40">@Serializable(with = EventPayload.Serializer::class)</span>
 <span class="fc" id="L41">class EventPayload(override val value: MapType = MapType()) : Inputs() {</span>
 <span class="fc" id="L42">    internal object Serializer : InputsSerializer&lt;EventPayload&gt;(::EventPayload)</span>
 <span class="fc" id="L43">}</span>

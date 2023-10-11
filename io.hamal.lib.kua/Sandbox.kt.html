@@ -31,7 +31,7 @@ import io.hamal.lib.kua.type.ErrorType
 
     fun register(vararg factories: ExtensionFactory&lt;*&gt;): Sandbox {
 <span class="fc" id="L33">        factories.map { it.create(this) }.forEach { extension -&gt;</span>
-<span class="pc bpc" id="L34" title="1 of 2 branches missed.">            check(extension is ScriptExtension)</span>
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">            check(extension is BundleExtension)</span>
 <span class="fc" id="L35">            this.register(extension)</span>
 <span class="fc" id="L36">        }</span>
 <span class="fc" id="L37">        return this</span>
@@ -45,7 +45,7 @@ import io.hamal.lib.kua.type.ErrorType
 <span class="nc" id="L45">        fn(state)</span>
 <span class="nc" id="L46">    }</span>
 
-    fun register(extension: ScriptExtension) {
+    fun register(extension: BundleExtension) {
 <span class="fc" id="L49">        registry.register(extension)</span>
 <span class="fc" id="L50">    }</span>
 

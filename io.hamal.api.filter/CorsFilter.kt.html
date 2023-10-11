@@ -3,25 +3,27 @@
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 
 @Component
-<span class="fc" id="L10">class CorsApiFilter : OncePerRequestFilter() {</span>
+@Profile(&quot;dev&quot;)
+<span class="nc" id="L12">class CorsApiFilter : OncePerRequestFilter() {</span>
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-<span class="fc" id="L16">        response.setHeader(&quot;Access-Control-Allow-Origin&quot;, &quot;*&quot;)</span>
-<span class="fc" id="L17">        response.setHeader(&quot;Access-Control-Allow-Methods&quot;, &quot;GET, POST, PUT, DELETE, OPTIONS&quot;)</span>
-<span class="fc" id="L18">        response.setHeader(&quot;Access-Control-Max-Age&quot;, &quot;3600&quot;)</span>
-<span class="fc" id="L19">        response.setHeader(&quot;Access-Control-Allow-Headers&quot;, &quot;authorization, content-type&quot;)</span>
-<span class="pc bpc" id="L20" title="1 of 2 branches missed.">        if (&quot;OPTIONS&quot; == request.method) {</span>
-<span class="nc" id="L21">            response.status = HttpServletResponse.SC_OK</span>
+<span class="nc" id="L18">        response.setHeader(&quot;Access-Control-Allow-Origin&quot;, &quot;*&quot;)</span>
+<span class="nc" id="L19">        response.setHeader(&quot;Access-Control-Allow-Methods&quot;, &quot;GET, POST, PUT, DELETE, OPTIONS&quot;)</span>
+<span class="nc" id="L20">        response.setHeader(&quot;Access-Control-Max-Age&quot;, &quot;3600&quot;)</span>
+<span class="nc" id="L21">        response.setHeader(&quot;Access-Control-Allow-Headers&quot;, &quot;authorization, content-type&quot;)</span>
+<span class="nc bnc" id="L22" title="All 2 branches missed.">        if (&quot;OPTIONS&quot; == request.method) {</span>
+<span class="nc" id="L23">            response.status = HttpServletResponse.SC_OK</span>
         } else {
-<span class="fc" id="L23">            filterChain.doFilter(request, response)</span>
+<span class="nc" id="L25">            filterChain.doFilter(request, response)</span>
         }
-<span class="fc" id="L25">    }</span>
+<span class="nc" id="L27">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

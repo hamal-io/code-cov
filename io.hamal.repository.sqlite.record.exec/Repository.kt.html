@@ -143,7 +143,7 @@ internal object CreateExec : CreateDomainObject&lt;ExecId, ExecRecord, Exec&gt; 
             } else {
 <span class="nc bnc" id="L144" title="All 2 branches missed.">                check(currentVersion(execId) is StartedExec) { &quot;$execId not started&quot; }</span>
 
-<span class="nc" id="L146">                store(ExecCompletedRecord(cmdId, execId))</span>
+<span class="nc" id="L146">                store(ExecCompletedRecord(cmdId, execId, cmd.result))</span>
 
 <span class="nc" id="L148">                (currentVersion(execId) as CompletedExec).also { ProjectionCurrent.upsert(this, it) }</span>
             }
@@ -159,7 +159,7 @@ internal object CreateExec : CreateDomainObject&lt;ExecId, ExecRecord, Exec&gt; 
             } else {
 <span class="nc bnc" id="L160" title="All 2 branches missed.">                check(currentVersion(execId) is StartedExec) { &quot;$execId not started&quot; }</span>
 
-<span class="nc" id="L162">                store(ExecFailedRecord(cmdId, execId, cmd.cause))</span>
+<span class="nc" id="L162">                store(ExecFailedRecord(cmdId, execId, cmd.result))</span>
 
 <span class="nc" id="L164">                (currentVersion(execId) as FailedExec).also { ProjectionCurrent.upsert(this, it) }</span>
             }

@@ -43,7 +43,7 @@ import org.springframework.stereotype.Component
 <span class="fc" id="L43">    }</span>
 
     private fun completeExec(req: SubmittedCompleteExecReq) =
-<span class="fc" id="L46">        execCmdRepository.complete(ExecCmdRepository.CompleteCmd(req.cmdId(), req.id))</span>
+<span class="fc" id="L46">        execCmdRepository.complete(ExecCmdRepository.CompleteCmd(req.cmdId(), req.id, req.result))</span>
 
     private fun emitCompletionEvent(cmdId: CmdId, exec: CompletedExec) {
 <span class="fc" id="L49">        eventEmitter.emit(cmdId, ExecutionCompletedEvent(exec))</span>

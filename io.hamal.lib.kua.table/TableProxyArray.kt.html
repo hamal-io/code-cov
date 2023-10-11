@@ -13,7 +13,7 @@ import kotlin.reflect.KClass
 
 <span class="nc" id="L14">    val length get() = state.native.tableGetLength(index)</span>
 
-<span class="nc" id="L16">    fun getBoolean(idx: Int) = getBooleanType(idx) == TrueValue</span>
+<span class="nc" id="L16">    fun getBoolean(idx: Int) = getBooleanType(idx) == True</span>
     fun getBooleanType(idx: Int): BooleanType {
 <span class="nc" id="L18">        val type = state.tableGetRawIdx(index, idx)</span>
 <span class="nc" id="L19">        type.checkExpectedType(BooleanType::class)</span>

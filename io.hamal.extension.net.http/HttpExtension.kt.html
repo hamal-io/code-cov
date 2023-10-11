@@ -2,16 +2,16 @@
 
 import io.hamal.lib.kua.Sandbox
 import io.hamal.lib.kua.extension.ExtensionConfig
-import io.hamal.lib.kua.extension.ScriptExtension
-import io.hamal.lib.kua.extension.ScriptExtensionFactory
+import io.hamal.lib.kua.extension.BundleExtension
+import io.hamal.lib.kua.extension.BundleExtensionFactory
 
 <span class="pc" id="L8">class HttpExtensionFactory(</span>
 <span class="pc" id="L9">    val config: ExtensionConfig = ExtensionConfig(mutableMapOf())</span>
-) : ScriptExtensionFactory {
+) : BundleExtensionFactory {
 
 
-    override fun create(sandbox: Sandbox): ScriptExtension {
-<span class="fc" id="L14">        return ScriptExtension(</span>
+    override fun create(sandbox: Sandbox): BundleExtension {
+<span class="fc" id="L14">        return BundleExtension(</span>
 <span class="fc" id="L15">            name = &quot;net.http&quot;,</span>
 <span class="fc" id="L16">            config = config,</span>
 <span class="fc" id="L17">            internals = mapOf(</span>

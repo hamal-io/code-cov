@@ -170,7 +170,7 @@ internal object QueueProjection {
             } else {
 <span class="pc bpc" id="L171" title="1 of 2 branches missed.">                check(currentVersion(execId) is StartedExec) { &quot;$execId not started&quot; }</span>
 
-<span class="fc" id="L173">                store(ExecCompletedRecord(cmdId, execId))</span>
+<span class="fc" id="L173">                store(ExecCompletedRecord(cmdId, execId, cmd.result))</span>
 
 <span class="fc" id="L175">                (versionOf(execId, cmdId) as CompletedExec).also(CurrentExecProjection::apply)</span>
             }
@@ -187,7 +187,7 @@ internal object QueueProjection {
             } else {
 <span class="pc bpc" id="L188" title="1 of 2 branches missed.">                check(currentVersion(execId) is StartedExec) { &quot;$execId not started&quot; }</span>
 
-<span class="fc" id="L190">                store(ExecFailedRecord(cmdId, execId, cmd.cause))</span>
+<span class="fc" id="L190">                store(ExecFailedRecord(cmdId, execId, cmd.result))</span>
 
 <span class="fc" id="L192">                (versionOf(execId, cmdId) as FailedExec).also(CurrentExecProjection::apply)</span>
             }

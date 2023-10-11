@@ -3,47 +3,51 @@
 import io.hamal.lib.domain.Event
 import io.hamal.lib.domain.vo.ExecId
 import io.hamal.lib.kua.Sandbox
-import io.hamal.lib.kua.extension.ScriptExtension
-import io.hamal.lib.kua.extension.ScriptExtensionFactory
+import io.hamal.lib.kua.extension.BundleExtension
+import io.hamal.lib.kua.extension.BundleExtensionFactory
 import io.hamal.lib.kua.table.TableProxyArray
 import io.hamal.lib.kua.type.MapType
 import io.hamal.lib.kua.type.StringType
 import io.hamal.lib.kua.type.toProxyMap
-import io.hamal.runner.extension.ctx.function.EmitFunction
+import io.hamal.runner.run.function.CompleteRunFunction
+import io.hamal.runner.run.function.EmitFunction
+import io.hamal.runner.run.function.FailRunFunction
 
-<span class="fc" id="L14">class RunnerContextFactory(</span>
-<span class="fc" id="L15">    private val executionCtx: RunnerContext</span>
-) : ScriptExtensionFactory {
-    override fun create(sandbox: Sandbox): ScriptExtension {
-<span class="fc" id="L18">        return ScriptExtension(</span>
-<span class="fc" id="L19">            name = &quot;ctx&quot;,</span>
-<span class="fc" id="L20">            internals = mapOf(</span>
-<span class="fc" id="L21">                &quot;events&quot; to sandbox.invocationEvents(executionCtx[RunnerInvocationEvents::class].events),</span>
-<span class="fc" id="L22">                &quot;exec_id&quot; to StringType(executionCtx[ExecId::class].value.value.toString(16)),</span>
-<span class="fc" id="L23">                &quot;emit&quot; to EmitFunction(executionCtx)</span>
+<span class="fc" id="L16">class RunnerContextFactory(</span>
+<span class="fc" id="L17">    private val executionCtx: RunnerContext</span>
+) : BundleExtensionFactory {
+    override fun create(sandbox: Sandbox): BundleExtension {
+<span class="fc" id="L20">        return BundleExtension(</span>
+<span class="fc" id="L21">            name = &quot;ctx&quot;,</span>
+<span class="fc" id="L22">            internals = mapOf(</span>
+<span class="fc" id="L23">                &quot;events&quot; to sandbox.invocationEvents(executionCtx[RunnerInvocationEvents::class].events),</span>
+<span class="fc" id="L24">                &quot;exec_id&quot; to StringType(executionCtx[ExecId::class].value.value.toString(16)),</span>
+<span class="fc" id="L25">                &quot;emit&quot; to EmitFunction(executionCtx),</span>
+<span class="fc" id="L26">                &quot;fail&quot; to FailRunFunction,</span>
+<span class="fc" id="L27">                &quot;complete&quot; to CompleteRunFunction</span>
             )
         )
     }
 }
 
 private fun Sandbox.invocationEvents(events: List&lt;Event&gt;): TableProxyArray =
-<span class="fc" id="L30">    tableCreateArray(events.size).let { result -&gt;</span>
-<span class="fc" id="L31">        events.map {</span>
-<span class="fc" id="L32">            toProxyMap(</span>
-<span class="fc" id="L33">                MapType(</span>
-<span class="fc" id="L34">                    mutableMapOf(</span>
-<span class="fc" id="L35">                        &quot;id&quot; to StringType(it.id.value.value.toString(16)),</span>
-<span class="fc" id="L36">                        &quot;topic&quot; to MapType(</span>
-<span class="fc" id="L37">                            mutableMapOf(</span>
-<span class="fc" id="L38">                                &quot;id&quot; to StringType(it.topic.id.value.value.toString(16)),</span>
-<span class="fc" id="L39">                                &quot;name&quot; to StringType(it.topic.name.value)</span>
+<span class="fc" id="L34">    tableCreateArray(events.size).let { result -&gt;</span>
+<span class="fc" id="L35">        events.map {</span>
+<span class="fc" id="L36">            toProxyMap(</span>
+<span class="fc" id="L37">                MapType(</span>
+<span class="fc" id="L38">                    mutableMapOf(</span>
+<span class="fc" id="L39">                        &quot;id&quot; to StringType(it.id.value.value.toString(16)),</span>
+<span class="fc" id="L40">                        &quot;topic&quot; to MapType(</span>
+<span class="fc" id="L41">                            mutableMapOf(</span>
+<span class="fc" id="L42">                                &quot;id&quot; to StringType(it.topic.id.value.value.toString(16)),</span>
+<span class="fc" id="L43">                                &quot;name&quot; to StringType(it.topic.name.value)</span>
                             )
                         ),
-<span class="fc" id="L42">                        &quot;payload&quot; to it.payload.value</span>
+<span class="fc" id="L46">                        &quot;payload&quot; to it.payload.value</span>
                     )
                 )
             )
-<span class="fc" id="L46">        }.forEach(result::append)</span>
-<span class="fc" id="L47">        result</span>
-<span class="fc" id="L48">    }</span>
+<span class="fc" id="L50">        }.forEach(result::append)</span>
+<span class="fc" id="L51">        result</span>
+<span class="fc" id="L52">    }</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

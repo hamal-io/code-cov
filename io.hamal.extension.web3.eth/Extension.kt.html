@@ -2,19 +2,19 @@
 
 import io.hamal.lib.kua.Sandbox
 import io.hamal.lib.kua.extension.ExtensionConfig
-import io.hamal.lib.kua.extension.ScriptExtension
-import io.hamal.lib.kua.extension.ScriptExtensionFactory
+import io.hamal.lib.kua.extension.BundleExtension
+import io.hamal.lib.kua.extension.BundleExtensionFactory
 import io.hamal.lib.kua.type.StringType
 
-<span class="fc" id="L9">class EthExtensionFactory : ScriptExtensionFactory {</span>
+<span class="fc" id="L9">class EthExtensionFactory : BundleExtensionFactory {</span>
 <span class="pc" id="L10">    val config = ExtensionConfig(</span>
 <span class="fc" id="L11">        mutableMapOf(</span>
 <span class="fc" id="L12">            &quot;host&quot; to StringType(&quot;http://localhost:8000&quot;)</span>
         )
     )
 
-    override fun create(sandbox: Sandbox): ScriptExtension {
-<span class="fc" id="L17">        return ScriptExtension(</span>
+    override fun create(sandbox: Sandbox): BundleExtension {
+<span class="fc" id="L17">        return BundleExtension(</span>
 <span class="fc" id="L18">            name = &quot;web3.eth&quot;,</span>
 <span class="fc" id="L19">            config = config,</span>
 <span class="fc" id="L20">            internals = mapOf(</span>

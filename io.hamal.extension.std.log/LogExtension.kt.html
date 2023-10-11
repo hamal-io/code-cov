@@ -6,8 +6,8 @@ import io.hamal.lib.domain.vo.ExecId
 import io.hamal.lib.domain.vo.ExecLogMessage
 import io.hamal.lib.domain.vo.LocalAt
 import io.hamal.lib.kua.Sandbox
-import io.hamal.lib.kua.extension.ScriptExtension
-import io.hamal.lib.kua.extension.ScriptExtensionFactory
+import io.hamal.lib.kua.extension.BundleExtension
+import io.hamal.lib.kua.extension.BundleExtensionFactory
 import io.hamal.lib.kua.function.Function2In1Out
 import io.hamal.lib.kua.function.FunctionContext
 import io.hamal.lib.kua.function.FunctionInput2Schema
@@ -22,9 +22,9 @@ import io.hamal.lib.sdk.api.ApiExecLogService
 
 <span class="fc" id="L23">class LogExtensionFactory(</span>
 <span class="fc" id="L24">    private val execLogService: ApiExecLogService</span>
-) : ScriptExtensionFactory {
-    override fun create(sandbox: Sandbox): ScriptExtension {
-<span class="fc" id="L27">        return ScriptExtension(</span>
+) : BundleExtensionFactory {
+    override fun create(sandbox: Sandbox): BundleExtension {
+<span class="fc" id="L27">        return BundleExtension(</span>
 <span class="fc" id="L28">            name = &quot;log&quot;,</span>
 <span class="fc" id="L29">            internals = mapOf(</span>
 <span class="fc" id="L30">                &quot;log&quot; to LogFunction(execLogService),</span>
