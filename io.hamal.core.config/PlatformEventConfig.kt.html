@@ -5,7 +5,6 @@ import io.hamal.core.event.PlatformEventEmitter
 import io.hamal.core.event.handler.exec.*
 import io.hamal.core.event.handler.trigger.TriggerCreatedHandler
 import io.hamal.core.service.FixedRateTriggerService
-import io.hamal.core.service.MetricService
 import io.hamal.core.service.OrchestrationService
 import io.hamal.lib.domain.GenerateDomainId
 import io.hamal.repository.api.ExecCmdRepository
@@ -15,16 +14,16 @@ import io.hamal.repository.api.log.BrokerRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
-<span class="fc" id="L18">@Configuration</span>
-<span class="fc" id="L19">internal open class PlatformEventConfig {</span>
+<span class="fc" id="L17">@Configuration</span>
+<span class="fc" id="L18">internal open class PlatformEventConfig {</span>
     @Bean
     open fun platformEventEmitter(
         platformEventBrokerRepository: BrokerRepository,
         generateDomainId: GenerateDomainId
-<span class="fc" id="L24">    ): PlatformEventEmitter = PlatformEventEmitter(</span>
-<span class="fc" id="L25">        generateDomainId,</span>
-<span class="fc" id="L26">        platformEventBrokerRepository</span>
-<span class="fc" id="L27">    )</span>
+<span class="fc" id="L23">    ): PlatformEventEmitter = PlatformEventEmitter(</span>
+<span class="fc" id="L24">        generateDomainId,</span>
+<span class="fc" id="L25">        platformEventBrokerRepository</span>
+<span class="fc" id="L26">    )</span>
 
     @Bean
     open fun platformEventContainer(
@@ -32,16 +31,15 @@ import org.springframework.context.annotation.Configuration
         execCmdRepository: ExecCmdRepository,
         fixedRateTriggerService: FixedRateTriggerService,
         orchestrationService: OrchestrationService,
-        metricService: MetricService,
         eventEmitter: PlatformEventEmitter
-<span class="fc" id="L37">    ) = PlatformEventContainerFactory()</span>
-<span class="fc" id="L38">        .register(TriggerCreatedEvent::class, TriggerCreatedHandler(fixedRateTriggerService))</span>
-<span class="fc" id="L39">        .register(ExecPlannedEvent::class, ExecPlannedHandler(orchestrationService))</span>
-<span class="fc" id="L40">        .register(ExecScheduledEvent::class, ExecScheduledHandler(execCmdRepository, eventEmitter))</span>
-<span class="fc" id="L41">        .register(ExecutionQueuedEvent::class, ExecQueuedHandler())</span>
-<span class="fc" id="L42">        .register(ExecutionCompletedEvent::class, ExecCompletedHandler(orchestrationService, metricService))</span>
-<span class="fc" id="L43">        .register(ExecutionFailedEvent::class, ExecFailedHandler(orchestrationService))</span>
-<span class="fc" id="L44">        .create()</span>
+<span class="fc" id="L35">    ) = PlatformEventContainerFactory()</span>
+<span class="fc" id="L36">        .register(TriggerCreatedEvent::class, TriggerCreatedHandler(fixedRateTriggerService))</span>
+<span class="fc" id="L37">        .register(ExecPlannedEvent::class, ExecPlannedHandler(orchestrationService))</span>
+<span class="fc" id="L38">        .register(ExecScheduledEvent::class, ExecScheduledHandler(execCmdRepository, eventEmitter))</span>
+<span class="fc" id="L39">        .register(ExecutionQueuedEvent::class, ExecQueuedHandler())</span>
+<span class="fc" id="L40">        .register(ExecutionCompletedEvent::class, ExecCompletedHandler(orchestrationService))</span>
+<span class="fc" id="L41">        .register(ExecutionFailedEvent::class, ExecFailedHandler(orchestrationService))</span>
+<span class="fc" id="L42">        .create()</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

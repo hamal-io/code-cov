@@ -6,6 +6,7 @@ import io.hamal.runner.config.SandboxFactory
 import io.hamal.runner.connector.HttpConnector
 import io.hamal.runner.connector.UnitOfWork
 import io.hamal.runner.run.CodeRunnerImpl
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.ApplicationListener
 import org.springframework.context.event.ContextRefreshedEvent
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler
@@ -13,33 +14,34 @@ import org.springframework.stereotype.Service
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.toJavaDuration
 
-<span class="nc" id="L16">@Service</span>
-<span class="nc" id="L17">class HttpExecutorService(</span>
-<span class="nc" id="L18">    private val httpTemplate: HttpTemplate,</span>
-<span class="nc" id="L19">    private val runnerExecutor: ThreadPoolTaskScheduler,</span>
-<span class="nc" id="L20">    private val sandboxFactory: SandboxFactory</span>
+<span class="nc" id="L17">@Service</span>
+<span class="nc" id="L18">class HttpExecutorService(</span>
+<span class="nc" id="L19">    private val httpTemplate: HttpTemplate,</span>
+<span class="nc" id="L20">    private val runnerExecutor: ThreadPoolTaskScheduler,</span>
+<span class="nc" id="L21">    private val sandboxFactory: SandboxFactory,</span>
+<span class="nc" id="L22">    @Value(&quot;\${io.hamal.runner.http.poll-every-ms}&quot;) private val pollEveryMs: Long</span>
 ) : ApplicationListener&lt;ContextRefreshedEvent&gt; {
 
     override fun onApplicationEvent(event: ContextRefreshedEvent) {
-<span class="nc" id="L24">        val sdk = BridgeSdkImpl(httpTemplate)</span>
-<span class="nc" id="L25">        val connector = HttpConnector(sdk)</span>
+<span class="nc" id="L26">        val sdk = BridgeSdkImpl(httpTemplate)</span>
+<span class="nc" id="L27">        val connector = HttpConnector(sdk)</span>
 
-<span class="nc" id="L27">        runnerExecutor.scheduleAtFixedRate({</span>
-<span class="nc" id="L28">            connector.poll().forEach { uow -&gt;</span>
-<span class="nc" id="L29">                CodeRunnerImpl(connector, sandboxFactory).run(</span>
-<span class="nc" id="L30">                    UnitOfWork(</span>
-<span class="nc" id="L31">                        id = uow.id,</span>
-<span class="nc" id="L32">                        groupId = uow.groupId,</span>
-<span class="nc" id="L33">                        inputs = uow.inputs,</span>
-<span class="nc" id="L34">                        state = uow.state,</span>
-<span class="nc" id="L35">                        code = uow.code,</span>
-<span class="nc" id="L36">                        correlation = uow.correlation,</span>
-<span class="nc" id="L37">                        events = uow.events</span>
+<span class="nc" id="L29">        runnerExecutor.scheduleAtFixedRate({</span>
+<span class="nc" id="L30">            connector.poll().forEach { uow -&gt;</span>
+<span class="nc" id="L31">                CodeRunnerImpl(connector, sandboxFactory).run(</span>
+<span class="nc" id="L32">                    UnitOfWork(</span>
+<span class="nc" id="L33">                        id = uow.id,</span>
+<span class="nc" id="L34">                        groupId = uow.groupId,</span>
+<span class="nc" id="L35">                        inputs = uow.inputs,</span>
+<span class="nc" id="L36">                        state = uow.state,</span>
+<span class="nc" id="L37">                        code = uow.code,</span>
+<span class="nc" id="L38">                        correlation = uow.correlation,</span>
+<span class="nc" id="L39">                        events = uow.events</span>
                     )
                 )
-<span class="nc" id="L40">            }</span>
-<span class="nc" id="L41">        }, 10.milliseconds.toJavaDuration())</span>
-<span class="nc" id="L42">    }</span>
+<span class="nc" id="L42">            }</span>
+<span class="nc" id="L43">        }, pollEveryMs.milliseconds.toJavaDuration())</span>
+<span class="nc" id="L44">    }</span>
 }
 
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
