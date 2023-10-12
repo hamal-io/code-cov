@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Repository.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.repository.sqlite.record.hook</a> &gt; <span class="el_source">Repository.kt</span></div><h1>Repository.kt</h1><pre class="source lang-java linenums">package io.hamal.repository.sqlite.record.hook
+
+import io.hamal.lib.domain.vo.HookId
+import io.hamal.lib.sqlite.SqliteBaseRepository
+import io.hamal.repository.api.Hook
+import io.hamal.repository.api.HookCmdRepository.CreateCmd
+import io.hamal.repository.api.HookCmdRepository.UpdateCmd
+import io.hamal.repository.api.HookQueryRepository.HookQuery
+import io.hamal.repository.api.HookRepository
+import io.hamal.repository.record.CreateDomainObject
+import io.hamal.repository.record.hook.HookCreationRecord
+import io.hamal.repository.record.hook.HookEntity
+import io.hamal.repository.record.hook.HookRecord
+import io.hamal.repository.record.hook.HookUpdatedRecord
+import io.hamal.repository.sqlite.record.SqliteRecordRepository
+import java.nio.file.Path
+
+internal object CreateHook : CreateDomainObject&lt;HookId, HookRecord, Hook&gt; {
+    override fun invoke(recs: List&lt;HookRecord&gt;): Hook {
+<span class="nc bnc" id="L20" title="All 4 branches missed.">        check(recs.isNotEmpty()) { &quot;At least one record is required&quot; }</span>
+<span class="nc" id="L21">        val firstRecord = recs.first()</span>
+<span class="nc bnc" id="L22" title="All 2 branches missed.">        check(firstRecord is HookCreationRecord)</span>
+
+<span class="nc" id="L24">        var result = HookEntity(</span>
+<span class="nc" id="L25">            cmdId = firstRecord.cmdId,</span>
+<span class="nc" id="L26">            id = firstRecord.entityId,</span>
+<span class="nc" id="L27">            groupId = firstRecord.groupId,</span>
+<span class="nc" id="L28">            sequence = firstRecord.sequence()</span>
+        )
+
+<span class="nc" id="L31">        recs.forEach { record -&gt;</span>
+<span class="nc" id="L32">            result = result.apply(record)</span>
+<span class="nc" id="L33">        }</span>
+
+<span class="nc" id="L35">        return result.toDomainObject()</span>
+    }
+}
+
+<span class="nc" id="L39">class SqliteHookRepository(</span>
+    config: Config
+<span class="nc" id="L41">) : SqliteRecordRepository&lt;HookId, HookRecord, Hook&gt;(</span>
+<span class="nc" id="L42">    config = config,</span>
+<span class="nc" id="L43">    createDomainObject = CreateHook,</span>
+    recordClass = HookRecord::class,
+<span class="nc" id="L45">    projections = listOf(</span>
+<span class="nc" id="L46">        ProjectionCurrent,</span>
+<span class="nc" id="L47">        ProjectionUniqueName</span>
+    )
+), HookRepository {
+
+<span class="nc" id="L51">    data class Config(</span>
+<span class="nc" id="L52">        override val path: Path</span>
+    ) : SqliteBaseRepository.Config {
+<span class="nc" id="L54">        override val filename = &quot;hook.db&quot;</span>
+    }
+
+    override fun create(cmd: CreateCmd): Hook {
+<span class="nc" id="L58">        val hookId = cmd.hookId</span>
+<span class="nc" id="L59">        val cmdId = cmd.id</span>
+<span class="nc" id="L60">        return tx {</span>
+<span class="nc bnc" id="L61" title="All 2 branches missed.">            if (commandAlreadyApplied(cmdId, hookId)) {</span>
+<span class="nc" id="L62">                versionOf(hookId, cmdId)</span>
+            } else {
+<span class="nc" id="L64">                store(</span>
+<span class="nc" id="L65">                    HookCreationRecord(</span>
+<span class="nc" id="L66">                        cmdId = cmdId,</span>
+<span class="nc" id="L67">                        entityId = hookId,</span>
+<span class="nc" id="L68">                        groupId = cmd.groupId,</span>
+<span class="nc" id="L69">                        namespaceId = cmd.namespaceId,</span>
+<span class="nc" id="L70">                        name = cmd.name</span>
+                    )
+                )
+
+<span class="nc" id="L74">                currentVersion(hookId)</span>
+<span class="nc" id="L75">                    .also { ProjectionCurrent.upsert(this, it) }</span>
+<span class="nc" id="L76">                    .also { ProjectionUniqueName.upsert(this, it) }</span>
+            }
+        }
+    }
+
+    override fun update(hookId: HookId, cmd: UpdateCmd): Hook {
+<span class="nc" id="L82">        val cmdId = cmd.id</span>
+<span class="nc" id="L83">        return tx {</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">            if (commandAlreadyApplied(cmdId, hookId)) {</span>
+<span class="nc" id="L85">                versionOf(hookId, cmdId)</span>
+            } else {
+<span class="nc" id="L87">                val currentVersion = versionOf(hookId, cmdId)</span>
+<span class="nc" id="L88">                store(</span>
+<span class="nc" id="L89">                    HookUpdatedRecord(</span>
+<span class="nc" id="L90">                        entityId = hookId,</span>
+<span class="nc" id="L91">                        cmdId = cmdId,</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">                        namespaceId = cmd.namespaceId ?: currentVersion.namespaceId,</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">                        name = cmd.name ?: currentVersion.name</span>
+                    )
+                )
+<span class="nc" id="L96">                currentVersion(hookId)</span>
+<span class="nc" id="L97">                    .also { ProjectionCurrent.upsert(this, it) }</span>
+<span class="nc" id="L98">                    .also { ProjectionUniqueName.upsert(this, it) }</span>
+            }
+        }
+    }
+
+    override fun find(hookId: HookId): Hook? {
+<span class="nc" id="L104">        return ProjectionCurrent.find(connection, hookId)</span>
+    }
+
+    override fun list(query: HookQuery): List&lt;Hook&gt; {
+<span class="nc" id="L108">        return ProjectionCurrent.list(connection, query)</span>
+    }
+
+    override fun count(query: HookQuery): ULong {
+<span class="nc" id="L112">        return ProjectionCurrent.count(connection, query)</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

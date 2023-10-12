@@ -48,17 +48,17 @@ import kotlin.reflect.KClass
     }
 
     override fun versionOf(id: ID, sequence: RecordSequence): OBJ? {
-<span class="nc" id="L51">        return recordsOf(id)</span>
-<span class="nc" id="L52">            .filter {</span>
-<span class="nc" id="L53">                val seq = it.sequence</span>
-<span class="nc bnc" id="L54" title="All 4 branches missed.">                seq != null &amp;&amp; seq &gt;= sequence</span>
+<span class="fc" id="L51">        return recordsOf(id)</span>
+<span class="fc" id="L52">            .filter {</span>
+<span class="fc" id="L53">                val seq = it.sequence</span>
+<span class="pc bpc" id="L54" title="1 of 4 branches missed.">                seq != null &amp;&amp; seq &gt;= sequence</span>
             }
-<span class="nc bnc" id="L56" title="All 2 branches missed.">            .ifEmpty { null }</span>
-<span class="nc bnc" id="L57" title="All 2 branches missed.">            ?.let { records -&gt;</span>
-<span class="nc bnc" id="L58" title="All 2 branches missed.">                if (records.none { it.sequence == sequence }) {</span>
-<span class="nc" id="L59">                    null</span>
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">            .ifEmpty { null }</span>
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">            ?.let { records -&gt;</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">                if (records.none { it.sequence == sequence }) {</span>
+<span class="fc" id="L59">                    null</span>
                 } else {
-<span class="nc" id="L61">                    createDomainObject(records)</span>
+<span class="fc" id="L61">                    createDomainObject(records)</span>
                 }
             }
     }

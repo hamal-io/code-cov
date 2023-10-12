@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SnowflakeId.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.common.snowflake</a> &gt; <span class="el_source">SnowflakeId.kt</span></div><h1>SnowflakeId.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.common.snowflake
+
+import io.hamal.lib.common.Partition
+import io.hamal.lib.common.util.BitUtils
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import java.util.concurrent.locks.Lock
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
+
+
+<span class="nc" id="L17">@JvmInline</span>
+@Serializable(with = SnowflakeId.Serializer::class)
+<span class="nc" id="L19">value class SnowflakeId(val value: Long) : Comparable&lt;SnowflakeId&gt; {</span>
+<span class="fc" id="L20">    constructor(value: String) : this(value.toLong(16))</span>
+
+    interface Generator {
+        fun next(): SnowflakeId
+    }
+
+<span class="fc" id="L26">    override fun compareTo(other: SnowflakeId) = value.compareTo(other.value)</span>
+
+<span class="nc" id="L28">    fun sequence(): Sequence = Sequence(</span>
+<span class="nc" id="L29">        BitUtils.extractRange(value = value, startIndex = 0, numberOfBits = 12).toShort()</span>
+<span class="nc" id="L30">    )</span>
+
+    fun partition(): Partition =
+<span class="nc" id="L33">        Partition(BitUtils.extractRange(value = value, startIndex = 12, numberOfBits = 10).toInt())</span>
+
+<span class="nc" id="L35">    fun elapsed(): Elapsed = Elapsed(</span>
+<span class="nc" id="L36">        BitUtils.extractRange(value = value, startIndex = 22, numberOfBits = 41)</span>
+<span class="nc" id="L37">    )</span>
+
+<span class="nc" id="L39">    override fun toString(): String {</span>
+<span class="nc" id="L40">        return &quot;$value&quot;</span>
+<span class="nc" id="L41">    }</span>
+
+    object Serializer : KSerializer&lt;SnowflakeId&gt; {
+        override val descriptor: SerialDescriptor
+<span class="fc" id="L45">            get() = PrimitiveSerialDescriptor(&quot;SnowflakeId&quot;, PrimitiveKind.STRING)</span>
+
+<span class="fc" id="L47">        override fun deserialize(decoder: Decoder) = SnowflakeId(decoder.decodeString().toLong(16))</span>
+
+        override fun serialize(encoder: Encoder, value: SnowflakeId) {
+<span class="fc" id="L50">            encoder.encodeString(value.value.toString(16))</span>
+<span class="fc" id="L51">        }</span>
+    }
+}
+
+
+<span class="fc" id="L56">class SnowflakeGenerator(</span>
+<span class="fc" id="L57">    private val partitionSource: PartitionSource,</span>
+<span class="fc" id="L58">    private val elapsedSource: ElapsedSource = ElapsedSourceImpl(),</span>
+<span class="fc" id="L59">    private val sequenceSource: SequenceSource = SequenceSourceImpl(),</span>
+<span class="fc" id="L60">    private val lock: Lock = ReentrantLock()</span>
+) : SnowflakeId.Generator {
+
+    override fun next(): SnowflakeId {
+<span class="fc" id="L64">        return lock.withLock {</span>
+<span class="fc" id="L65">            val partition = partitionSource.get()</span>
+<span class="fc" id="L66">            val (elapsed, sequence) = sequenceSource.next(elapsedSource::elapsed)</span>
+<span class="fc" id="L67">            generate(elapsed, partition, sequence)</span>
+        }
+    }
+
+    private fun generate(
+        elapsed: Elapsed,
+        partition: Partition,
+        sequence: Sequence
+    ): SnowflakeId {
+<span class="fc" id="L76">        val elapsedValue = elapsed.value.shl(22)</span>
+<span class="fc" id="L77">        val partitionValue = partition.value.toLong().shl(12)</span>
+<span class="fc" id="L78">        val sequenceValue = sequence.value.toLong()</span>
+<span class="fc" id="L79">        val result = elapsedValue + partitionValue + sequenceValue</span>
+<span class="fc" id="L80">        return SnowflakeId(result)</span>
+    }
+<span class="fc" id="L82">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

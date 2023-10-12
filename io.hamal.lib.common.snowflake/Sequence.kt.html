@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Sequence.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.common.snowflake</a> &gt; <span class="el_source">Sequence.kt</span></div><h1>Sequence.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.common.snowflake
+
+interface SequenceSource {
+    /**
+     * Blocks if sequence is exhausted until next millisecond
+     */
+    fun next(elapsedSource: () -&gt; Elapsed): Pair&lt;Elapsed, Sequence&gt;
+
+}
+
+@JvmInline
+<span class="nc" id="L12">value class Sequence(val value: Short) {</span>
+<span class="fc" id="L13">    constructor(value: Int) : this(value.toShort())</span>
+
+    init {
+<span class="pc bpc" id="L16" title="2 of 4 branches missed.">        require(value &gt;= 0) { &quot;Sequence must not be negative - [0, 4095]&quot; }</span>
+<span class="pc bpc" id="L17" title="2 of 4 branches missed.">        require(value &lt;= 4095) { &quot;Sequence is limited to 12 bits - [0, 4095]&quot; }</span>
+    }
+}
+
+<span class="fc" id="L21">class SequenceSourceImpl : SequenceSource {</span>
+
+<span class="fc" id="L23">    private var previousCalledAt: Elapsed = Elapsed(0)</span>
+    private var nextSequence = 0
+<span class="fc" id="L25">    private val maxSequence = 4096</span>
+
+    override fun next(elapsedSource: () -&gt; Elapsed): Pair&lt;Elapsed, Sequence&gt; {
+<span class="fc" id="L28">        val elapsed = elapsedSource()</span>
+<span class="pc bpc" id="L29" title="2 of 4 branches missed.">        check(elapsed &gt;= previousCalledAt) { &quot;Elapsed must be monotonic&quot; }</span>
+
+<span class="fc bfc" id="L31" title="All 2 branches covered.">        if (elapsed == previousCalledAt) {</span>
+<span class="pc bpc" id="L32" title="1 of 2 branches missed.">            if (nextSequence &gt;= maxSequence) {</span>
+<span class="nc" id="L33">                while (true) {</span>
+<span class="nc" id="L34">                    val currentElapsed = elapsedSource()</span>
+<span class="nc bnc" id="L35" title="All 2 branches missed.">                    if (elapsed != currentElapsed) {</span>
+<span class="nc" id="L36">                        nextSequence = 0</span>
+<span class="nc" id="L37">                        previousCalledAt = currentElapsed</span>
+<span class="nc" id="L38">                        break</span>
+                    }
+                }
+            } else {
+<span class="fc" id="L42">                nextSequence</span>
+<span class="fc" id="L43">                previousCalledAt = elapsed</span>
+            }
+
+        } else {
+<span class="fc" id="L47">            previousCalledAt = elapsed</span>
+<span class="fc" id="L48">            nextSequence = 0</span>
+        }
+
+<span class="fc" id="L51">        return Pair(previousCalledAt, Sequence(nextSequence++))</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

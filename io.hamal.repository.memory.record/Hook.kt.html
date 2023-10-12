@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Hook.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.repository.memory.record</a> &gt; <span class="el_source">Hook.kt</span></div><h1>Hook.kt</h1><pre class="source lang-java linenums">package io.hamal.repository.memory.record
+
+import io.hamal.lib.domain.vo.HookId
+import io.hamal.repository.api.Hook
+import io.hamal.repository.api.HookCmdRepository
+import io.hamal.repository.api.HookQueryRepository.HookQuery
+import io.hamal.repository.api.HookRepository
+import io.hamal.repository.record.hook.CreateHookFromRecords
+import io.hamal.repository.record.hook.HookCreationRecord
+import io.hamal.repository.record.hook.HookRecord
+import io.hamal.repository.record.hook.HookUpdatedRecord
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
+
+internal object CurrentHookProjection {
+<span class="fc" id="L16">    private val projection = mutableMapOf&lt;HookId, Hook&gt;()</span>
+    fun apply(hook: Hook) {
+<span class="fc" id="L18">        val currentHook = projection[hook.id]</span>
+<span class="fc" id="L19">        projection.remove(hook.id)</span>
+
+<span class="fc" id="L21">        val hooksInNamespace = projection.values.filter { it.namespaceId == hook.namespaceId }</span>
+<span class="pc bpc" id="L22" title="1 of 2 branches missed.">        if (hooksInNamespace.any { it.name == hook.name }) {</span>
+<span class="nc bnc" id="L23" title="All 2 branches missed.">            if (currentHook != null) {</span>
+<span class="nc" id="L24">                projection[currentHook.id] = currentHook</span>
+            }
+<span class="nc" id="L26">            throw IllegalArgumentException(&quot;${hook.name} already exists in namespace ${hook.namespaceId}&quot;)</span>
+        }
+
+<span class="fc" id="L29">        projection[hook.id] = hook</span>
+<span class="fc" id="L30">    }</span>
+
+<span class="fc" id="L32">    fun find(hookId: HookId): Hook? = projection[hookId]</span>
+
+    fun list(query: HookQuery): List&lt;Hook&gt; {
+<span class="pc bpc" id="L35" title="3 of 4 branches missed.">        return projection.filter { query.hookIds.isEmpty() || it.key in query.hookIds }</span>
+<span class="fc" id="L36">            .map { it.value }</span>
+<span class="fc" id="L37">            .reversed()</span>
+<span class="fc" id="L38">            .asSequence()</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">            .filter { if (query.groupIds.isEmpty()) true else query.groupIds.contains(it.groupId) }</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">            .dropWhile { it.id &gt;= query.afterId }</span>
+<span class="fc" id="L41">            .take(query.limit.value)</span>
+<span class="fc" id="L42">            .toList()</span>
+    }
+
+    fun count(query: HookQuery): ULong {
+<span class="nc bnc" id="L46" title="All 4 branches missed.">        return projection.filter { query.hookIds.isEmpty() || it.key in query.hookIds }</span>
+<span class="nc" id="L47">            .map { it.value }</span>
+<span class="nc" id="L48">            .reversed()</span>
+<span class="nc" id="L49">            .asSequence()</span>
+<span class="nc bnc" id="L50" title="All 2 branches missed.">            .filter { if (query.groupIds.isEmpty()) true else query.groupIds.contains(it.groupId) }</span>
+<span class="nc bnc" id="L51" title="All 2 branches missed.">            .dropWhile { it.id &gt;= query.afterId }</span>
+<span class="nc" id="L52">            .count()</span>
+<span class="nc" id="L53">            .toULong()</span>
+    }
+
+    fun clear() {
+<span class="fc" id="L57">        projection.clear()</span>
+<span class="fc" id="L58">    }</span>
+}
+
+<span class="pc" id="L61">class MemoryHookRepository : MemoryRecordRepository&lt;HookId, HookRecord, Hook&gt;(</span>
+<span class="fc" id="L62">    createDomainObject = CreateHookFromRecords,</span>
+    recordClass = HookRecord::class
+), HookRepository {
+<span class="fc" id="L65">    private val lock = ReentrantLock()</span>
+    override fun create(cmd: HookCmdRepository.CreateCmd): Hook {
+<span class="fc" id="L67">        return lock.withLock {</span>
+<span class="fc" id="L68">            val hookId = cmd.hookId</span>
+<span class="fc" id="L69">            val cmdId = cmd.id</span>
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">            if (commandAlreadyApplied(cmdId, hookId)) {</span>
+<span class="nc" id="L71">                versionOf(hookId, cmd.id)</span>
+            } else {
+<span class="fc" id="L73">                store(</span>
+<span class="fc" id="L74">                    HookCreationRecord(</span>
+<span class="fc" id="L75">                        cmdId = cmd.id,</span>
+<span class="fc" id="L76">                        entityId = hookId,</span>
+<span class="fc" id="L77">                        groupId = cmd.groupId,</span>
+<span class="fc" id="L78">                        namespaceId = cmd.namespaceId,</span>
+<span class="fc" id="L79">                        name = cmd.name</span>
+                    )
+                )
+<span class="fc" id="L82">                (currentVersion(hookId)).also(CurrentHookProjection::apply)</span>
+            }
+        }
+    }
+
+    override fun update(hookId: HookId, cmd: HookCmdRepository.UpdateCmd): Hook {
+<span class="fc" id="L88">        return lock.withLock {</span>
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">            if (commandAlreadyApplied(cmd.id, hookId)) {</span>
+<span class="nc" id="L90">                versionOf(hookId, cmd.id)</span>
+            } else {
+<span class="fc" id="L92">                val currentVersion = versionOf(hookId, cmd.id)</span>
+<span class="fc" id="L93">                store(</span>
+<span class="fc" id="L94">                    HookUpdatedRecord(</span>
+<span class="fc" id="L95">                        entityId = hookId,</span>
+<span class="fc" id="L96">                        cmdId = cmd.id,</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">                        namespaceId = cmd.namespaceId ?: currentVersion.namespaceId,</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">                        name = cmd.name ?: currentVersion.name</span>
+                    )
+                )
+<span class="fc" id="L101">                (currentVersion(hookId)).also(CurrentHookProjection::apply)</span>
+            }
+        }
+    }
+
+<span class="fc" id="L106">    override fun find(hookId: HookId): Hook? = CurrentHookProjection.find(hookId)</span>
+
+    override fun list(query: HookQuery): List&lt;Hook&gt; {
+<span class="fc" id="L109">        return CurrentHookProjection.list(query)</span>
+    }
+
+    override fun count(query: HookQuery): ULong {
+<span class="nc" id="L113">        return CurrentHookProjection.count(query)</span>
+    }
+
+    override fun clear() {
+<span class="fc" id="L117">        super.clear()</span>
+<span class="fc" id="L118">        CurrentHookProjection.clear()</span>
+<span class="fc" id="L119">    }</span>
+
+<span class="nc" id="L121">    override fun close() {}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

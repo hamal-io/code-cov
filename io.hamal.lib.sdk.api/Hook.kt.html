@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Hook.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.sdk.api</a> &gt; <span class="el_source">Hook.kt</span></div><h1>Hook.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.sdk.api
+
+import io.hamal.lib.domain.vo.*
+import io.hamal.lib.http.HttpTemplate
+import io.hamal.lib.http.body
+import io.hamal.lib.sdk.fold
+import io.hamal.request.CreateHookReq
+import io.hamal.request.UpdateHookReq
+import kotlinx.serialization.Serializable
+
+<span class="pc bpc" id="L11" title="6 of 14 branches missed.">@Serializable</span>
+<span class="pc" id="L12">data class ApiCreateHookReq(</span>
+<span class="pc" id="L13">    override val namespaceId: NamespaceId? = null,</span>
+<span class="fc" id="L14">    override val name: HookName</span>
+<span class="pc" id="L15">) : CreateHookReq</span>
+
+<span class="pc bpc" id="L17" title="10 of 20 branches missed.">@Serializable</span>
+<span class="fc" id="L18">data class ApiUpdateHookReq(</span>
+<span class="pc" id="L19">    override val namespaceId: NamespaceId? = null,</span>
+<span class="fc" id="L20">    override val name: HookName? = null</span>
+<span class="fc" id="L21">) : UpdateHookReq</span>
+
+<span class="pc bpc" id="L23" title="2 of 7 branches missed.">@Serializable</span>
+<span class="fc" id="L24">data class ApiHookList(</span>
+<span class="fc" id="L25">    val hooks: List&lt;Hook&gt;</span>
+) {
+<span class="pc bpc" id="L27" title="2 of 9 branches missed.">    @Serializable</span>
+<span class="fc" id="L28">    data class Hook(</span>
+<span class="fc" id="L29">        val id: HookId,</span>
+<span class="fc" id="L30">        val namespace: Namespace,</span>
+<span class="fc" id="L31">        val name: HookName</span>
+    ) {
+<span class="pc bpc" id="L33" title="2 of 8 branches missed.">        @Serializable</span>
+<span class="fc" id="L34">        data class Namespace(</span>
+<span class="pc" id="L35">            val id: NamespaceId,</span>
+<span class="fc" id="L36">            val name: NamespaceName</span>
+<span class="fc" id="L37">        )</span>
+<span class="fc" id="L38">    }</span>
+<span class="fc" id="L39">}</span>
+
+
+<span class="pc bpc" id="L42" title="2 of 9 branches missed.">@Serializable</span>
+<span class="fc" id="L43">data class ApiHook(</span>
+<span class="fc" id="L44">    val id: HookId,</span>
+<span class="fc" id="L45">    val namespace: Namespace,</span>
+<span class="fc" id="L46">    val name: HookName,</span>
+) {
+<span class="pc bpc" id="L48" title="2 of 8 branches missed.">    @Serializable</span>
+<span class="fc" id="L49">    data class Namespace(</span>
+<span class="fc" id="L50">        val id: NamespaceId,</span>
+<span class="fc" id="L51">        val name: NamespaceName</span>
+<span class="fc" id="L52">    )</span>
+
+<span class="nc bnc" id="L54" title="All 9 branches missed.">    @Serializable</span>
+<span class="nc" id="L55">    data class Code(</span>
+<span class="nc" id="L56">        val id: CodeId,</span>
+<span class="nc" id="L57">        val version: CodeVersion,</span>
+<span class="nc" id="L58">        val value: CodeValue</span>
+<span class="nc" id="L59">    )</span>
+<span class="fc" id="L60">}</span>
+
+interface ApiHookService {
+    fun create(groupId: GroupId, createHookReq: ApiCreateHookReq): ApiSubmittedReqWithId
+    fun list(groupId: GroupId): List&lt;ApiHookList.Hook&gt;
+    fun get(hookId: HookId): ApiHook
+}
+
+<span class="nc" id="L68">internal class ApiHookServiceImpl(</span>
+<span class="nc" id="L69">    private val template: HttpTemplate</span>
+) : ApiHookService {
+
+    override fun create(groupId: GroupId, createHookReq: ApiCreateHookReq) =
+<span class="nc" id="L73">        template.post(&quot;/v1/groups/{groupId}/hooks&quot;)</span>
+<span class="nc" id="L74">            .path(&quot;groupId&quot;, groupId)</span>
+<span class="nc" id="L75">            .body(createHookReq)</span>
+<span class="nc" id="L76">            .execute()</span>
+<span class="nc" id="L77">            .fold(ApiSubmittedReqWithId::class)</span>
+
+    override fun list(groupId: GroupId): List&lt;ApiHookList.Hook&gt; =
+<span class="nc" id="L80">        template.get(&quot;/v1/hooks&quot;)</span>
+<span class="nc" id="L81">            .parameter(&quot;group_ids&quot;, groupId)</span>
+<span class="nc" id="L82">            .execute()</span>
+<span class="nc" id="L83">            .fold(ApiHookList::class)</span>
+<span class="nc" id="L84">            .hooks</span>
+
+    override fun get(hookId: HookId) =
+<span class="nc" id="L87">        template.get(&quot;/v1/hooks/{hookId}&quot;)</span>
+<span class="nc" id="L88">            .path(&quot;hookId&quot;, hookId)</span>
+<span class="nc" id="L89">            .execute()</span>
+<span class="nc" id="L90">            .fold(ApiHook::class)</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

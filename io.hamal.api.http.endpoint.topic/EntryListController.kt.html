@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EntryListController.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.api.http.endpoint.topic</a> &gt; <span class="el_source">EntryListController.kt</span></div><h1>EntryListController.kt</h1><pre class="source lang-java linenums">package io.hamal.api.http.endpoint.topic
+
+import io.hamal.core.adapter.ListTopicEntriesPort
+import io.hamal.lib.common.domain.Limit
+import io.hamal.lib.domain.vo.TopicEntryId
+import io.hamal.lib.domain.vo.TopicId
+import io.hamal.lib.sdk.api.ApiTopicEntryList
+import io.hamal.repository.api.log.BrokerRepository.TopicEntryQuery
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
+
+<span class="fc" id="L15">@RestController</span>
+<span class="fc" id="L16">internal class EntryListController(private val listTopicEntries: ListTopicEntriesPort) {</span>
+    @GetMapping(&quot;/v1/topics/{topicId}/entries&quot;)
+    fun listEvents(
+        @PathVariable(&quot;topicId&quot;) topicId: TopicId,
+        @RequestParam(required = false, name = &quot;after_id&quot;, defaultValue = &quot;0&quot;) afterId: TopicEntryId,
+        @RequestParam(required = false, name = &quot;limit&quot;, defaultValue = &quot;100&quot;) limit: Limit
+    ): ResponseEntity&lt;ApiTopicEntryList&gt; {
+<span class="fc" id="L23">        return listTopicEntries(</span>
+<span class="fc" id="L24">            topicId, TopicEntryQuery(</span>
+<span class="fc" id="L25">                afterId = afterId,</span>
+<span class="fc" id="L26">                limit = limit</span>
+            )
+        ) { entries, topic -&gt;
+<span class="fc" id="L29">            ResponseEntity.ok(</span>
+<span class="fc" id="L30">                ApiTopicEntryList(</span>
+<span class="fc" id="L31">                    topicId = topic.id,</span>
+<span class="fc" id="L32">                    topicName = topic.name,</span>
+<span class="fc" id="L33">                    entries = entries.map {</span>
+<span class="fc" id="L34">                        ApiTopicEntryList.Entry(</span>
+<span class="fc" id="L35">                            id = it.id,</span>
+<span class="fc" id="L36">                            payload = it.payload</span>
+                        )
+                    }
+                )
+            )
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TriggerGetFunction.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.extension.std.sys.trigger</a> &gt; <span class="el_source">TriggerGetFunction.kt</span></div><h1>TriggerGetFunction.kt</h1><pre class="source lang-java linenums">package io.hamal.extension.std.sys.trigger
+
+import io.hamal.lib.domain.vo.TriggerId
+import io.hamal.lib.kua.function.Function1In2Out
+import io.hamal.lib.kua.function.FunctionContext
+import io.hamal.lib.kua.function.FunctionInput1Schema
+import io.hamal.lib.kua.function.FunctionOutput2Schema
+import io.hamal.lib.kua.type.ErrorType
+import io.hamal.lib.kua.type.MapType
+import io.hamal.lib.kua.type.StringType
+import io.hamal.lib.sdk.ApiSdk
+import io.hamal.lib.sdk.api.ApiEventTrigger
+import io.hamal.lib.sdk.api.ApiFixedRateTrigger
+
+<span class="nc" id="L15">class TriggerGetFunction(</span>
+<span class="nc" id="L16">    private val sdk: ApiSdk</span>
+<span class="nc" id="L17">) : Function1In2Out&lt;StringType, ErrorType, MapType&gt;(</span>
+<span class="nc" id="L18">    FunctionInput1Schema(StringType::class),</span>
+<span class="nc" id="L19">    FunctionOutput2Schema(ErrorType::class, MapType::class)</span>
+) {
+    override fun invoke(ctx: FunctionContext, arg1: StringType): Pair&lt;ErrorType?, MapType?&gt; {
+<span class="nc" id="L22">        return try {</span>
+<span class="nc" id="L23">            null to sdk.trigger.get(TriggerId(arg1.value))</span>
+<span class="nc" id="L24">                .let { trigger -&gt;</span>
+<span class="nc" id="L25">                    when (trigger) {</span>
+<span class="nc bnc" id="L26" title="All 2 branches missed.">                        is ApiFixedRateTrigger -&gt;</span>
+<span class="nc" id="L27">                            MapType(</span>
+<span class="nc" id="L28">                                mutableMapOf(</span>
+<span class="nc" id="L29">                                    &quot;id&quot; to StringType(trigger.id.value.value.toString(16)),</span>
+<span class="nc" id="L30">                                    &quot;type&quot; to StringType(&quot;FixedRate&quot;),</span>
+<span class="nc" id="L31">                                    &quot;name&quot; to StringType(trigger.name.value),</span>
+<span class="nc" id="L32">                                    &quot;namespace&quot; to MapType(</span>
+<span class="nc" id="L33">                                        mutableMapOf(</span>
+<span class="nc" id="L34">                                            &quot;id&quot; to StringType(trigger.namespace.id.value.value.toString(16)),</span>
+<span class="nc" id="L35">                                            &quot;name&quot; to StringType(trigger.namespace.name.value)</span>
+                                        )
+                                    ),
+<span class="nc" id="L38">                                    &quot;func&quot; to MapType(</span>
+<span class="nc" id="L39">                                        mutableMapOf(</span>
+<span class="nc" id="L40">                                            &quot;id&quot; to StringType(trigger.func.id.value.value.toString(16)),</span>
+<span class="nc" id="L41">                                            &quot;name&quot; to StringType(trigger.func.name.value)</span>
+                                        )
+                                    ),
+<span class="nc" id="L44">                                    &quot;duration&quot; to StringType(trigger.duration.toIsoString())</span>
+                                )
+                            )
+
+<span class="nc" id="L48">                        is ApiEventTrigger -&gt; {</span>
+<span class="nc" id="L49">                            MapType(</span>
+<span class="nc" id="L50">                                mutableMapOf(</span>
+<span class="nc" id="L51">                                    &quot;id&quot; to StringType(trigger.id.value.value.toString(16)),</span>
+<span class="nc" id="L52">                                    &quot;type&quot; to StringType(&quot;Event&quot;),</span>
+<span class="nc" id="L53">                                    &quot;name&quot; to StringType(trigger.name.value),</span>
+<span class="nc" id="L54">                                    &quot;namespace&quot; to MapType(</span>
+<span class="nc" id="L55">                                        mutableMapOf(</span>
+<span class="nc" id="L56">                                            &quot;id&quot; to StringType(trigger.namespace.id.value.value.toString(16)),</span>
+<span class="nc" id="L57">                                            &quot;name&quot; to StringType(trigger.namespace.name.value)</span>
+                                        )
+                                    ),
+<span class="nc" id="L60">                                    &quot;func&quot; to MapType(</span>
+<span class="nc" id="L61">                                        mutableMapOf(</span>
+<span class="nc" id="L62">                                            &quot;id&quot; to StringType(trigger.func.id.value.value.toString(16)),</span>
+<span class="nc" id="L63">                                            &quot;name&quot; to StringType(trigger.func.name.value)</span>
+                                        )
+                                    ),
+<span class="nc" id="L66">                                    &quot;topic&quot; to MapType(</span>
+<span class="nc" id="L67">                                        mutableMapOf(</span>
+<span class="nc" id="L68">                                            &quot;id&quot; to StringType(trigger.topic.id.value.value.toString(16)),</span>
+<span class="nc" id="L69">                                            &quot;name&quot; to StringType(trigger.topic.name.value)</span>
+                                        )
+                                    ),
+                                )
+                            )
+                        }
+                    }
+                }
+<span class="nc" id="L77">        } catch (t: Throwable) {</span>
+<span class="nc" id="L78">            ErrorType(t.message!!) to null</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

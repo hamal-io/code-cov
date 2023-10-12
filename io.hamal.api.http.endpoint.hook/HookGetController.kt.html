@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HookGetController.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.api.http.endpoint.hook</a> &gt; <span class="el_source">HookGetController.kt</span></div><h1>HookGetController.kt</h1><pre class="source lang-java linenums">package io.hamal.api.http.endpoint.hook
+
+import io.hamal.core.adapter.GetHookPort
+import io.hamal.lib.domain.vo.HookId
+import io.hamal.lib.sdk.api.ApiHook
+import io.hamal.lib.sdk.api.ApiHook.*
+import io.hamal.repository.api.Hook
+import io.hamal.repository.api.Namespace
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RestController
+
+<span class="fc" id="L14">@RestController</span>
+<span class="fc" id="L15">internal class HookGetController(private val getHook: GetHookPort) {</span>
+
+    @GetMapping(&quot;/v1/hooks/{hookId}&quot;)
+<span class="fc" id="L18">    fun getHook(@PathVariable(&quot;hookId&quot;) hookId: HookId): ResponseEntity&lt;ApiHook&gt; = getHook(hookId, ::assemble)</span>
+
+    private fun assemble(hook: Hook, namespace: Namespace) =
+<span class="fc" id="L21">        ResponseEntity.ok(</span>
+<span class="fc" id="L22">            ApiHook(</span>
+<span class="fc" id="L23">                id = hook.id,</span>
+<span class="fc" id="L24">                namespace = Namespace(</span>
+<span class="fc" id="L25">                    id = namespace.id,</span>
+<span class="fc" id="L26">                    name = namespace.name</span>
+                ),
+<span class="fc" id="L28">                name = hook.name</span>
+            )
+<span class="fc" id="L30">        )</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

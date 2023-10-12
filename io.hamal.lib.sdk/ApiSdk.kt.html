@@ -12,57 +12,62 @@ interface ApiSdk {
     val execLog: ApiExecLogService
     val func: ApiFuncService
     val group: ApiGroupService
+    val hook: ApiHookService
     val namespace: ApiNamespaceService
     val topic: ApiTopicService
     val trigger: ApiTriggerService
 }
 
-<span class="nc" id="L20">data class ApiSdkImpl(</span>
-<span class="nc" id="L21">    val template: HttpTemplate</span>
+<span class="nc" id="L21">data class ApiSdkImpl(</span>
+<span class="nc" id="L22">    val template: HttpTemplate</span>
 ) : ApiSdk {
 
-<span class="nc" id="L24">    override val account: ApiAccountService by lazy {</span>
-<span class="nc" id="L25">        ApiAccountServiceImpl(template)</span>
+<span class="nc" id="L25">    override val account: ApiAccountService by lazy {</span>
+<span class="nc" id="L26">        ApiAccountServiceImpl(template)</span>
     }
 
-<span class="nc" id="L28">    override val adhoc: ApiAdhocService by lazy {</span>
-<span class="nc" id="L29">        ApiAdhocServiceImpl(template)</span>
+<span class="nc" id="L29">    override val adhoc: ApiAdhocService by lazy {</span>
+<span class="nc" id="L30">        ApiAdhocServiceImpl(template)</span>
     }
 
-<span class="nc" id="L32">    override val auth: AuthService by lazy {</span>
-<span class="nc" id="L33">        ApiAuthServiceImpl(template)</span>
+<span class="nc" id="L33">    override val auth: AuthService by lazy {</span>
+<span class="nc" id="L34">        ApiAuthServiceImpl(template)</span>
     }
 
-<span class="nc" id="L36">    override val await: ApiAwaitService by lazy {</span>
-<span class="nc" id="L37">        ApiAwaitServiceImpl(template)</span>
+<span class="nc" id="L37">    override val await: ApiAwaitService by lazy {</span>
+<span class="nc" id="L38">        ApiAwaitServiceImpl(template)</span>
     }
 
-<span class="nc" id="L40">    override val exec: ApiExecService by lazy {</span>
-<span class="nc" id="L41">        ApiExecServiceImpl(template)</span>
+<span class="nc" id="L41">    override val exec: ApiExecService by lazy {</span>
+<span class="nc" id="L42">        ApiExecServiceImpl(template)</span>
     }
 
-<span class="nc" id="L44">    override val execLog: ApiExecLogService by lazy {</span>
-<span class="nc" id="L45">        ApiExecLogServiceImpl(template)</span>
+<span class="nc" id="L45">    override val execLog: ApiExecLogService by lazy {</span>
+<span class="nc" id="L46">        ApiExecLogServiceImpl(template)</span>
     }
 
-<span class="nc" id="L48">    override val func: ApiFuncService by lazy {</span>
-<span class="nc" id="L49">        ApiFuncServiceImpl(template)</span>
+<span class="nc" id="L49">    override val func: ApiFuncService by lazy {</span>
+<span class="nc" id="L50">        ApiFuncServiceImpl(template)</span>
     }
 
-<span class="nc" id="L52">    override val group: ApiGroupService by lazy {</span>
-<span class="nc" id="L53">        ApiGroupServiceImpl(template)</span>
+<span class="nc" id="L53">    override val group: ApiGroupService by lazy {</span>
+<span class="nc" id="L54">        ApiGroupServiceImpl(template)</span>
     }
 
-<span class="nc" id="L56">    override val namespace: ApiNamespaceService by lazy {</span>
-<span class="nc" id="L57">        ApiNamespaceServiceImpl(template)</span>
+<span class="nc" id="L57">    override val hook: ApiHookService by lazy {</span>
+<span class="nc" id="L58">        ApiHookServiceImpl(template)</span>
     }
 
-<span class="nc" id="L60">    override val topic: ApiTopicService by lazy {</span>
-<span class="nc" id="L61">        ApiTopicServiceImpl(template)</span>
+<span class="nc" id="L61">    override val namespace: ApiNamespaceService by lazy {</span>
+<span class="nc" id="L62">        ApiNamespaceServiceImpl(template)</span>
     }
 
-<span class="nc" id="L64">    override val trigger: ApiTriggerService by lazy {</span>
-<span class="nc" id="L65">        ApiTriggerServiceImpl(template)</span>
+<span class="nc" id="L65">    override val topic: ApiTopicService by lazy {</span>
+<span class="nc" id="L66">        ApiTopicServiceImpl(template)</span>
+    }
+
+<span class="nc" id="L69">    override val trigger: ApiTriggerService by lazy {</span>
+<span class="nc" id="L70">        ApiTriggerServiceImpl(template)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

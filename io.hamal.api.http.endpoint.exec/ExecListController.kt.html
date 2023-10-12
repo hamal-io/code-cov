@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExecListController.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.api.http.endpoint.exec</a> &gt; <span class="el_source">ExecListController.kt</span></div><h1>ExecListController.kt</h1><pre class="source lang-java linenums">package io.hamal.api.http.endpoint.exec
+
+import io.hamal.core.adapter.ListExecsPort
+import io.hamal.lib.common.domain.Limit
+import io.hamal.lib.domain.vo.ExecId
+import io.hamal.lib.domain.vo.FuncId
+import io.hamal.lib.domain.vo.GroupId
+import io.hamal.lib.sdk.api.ApiExecList
+import io.hamal.repository.api.ExecQueryRepository
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
+
+<span class="fc" id="L15">@RestController</span>
+<span class="fc" id="L16">internal class ExecListController(private val listExec: ListExecsPort) {</span>
+
+    @GetMapping(&quot;/v1/execs&quot;)
+    fun list(
+        @RequestParam(required = false, name = &quot;after_id&quot;, defaultValue = &quot;7FFFFFFFFFFFFFFF&quot;) afterId: ExecId,
+        @RequestParam(required = false, name = &quot;limit&quot;, defaultValue = &quot;100&quot;) limit: Limit,
+        @RequestParam(required = false, name = &quot;group_ids&quot;, defaultValue = &quot;&quot;) groupIds: List&lt;GroupId&gt;,
+        @RequestParam(required = false, name = &quot;func_ids&quot;, defaultValue = &quot;&quot;) funcIds: List&lt;FuncId&gt;
+    ): ResponseEntity&lt;ApiExecList&gt; {
+<span class="fc" id="L25">        return listExec(</span>
+<span class="fc" id="L26">            ExecQueryRepository.ExecQuery(</span>
+<span class="fc" id="L27">                afterId = afterId,</span>
+<span class="fc" id="L28">                limit = limit,</span>
+<span class="fc" id="L29">                groupIds = groupIds,</span>
+<span class="fc" id="L30">                funcIds = funcIds</span>
+            )
+        ) { execs -&gt;
+<span class="fc" id="L33">            ResponseEntity.ok(</span>
+<span class="fc" id="L34">                ApiExecList(</span>
+<span class="fc" id="L35">                    execs = execs.map {</span>
+<span class="fc" id="L36">                        ApiExecList.Exec(</span>
+<span class="fc" id="L37">                            id = it.id,</span>
+<span class="fc" id="L38">                            status = it.status,</span>
+<span class="fc" id="L39">                            correlation = it.correlation,</span>
+                        )
+                    }
+                )
+            )
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

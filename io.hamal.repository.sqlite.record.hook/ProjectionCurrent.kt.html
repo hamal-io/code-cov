@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProjectionCurrent.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.repository.sqlite.record.hook</a> &gt; <span class="el_source">ProjectionCurrent.kt</span></div><h1>ProjectionCurrent.kt</h1><pre class="source lang-java linenums">package io.hamal.repository.sqlite.record.hook
+
+import io.hamal.lib.domain.vo.HookId
+import io.hamal.lib.sqlite.Connection
+import io.hamal.lib.sqlite.Transaction
+import io.hamal.repository.api.Hook
+import io.hamal.repository.api.HookQueryRepository.HookQuery
+import io.hamal.repository.record.hook.HookRecord
+import io.hamal.repository.sqlite.record.SqliteProjection
+import io.hamal.repository.sqlite.record.SqliteRecordTransaction
+import io.hamal.repository.sqlite.record.protobuf
+import kotlinx.serialization.ExperimentalSerializationApi
+
+
+@OptIn(ExperimentalSerializationApi::class)
+internal object ProjectionCurrent : SqliteProjection&lt;HookId, HookRecord, Hook&gt; {
+
+    fun find(connection: Connection, hookId: HookId): Hook? {
+<span class="nc" id="L19">        return connection.executeQueryOne(</span>
+            &quot;&quot;&quot;
+            SELECT 
+                data
+             FROM
+                current
+            WHERE
+                id  = :id
+<span class="nc" id="L27">        &quot;&quot;&quot;.trimIndent()</span>
+        ) {
+<span class="nc" id="L29">            query {</span>
+<span class="nc" id="L30">                set(&quot;id&quot;, hookId)</span>
+            }
+<span class="nc" id="L32">            map { rs -&gt;</span>
+<span class="nc" id="L33">                protobuf.decodeFromByteArray(Hook.serializer(), rs.getBytes(&quot;data&quot;))</span>
+            }
+        }
+    }
+
+    fun list(connection: Connection, query: HookQuery): List&lt;Hook&gt; {
+<span class="nc" id="L39">        return connection.executeQuery&lt;Hook&gt;(</span>
+            &quot;&quot;&quot;
+            SELECT 
+                data
+             FROM
+                current
+            WHERE
+                id &lt; :afterId
+<span class="nc" id="L47">                ${query.ids()}</span>
+<span class="nc" id="L48">                ${query.groupIds()}</span>
+            ORDER BY id DESC
+            LIMIT :limit
+<span class="nc" id="L51">        &quot;&quot;&quot;.trimIndent()</span>
+        ) {
+<span class="nc" id="L53">            query {</span>
+<span class="nc" id="L54">                set(&quot;afterId&quot;, query.afterId)</span>
+<span class="nc" id="L55">                set(&quot;limit&quot;, query.limit)</span>
+            }
+<span class="nc" id="L57">            map { rs -&gt;</span>
+<span class="nc" id="L58">                protobuf.decodeFromByteArray(Hook.serializer(), rs.getBytes(&quot;data&quot;))</span>
+            }
+        }
+    }
+
+    fun count(connection: Connection, query: HookQuery): ULong {
+<span class="nc bnc" id="L64" title="All 2 branches missed.">        return connection.executeQueryOne(</span>
+            &quot;&quot;&quot;
+            SELECT 
+                COUNT(*) as count 
+            FROM 
+                current
+            WHERE
+                id &lt; :afterId
+<span class="nc" id="L72">                ${query.ids()}</span>
+<span class="nc" id="L73">                ${query.groupIds()}</span>
+<span class="nc" id="L74">        &quot;&quot;&quot;.trimIndent()</span>
+        ) {
+<span class="nc" id="L76">            query {</span>
+<span class="nc" id="L77">                set(&quot;afterId&quot;, query.afterId)</span>
+            }
+<span class="nc" id="L79">            map {</span>
+<span class="nc" id="L80">                it.getLong(&quot;count&quot;).toULong()</span>
+            }
+<span class="nc" id="L82">        } ?: 0UL</span>
+    }
+
+    override fun upsert(tx: SqliteRecordTransaction&lt;HookId, HookRecord, Hook&gt;, obj: Hook) {
+<span class="nc" id="L86">        tx.execute(</span>
+            &quot;&quot;&quot;
+                INSERT OR REPLACE INTO current
+                    (id, group_id, data) 
+                VALUES
+                    (:id, :groupId, :data)
+<span class="nc" id="L92">            &quot;&quot;&quot;.trimIndent()</span>
+        ) {
+<span class="nc" id="L94">            set(&quot;id&quot;, obj.id)</span>
+<span class="nc" id="L95">            set(&quot;groupId&quot;, obj.groupId)</span>
+<span class="nc" id="L96">            set(&quot;data&quot;, protobuf.encodeToByteArray(Hook.serializer(), obj))</span>
+        }
+<span class="nc" id="L98">    }</span>
+
+    override fun setupSchema(connection: Connection) {
+<span class="nc" id="L101">        connection.execute(</span>
+            &quot;&quot;&quot;
+            CREATE TABLE IF NOT EXISTS current (
+                 id             INTEGER NOT NULL,
+                 group_id       INTEGER NOT NULL,
+                 data           BLOB NOT NULL,
+                 PRIMARY KEY    (id)
+            );
+<span class="nc" id="L109">        &quot;&quot;&quot;.trimIndent()</span>
+        )
+<span class="nc" id="L111">    }</span>
+
+    override fun clear(tx: Transaction) {
+<span class="nc" id="L114">        tx.execute(&quot;&quot;&quot;DELETE FROM current&quot;&quot;&quot;)</span>
+<span class="nc" id="L115">    }</span>
+
+    private fun HookQuery.ids(): String {
+<span class="nc bnc" id="L118" title="All 2 branches missed.">        return if (hookIds.isEmpty()) {</span>
+<span class="nc" id="L119">            &quot;&quot;</span>
+        } else {
+<span class="nc" id="L121">            &quot;AND id IN (${hookIds.joinToString(&quot;,&quot;) { &quot;${it.value.value}&quot; }})&quot;</span>
+        }
+    }
+
+    private fun HookQuery.groupIds(): String {
+<span class="nc bnc" id="L126" title="All 2 branches missed.">        return if (groupIds.isEmpty()) {</span>
+<span class="nc" id="L127">            &quot;&quot;</span>
+        } else {
+<span class="nc" id="L129">            &quot;AND group_id IN (${groupIds.joinToString(&quot;,&quot;) { &quot;${it.value.value}&quot; }})&quot;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
