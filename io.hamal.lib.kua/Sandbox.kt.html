@@ -57,12 +57,12 @@ import io.hamal.lib.kua.type.ErrorType
 <span class="nc" id="L57">    override fun isEmpty() = state.isEmpty()</span>
 <span class="nc" id="L58">    override fun isNotEmpty() = state.isNotEmpty()</span>
 <span class="nc" id="L59">    override fun setTop(idx: Int) = state.setTop(idx)</span>
-<span class="nc" id="L60">    override fun absIndex(idx: Int) = state.absIndex(idx)</span>
+<span class="fc" id="L60">    override fun absIndex(idx: Int) = state.absIndex(idx)</span>
 
 <span class="nc" id="L62">    override fun pushTop(idx: Int) = state.pushTop(idx)</span>
 
 <span class="nc" id="L64">    override fun type(idx: Int) = state.type(idx)</span>
-<span class="nc" id="L65">    override fun pushNil() = state.pushNil()</span>
+<span class="fc" id="L65">    override fun pushNil() = state.pushNil()</span>
 <span class="nc" id="L66">    override fun pushAny(value: AnyType) = state.pushAny(value)</span>
 <span class="nc" id="L67">    override fun getAny(idx: Int) = state.getAny(idx)</span>
 <span class="nc" id="L68">    override fun getArrayType(idx: Int) = state.getArrayType(idx)</span>
@@ -86,7 +86,7 @@ import io.hamal.lib.kua.type.ErrorType
 <span class="fc" id="L86">    override fun setGlobal(name: String, value: FunctionType&lt;*, *, *, *&gt;) = state.setGlobal(name, value)</span>
 <span class="fc" id="L87">    override fun setGlobal(name: String, value: TableProxyMap) = state.setGlobal(name, value)</span>
 <span class="fc" id="L88">    override fun setGlobal(name: String, value: TableProxyArray) = state.setGlobal(name, value)</span>
-<span class="nc" id="L89">    override fun getGlobalTableMap(name: String): TableProxyMap = state.getGlobalTableMap(name)</span>
+<span class="fc" id="L89">    override fun getGlobalTableMap(name: String): TableProxyMap = state.getGlobalTableMap(name)</span>
 <span class="fc" id="L90">    override fun unsetGlobal(name: String) = state.unsetGlobal(name)</span>
 
 <span class="fc" id="L92">    override fun tableCreateMap(capacity: Int) = state.tableCreateMap(capacity)</span>

@@ -17,7 +17,7 @@ import kotlin.time.Duration
 <span class="fc" id="L17">) : Record&lt;TriggerId&gt;()</span>
 
 <span class="nc bnc" id="L19" title="All 25 branches missed.">@Serializable</span>
-@SerialName(&quot;FRCR&quot;)
+@SerialName(&quot;FRTCR&quot;)
 <span class="pc" id="L21">data class FixedRateTriggerCreationRecord(</span>
 <span class="fc" id="L22">    override val cmdId: CmdId,</span>
 <span class="fc" id="L23">    override val entityId: TriggerId,</span>
@@ -31,7 +31,7 @@ import kotlin.time.Duration
 <span class="pc" id="L31">) : TriggerRecord()</span>
 
 <span class="nc bnc" id="L33" title="All 21 branches missed.">@Serializable</span>
-@SerialName(&quot;ECR&quot;)
+@SerialName(&quot;ETCR&quot;)
 <span class="pc" id="L35">data class EventTriggerCreationRecord(</span>
 <span class="fc" id="L36">    override val cmdId: CmdId,</span>
 <span class="fc" id="L37">    override val entityId: TriggerId,</span>
@@ -43,4 +43,18 @@ import kotlin.time.Duration
 <span class="fc" id="L43">    val topicId: TopicId,</span>
 <span class="pc" id="L44">    val correlationId: CorrelationId? = null</span>
 <span class="pc" id="L45">) : TriggerRecord()</span>
+
+<span class="nc bnc" id="L47" title="All 21 branches missed.">@Serializable</span>
+@SerialName(&quot;HTCR&quot;)
+<span class="pc" id="L49">data class HookTriggerCreationRecord(</span>
+<span class="fc" id="L50">    override val cmdId: CmdId,</span>
+<span class="fc" id="L51">    override val entityId: TriggerId,</span>
+<span class="fc" id="L52">    val groupId: GroupId,</span>
+<span class="fc" id="L53">    val funcId: FuncId,</span>
+<span class="fc" id="L54">    val namespaceId: NamespaceId,</span>
+<span class="fc" id="L55">    val name: TriggerName,</span>
+<span class="fc" id="L56">    val inputs: TriggerInputs,</span>
+<span class="fc" id="L57">    val hookId: HookId,</span>
+<span class="pc" id="L58">    val correlationId: CorrelationId? = null</span>
+<span class="pc" id="L59">) : TriggerRecord()</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

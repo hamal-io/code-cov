@@ -19,7 +19,7 @@ import kotlinx.serialization.Serializable
 <span class="fc" id="L19">    val name: HookName</span>
 <span class="fc" id="L20">) : DomainObject&lt;HookId&gt;</span>
 
-<span class="pc" id="L22">interface HookRepository : HookCmdRepository, HookQueryRepository</span>
+<span class="fc" id="L22">interface HookRepository : HookCmdRepository, HookQueryRepository</span>
 
 interface HookCmdRepository : CmdRepository {
     fun create(cmd: CreateCmd): Hook
@@ -45,13 +45,13 @@ interface HookQueryRepository {
 <span class="fc bfc" id="L45" title="All 2 branches covered.">    fun get(hookId: HookId) = find(hookId) ?: throw NoSuchElementException(&quot;Hook not found&quot;)</span>
     fun find(hookId: HookId): Hook?
     fun list(query: HookQuery): List&lt;Hook&gt;
-<span class="nc" id="L48">    fun list(hookIds: List&lt;HookId&gt;): List&lt;Hook&gt; = list(</span>
-<span class="nc" id="L49">        HookQuery(</span>
-<span class="nc" id="L50">            limit = Limit.all,</span>
-<span class="nc" id="L51">            groupIds = listOf(),</span>
-<span class="nc" id="L52">            hookIds = hookIds,</span>
+<span class="fc" id="L48">    fun list(hookIds: List&lt;HookId&gt;): List&lt;Hook&gt; = list(</span>
+<span class="fc" id="L49">        HookQuery(</span>
+<span class="fc" id="L50">            limit = Limit.all,</span>
+<span class="fc" id="L51">            groupIds = listOf(),</span>
+<span class="fc" id="L52">            hookIds = hookIds,</span>
         )
-<span class="nc" id="L54">    )</span>
+<span class="fc" id="L54">    )</span>
 
     fun count(query: HookQuery): ULong
 

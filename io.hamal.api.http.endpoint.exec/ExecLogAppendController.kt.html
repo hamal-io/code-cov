@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExecLogAppendController.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.api.http.endpoint.exec</a> &gt; <span class="el_source">ExecLogAppendController.kt</span></div><h1>ExecLogAppendController.kt</h1><pre class="source lang-java linenums">package io.hamal.api.http.endpoint.exec
 
 import io.hamal.core.adapter.AppendExecLogPort
+import io.hamal.core.component.Retry
 import io.hamal.lib.domain.vo.ExecId
 import io.hamal.lib.sdk.api.ApiAppendExecLogCmd
 import org.springframework.http.ResponseEntity
@@ -9,15 +10,20 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
-<span class="fc" id="L12">@RestController</span>
-<span class="fc" id="L13">internal class ExecLogAppendController(private val appendExecLog: AppendExecLogPort) {</span>
+<span class="fc" id="L13">@RestController</span>
+<span class="fc" id="L14">internal class ExecLogAppendController(</span>
+<span class="fc" id="L15">    private val retry: Retry,</span>
+<span class="fc" id="L16">    private val appendExecLog: AppendExecLogPort</span>
+) {
     @PostMapping(&quot;/v1/execs/{execId}/logs&quot;)
     fun appendExecLog(
         @PathVariable(&quot;execId&quot;) execId: ExecId,
         @RequestBody cmd: ApiAppendExecLogCmd
     ): ResponseEntity&lt;Unit&gt; {
-<span class="nc" id="L19">        return appendExecLog(execId, cmd) {</span>
-<span class="nc" id="L20">            ResponseEntity.accepted().build()</span>
+<span class="nc" id="L23">        return retry {</span>
+<span class="nc" id="L24">            appendExecLog(execId, cmd) {</span>
+<span class="nc" id="L25">                ResponseEntity.accepted().build()</span>
+            }
         }
     }
 }

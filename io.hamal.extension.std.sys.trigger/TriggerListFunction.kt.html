@@ -45,7 +45,7 @@ import io.hamal.lib.sdk.api.ApiTriggerList
                                 )
                             }
 
-<span class="nc" id="L48">                            is ApiTriggerList.EventTrigger -&gt; {</span>
+<span class="nc bnc" id="L48" title="All 2 branches missed.">                            is ApiTriggerList.EventTrigger -&gt; {</span>
 <span class="nc" id="L49">                                MapType(</span>
 <span class="nc" id="L50">                                    mutableMapOf(</span>
 <span class="nc" id="L51">                                        &quot;id&quot; to StringType(trigger.id.value.value.toString(16)),</span>
@@ -72,11 +72,39 @@ import io.hamal.lib.sdk.api.ApiTriggerList
                                     )
                                 )
                             }
+
+<span class="nc" id="L76">                            is ApiTriggerList.HookTrigger -&gt; {</span>
+<span class="nc" id="L77">                                MapType(</span>
+<span class="nc" id="L78">                                    mutableMapOf(</span>
+<span class="nc" id="L79">                                        &quot;id&quot; to StringType(trigger.id.value.value.toString(16)),</span>
+<span class="nc" id="L80">                                        &quot;type&quot; to StringType(&quot;Hook&quot;),</span>
+<span class="nc" id="L81">                                        &quot;name&quot; to StringType(trigger.name.value),</span>
+<span class="nc" id="L82">                                        &quot;namespace&quot; to MapType(</span>
+<span class="nc" id="L83">                                            mutableMapOf(</span>
+<span class="nc" id="L84">                                                &quot;id&quot; to StringType(trigger.namespace.id.value.value.toString(16)),</span>
+<span class="nc" id="L85">                                                &quot;name&quot; to StringType(trigger.namespace.name.value)</span>
+                                            )
+                                        ),
+<span class="nc" id="L88">                                        &quot;func&quot; to MapType(</span>
+<span class="nc" id="L89">                                            mutableMapOf(</span>
+<span class="nc" id="L90">                                                &quot;id&quot; to StringType(trigger.func.id.value.value.toString(16)),</span>
+<span class="nc" id="L91">                                                &quot;name&quot; to StringType(trigger.func.name.value)</span>
+                                            )
+                                        ),
+<span class="nc" id="L94">                                        &quot;hook&quot; to MapType(</span>
+<span class="nc" id="L95">                                            mutableMapOf(</span>
+<span class="nc" id="L96">                                                &quot;id&quot; to StringType(trigger.hook.id.value.value.toString(16)),</span>
+<span class="nc" id="L97">                                                &quot;name&quot; to StringType(trigger.hook.name.value)</span>
+                                            )
+                                        ),
+                                    )
+                                )
+                            }
                         }
-<span class="nc" id="L76">                    }.toMap().toMutableMap()</span>
+<span class="nc" id="L104">                    }.toMap().toMutableMap()</span>
             )
-<span class="nc" id="L78">        } catch (t: Throwable) {</span>
-<span class="nc" id="L79">            ErrorType(t.message!!) to null</span>
+<span class="nc" id="L106">        } catch (t: Throwable) {</span>
+<span class="nc" id="L107">            ErrorType(t.message!!) to null</span>
         }
     }
 }

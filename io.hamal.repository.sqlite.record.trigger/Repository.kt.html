@@ -3,118 +3,143 @@
 import io.hamal.lib.domain.vo.TriggerId
 import io.hamal.lib.sqlite.SqliteBaseRepository
 import io.hamal.repository.api.*
-import io.hamal.repository.api.TriggerCmdRepository.CreateFixedRateCmd
+import io.hamal.repository.api.TriggerCmdRepository.*
 import io.hamal.repository.api.TriggerQueryRepository.TriggerQuery
 import io.hamal.repository.record.CreateDomainObject
-import io.hamal.repository.record.trigger.EventTriggerCreationRecord
-import io.hamal.repository.record.trigger.FixedRateTriggerCreationRecord
-import io.hamal.repository.record.trigger.TriggerEntity
-import io.hamal.repository.record.trigger.TriggerRecord
+import io.hamal.repository.record.trigger.*
 import io.hamal.repository.sqlite.record.SqliteRecordRepository
 import java.nio.file.Path
 
 internal object CreateTrigger : CreateDomainObject&lt;TriggerId, TriggerRecord, Trigger&gt; {
     override fun invoke(recs: List&lt;TriggerRecord&gt;): Trigger {
-<span class="nc bnc" id="L18" title="All 4 branches missed.">        check(recs.isNotEmpty()) { &quot;At least one record is required&quot; }</span>
-<span class="nc" id="L19">        val firstRecord = recs.first()</span>
+<span class="nc bnc" id="L15" title="All 4 branches missed.">        check(recs.isNotEmpty()) { &quot;At least one record is required&quot; }</span>
+<span class="nc" id="L16">        val firstRecord = recs.first()</span>
 
-<span class="nc bnc" id="L21" title="All 6 branches missed.">        check(firstRecord is FixedRateTriggerCreationRecord || firstRecord is EventTriggerCreationRecord)</span>
+<span class="nc bnc" id="L18" title="All 8 branches missed.">        check(firstRecord is FixedRateTriggerCreationRecord || firstRecord is EventTriggerCreationRecord || firstRecord is HookTriggerCreationRecord)</span>
 
-<span class="nc" id="L23">        var result = TriggerEntity(</span>
-<span class="nc" id="L24">            id = firstRecord.entityId,</span>
-<span class="nc" id="L25">            cmdId = firstRecord.cmdId,</span>
-<span class="nc" id="L26">            sequence = firstRecord.sequence()</span>
+<span class="nc" id="L20">        var result = TriggerEntity(</span>
+<span class="nc" id="L21">            id = firstRecord.entityId,</span>
+<span class="nc" id="L22">            cmdId = firstRecord.cmdId,</span>
+<span class="nc" id="L23">            sequence = firstRecord.sequence()</span>
         )
 
-<span class="nc" id="L29">        recs.forEach { record -&gt;</span>
-<span class="nc" id="L30">            result = result.apply(record)</span>
-<span class="nc" id="L31">        }</span>
+<span class="nc" id="L26">        recs.forEach { record -&gt;</span>
+<span class="nc" id="L27">            result = result.apply(record)</span>
+<span class="nc" id="L28">        }</span>
 
-<span class="nc" id="L33">        return result.toDomainObject()</span>
+<span class="nc" id="L30">        return result.toDomainObject()</span>
     }
 }
 
-<span class="nc" id="L37">class SqliteTriggerRepository(</span>
+<span class="nc" id="L34">class SqliteTriggerRepository(</span>
     config: Config
-<span class="nc" id="L39">) : SqliteRecordRepository&lt;TriggerId, TriggerRecord, Trigger&gt;(</span>
-<span class="nc" id="L40">    config = config,</span>
-<span class="nc" id="L41">    createDomainObject = CreateTrigger,</span>
+<span class="nc" id="L36">) : SqliteRecordRepository&lt;TriggerId, TriggerRecord, Trigger&gt;(</span>
+<span class="nc" id="L37">    config = config,</span>
+<span class="nc" id="L38">    createDomainObject = CreateTrigger,</span>
     recordClass = TriggerRecord::class,
-<span class="nc" id="L43">    projections = listOf(ProjectionCurrent, ProjectionUniqueName)</span>
+<span class="nc" id="L40">    projections = listOf(ProjectionCurrent, ProjectionUniqueName)</span>
 ), TriggerRepository {
 
-<span class="nc" id="L46">    data class Config(</span>
-<span class="nc" id="L47">        override val path: Path,</span>
+<span class="nc" id="L43">    data class Config(</span>
+<span class="nc" id="L44">        override val path: Path,</span>
     ) : SqliteBaseRepository.Config {
-<span class="nc" id="L49">        override val filename = &quot;trigger.db&quot;</span>
+<span class="nc" id="L46">        override val filename = &quot;trigger.db&quot;</span>
     }
 
     override fun create(cmd: CreateFixedRateCmd): FixedRateTrigger {
-<span class="nc" id="L53">        val triggerId = cmd.triggerId</span>
-<span class="nc" id="L54">        val cmdId = cmd.id</span>
-<span class="nc" id="L55">        return tx {</span>
-<span class="nc bnc" id="L56" title="All 2 branches missed.">            if (commandAlreadyApplied(cmdId, triggerId)) {</span>
-<span class="nc" id="L57">                versionOf(triggerId, cmdId) as FixedRateTrigger</span>
+<span class="nc" id="L50">        val triggerId = cmd.triggerId</span>
+<span class="nc" id="L51">        val cmdId = cmd.id</span>
+<span class="nc" id="L52">        return tx {</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">            if (commandAlreadyApplied(cmdId, triggerId)) {</span>
+<span class="nc" id="L54">                versionOf(triggerId, cmdId) as FixedRateTrigger</span>
             } else {
-<span class="nc" id="L59">                store(</span>
-<span class="nc" id="L60">                    FixedRateTriggerCreationRecord(</span>
-<span class="nc" id="L61">                        cmdId = cmdId,</span>
-<span class="nc" id="L62">                        entityId = triggerId,</span>
-<span class="nc" id="L63">                        groupId = cmd.groupId,</span>
-<span class="nc" id="L64">                        funcId = cmd.funcId,</span>
-<span class="nc" id="L65">                        namespaceId = cmd.namespaceId,</span>
-<span class="nc" id="L66">                        name = cmd.name,</span>
-<span class="nc" id="L67">                        inputs = cmd.inputs,</span>
-<span class="nc" id="L68">                        duration = cmd.duration,</span>
-<span class="nc" id="L69">                        correlationId = cmd.correlationId</span>
+<span class="nc" id="L56">                store(</span>
+<span class="nc" id="L57">                    FixedRateTriggerCreationRecord(</span>
+<span class="nc" id="L58">                        cmdId = cmdId,</span>
+<span class="nc" id="L59">                        entityId = triggerId,</span>
+<span class="nc" id="L60">                        groupId = cmd.groupId,</span>
+<span class="nc" id="L61">                        funcId = cmd.funcId,</span>
+<span class="nc" id="L62">                        namespaceId = cmd.namespaceId,</span>
+<span class="nc" id="L63">                        name = cmd.name,</span>
+<span class="nc" id="L64">                        inputs = cmd.inputs,</span>
+<span class="nc" id="L65">                        duration = cmd.duration,</span>
+<span class="nc" id="L66">                        correlationId = cmd.correlationId</span>
                     )
                 )
 
-<span class="nc" id="L73">                (currentVersion(triggerId) as FixedRateTrigger)</span>
-<span class="nc" id="L74">                    .also { ProjectionCurrent.upsert(this, it) }</span>
-<span class="nc" id="L75">                    .also { ProjectionUniqueName.upsert(this, it) }</span>
+<span class="nc" id="L70">                (currentVersion(triggerId) as FixedRateTrigger)</span>
+<span class="nc" id="L71">                    .also { ProjectionCurrent.upsert(this, it) }</span>
+<span class="nc" id="L72">                    .also { ProjectionUniqueName.upsert(this, it) }</span>
             }
         }
     }
 
-    override fun create(cmd: TriggerCmdRepository.CreateEventCmd): EventTrigger {
-<span class="nc" id="L81">        val triggerId = cmd.triggerId</span>
-<span class="nc" id="L82">        val cmdId = cmd.id</span>
-<span class="nc" id="L83">        return tx {</span>
-<span class="nc bnc" id="L84" title="All 2 branches missed.">            if (commandAlreadyApplied(cmdId, triggerId)) {</span>
-<span class="nc" id="L85">                versionOf(triggerId, cmdId) as EventTrigger</span>
+    override fun create(cmd: CreateEventCmd): EventTrigger {
+<span class="nc" id="L78">        val triggerId = cmd.triggerId</span>
+<span class="nc" id="L79">        val cmdId = cmd.id</span>
+<span class="nc" id="L80">        return tx {</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">            if (commandAlreadyApplied(cmdId, triggerId)) {</span>
+<span class="nc" id="L82">                versionOf(triggerId, cmdId) as EventTrigger</span>
             } else {
-<span class="nc" id="L87">                store(</span>
-<span class="nc" id="L88">                    EventTriggerCreationRecord(</span>
-<span class="nc" id="L89">                        cmdId = cmdId,</span>
-<span class="nc" id="L90">                        entityId = triggerId,</span>
-<span class="nc" id="L91">                        groupId = cmd.groupId,</span>
-<span class="nc" id="L92">                        funcId = cmd.funcId,</span>
-<span class="nc" id="L93">                        namespaceId = cmd.namespaceId,</span>
-<span class="nc" id="L94">                        name = cmd.name,</span>
-<span class="nc" id="L95">                        inputs = cmd.inputs,</span>
-<span class="nc" id="L96">                        topicId = cmd.topicId,</span>
-<span class="nc" id="L97">                        correlationId = cmd.correlationId</span>
+<span class="nc" id="L84">                store(</span>
+<span class="nc" id="L85">                    EventTriggerCreationRecord(</span>
+<span class="nc" id="L86">                        cmdId = cmdId,</span>
+<span class="nc" id="L87">                        entityId = triggerId,</span>
+<span class="nc" id="L88">                        groupId = cmd.groupId,</span>
+<span class="nc" id="L89">                        funcId = cmd.funcId,</span>
+<span class="nc" id="L90">                        namespaceId = cmd.namespaceId,</span>
+<span class="nc" id="L91">                        name = cmd.name,</span>
+<span class="nc" id="L92">                        inputs = cmd.inputs,</span>
+<span class="nc" id="L93">                        topicId = cmd.topicId,</span>
+<span class="nc" id="L94">                        correlationId = cmd.correlationId</span>
                     )
                 )
 
-<span class="nc" id="L101">                (currentVersion(triggerId) as EventTrigger)</span>
-<span class="nc" id="L102">                    .also { ProjectionCurrent.upsert(this, it) }</span>
-<span class="nc" id="L103">                    .also { ProjectionUniqueName.upsert(this, it) }</span>
+<span class="nc" id="L98">                (currentVersion(triggerId) as EventTrigger)</span>
+<span class="nc" id="L99">                    .also { ProjectionCurrent.upsert(this, it) }</span>
+<span class="nc" id="L100">                    .also { ProjectionUniqueName.upsert(this, it) }</span>
+            }
+        }
+    }
+
+    override fun create(cmd: CreateHookCmd): HookTrigger {
+<span class="nc" id="L106">        val triggerId = cmd.triggerId</span>
+<span class="nc" id="L107">        val cmdId = cmd.id</span>
+<span class="nc" id="L108">        return tx {</span>
+<span class="nc bnc" id="L109" title="All 2 branches missed.">            if (commandAlreadyApplied(cmdId, triggerId)) {</span>
+<span class="nc" id="L110">                versionOf(triggerId, cmdId) as HookTrigger</span>
+            } else {
+<span class="nc" id="L112">                store(</span>
+<span class="nc" id="L113">                    HookTriggerCreationRecord(</span>
+<span class="nc" id="L114">                        cmdId = cmdId,</span>
+<span class="nc" id="L115">                        entityId = triggerId,</span>
+<span class="nc" id="L116">                        groupId = cmd.groupId,</span>
+<span class="nc" id="L117">                        funcId = cmd.funcId,</span>
+<span class="nc" id="L118">                        namespaceId = cmd.namespaceId,</span>
+<span class="nc" id="L119">                        name = cmd.name,</span>
+<span class="nc" id="L120">                        inputs = cmd.inputs,</span>
+<span class="nc" id="L121">                        hookId = cmd.hookId,</span>
+<span class="nc" id="L122">                        correlationId = cmd.correlationId</span>
+                    )
+                )
+
+<span class="nc" id="L126">                (currentVersion(triggerId) as HookTrigger)</span>
+<span class="nc" id="L127">                    .also { ProjectionCurrent.upsert(this, it) }</span>
+<span class="nc" id="L128">                    .also { ProjectionUniqueName.upsert(this, it) }</span>
             }
         }
     }
 
     override fun find(triggerId: TriggerId): Trigger? {
-<span class="nc" id="L109">        return ProjectionCurrent.find(connection, triggerId)</span>
+<span class="nc" id="L134">        return ProjectionCurrent.find(connection, triggerId)</span>
     }
 
     override fun list(query: TriggerQuery): List&lt;Trigger&gt; {
-<span class="nc" id="L113">        return ProjectionCurrent.list(connection, query)</span>
+<span class="nc" id="L138">        return ProjectionCurrent.list(connection, query)</span>
     }
 
     override fun count(query: TriggerQuery): ULong {
-<span class="nc" id="L117">        return ProjectionCurrent.count(connection, query)</span>
+<span class="nc" id="L142">        return ProjectionCurrent.count(connection, query)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

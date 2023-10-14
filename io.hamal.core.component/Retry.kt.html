@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Retry.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.core.component</a> &gt; <span class="el_source">Retry.kt</span></div><h1>Retry.kt</h1><pre class="source lang-java linenums">package io.hamal.core.component
+
+
+import org.springframework.stereotype.Component
+import java.util.concurrent.ThreadLocalRandom
+import java.util.concurrent.atomic.AtomicReference
+import kotlin.math.min
+import kotlin.math.pow
+import kotlin.time.Duration
+
+fun interface DelayRetry {
+    operator fun invoke(iteration: Int)
+}
+
+<span class="fc" id="L15">class DelayRetryExponentialTime(</span>
+<span class="fc" id="L16">    private val base: Duration,</span>
+<span class="fc" id="L17">    private val maxBackOffTime: Duration</span>
+) : DelayRetry {
+<span class="fc" id="L19">    private val rand = ThreadLocalRandom.current()</span>
+
+    override operator fun invoke(iteration: Int) {
+<span class="nc" id="L22">        val pow: Double = base.inWholeMilliseconds.toDouble().pow(iteration.toDouble())</span>
+<span class="nc" id="L23">        val extraDelay = rand.nextInt(1000)</span>
+<span class="nc" id="L24">        Thread.sleep(min(pow * 1000 + extraDelay, maxBackOffTime.inWholeMilliseconds.toDouble()).toLong())</span>
+<span class="nc" id="L25">    }</span>
+}
+
+<span class="nc" id="L28">class DelayRetryFixedTime(</span>
+<span class="nc" id="L29">    private val delay: Duration</span>
+) : DelayRetry {
+    override operator fun invoke(iteration: Int) {
+<span class="nc" id="L32">        Thread.sleep(delay.inWholeMilliseconds)</span>
+<span class="nc" id="L33">    }</span>
+}
+
+object DelayRetryNoDelay : DelayRetry {
+<span class="fc" id="L37">    override fun invoke(iteration: Int) {}</span>
+}
+
+
+<span class="fc" id="L41">@Component</span>
+<span class="fc" id="L42">class Retry(private val delay: DelayRetry) {</span>
+<span class="fc" id="L43">    operator fun &lt;T&gt; invoke(maxAttempts: Int = 5, action: () -&gt; T): T {</span>
+<span class="pc bpc" id="L44" title="2 of 4 branches missed.">        require(maxAttempts &gt;= 0) { &quot;maxAttempts must not be negative&quot; }</span>
+<span class="fc" id="L45">        val exceptionRef = AtomicReference&lt;NoSuchElementException&gt;(null)</span>
+
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        for (iteration in 0 until maxAttempts) {</span>
+<span class="fc" id="L48">            try {</span>
+<span class="fc" id="L49">                return action()</span>
+<span class="fc" id="L50">            } catch (e: java.util.NoSuchElementException) {</span>
+<span class="fc" id="L51">                exceptionRef.set(e)</span>
+<span class="fc" id="L52">                delay(iteration)</span>
+<span class="fc" id="L53">            } catch (t: Throwable) {</span>
+<span class="fc" id="L54">                throw t</span>
+            }
+        }
+
+<span class="fc" id="L58">        throw exceptionRef.get()</span>
+    }
+}
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

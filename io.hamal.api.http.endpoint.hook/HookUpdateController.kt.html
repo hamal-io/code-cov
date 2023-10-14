@@ -2,6 +2,7 @@
 
 import io.hamal.api.http.endpoint.req.Assembler
 import io.hamal.core.adapter.UpdateHookPort
+import io.hamal.core.component.Retry
 import io.hamal.lib.domain.vo.HookId
 import io.hamal.lib.sdk.api.ApiUpdateHookReq
 import org.springframework.http.HttpStatus.ACCEPTED
@@ -11,12 +12,16 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
-<span class="fc" id="L14">@RestController</span>
-<span class="fc" id="L15">internal class HookUpdateController(private val updateHook: UpdateHookPort) {</span>
+<span class="fc" id="L15">@RestController</span>
+<span class="fc" id="L16">internal class HookUpdateController(</span>
+<span class="fc" id="L17">    private val retry: Retry,</span>
+<span class="fc" id="L18">    private val updateHook: UpdateHookPort</span>
+) {
     @PatchMapping(&quot;/v1/hooks/{hookId}&quot;)
-    fun createHook(@PathVariable(&quot;hookId&quot;) hookId: HookId, @RequestBody req: ApiUpdateHookReq) =
-<span class="fc" id="L18">        updateHook(hookId, req) { submittedReq -&gt;</span>
-<span class="fc" id="L19">            ResponseEntity(Assembler.assemble(submittedReq), ACCEPTED)</span>
-<span class="fc" id="L20">        }</span>
+<span class="fc" id="L21">    fun createHook(@PathVariable(&quot;hookId&quot;) hookId: HookId, @RequestBody req: ApiUpdateHookReq) = retry {</span>
+<span class="fc" id="L22">        updateHook(hookId, req) { submittedReq -&gt;</span>
+<span class="fc" id="L23">            ResponseEntity(Assembler.assemble(submittedReq), ACCEPTED)</span>
+        }
+<span class="fc" id="L25">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

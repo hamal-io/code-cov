@@ -2,11 +2,11 @@
 
 import io.hamal.lib.common.domain.CmdId
 import io.hamal.lib.domain._enum.TriggerType
-import io.hamal.lib.domain._enum.TriggerType.Event
-import io.hamal.lib.domain._enum.TriggerType.FixedRate
+import io.hamal.lib.domain._enum.TriggerType.*
 import io.hamal.lib.domain.vo.*
 import io.hamal.repository.api.EventTrigger
 import io.hamal.repository.api.FixedRateTrigger
+import io.hamal.repository.api.HookTrigger
 import io.hamal.repository.api.Trigger
 
 import io.hamal.repository.record.CreateDomainObject
@@ -29,93 +29,120 @@ import kotlin.time.Duration
 <span class="pc" id="L29">    var correlationId: CorrelationId? = null,</span>
 
 <span class="pc" id="L31">    var topicId: TopicId? = null,</span>
-<span class="pc" id="L32">    var duration: Duration? = null</span>
+<span class="pc" id="L32">    var duration: Duration? = null,</span>
+<span class="pc" id="L33">    var hookId: HookId? = null</span>
 
 ) : RecordEntity&lt;TriggerId, TriggerRecord, Trigger&gt; {
 
     override fun apply(rec: TriggerRecord): TriggerEntity {
-<span class="fc" id="L37">        return when (rec) {</span>
-<span class="fc bfc" id="L38" title="All 2 branches covered.">            is FixedRateTriggerCreationRecord -&gt; copy(</span>
-<span class="fc" id="L39">                cmdId = rec.cmdId,</span>
-<span class="fc" id="L40">                id = rec.entityId,</span>
-<span class="fc" id="L41">                groupId = rec.groupId,</span>
-<span class="fc" id="L42">                sequence = rec.sequence(),</span>
-<span class="fc" id="L43">                name = rec.name,</span>
-<span class="fc" id="L44">                funcId = rec.funcId,</span>
-<span class="fc" id="L45">                namespaceId = rec.namespaceId,</span>
-<span class="fc" id="L46">                type = FixedRate,</span>
-<span class="fc" id="L47">                inputs = rec.inputs,</span>
-<span class="fc" id="L48">                correlationId = rec.correlationId,</span>
-<span class="fc" id="L49">                duration = rec.duration</span>
+<span class="fc" id="L38">        return when (rec) {</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">            is FixedRateTriggerCreationRecord -&gt; copy(</span>
+<span class="fc" id="L40">                cmdId = rec.cmdId,</span>
+<span class="fc" id="L41">                id = rec.entityId,</span>
+<span class="fc" id="L42">                groupId = rec.groupId,</span>
+<span class="fc" id="L43">                sequence = rec.sequence(),</span>
+<span class="fc" id="L44">                name = rec.name,</span>
+<span class="fc" id="L45">                funcId = rec.funcId,</span>
+<span class="fc" id="L46">                namespaceId = rec.namespaceId,</span>
+<span class="fc" id="L47">                type = FixedRate,</span>
+<span class="fc" id="L48">                inputs = rec.inputs,</span>
+<span class="fc" id="L49">                correlationId = rec.correlationId,</span>
+<span class="fc" id="L50">                duration = rec.duration</span>
             )
 
-<span class="fc" id="L52">            is EventTriggerCreationRecord -&gt; copy(</span>
-<span class="fc" id="L53">                cmdId = rec.cmdId,</span>
-<span class="fc" id="L54">                id = rec.entityId,</span>
-<span class="fc" id="L55">                groupId = rec.groupId,</span>
-<span class="fc" id="L56">                sequence = rec.sequence(),</span>
-<span class="fc" id="L57">                name = rec.name,</span>
-<span class="fc" id="L58">                funcId = rec.funcId,</span>
-<span class="fc" id="L59">                namespaceId = rec.namespaceId,</span>
-<span class="fc" id="L60">                type = Event,</span>
-<span class="fc" id="L61">                inputs = rec.inputs,</span>
-<span class="fc" id="L62">                correlationId = rec.correlationId,</span>
-<span class="fc" id="L63">                topicId = rec.topicId</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">            is EventTriggerCreationRecord -&gt; copy(</span>
+<span class="fc" id="L54">                cmdId = rec.cmdId,</span>
+<span class="fc" id="L55">                id = rec.entityId,</span>
+<span class="fc" id="L56">                groupId = rec.groupId,</span>
+<span class="fc" id="L57">                sequence = rec.sequence(),</span>
+<span class="fc" id="L58">                name = rec.name,</span>
+<span class="fc" id="L59">                funcId = rec.funcId,</span>
+<span class="fc" id="L60">                namespaceId = rec.namespaceId,</span>
+<span class="fc" id="L61">                type = Event,</span>
+<span class="fc" id="L62">                inputs = rec.inputs,</span>
+<span class="fc" id="L63">                correlationId = rec.correlationId,</span>
+<span class="fc" id="L64">                topicId = rec.topicId</span>
+            )
+
+<span class="fc" id="L67">            is HookTriggerCreationRecord -&gt; copy(</span>
+<span class="fc" id="L68">                cmdId = rec.cmdId,</span>
+<span class="fc" id="L69">                id = rec.entityId,</span>
+<span class="fc" id="L70">                groupId = rec.groupId,</span>
+<span class="fc" id="L71">                sequence = rec.sequence(),</span>
+<span class="fc" id="L72">                name = rec.name,</span>
+<span class="fc" id="L73">                funcId = rec.funcId,</span>
+<span class="fc" id="L74">                namespaceId = rec.namespaceId,</span>
+<span class="fc" id="L75">                type = Hook,</span>
+<span class="fc" id="L76">                inputs = rec.inputs,</span>
+<span class="fc" id="L77">                correlationId = rec.correlationId,</span>
+<span class="fc" id="L78">                hookId = rec.hookId</span>
             )
         }
     }
 
     override fun toDomainObject(): Trigger {
-<span class="fc bfc" id="L69" title="All 2 branches covered.">        return when (type!!) {</span>
-<span class="fc" id="L70">            FixedRate -&gt; FixedRateTrigger(</span>
-<span class="fc" id="L71">                cmdId = cmdId,</span>
-<span class="fc" id="L72">                id = id,</span>
-<span class="fc" id="L73">                groupId = groupId!!,</span>
-<span class="fc" id="L74">                funcId = funcId!!,</span>
-<span class="fc" id="L75">                namespaceId = namespaceId!!,</span>
-<span class="fc" id="L76">                correlationId = correlationId,</span>
-<span class="fc" id="L77">                name = name!!,</span>
-<span class="fc" id="L78">                inputs = inputs!!,</span>
-<span class="fc" id="L79">                duration = duration!!</span>
+<span class="fc bfc" id="L84" title="All 3 branches covered.">        return when (type!!) {</span>
+<span class="fc" id="L85">            FixedRate -&gt; FixedRateTrigger(</span>
+<span class="fc" id="L86">                cmdId = cmdId,</span>
+<span class="fc" id="L87">                id = id,</span>
+<span class="fc" id="L88">                groupId = groupId!!,</span>
+<span class="fc" id="L89">                funcId = funcId!!,</span>
+<span class="fc" id="L90">                namespaceId = namespaceId!!,</span>
+<span class="fc" id="L91">                correlationId = correlationId,</span>
+<span class="fc" id="L92">                name = name!!,</span>
+<span class="fc" id="L93">                inputs = inputs!!,</span>
+<span class="fc" id="L94">                duration = duration!!</span>
             )
 
-<span class="fc" id="L82">            Event -&gt; EventTrigger(</span>
-<span class="fc" id="L83">                cmdId = cmdId,</span>
-<span class="fc" id="L84">                id = id,</span>
-<span class="fc" id="L85">                groupId = groupId!!,</span>
-<span class="fc" id="L86">                funcId = funcId!!,</span>
-<span class="fc" id="L87">                namespaceId = namespaceId!!,</span>
-<span class="fc" id="L88">                correlationId = correlationId,</span>
-<span class="fc" id="L89">                name = name!!,</span>
-<span class="fc" id="L90">                inputs = inputs!!,</span>
-<span class="fc" id="L91">                topicId = topicId!!</span>
+<span class="fc" id="L97">            Event -&gt; EventTrigger(</span>
+<span class="fc" id="L98">                cmdId = cmdId,</span>
+<span class="fc" id="L99">                id = id,</span>
+<span class="fc" id="L100">                groupId = groupId!!,</span>
+<span class="fc" id="L101">                funcId = funcId!!,</span>
+<span class="fc" id="L102">                namespaceId = namespaceId!!,</span>
+<span class="fc" id="L103">                correlationId = correlationId,</span>
+<span class="fc" id="L104">                name = name!!,</span>
+<span class="fc" id="L105">                inputs = inputs!!,</span>
+<span class="fc" id="L106">                topicId = topicId!!</span>
+            )
+
+<span class="fc" id="L109">            Hook -&gt; HookTrigger(</span>
+<span class="fc" id="L110">                cmdId = cmdId,</span>
+<span class="fc" id="L111">                id = id,</span>
+<span class="fc" id="L112">                groupId = groupId!!,</span>
+<span class="fc" id="L113">                funcId = funcId!!,</span>
+<span class="fc" id="L114">                namespaceId = namespaceId!!,</span>
+<span class="fc" id="L115">                correlationId = correlationId,</span>
+<span class="fc" id="L116">                name = name!!,</span>
+<span class="fc" id="L117">                inputs = inputs!!,</span>
+<span class="fc" id="L118">                hookId = hookId!!</span>
             )
         }
     }
-<span class="fc" id="L95">}</span>
+<span class="fc" id="L122">}</span>
 
 fun List&lt;TriggerRecord&gt;.createEntity(): TriggerEntity {
-<span class="pc bpc" id="L98" title="2 of 4 branches missed.">    check(isNotEmpty()) { &quot;At least one record is required&quot; }</span>
-<span class="fc" id="L99">    val firstRecord = first()</span>
+<span class="pc bpc" id="L125" title="2 of 4 branches missed.">    check(isNotEmpty()) { &quot;At least one record is required&quot; }</span>
+<span class="fc" id="L126">    val firstRecord = first()</span>
 
-<span class="pc bpc" id="L101" title="2 of 6 branches missed.">    check(firstRecord is FixedRateTriggerCreationRecord || firstRecord is EventTriggerCreationRecord)</span>
+<span class="pc bpc" id="L128" title="2 of 8 branches missed.">    check(firstRecord is FixedRateTriggerCreationRecord || firstRecord is EventTriggerCreationRecord || firstRecord is HookTriggerCreationRecord)</span>
 
-<span class="fc" id="L103">    var result = TriggerEntity(</span>
-<span class="fc" id="L104">        id = firstRecord.entityId,</span>
-<span class="fc" id="L105">        cmdId = firstRecord.cmdId,</span>
-<span class="fc" id="L106">        sequence = firstRecord.sequence()</span>
+<span class="fc" id="L130">    var result = TriggerEntity(</span>
+<span class="fc" id="L131">        id = firstRecord.entityId,</span>
+<span class="fc" id="L132">        cmdId = firstRecord.cmdId,</span>
+<span class="fc" id="L133">        sequence = firstRecord.sequence()</span>
     )
 
-<span class="fc" id="L109">    forEach { record -&gt;</span>
-<span class="fc" id="L110">        result = result.apply(record)</span>
-<span class="fc" id="L111">    }</span>
+<span class="fc" id="L136">    forEach { record -&gt;</span>
+<span class="fc" id="L137">        result = result.apply(record)</span>
+<span class="fc" id="L138">    }</span>
 
-<span class="fc" id="L113">    return result</span>
+<span class="fc" id="L140">    return result</span>
 }
 
 object CreateTriggerFromRecords : CreateDomainObject&lt;TriggerId, TriggerRecord, Trigger&gt; {
     override fun invoke(recs: List&lt;TriggerRecord&gt;): Trigger {
-<span class="fc" id="L118">        return recs.createEntity().toDomainObject()</span>
+<span class="fc" id="L145">        return recs.createEntity().toDomainObject()</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GetAccountController.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.api.http.endpoint.account</a> &gt; <span class="el_source">GetAccountController.kt</span></div><h1>GetAccountController.kt</h1><pre class="source lang-java linenums">package io.hamal.api.http.endpoint.account
 
 import io.hamal.core.adapter.GetAccountPort
+import io.hamal.core.component.Retry
 import io.hamal.lib.domain.vo.AccountId
 import io.hamal.lib.sdk.api.ApiAccount
 import org.springframework.http.ResponseEntity
@@ -8,19 +9,24 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
 
-<span class="fc" id="L11">@RestController</span>
-<span class="fc" id="L12">internal class GetAccountController(private val getAccount: GetAccountPort) {</span>
+<span class="fc" id="L12">@RestController</span>
+<span class="fc" id="L13">internal class GetAccountController(</span>
+<span class="fc" id="L14">    private val retry: Retry,</span>
+<span class="fc" id="L15">    private val getAccount: GetAccountPort</span>
+) {
     @GetMapping(&quot;/v1/accounts/{accountId}&quot;)
     fun getAccount(
         @PathVariable(&quot;accountId&quot;) accountId: AccountId,
     ): ResponseEntity&lt;ApiAccount&gt; {
-<span class="nc" id="L17">        return getAccount(accountId) { account -&gt;</span>
-<span class="nc" id="L18">            ResponseEntity.ok(</span>
-<span class="nc" id="L19">                ApiAccount(</span>
-<span class="nc" id="L20">                    id = account.id,</span>
-<span class="nc" id="L21">                    name = account.name,</span>
+<span class="nc" id="L21">        return retry {</span>
+<span class="nc" id="L22">            getAccount(accountId) { account -&gt;</span>
+<span class="nc" id="L23">                ResponseEntity.ok(</span>
+<span class="nc" id="L24">                    ApiAccount(</span>
+<span class="nc" id="L25">                        id = account.id,</span>
+<span class="nc" id="L26">                        name = account.name,</span>
+                    )
                 )
-            )
+            }
         }
     }
 }

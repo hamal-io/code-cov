@@ -45,20 +45,25 @@ import kotlin.time.Duration
 <span class="nc" id="L45">                        TopicId(SnowflakeId(arg1.getString(&quot;topic_id&quot;)))</span>
                     } else {
 <span class="nc" id="L47">                        null</span>
+                    },
+<span class="nc bnc" id="L49" title="All 2 branches missed.">                    hookId = if (arg1.type(&quot;hook_id&quot;) == StringType::class) {</span>
+<span class="nc" id="L50">                        HookId(SnowflakeId(arg1.getString(&quot;hook_id&quot;)))</span>
+                    } else {
+<span class="nc" id="L52">                        null</span>
                     }
                 )
             )
 
-<span class="nc" id="L52">            null to MapType(</span>
-<span class="nc" id="L53">                mutableMapOf(</span>
-<span class="nc" id="L54">                    &quot;req_id&quot; to StringType(res.reqId.value.value.toString(16)),</span>
-<span class="nc" id="L55">                    &quot;status&quot; to StringType(res.status.name),</span>
-<span class="nc" id="L56">                    &quot;id&quot; to StringType(res.id.value.toString(16))</span>
+<span class="nc" id="L57">            null to MapType(</span>
+<span class="nc" id="L58">                mutableMapOf(</span>
+<span class="nc" id="L59">                    &quot;req_id&quot; to StringType(res.reqId.value.value.toString(16)),</span>
+<span class="nc" id="L60">                    &quot;status&quot; to StringType(res.status.name),</span>
+<span class="nc" id="L61">                    &quot;id&quot; to StringType(res.id.value.toString(16))</span>
                 )
             )
 
-<span class="nc" id="L60">        } catch (t: Throwable) {</span>
-<span class="nc" id="L61">            ErrorType(t.message!!) to null</span>
+<span class="nc" id="L65">        } catch (t: Throwable) {</span>
+<span class="nc" id="L66">            ErrorType(t.message!!) to null</span>
         }
     }
 }

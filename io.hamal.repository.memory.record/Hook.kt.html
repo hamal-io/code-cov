@@ -58,7 +58,7 @@ internal object CurrentHookProjection {
 <span class="fc" id="L58">    }</span>
 }
 
-<span class="pc" id="L61">class MemoryHookRepository : MemoryRecordRepository&lt;HookId, HookRecord, Hook&gt;(</span>
+<span class="fc" id="L61">class MemoryHookRepository : MemoryRecordRepository&lt;HookId, HookRecord, Hook&gt;(</span>
 <span class="fc" id="L62">    createDomainObject = CreateHookFromRecords,</span>
     recordClass = HookRecord::class
 ), HookRepository {

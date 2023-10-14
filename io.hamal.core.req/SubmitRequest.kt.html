@@ -236,36 +236,37 @@ import org.springframework.stereotype.Component
 <span class="fc" id="L236">            inputs = req.inputs,</span>
 <span class="fc" id="L237">            correlationId = req.correlationId,</span>
 <span class="fc" id="L238">            duration = req.duration,</span>
-<span class="fc" id="L239">            topicId = req.topicId</span>
-<span class="fc" id="L240">        ).also(reqCmdRepository::queue)</span>
+<span class="fc" id="L239">            topicId = req.topicId,</span>
+<span class="fc" id="L240">            hookId = req.hookId</span>
+<span class="fc" id="L241">        ).also(reqCmdRepository::queue)</span>
     }
 
-<span class="fc" id="L243">    operator fun invoke(groupId: GroupId, req: CreateTopicReq) = SubmittedCreateTopicReq(</span>
-<span class="fc" id="L244">        reqId = generateDomainId(::ReqId),</span>
-<span class="fc" id="L245">        status = Submitted,</span>
-<span class="fc" id="L246">        groupId = groupId,</span>
-<span class="fc" id="L247">        id = generateDomainId(::TopicId),</span>
-<span class="fc" id="L248">        name = req.name</span>
-<span class="fc" id="L249">    ).also(reqCmdRepository::queue)</span>
+<span class="fc" id="L244">    operator fun invoke(groupId: GroupId, req: CreateTopicReq) = SubmittedCreateTopicReq(</span>
+<span class="fc" id="L245">        reqId = generateDomainId(::ReqId),</span>
+<span class="fc" id="L246">        status = Submitted,</span>
+<span class="fc" id="L247">        groupId = groupId,</span>
+<span class="fc" id="L248">        id = generateDomainId(::TopicId),</span>
+<span class="fc" id="L249">        name = req.name</span>
+<span class="fc" id="L250">    ).also(reqCmdRepository::queue)</span>
 
     operator fun invoke(req: AppendEntryReq): SubmittedAppendToTopicReq {
-<span class="fc" id="L252">        val topic = eventBrokerRepository.getTopic(req.topicId)</span>
-<span class="fc" id="L253">        return SubmittedAppendToTopicReq(</span>
-<span class="fc" id="L254">            reqId = generateDomainId(::ReqId),</span>
-<span class="fc" id="L255">            status = Submitted,</span>
-<span class="fc" id="L256">            groupId = topic.groupId,</span>
-<span class="fc" id="L257">            id = req.topicId,</span>
-<span class="fc" id="L258">            payload = req.payload</span>
-<span class="fc" id="L259">        ).also(reqCmdRepository::queue)</span>
+<span class="fc" id="L253">        val topic = eventBrokerRepository.getTopic(req.topicId)</span>
+<span class="fc" id="L254">        return SubmittedAppendToTopicReq(</span>
+<span class="fc" id="L255">            reqId = generateDomainId(::ReqId),</span>
+<span class="fc" id="L256">            status = Submitted,</span>
+<span class="fc" id="L257">            groupId = topic.groupId,</span>
+<span class="fc" id="L258">            id = req.topicId,</span>
+<span class="fc" id="L259">            payload = req.payload</span>
+<span class="fc" id="L260">        ).also(reqCmdRepository::queue)</span>
     }
 
     operator fun invoke(req: SetStateReq): SubmittedSetStateReq {
-<span class="fc" id="L263">        val func = funcQueryRepository.get(req.correlation.funcId)</span>
-<span class="fc" id="L264">        return SubmittedSetStateReq(</span>
-<span class="fc" id="L265">            reqId = generateDomainId(::ReqId), status = Submitted, groupId = func.groupId, state = CorrelatedState(</span>
-<span class="fc" id="L266">                correlation = req.correlation, value = req.value</span>
+<span class="fc" id="L264">        val func = funcQueryRepository.get(req.correlation.funcId)</span>
+<span class="fc" id="L265">        return SubmittedSetStateReq(</span>
+<span class="fc" id="L266">            reqId = generateDomainId(::ReqId), status = Submitted, groupId = func.groupId, state = CorrelatedState(</span>
+<span class="fc" id="L267">                correlation = req.correlation, value = req.value</span>
             )
-<span class="fc" id="L268">        ).also(reqCmdRepository::queue)</span>
+<span class="fc" id="L269">        ).also(reqCmdRepository::queue)</span>
     }
 }
 

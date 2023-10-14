@@ -8,10 +8,12 @@ import io.hamal.lib.domain.vo.GroupId
 import io.hamal.lib.domain.vo.TriggerId
 import io.hamal.lib.sdk.api.ApiTriggerList
 import io.hamal.lib.sdk.api.ApiTriggerList.EventTrigger.Topic
+import io.hamal.lib.sdk.api.ApiTriggerList.HookTrigger.Hook
 import io.hamal.lib.sdk.api.ApiTriggerList.Trigger.Func
 import io.hamal.lib.sdk.api.ApiTriggerList.Trigger.Namespace
 import io.hamal.repository.api.EventTrigger
 import io.hamal.repository.api.FixedRateTrigger
+import io.hamal.repository.api.HookTrigger
 import io.hamal.repository.api.TriggerQueryRepository.TriggerQuery
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -20,8 +22,8 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 
-<span class="fc" id="L23">@RestController</span>
-<span class="fc" id="L24">class TriggerListController(private val listTriggers: ListTriggersPort) {</span>
+<span class="fc" id="L25">@RestController</span>
+<span class="fc" id="L26">class TriggerListController(private val listTriggers: ListTriggersPort) {</span>
     @GetMapping(&quot;/v1/groups/{groupId}/triggers&quot;)
     fun listGroupTriggers(
         @PathVariable(&quot;groupId&quot;) groupId: GroupId,
@@ -29,55 +31,74 @@ import org.springframework.web.bind.annotation.RestController
         @RequestParam(required = false, name = &quot;limit&quot;, defaultValue = &quot;100&quot;) limit: Limit,
         @RequestParam(required = false, name = &quot;func_ids&quot;, defaultValue = &quot;&quot;) funcIds: List&lt;FuncId&gt;
     ): ResponseEntity&lt;ApiTriggerList&gt; {
-<span class="fc" id="L32">        return listTriggers(</span>
-<span class="fc" id="L33">            TriggerQuery(</span>
-<span class="fc" id="L34">                afterId = triggerId,</span>
-<span class="fc" id="L35">                types = TriggerType.values().toList(),</span>
-<span class="fc" id="L36">                limit = limit,</span>
-<span class="fc" id="L37">                groupIds = listOf(groupId),</span>
-<span class="fc" id="L38">                funcIds = funcIds</span>
+<span class="fc" id="L34">        return listTriggers(</span>
+<span class="fc" id="L35">            TriggerQuery(</span>
+<span class="fc" id="L36">                afterId = triggerId,</span>
+<span class="fc" id="L37">                types = TriggerType.values().toList(),</span>
+<span class="fc" id="L38">                limit = limit,</span>
+<span class="fc" id="L39">                groupIds = listOf(groupId),</span>
+<span class="fc" id="L40">                funcIds = funcIds</span>
             )
-        ) { triggers, funcs, namespaces, topics -&gt;
-<span class="fc" id="L41">            ResponseEntity.ok(</span>
-<span class="fc" id="L42">                ApiTriggerList(</span>
-<span class="fc" id="L43">                    triggers.map { trigger -&gt;</span>
-<span class="fc" id="L44">                        when (trigger) {</span>
-<span class="pc bpc" id="L45" title="1 of 2 branches missed.">                            is FixedRateTrigger -&gt; {</span>
-<span class="fc" id="L46">                                ApiTriggerList.FixedRateTrigger(</span>
-<span class="fc" id="L47">                                    id = trigger.id,</span>
-<span class="fc" id="L48">                                    name = trigger.name,</span>
-<span class="fc" id="L49">                                    func = Func(</span>
-<span class="fc" id="L50">                                        id = trigger.funcId,</span>
-<span class="fc" id="L51">                                        name = funcs[trigger.funcId]!!.name</span>
+        ) { triggers, funcs, namespaces, topics, hooks -&gt;
+<span class="fc" id="L43">            ResponseEntity.ok(</span>
+<span class="fc" id="L44">                ApiTriggerList(</span>
+<span class="fc" id="L45">                    triggers.map { trigger -&gt;</span>
+<span class="fc" id="L46">                        when (trigger) {</span>
+<span class="pc bpc" id="L47" title="1 of 2 branches missed.">                            is FixedRateTrigger -&gt; {</span>
+<span class="fc" id="L48">                                ApiTriggerList.FixedRateTrigger(</span>
+<span class="fc" id="L49">                                    id = trigger.id,</span>
+<span class="fc" id="L50">                                    name = trigger.name,</span>
+<span class="fc" id="L51">                                    func = Func(</span>
+<span class="fc" id="L52">                                        id = trigger.funcId,</span>
+<span class="fc" id="L53">                                        name = funcs[trigger.funcId]!!.name</span>
                                     ),
-<span class="fc" id="L53">                                    namespace = Namespace(</span>
-<span class="fc" id="L54">                                        id = trigger.namespaceId,</span>
-<span class="fc" id="L55">                                        name = namespaces[trigger.namespaceId]!!.name</span>
+<span class="fc" id="L55">                                    namespace = Namespace(</span>
+<span class="fc" id="L56">                                        id = trigger.namespaceId,</span>
+<span class="fc" id="L57">                                        name = namespaces[trigger.namespaceId]!!.name</span>
                                     ),
-<span class="fc" id="L57">                                    duration = trigger.duration</span>
+<span class="fc" id="L59">                                    duration = trigger.duration</span>
                                 )
                             }
 
-<span class="nc bnc" id="L61" title="All 2 branches missed.">                            is EventTrigger -&gt; {</span>
-<span class="nc" id="L62">                                ApiTriggerList.EventTrigger(</span>
-<span class="nc" id="L63">                                    id = trigger.id,</span>
-<span class="nc" id="L64">                                    name = trigger.name,</span>
-<span class="nc" id="L65">                                    func = Func(</span>
-<span class="nc" id="L66">                                        id = trigger.funcId,</span>
-<span class="nc" id="L67">                                        name = funcs[trigger.funcId]!!.name</span>
+<span class="nc bnc" id="L63" title="All 2 branches missed.">                            is EventTrigger -&gt; {</span>
+<span class="nc" id="L64">                                ApiTriggerList.EventTrigger(</span>
+<span class="nc" id="L65">                                    id = trigger.id,</span>
+<span class="nc" id="L66">                                    name = trigger.name,</span>
+<span class="nc" id="L67">                                    func = Func(</span>
+<span class="nc" id="L68">                                        id = trigger.funcId,</span>
+<span class="nc" id="L69">                                        name = funcs[trigger.funcId]!!.name</span>
                                     ),
-<span class="nc" id="L69">                                    namespace = Namespace(</span>
-<span class="nc" id="L70">                                        id = trigger.namespaceId,</span>
-<span class="nc" id="L71">                                        name = namespaces[trigger.namespaceId]!!.name</span>
+<span class="nc" id="L71">                                    namespace = Namespace(</span>
+<span class="nc" id="L72">                                        id = trigger.namespaceId,</span>
+<span class="nc" id="L73">                                        name = namespaces[trigger.namespaceId]!!.name</span>
                                     ),
-<span class="nc" id="L73">                                    topic = Topic(</span>
-<span class="nc" id="L74">                                        id = trigger.topicId,</span>
-<span class="nc" id="L75">                                        name = topics[trigger.topicId]!!.name</span>
+<span class="nc" id="L75">                                    topic = Topic(</span>
+<span class="nc" id="L76">                                        id = trigger.topicId,</span>
+<span class="nc" id="L77">                                        name = topics[trigger.topicId]!!.name</span>
                                     )
                                 )
                             }
 
-<span class="nc" id="L80">                            else -&gt; TODO()</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">                            is HookTrigger -&gt; {</span>
+<span class="nc" id="L83">                                ApiTriggerList.HookTrigger(</span>
+<span class="nc" id="L84">                                    id = trigger.id,</span>
+<span class="nc" id="L85">                                    name = trigger.name,</span>
+<span class="nc" id="L86">                                    func = Func(</span>
+<span class="nc" id="L87">                                        id = trigger.funcId,</span>
+<span class="nc" id="L88">                                        name = funcs[trigger.funcId]!!.name</span>
+                                    ),
+<span class="nc" id="L90">                                    namespace = Namespace(</span>
+<span class="nc" id="L91">                                        id = trigger.namespaceId,</span>
+<span class="nc" id="L92">                                        name = namespaces[trigger.namespaceId]!!.name</span>
+                                    ),
+<span class="nc" id="L94">                                    hook = Hook(</span>
+<span class="nc" id="L95">                                        id = trigger.hookId,</span>
+<span class="nc" id="L96">                                        name = hooks[trigger.hookId]!!.name</span>
+                                    )
+                                )
+                            }
+
+<span class="nc" id="L101">                            else -&gt; TODO()</span>
                         }
                     }
                 )

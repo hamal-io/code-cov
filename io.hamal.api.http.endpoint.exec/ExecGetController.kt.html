@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExecGetController.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.api.http.endpoint.exec</a> &gt; <span class="el_source">ExecGetController.kt</span></div><h1>ExecGetController.kt</h1><pre class="source lang-java linenums">package io.hamal.api.http.endpoint.exec
 
 import io.hamal.core.adapter.GetExecPort
+import io.hamal.core.component.Retry
 import io.hamal.lib.domain.vo.ExecId
 import io.hamal.lib.sdk.api.ApiExec
 import org.springframework.http.ResponseEntity
@@ -8,23 +9,28 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
 
-<span class="fc" id="L11">@RestController</span>
-<span class="fc" id="L12">internal class ExecGetController(private val getExec: GetExecPort) {</span>
+<span class="fc" id="L12">@RestController</span>
+<span class="fc" id="L13">internal class ExecGetController(</span>
+<span class="fc" id="L14">    private val retry: Retry,</span>
+<span class="fc" id="L15">    private val getExec: GetExecPort</span>
+) {
     @GetMapping(&quot;/v1/execs/{execId}&quot;)
     fun get(@PathVariable(&quot;execId&quot;) execId: ExecId): ResponseEntity&lt;ApiExec&gt; {
-<span class="fc" id="L15">        return getExec(execId) { exec -&gt;</span>
-<span class="fc" id="L16">            ResponseEntity.ok(</span>
-<span class="fc" id="L17">                ApiExec(</span>
-<span class="fc" id="L18">                    id = exec.id,</span>
-<span class="fc" id="L19">                    status = exec.status,</span>
-<span class="fc" id="L20">                    correlation = exec.correlation,</span>
-<span class="fc" id="L21">                    inputs = exec.inputs,</span>
-<span class="fc" id="L22">                    code = exec.code,</span>
-<span class="fc" id="L23">                    codeId = exec.codeId,</span>
-<span class="fc" id="L24">                    codeVersion = exec.codeVersion,</span>
-<span class="fc" id="L25">                    events = exec.events</span>
+<span class="fc" id="L19">        return retry{</span>
+<span class="fc" id="L20">            getExec(execId) { exec -&gt;</span>
+<span class="fc" id="L21">                ResponseEntity.ok(</span>
+<span class="fc" id="L22">                    ApiExec(</span>
+<span class="fc" id="L23">                        id = exec.id,</span>
+<span class="fc" id="L24">                        status = exec.status,</span>
+<span class="fc" id="L25">                        correlation = exec.correlation,</span>
+<span class="fc" id="L26">                        inputs = exec.inputs,</span>
+<span class="fc" id="L27">                        code = exec.code,</span>
+<span class="fc" id="L28">                        codeId = exec.codeId,</span>
+<span class="fc" id="L29">                        codeVersion = exec.codeVersion,</span>
+<span class="fc" id="L30">                        events = exec.events</span>
+                    )
                 )
-            )
+            }
         }
     }
 }

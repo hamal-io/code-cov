@@ -2,14 +2,14 @@
 
 import io.hamal.lib.domain.Event
 import io.hamal.lib.domain.EventToSubmit
+import io.hamal.lib.domain.State
 import io.hamal.lib.kua.SandboxContext
 import kotlin.reflect.KClass
 
-<span class="fc" id="L8">data class RunnerInvocationEvents(</span>
-<span class="fc" id="L9">    val events: List&lt;Event&gt;</span>
-)
+<span class="fc" id="L9">data class RunnerInvocationEvents(val events: List&lt;Event&gt;)</span>
 
-<span class="fc" id="L12">class RunnerContext(</span>
+<span class="fc" id="L11">class RunnerContext(</span>
+<span class="fc" id="L12">    val state: State,</span>
     invocationEvents: RunnerInvocationEvents
 ) : SandboxContext {
 

@@ -4,6 +4,7 @@ import io.hamal.admin.AdminConfig
 import io.hamal.api.ApiConfig
 import io.hamal.bridge.BridgeConfig
 import io.hamal.core.CoreConfig
+import io.hamal.integration.IntegrationConfig
 import io.hamal.runner.RunnerConfig
 import org.springframework.boot.Banner.Mode.OFF
 import org.springframework.boot.WebApplicationType.NONE
@@ -14,17 +15,17 @@ import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.core.env.Environment
 import java.io.PrintStream
 
-<span class="nc" id="L17">@SpringBootApplication</span>
-<span class="nc" id="L18">class Mono</span>
+<span class="nc" id="L18">@SpringBootApplication</span>
+<span class="nc" id="L19">class Mono</span>
 
 fun main(args: Array&lt;String&gt;) {
 
-<span class="nc" id="L22">    val applicationBuilder = SpringApplicationBuilder()</span>
-<span class="nc" id="L23">        .parent(CoreConfig::class.java)</span>
-<span class="nc" id="L24">        .banner { _: Environment, _: Class&lt;*&gt;, out: PrintStream -&gt;</span>
-<span class="nc" id="L25">            out.println(&quot;&quot;)</span>
+<span class="nc" id="L23">    val applicationBuilder = SpringApplicationBuilder()</span>
+<span class="nc" id="L24">        .parent(CoreConfig::class.java)</span>
+<span class="nc" id="L25">        .banner { _: Environment, _: Class&lt;*&gt;, out: PrintStream -&gt;</span>
 <span class="nc" id="L26">            out.println(&quot;&quot;)</span>
-<span class="nc" id="L27">            out.println(</span>
+<span class="nc" id="L27">            out.println(&quot;&quot;)</span>
+<span class="nc" id="L28">            out.println(</span>
                 &quot;&quot;&quot;
  _    _                       _   _       
  | |  | |                     | | (_)      
@@ -32,44 +33,44 @@ fun main(args: Array&lt;String&gt;) {
  |  __  |/ _` | '_ ` _ \ / _` | | | |/ _ \ 
  | |  | | (_| | | | | | | (_| | |_| | (_) |
  |_|  |_|\__,_|_| |_| |_|\__,_|_(_)_|\___/ 
-<span class="nc" id="L35">            &quot;&quot;&quot;.trimIndent()</span>
+<span class="nc" id="L36">            &quot;&quot;&quot;.trimIndent()</span>
             )
-<span class="nc" id="L37">            out.println(&quot;&quot;)</span>
 <span class="nc" id="L38">            out.println(&quot;&quot;)</span>
-<span class="nc" id="L39">        }</span>
-<span class="nc" id="L40">        .web(NONE)</span>
+<span class="nc" id="L39">            out.println(&quot;&quot;)</span>
+<span class="nc" id="L40">        }</span>
+<span class="nc" id="L41">        .web(NONE)</span>
 
-<span class="nc" id="L42">    val parent: ConfigurableApplicationContext = applicationBuilder.run(*args)</span>
+<span class="nc" id="L43">    val parent: ConfigurableApplicationContext = applicationBuilder.run(*args)</span>
 
-<span class="nc" id="L44">    applicationBuilder</span>
-<span class="nc" id="L45">        .parent(parent)</span>
-<span class="nc" id="L46">        .child(AdminConfig::class.java)</span>
-<span class="nc" id="L47">        .web(SERVLET)</span>
-<span class="nc" id="L48">        .properties(&quot;server.port=9009&quot;)</span>
-<span class="nc" id="L49">        .bannerMode(OFF)</span>
-<span class="nc" id="L50">        .run(*args)</span>
+<span class="nc" id="L45">    applicationBuilder</span>
+<span class="nc" id="L46">        .parent(parent)</span>
+<span class="nc" id="L47">        .child(AdminConfig::class.java)</span>
+<span class="nc" id="L48">        .web(SERVLET)</span>
+<span class="nc" id="L49">        .properties(&quot;server.port=9009&quot;)</span>
+<span class="nc" id="L50">        .bannerMode(OFF)</span>
+<span class="nc" id="L51">        .run(*args)</span>
 
-<span class="nc" id="L52">    applicationBuilder</span>
-<span class="nc" id="L53">        .parent(parent)</span>
-<span class="nc" id="L54">        .child(ApiConfig::class.java)</span>
-<span class="nc" id="L55">        .web(SERVLET)</span>
-<span class="nc" id="L56">        .properties(&quot;server.port=8008&quot;)</span>
-<span class="nc" id="L57">        .bannerMode(OFF)</span>
-<span class="nc" id="L58">        .run(*args)</span>
+<span class="nc" id="L53">    applicationBuilder</span>
+<span class="nc" id="L54">        .parent(parent)</span>
+<span class="nc" id="L55">        .child(ApiConfig::class.java, IntegrationConfig::class.java)</span>
+<span class="nc" id="L56">        .web(SERVLET)</span>
+<span class="nc" id="L57">        .properties(&quot;server.port=8008&quot;)</span>
+<span class="nc" id="L58">        .bannerMode(OFF)</span>
+<span class="nc" id="L59">        .run(*args)</span>
 
-<span class="nc" id="L60">    applicationBuilder</span>
-<span class="nc" id="L61">        .parent(parent)</span>
-<span class="nc" id="L62">        .child(BridgeConfig::class.java)</span>
-<span class="nc" id="L63">        .web(SERVLET)</span>
-<span class="nc" id="L64">        .properties(&quot;server.port=7007&quot;)</span>
-<span class="nc" id="L65">        .bannerMode(OFF)</span>
-<span class="nc" id="L66">        .run(*args)</span>
+<span class="nc" id="L61">    applicationBuilder</span>
+<span class="nc" id="L62">        .parent(parent)</span>
+<span class="nc" id="L63">        .child(BridgeConfig::class.java)</span>
+<span class="nc" id="L64">        .web(SERVLET)</span>
+<span class="nc" id="L65">        .properties(&quot;server.port=7007&quot;)</span>
+<span class="nc" id="L66">        .bannerMode(OFF)</span>
+<span class="nc" id="L67">        .run(*args)</span>
 
-<span class="nc" id="L68">    applicationBuilder</span>
-<span class="nc" id="L69">        .parent(parent)</span>
-<span class="nc" id="L70">        .child(RunnerConfig::class.java)</span>
-<span class="nc" id="L71">        .web(NONE)</span>
-<span class="nc" id="L72">        .bannerMode(OFF)</span>
-<span class="nc" id="L73">        .run(*args)</span>
-<span class="nc" id="L74">}</span>
+<span class="nc" id="L69">    applicationBuilder</span>
+<span class="nc" id="L70">        .parent(parent)</span>
+<span class="nc" id="L71">        .child(RunnerConfig::class.java)</span>
+<span class="nc" id="L72">        .web(NONE)</span>
+<span class="nc" id="L73">        .bannerMode(OFF)</span>
+<span class="nc" id="L74">        .run(*args)</span>
+<span class="nc" id="L75">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

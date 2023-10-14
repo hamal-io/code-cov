@@ -7,7 +7,7 @@ import io.hamal.lib.domain.vo.*
 import kotlinx.serialization.Serializable
 import kotlin.time.Duration
 
-<span class="pc bpc" id="L10" title="11 of 52 branches missed.">@Serializable</span>
+<span class="pc bpc" id="L10" title="12 of 61 branches missed.">@Serializable</span>
 <span class="fc" id="L11">data class SubmittedCreateTriggerReq(</span>
 <span class="fc" id="L12">    override val reqId: ReqId,</span>
 <span class="fc" id="L13">    override var status: ReqStatus,</span>
@@ -20,8 +20,9 @@ import kotlin.time.Duration
 <span class="pc" id="L20">    var namespaceId: NamespaceId? = null,</span>
 <span class="fc" id="L21">    val correlationId: CorrelationId? = null,</span>
 <span class="fc" id="L22">    val duration: Duration? = null,</span>
-<span class="fc" id="L23">    val topicId: TopicId? = null</span>
-<span class="fc" id="L24">) : SubmittedReqWithGroupId</span>
+<span class="fc" id="L23">    val topicId: TopicId? = null,</span>
+<span class="pc" id="L24">    var hookId: HookId? = null</span>
+<span class="fc" id="L25">) : SubmittedReqWithGroupId</span>
 
 
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

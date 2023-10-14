@@ -43,5 +43,9 @@ import java.text.DecimalFormat
 <span class="fc" id="L43">            isDecimalSeparatorAlwaysShown = false</span>
 <span class="fc" id="L44">        }</span>
     }
-<span class="fc" id="L46">}</span>
+
+    override fun toString(): String {
+<span class="fc" id="L48">        return &quot;NumberType(${value.toBigDecimal().toPlainString()})&quot;</span>
+    }
+<span class="fc" id="L50">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

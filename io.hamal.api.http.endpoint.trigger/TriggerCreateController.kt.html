@@ -2,6 +2,7 @@
 
 import io.hamal.api.http.endpoint.req.Assembler
 import io.hamal.core.adapter.CreateTriggerPort
+import io.hamal.core.component.Retry
 import io.hamal.lib.sdk.api.ApiCreateTriggerReq
 import io.hamal.lib.sdk.api.ApiSubmittedReq
 import org.springframework.http.HttpStatus.ACCEPTED
@@ -10,14 +11,19 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
-<span class="fc" id="L13">@RestController</span>
-<span class="fc" id="L14">internal class TriggerCreateController(private val createTrigger: CreateTriggerPort) {</span>
+<span class="fc" id="L14">@RestController</span>
+<span class="fc" id="L15">internal class TriggerCreateController(</span>
+<span class="fc" id="L16">    private val retry: Retry,</span>
+<span class="fc" id="L17">    private val createTrigger: CreateTriggerPort</span>
+) {
     @PostMapping(&quot;/v1/triggers&quot;)
     fun createTrigger(
         @RequestBody req: ApiCreateTriggerReq
     ): ResponseEntity&lt;ApiSubmittedReq&gt; {
-<span class="fc" id="L19">        return createTrigger(req) {</span>
-<span class="fc" id="L20">            ResponseEntity(Assembler.assemble(it), ACCEPTED)</span>
+<span class="fc" id="L23">        return retry {</span>
+<span class="fc" id="L24">            createTrigger(req) {</span>
+<span class="fc" id="L25">                ResponseEntity(Assembler.assemble(it), ACCEPTED)</span>
+            }
         }
     }
 }

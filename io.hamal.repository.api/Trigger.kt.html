@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Trigger.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.repository.api</a> &gt; <span class="el_source">Trigger.kt</span></div><h1>Trigger.kt</h1><pre class="source lang-java linenums">package io.hamal.repository.api
 
-import io.hamal.lib.common.snowflake.SnowflakeId
 import io.hamal.lib.common.domain.CmdId
 import io.hamal.lib.common.domain.DomainObject
 import io.hamal.lib.common.domain.Limit
+import io.hamal.lib.common.snowflake.SnowflakeId
 import io.hamal.lib.domain._enum.TriggerType
 import io.hamal.lib.domain.vo.*
 import kotlinx.serialization.Serializable
@@ -14,52 +14,67 @@ import kotlin.time.Duration
 interface TriggerCmdRepository : CmdRepository {
     fun create(cmd: CreateFixedRateCmd): FixedRateTrigger
     fun create(cmd: CreateEventCmd): EventTrigger
+    fun create(cmd: CreateHookCmd): HookTrigger
 
-<span class="pc" id="L18">    data class CreateFixedRateCmd(</span>
-<span class="fc" id="L19">        val id: CmdId,</span>
-<span class="fc" id="L20">        val triggerId: TriggerId,</span>
-<span class="fc" id="L21">        val groupId: GroupId,</span>
-<span class="fc" id="L22">        val name: TriggerName,</span>
-<span class="fc" id="L23">        val funcId: FuncId,</span>
-<span class="fc" id="L24">        val namespaceId: NamespaceId,</span>
-<span class="fc" id="L25">        val inputs: TriggerInputs,</span>
-<span class="fc" id="L26">        val duration: Duration,</span>
-<span class="pc" id="L27">        val correlationId: CorrelationId? = null</span>
-<span class="nc" id="L28">    )</span>
+<span class="pc" id="L19">    data class CreateFixedRateCmd(</span>
+<span class="fc" id="L20">        val id: CmdId,</span>
+<span class="fc" id="L21">        val triggerId: TriggerId,</span>
+<span class="fc" id="L22">        val groupId: GroupId,</span>
+<span class="fc" id="L23">        val name: TriggerName,</span>
+<span class="fc" id="L24">        val funcId: FuncId,</span>
+<span class="fc" id="L25">        val namespaceId: NamespaceId,</span>
+<span class="fc" id="L26">        val inputs: TriggerInputs,</span>
+<span class="fc" id="L27">        val duration: Duration,</span>
+<span class="pc" id="L28">        val correlationId: CorrelationId? = null</span>
+<span class="nc" id="L29">    )</span>
 
-<span class="pc" id="L30">    data class CreateEventCmd(</span>
-<span class="fc" id="L31">        val id: CmdId,</span>
-<span class="fc" id="L32">        val triggerId: TriggerId,</span>
-<span class="fc" id="L33">        val groupId: GroupId,</span>
-<span class="fc" id="L34">        val name: TriggerName,</span>
-<span class="fc" id="L35">        val funcId: FuncId,</span>
-<span class="fc" id="L36">        val namespaceId: NamespaceId,</span>
-<span class="fc" id="L37">        val inputs: TriggerInputs,</span>
-<span class="fc" id="L38">        val topicId: TopicId,</span>
-<span class="pc" id="L39">        val correlationId: CorrelationId? = null</span>
-<span class="nc" id="L40">    )</span>
+<span class="pc" id="L31">    data class CreateEventCmd(</span>
+<span class="fc" id="L32">        val id: CmdId,</span>
+<span class="fc" id="L33">        val triggerId: TriggerId,</span>
+<span class="fc" id="L34">        val groupId: GroupId,</span>
+<span class="fc" id="L35">        val name: TriggerName,</span>
+<span class="fc" id="L36">        val funcId: FuncId,</span>
+<span class="fc" id="L37">        val namespaceId: NamespaceId,</span>
+<span class="fc" id="L38">        val inputs: TriggerInputs,</span>
+<span class="fc" id="L39">        val topicId: TopicId,</span>
+<span class="pc" id="L40">        val correlationId: CorrelationId? = null</span>
+<span class="nc" id="L41">    )</span>
+
+<span class="pc" id="L43">    data class CreateHookCmd(</span>
+<span class="fc" id="L44">        val id: CmdId,</span>
+<span class="fc" id="L45">        val triggerId: TriggerId,</span>
+<span class="fc" id="L46">        val groupId: GroupId,</span>
+<span class="fc" id="L47">        val name: TriggerName,</span>
+<span class="fc" id="L48">        val funcId: FuncId,</span>
+<span class="fc" id="L49">        val namespaceId: NamespaceId,</span>
+<span class="fc" id="L50">        val inputs: TriggerInputs,</span>
+<span class="fc" id="L51">        val hookId: HookId,</span>
+<span class="pc" id="L52">        val correlationId: CorrelationId? = null</span>
+<span class="nc" id="L53">    )</span>
 }
 
 interface TriggerQueryRepository {
-<span class="fc bfc" id="L44" title="All 2 branches covered.">    fun get(triggerId: TriggerId) = find(triggerId) ?: throw NoSuchElementException(&quot;Trigger not found&quot;)</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">    fun get(triggerId: TriggerId) = find(triggerId) ?: throw NoSuchElementException(&quot;Trigger not found&quot;)</span>
     fun find(triggerId: TriggerId): Trigger?
 
     fun list(query: TriggerQuery): List&lt;Trigger&gt;
     fun count(query: TriggerQuery): ULong
 
-<span class="fc" id="L50">    data class TriggerQuery(</span>
-<span class="pc" id="L51">        var afterId: TriggerId = TriggerId(SnowflakeId(Long.MAX_VALUE)),</span>
-<span class="pc" id="L52">        var types: List&lt;TriggerType&gt; = TriggerType.values().toList(),</span>
-<span class="pc" id="L53">        var limit: Limit = Limit(1),</span>
-<span class="pc" id="L54">        var triggerIds: List&lt;TriggerId&gt; = listOf(),</span>
-<span class="pc" id="L55">        var funcIds: List&lt;FuncId&gt; = listOf(),</span>
-<span class="pc" id="L56">        var groupIds: List&lt;GroupId&gt;</span>
-<span class="fc" id="L57">    )</span>
+<span class="fc" id="L63">    data class TriggerQuery(</span>
+<span class="pc" id="L64">        var afterId: TriggerId = TriggerId(SnowflakeId(Long.MAX_VALUE)),</span>
+<span class="pc" id="L65">        var types: List&lt;TriggerType&gt; = TriggerType.values().toList(),</span>
+<span class="pc" id="L66">        var limit: Limit = Limit(1),</span>
+<span class="pc" id="L67">        var triggerIds: List&lt;TriggerId&gt; = listOf(),</span>
+<span class="pc" id="L68">        var funcIds: List&lt;FuncId&gt; = listOf(),</span>
+<span class="pc" id="L69">        var topicIds: List&lt;TopicId&gt; = listOf(),</span>
+<span class="pc" id="L70">        var hookIds: List&lt;HookId&gt; = listOf(),</span>
+<span class="pc" id="L71">        var groupIds: List&lt;GroupId&gt;</span>
+<span class="fc" id="L72">    )</span>
 }
 
 
-<span class="nc" id="L61">@Serializable</span>
-<span class="nc" id="L62">sealed interface Trigger : DomainObject&lt;TriggerId&gt; {</span>
+<span class="nc" id="L76">@Serializable</span>
+<span class="nc" id="L77">sealed interface Trigger : DomainObject&lt;TriggerId&gt; {</span>
     val cmdId: CmdId
     val groupId: GroupId
     val name: TriggerName
@@ -68,25 +83,10 @@ interface TriggerQueryRepository {
     val correlationId: CorrelationId?
     val inputs: TriggerInputs
     val type: TriggerType
-<span class="nc" id="L71">}</span>
+<span class="nc" id="L86">}</span>
 
-<span class="pc bpc" id="L73" title="26 of 30 branches missed.">@Serializable</span>
-<span class="pc" id="L74">class FixedRateTrigger(</span>
-<span class="fc" id="L75">    override val cmdId: CmdId,</span>
-<span class="fc" id="L76">    override val id: TriggerId,</span>
-<span class="fc" id="L77">    override val groupId: GroupId,</span>
-<span class="fc" id="L78">    override val name: TriggerName,</span>
-<span class="fc" id="L79">    override val funcId: FuncId,</span>
-<span class="fc" id="L80">    override val namespaceId: NamespaceId,</span>
-<span class="fc" id="L81">    override val inputs: TriggerInputs,</span>
-<span class="fc" id="L82">    val duration: Duration,</span>
-<span class="pc" id="L83">    override val correlationId: CorrelationId? = null</span>
-) : Trigger {
-<span class="pc bpc" id="L85" title="2 of 4 branches missed.">    override val type = TriggerType.FixedRate</span>
-<span class="pc" id="L86">}</span>
-
-<span class="pc bpc" id="L88" title="20 of 24 branches missed.">@Serializable</span>
-<span class="pc" id="L89">class EventTrigger(</span>
+<span class="pc bpc" id="L88" title="26 of 30 branches missed.">@Serializable</span>
+<span class="pc" id="L89">class FixedRateTrigger(</span>
 <span class="fc" id="L90">    override val cmdId: CmdId,</span>
 <span class="fc" id="L91">    override val id: TriggerId,</span>
 <span class="fc" id="L92">    override val groupId: GroupId,</span>
@@ -94,9 +94,40 @@ interface TriggerQueryRepository {
 <span class="fc" id="L94">    override val funcId: FuncId,</span>
 <span class="fc" id="L95">    override val namespaceId: NamespaceId,</span>
 <span class="fc" id="L96">    override val inputs: TriggerInputs,</span>
-<span class="fc" id="L97">    val topicId: TopicId,</span>
+<span class="fc" id="L97">    val duration: Duration,</span>
 <span class="pc" id="L98">    override val correlationId: CorrelationId? = null</span>
 ) : Trigger {
-<span class="pc bpc" id="L100" title="2 of 4 branches missed.">    override val type = TriggerType.Event</span>
+<span class="pc bpc" id="L100" title="2 of 4 branches missed.">    override val type = TriggerType.FixedRate</span>
 <span class="pc" id="L101">}</span>
+
+<span class="pc bpc" id="L103" title="20 of 24 branches missed.">@Serializable</span>
+<span class="pc" id="L104">class EventTrigger(</span>
+<span class="fc" id="L105">    override val cmdId: CmdId,</span>
+<span class="fc" id="L106">    override val id: TriggerId,</span>
+<span class="fc" id="L107">    override val groupId: GroupId,</span>
+<span class="fc" id="L108">    override val name: TriggerName,</span>
+<span class="fc" id="L109">    override val funcId: FuncId,</span>
+<span class="fc" id="L110">    override val namespaceId: NamespaceId,</span>
+<span class="fc" id="L111">    override val inputs: TriggerInputs,</span>
+<span class="fc" id="L112">    val topicId: TopicId,</span>
+<span class="pc" id="L113">    override val correlationId: CorrelationId? = null</span>
+) : Trigger {
+<span class="pc bpc" id="L115" title="2 of 4 branches missed.">    override val type = TriggerType.Event</span>
+<span class="pc" id="L116">}</span>
+
+
+<span class="pc bpc" id="L119" title="20 of 24 branches missed.">@Serializable</span>
+<span class="pc" id="L120">class HookTrigger(</span>
+<span class="fc" id="L121">    override val cmdId: CmdId,</span>
+<span class="fc" id="L122">    override val id: TriggerId,</span>
+<span class="fc" id="L123">    override val groupId: GroupId,</span>
+<span class="fc" id="L124">    override val name: TriggerName,</span>
+<span class="fc" id="L125">    override val funcId: FuncId,</span>
+<span class="fc" id="L126">    override val namespaceId: NamespaceId,</span>
+<span class="fc" id="L127">    override val inputs: TriggerInputs,</span>
+<span class="fc" id="L128">    val hookId: HookId,</span>
+<span class="pc" id="L129">    override val correlationId: CorrelationId? = null</span>
+) : Trigger {
+<span class="pc bpc" id="L131" title="2 of 4 branches missed.">    override val type = TriggerType.Hook</span>
+<span class="pc" id="L132">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -2,6 +2,7 @@
 
 import io.hamal.api.http.endpoint.req.Assembler
 import io.hamal.core.adapter.AppendEntryToTopicPort
+import io.hamal.core.component.Retry
 import io.hamal.lib.domain.vo.TopicEntryPayload
 import io.hamal.lib.domain.vo.TopicId
 import io.hamal.lib.sdk.api.ApiSubmittedReq
@@ -12,15 +13,20 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
-<span class="fc" id="L15">@RestController</span>
-<span class="fc" id="L16">internal class EntryAppendController(private val appendEntryToTopic: AppendEntryToTopicPort) {</span>
+<span class="fc" id="L16">@RestController</span>
+<span class="fc" id="L17">internal class EntryAppendController(</span>
+<span class="fc" id="L18">    private val retry: Retry,</span>
+<span class="fc" id="L19">    private val appendEntryToTopic: AppendEntryToTopicPort</span>
+) {
     @PostMapping(&quot;/v1/topics/{topicId}/entries&quot;)
     fun appendEvent(
         @PathVariable(&quot;topicId&quot;) topicId: TopicId,
         @RequestBody topAppend: TopicEntryPayload
     ): ResponseEntity&lt;ApiSubmittedReq&gt; {
-<span class="fc" id="L22">        return appendEntryToTopic(topicId, topAppend) {</span>
-<span class="fc" id="L23">            ResponseEntity(Assembler.assemble(it), ACCEPTED)</span>
+<span class="fc" id="L26">        return retry {</span>
+<span class="fc" id="L27">            appendEntryToTopic(topicId, topAppend) {</span>
+<span class="fc" id="L28">                ResponseEntity(Assembler.assemble(it), ACCEPTED)</span>
+            }
         }
     }
 }

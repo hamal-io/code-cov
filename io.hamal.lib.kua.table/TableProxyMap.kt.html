@@ -73,10 +73,10 @@ import kotlin.reflect.KClass
     }
 
     fun getTableMap(key: String): TableProxyMap {
-<span class="nc" id="L76">        state.pushString(key)</span>
-<span class="nc" id="L77">        val type = state.tableGetRaw(index)</span>
-<span class="nc" id="L78">        type.checkExpectedType(TableType::class)</span>
-<span class="nc" id="L79">        return state.getTableMapProxy(state.top.value)</span>
+<span class="fc" id="L76">        state.pushString(key)</span>
+<span class="fc" id="L77">        val type = state.tableGetRaw(index)</span>
+<span class="fc" id="L78">        type.checkExpectedType(TableType::class)</span>
+<span class="fc" id="L79">        return state.getTableMapProxy(state.top.value)</span>
     }
 
     fun getTableArray(key: String): TableProxyArray {

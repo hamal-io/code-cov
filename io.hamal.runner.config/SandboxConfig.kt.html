@@ -6,7 +6,6 @@ import io.hamal.extension.std.log.DecimalExtensionFactory
 import io.hamal.extension.std.log.LogExtensionFactory
 import io.hamal.extension.std.sys.SysExtensionFactory
 import io.hamal.extension.web3.eth.EthExtensionFactory
-import io.hamal.extension.web3.hml.HmlExtensionFactory
 import io.hamal.lib.domain.vo.ExecToken
 import io.hamal.lib.http.HttpTemplate
 import io.hamal.lib.kua.NativeLoader
@@ -18,46 +17,45 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
-<span class="nc" id="L21">@Configuration</span>
-<span class="nc" id="L22">open class SandboxConfig {</span>
+<span class="nc" id="L20">@Configuration</span>
+<span class="nc" id="L21">open class SandboxConfig {</span>
     @Bean
     open fun sandboxFactory(
         @Value(&quot;\${io.hamal.runner.api.host}&quot;) apiHost: String,
         @Value(&quot;\${io.hamal.runner.bridge.host}&quot;) bridgeHost: String
-<span class="nc" id="L27">    ): SandboxFactory = RunnerSandboxFactory(</span>
-<span class="nc" id="L28">        apiHost, bridgeHost</span>
-<span class="nc" id="L29">    )</span>
+<span class="nc" id="L26">    ): SandboxFactory = RunnerSandboxFactory(</span>
+<span class="nc" id="L27">        apiHost, bridgeHost</span>
+<span class="nc" id="L28">    )</span>
 }
 
 interface SandboxFactory {
     fun create(ctx: SandboxContext): Sandbox
 }
 
-<span class="nc" id="L36">class RunnerSandboxFactory(</span>
-<span class="nc" id="L37">    private val apiHost: String,</span>
-<span class="nc" id="L38">    private val bridgeHost: String</span>
+<span class="nc" id="L35">class RunnerSandboxFactory(</span>
+<span class="nc" id="L36">    private val apiHost: String,</span>
+<span class="nc" id="L37">    private val bridgeHost: String</span>
 
 ) : SandboxFactory {
     override fun create(ctx: SandboxContext): Sandbox {
-<span class="nc" id="L42">        NativeLoader.load(Jar)</span>
+<span class="nc" id="L41">        NativeLoader.load(Jar)</span>
 
-<span class="nc" id="L44">        val execToken = ctx[ExecToken::class]</span>
-<span class="nc" id="L45">        val template = HttpTemplate(</span>
-<span class="nc" id="L46">            baseUrl = apiHost,</span>
+<span class="nc" id="L43">        val execToken = ctx[ExecToken::class]</span>
+<span class="nc" id="L44">        val template = HttpTemplate(</span>
+<span class="nc" id="L45">            baseUrl = apiHost,</span>
             headerFactory = {
-<span class="nc" id="L48">                set(&quot;x-runner-exec-token&quot;, execToken.value)</span>
-<span class="nc" id="L49">            }</span>
+<span class="nc" id="L47">                set(&quot;x-runner-exec-token&quot;, execToken.value)</span>
+<span class="nc" id="L48">            }</span>
         )
-<span class="nc" id="L51">        val sdk = ApiSdkImpl(template)</span>
+<span class="nc" id="L50">        val sdk = ApiSdkImpl(template)</span>
 
-<span class="nc" id="L53">        return Sandbox(ctx).register(</span>
-<span class="nc" id="L54">            DecimalExtensionFactory,</span>
-<span class="nc" id="L55">            HttpExtensionFactory(),</span>
-<span class="nc" id="L56">            LogExtensionFactory(sdk.execLog),</span>
-<span class="nc" id="L57">            DebugExtensionFactory(),</span>
-<span class="nc" id="L58">            SysExtensionFactory(HttpTemplate(apiHost)),</span>
-<span class="nc" id="L59">            EthExtensionFactory(),</span>
-<span class="nc" id="L60">            HmlExtensionFactory()</span>
+<span class="nc" id="L52">        return Sandbox(ctx).register(</span>
+<span class="nc" id="L53">            DecimalExtensionFactory,</span>
+<span class="nc" id="L54">            HttpExtensionFactory(),</span>
+<span class="nc" id="L55">            LogExtensionFactory(sdk.execLog),</span>
+<span class="nc" id="L56">            DebugExtensionFactory(),</span>
+<span class="nc" id="L57">            SysExtensionFactory(HttpTemplate(apiHost)),</span>
+<span class="nc" id="L58">            EthExtensionFactory()</span>
         )
     }
 }

@@ -2,6 +2,7 @@
 
 import io.hamal.api.http.endpoint.req.Assembler
 import io.hamal.core.adapter.InvokeFuncPort
+import io.hamal.core.component.Retry
 import io.hamal.lib.domain.vo.CorrelationId
 import io.hamal.lib.domain.vo.FuncId
 import io.hamal.lib.domain.vo.InvocationInputs
@@ -14,20 +15,24 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
-<span class="fc" id="L17">@RestController</span>
-<span class="fc" id="L18">internal class FuncInvokeController(private val invokeFunc: InvokeFuncPort) {</span>
+<span class="fc" id="L18">@RestController</span>
+<span class="fc" id="L19">internal class FuncInvokeController(</span>
+<span class="fc" id="L20">    private val retry: Retry,</span>
+<span class="fc" id="L21">    private val invokeFunc: InvokeFuncPort</span>
+) {
     @PostMapping(&quot;/v1/funcs/{funcId}/invoke&quot;)
-<span class="nc" id="L20">    fun execFunc(</span>
+<span class="nc" id="L24">    fun execFunc(</span>
         @PathVariable(&quot;funcId&quot;) funcId: FuncId,
-<span class="nc" id="L22">        @RequestBody req: ApiInvokeFuncReq? = null</span>
-    ): ResponseEntity&lt;ApiSubmittedReq&gt; =
-<span class="fc" id="L24">        invokeFunc(</span>
-<span class="fc" id="L25">            funcId, ApiInvokeFuncReq(</span>
-<span class="pc bpc" id="L26" title="1 of 4 branches missed.">                correlationId = req?.correlationId ?: CorrelationId.default,</span>
-<span class="pc bpc" id="L27" title="2 of 4 branches missed.">                inputs = req?.inputs ?: InvocationInputs()</span>
+<span class="nc" id="L26">        @RequestBody req: ApiInvokeFuncReq? = null</span>
+<span class="fc" id="L27">    ): ResponseEntity&lt;ApiSubmittedReq&gt; = retry {</span>
+<span class="fc" id="L28">        invokeFunc(</span>
+<span class="fc" id="L29">            funcId, ApiInvokeFuncReq(</span>
+<span class="pc bpc" id="L30" title="1 of 4 branches missed.">                correlationId = req?.correlationId ?: CorrelationId.default,</span>
+<span class="pc bpc" id="L31" title="2 of 4 branches missed.">                inputs = req?.inputs ?: InvocationInputs()</span>
             )
         ) {
-<span class="fc" id="L30">            ResponseEntity(Assembler.assemble(it), ACCEPTED)</span>
-<span class="fc" id="L31">        }</span>
+<span class="fc" id="L34">            ResponseEntity(Assembler.assemble(it), ACCEPTED)</span>
+        }
+<span class="fc" id="L36">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

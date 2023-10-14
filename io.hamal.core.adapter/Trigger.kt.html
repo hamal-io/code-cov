@@ -2,10 +2,7 @@
 
 import io.hamal.core.req.SubmitRequest
 import io.hamal.lib.domain._enum.TriggerType
-import io.hamal.lib.domain.vo.FuncId
-import io.hamal.lib.domain.vo.NamespaceId
-import io.hamal.lib.domain.vo.TopicId
-import io.hamal.lib.domain.vo.TriggerId
+import io.hamal.lib.domain.vo.*
 import io.hamal.repository.api.*
 import io.hamal.repository.api.TriggerQueryRepository.TriggerQuery
 import io.hamal.repository.api.log.BrokerRepository
@@ -25,7 +22,7 @@ interface CreateTriggerPort {
 interface GetTriggerPort {
     operator fun &lt;T : Any&gt; invoke(
         triggerId: TriggerId,
-        responseHandler: (Trigger, Func, Namespace, Topic?) -&gt; T
+        responseHandler: (Trigger, Func, Namespace, Topic?, Hook?) -&gt; T
     ): T
 }
 
@@ -37,7 +34,8 @@ interface ListTriggersPort {
             triggers: List&lt;Trigger&gt;,
             funcs: Map&lt;FuncId, Func&gt;,
             namespaces: Map&lt;NamespaceId, Namespace&gt;,
-            topics: Map&lt;TopicId, Topic&gt;
+            topics: Map&lt;TopicId, Topic&gt;,
+            hooks: Map&lt;HookId, Hook&gt;
         ) -&gt; T
     ): T
 }
@@ -45,38 +43,44 @@ interface ListTriggersPort {
 interface TriggerPort : CreateTriggerPort, GetTriggerPort, ListTriggersPort
 
 
-<span class="fc" id="L48">@Component</span>
-<span class="fc" id="L49">class TriggerAdapter(</span>
-<span class="fc" id="L50">    private val submitRequest: SubmitRequest,</span>
-<span class="fc" id="L51">    private val triggerQueryRepository: TriggerQueryRepository,</span>
-<span class="fc" id="L52">    private val namespaceQueryRepository: NamespaceQueryRepository,</span>
-<span class="fc" id="L53">    private val funcQueryRepository: FuncQueryRepository,</span>
-<span class="fc" id="L54">    private val eventBrokerRepository: BrokerRepository</span>
+<span class="fc" id="L46">@Component</span>
+<span class="fc" id="L47">class TriggerAdapter(</span>
+<span class="fc" id="L48">    private val submitRequest: SubmitRequest,</span>
+<span class="fc" id="L49">    private val triggerQueryRepository: TriggerQueryRepository,</span>
+<span class="fc" id="L50">    private val namespaceQueryRepository: NamespaceQueryRepository,</span>
+<span class="fc" id="L51">    private val funcQueryRepository: FuncQueryRepository,</span>
+<span class="fc" id="L52">    private val eventBrokerRepository: BrokerRepository,</span>
+<span class="fc" id="L53">    private val hookQueryRepository: HookQueryRepository</span>
 ) : TriggerPort {
     override fun &lt;T : Any&gt; invoke(req: CreateTriggerReq, responseHandler: (SubmittedReqWithGroupId) -&gt; T): T {
-<span class="fc" id="L57">        ensureFuncExists(req)</span>
-<span class="fc" id="L58">        ensureTopicExists(req)</span>
+<span class="fc" id="L56">        ensureFuncExists(req)</span>
+<span class="fc" id="L57">        ensureTopicExists(req)</span>
+<span class="fc" id="L58">        ensureHookExists(req)</span>
 <span class="fc" id="L59">        ensureNamespaceExist(req)</span>
 
 <span class="fc" id="L61">        return responseHandler(submitRequest(req))</span>
     }
 
-    override fun &lt;T : Any&gt; invoke(triggerId: TriggerId, responseHandler: (Trigger, Func, Namespace, Topic?) -&gt; T): T {
-<span class="fc" id="L65">        val trigger = triggerQueryRepository.get(triggerId)</span>
-<span class="fc" id="L66">        val func = funcQueryRepository.get(trigger.funcId)</span>
-<span class="fc" id="L67">        val namespace = namespaceQueryRepository.get(trigger.namespaceId)</span>
-<span class="fc bfc" id="L68" title="All 2 branches covered.">        val topic = if (trigger is EventTrigger) {</span>
-<span class="fc" id="L69">            eventBrokerRepository.getTopic(trigger.topicId)</span>
+    override fun &lt;T : Any&gt; invoke(
+        triggerId: TriggerId,
+        responseHandler: (Trigger, Func, Namespace, Topic?, Hook?) -&gt; T
+    ): T {
+<span class="fc" id="L68">        val trigger = triggerQueryRepository.get(triggerId)</span>
+<span class="fc" id="L69">        val func = funcQueryRepository.get(trigger.funcId)</span>
+<span class="fc" id="L70">        val namespace = namespaceQueryRepository.get(trigger.namespaceId)</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        val topic = if (trigger is EventTrigger) {</span>
+<span class="fc" id="L72">            eventBrokerRepository.getTopic(trigger.topicId)</span>
         } else {
-<span class="fc" id="L71">            null</span>
+<span class="fc" id="L74">            null</span>
         }
 
-<span class="fc" id="L74">        return responseHandler(</span>
-<span class="fc" id="L75">            trigger,</span>
-<span class="fc" id="L76">            func,</span>
-<span class="fc" id="L77">            namespace,</span>
-<span class="fc" id="L78">            topic</span>
-        )
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        val hook = if (trigger is HookTrigger) {</span>
+<span class="fc" id="L78">            hookQueryRepository.get(trigger.hookId)</span>
+        } else {
+<span class="fc" id="L80">            null</span>
+        }
+
+<span class="fc" id="L83">        return responseHandler(trigger, func, namespace, topic, hook)</span>
     }
 
     override operator fun &lt;T : Any&gt; invoke(
@@ -85,37 +89,48 @@ interface TriggerPort : CreateTriggerPort, GetTriggerPort, ListTriggersPort
             triggers: List&lt;Trigger&gt;,
             funcs: Map&lt;FuncId, Func&gt;,
             namespaces: Map&lt;NamespaceId, Namespace&gt;,
-            topics: Map&lt;TopicId, Topic&gt;
+            topics: Map&lt;TopicId, Topic&gt;,
+            hooks: Map&lt;HookId, Hook&gt;
         ) -&gt; T
     ): T {
 
-<span class="fc" id="L92">        val triggers = triggerQueryRepository.list(query)</span>
+<span class="fc" id="L97">        val triggers = triggerQueryRepository.list(query)</span>
 
-<span class="fc" id="L94">        val namespaces = namespaceQueryRepository.list(triggers.map { it.namespaceId })</span>
-<span class="fc" id="L95">            .associateBy { it.id }</span>
+<span class="fc" id="L99">        val namespaces = namespaceQueryRepository.list(triggers.map { it.namespaceId })</span>
+<span class="fc" id="L100">            .associateBy { it.id }</span>
 
-<span class="fc" id="L97">        val funcs = funcQueryRepository.list(triggers.map { it.funcId })</span>
-<span class="fc" id="L98">            .associateBy { it.id }</span>
+<span class="fc" id="L102">        val funcs = funcQueryRepository.list(triggers.map { it.funcId })</span>
+<span class="fc" id="L103">            .associateBy { it.id }</span>
 
-<span class="pc" id="L100">        val topics = eventBrokerRepository.list(triggers.filterIsInstance&lt;EventTrigger&gt;().map { it.topicId })</span>
-<span class="pc" id="L101">            .associateBy { it.id }</span>
+<span class="pc" id="L105">        val topics = eventBrokerRepository.list(triggers.filterIsInstance&lt;EventTrigger&gt;().map { it.topicId })</span>
+<span class="pc" id="L106">            .associateBy { it.id }</span>
 
-<span class="fc" id="L103">        return responseHandler(triggers, funcs, namespaces, topics)</span>
+<span class="pc" id="L108">        val hooks = hookQueryRepository.list(triggers.filterIsInstance&lt;HookTrigger&gt;().map { it.hookId })</span>
+<span class="pc" id="L109">            .associateBy { it.id }</span>
+
+<span class="fc" id="L111">        return responseHandler(triggers, funcs, namespaces, topics, hooks)</span>
     }
 
     private fun ensureFuncExists(createTrigger: CreateTriggerReq) {
-<span class="fc" id="L107">        funcQueryRepository.get(createTrigger.funcId)</span>
-<span class="fc" id="L108">    }</span>
+<span class="fc" id="L115">        funcQueryRepository.get(createTrigger.funcId)</span>
+<span class="fc" id="L116">    }</span>
 
     private fun ensureTopicExists(createTrigger: CreateTriggerReq) {
-<span class="fc bfc" id="L111" title="All 2 branches covered.">        if (createTrigger.type == TriggerType.Event) {</span>
-<span class="fc bfc" id="L112" title="All 2 branches covered.">            requireNotNull(createTrigger.topicId) { &quot;topicId is missing&quot; }</span>
-<span class="fc" id="L113">            eventBrokerRepository.getTopic(createTrigger.topicId!!)</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">        if (createTrigger.type == TriggerType.Event) {</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">            requireNotNull(createTrigger.topicId) { &quot;topicId is missing&quot; }</span>
+<span class="fc" id="L121">            eventBrokerRepository.getTopic(createTrigger.topicId!!)</span>
         }
-<span class="fc" id="L115">    }</span>
+<span class="fc" id="L123">    }</span>
+
+    private fun ensureHookExists(createTrigger: CreateTriggerReq) {
+<span class="fc bfc" id="L126" title="All 2 branches covered.">        if (createTrigger.type == TriggerType.Hook) {</span>
+<span class="fc bfc" id="L127" title="All 2 branches covered.">            requireNotNull(createTrigger.hookId) { &quot;hookId is missing&quot; }</span>
+<span class="fc" id="L128">            hookQueryRepository.get(createTrigger.hookId!!)</span>
+        }
+<span class="fc" id="L130">    }</span>
 
     private fun ensureNamespaceExist(createTriggerReq: CreateTriggerReq) {
-<span class="fc bfc" id="L118" title="All 2 branches covered.">        createTriggerReq.namespaceId?.let { namespaceQueryRepository.get(it) }</span>
-<span class="fc" id="L119">    }</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">        createTriggerReq.namespaceId?.let { namespaceQueryRepository.get(it) }</span>
+<span class="fc" id="L134">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

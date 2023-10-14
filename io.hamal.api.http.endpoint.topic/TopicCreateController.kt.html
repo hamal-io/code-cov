@@ -2,6 +2,7 @@
 
 import io.hamal.api.http.endpoint.req.Assembler
 import io.hamal.core.adapter.CreateTopicPort
+import io.hamal.core.component.Retry
 import io.hamal.lib.domain.vo.GroupId
 import io.hamal.lib.sdk.api.ApiCreateTopicReq
 import io.hamal.lib.sdk.api.ApiSubmittedReq
@@ -12,17 +13,20 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
-<span class="fc" id="L15">@RestController</span>
-<span class="fc" id="L16">class TopicCreateController(private val createTopic: CreateTopicPort) {</span>
+<span class="fc" id="L16">@RestController</span>
+<span class="fc" id="L17">class TopicCreateController(</span>
+<span class="fc" id="L18">    private val retry: Retry,</span>
+<span class="fc" id="L19">    private val createTopic: CreateTopicPort</span>
+) {
 
     @PostMapping(&quot;/v1/groups/{groupId}/topics&quot;)
     fun createTopic(
         @PathVariable(&quot;groupId&quot;) groupId: GroupId,
         @RequestBody req: ApiCreateTopicReq
-    ): ResponseEntity&lt;ApiSubmittedReq&gt; {
-<span class="fc" id="L23">        return createTopic(groupId, req) {</span>
-<span class="fc" id="L24">            ResponseEntity(Assembler.assemble(it), HttpStatus.ACCEPTED)</span>
+<span class="fc" id="L26">    ): ResponseEntity&lt;ApiSubmittedReq&gt; = retry {</span>
+<span class="fc" id="L27">        createTopic(groupId, req) {</span>
+<span class="fc" id="L28">            ResponseEntity(Assembler.assemble(it), HttpStatus.ACCEPTED)</span>
         }
-    }
+<span class="fc" id="L30">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NamespaceGetController.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.api.http.endpoint.namespace</a> &gt; <span class="el_source">NamespaceGetController.kt</span></div><h1>NamespaceGetController.kt</h1><pre class="source lang-java linenums">package io.hamal.api.http.endpoint.namespace
 
 import io.hamal.core.adapter.GetNamespacePort
+import io.hamal.core.component.Retry
 import io.hamal.lib.domain.vo.NamespaceId
 import io.hamal.lib.sdk.api.ApiNamespace
 import org.springframework.http.ResponseEntity
@@ -8,18 +9,22 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
 
-<span class="fc" id="L11">@RestController</span>
-<span class="fc" id="L12">internal class NamespaceGetController(private val getNamespace: GetNamespacePort) {</span>
+<span class="fc" id="L12">@RestController</span>
+<span class="fc" id="L13">internal class NamespaceGetController(</span>
+<span class="fc" id="L14">    private val retry: Retry,</span>
+<span class="fc" id="L15">    private val getNamespace: GetNamespacePort</span>
+) {
     @GetMapping(&quot;/v1/namespaces/{namespaceId}&quot;)
-    fun getNamespace(@PathVariable(&quot;namespaceId&quot;) namespaceId: NamespaceId) =
-<span class="fc" id="L15">        getNamespace(namespaceId) { namespace -&gt;</span>
-<span class="fc" id="L16">            ResponseEntity.ok(</span>
-<span class="fc" id="L17">                ApiNamespace(</span>
-<span class="fc" id="L18">                    id = namespace.id,</span>
-<span class="fc" id="L19">                    name = namespace.name,</span>
-<span class="fc" id="L20">                    inputs = namespace.inputs</span>
+<span class="fc" id="L18">    fun getNamespace(@PathVariable(&quot;namespaceId&quot;) namespaceId: NamespaceId) = retry {</span>
+<span class="fc" id="L19">        getNamespace(namespaceId) { namespace -&gt;</span>
+<span class="fc" id="L20">            ResponseEntity.ok(</span>
+<span class="fc" id="L21">                ApiNamespace(</span>
+<span class="fc" id="L22">                    id = namespace.id,</span>
+<span class="fc" id="L23">                    name = namespace.name,</span>
+<span class="fc" id="L24">                    inputs = namespace.inputs</span>
                 )
             )
-<span class="fc" id="L23">        }</span>
+        }
+<span class="fc" id="L28">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

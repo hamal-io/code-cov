@@ -2,6 +2,7 @@
 
 import io.hamal.api.http.endpoint.req.Assembler
 import io.hamal.core.adapter.UpdateNamespacePort
+import io.hamal.core.component.Retry
 import io.hamal.lib.domain.vo.NamespaceId
 import io.hamal.lib.sdk.api.ApiUpdateNamespaceReq
 import org.springframework.http.HttpStatus
@@ -11,14 +12,19 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
-<span class="fc" id="L14">@RestController</span>
-<span class="fc" id="L15">internal class NamespaceUpdateController(private val updateNamespace: UpdateNamespacePort) {</span>
+<span class="fc" id="L15">@RestController</span>
+<span class="fc" id="L16">internal class NamespaceUpdateController(</span>
+<span class="fc" id="L17">    private val retry: Retry,</span>
+<span class="fc" id="L18">    private val updateNamespace: UpdateNamespacePort</span>
+) {
     @PatchMapping(&quot;/v1/namespaces/{namespaceId}&quot;)
     fun createNamespace(
         @PathVariable(&quot;namespaceId&quot;) namespaceId: NamespaceId,
         @RequestBody req: ApiUpdateNamespaceReq
-<span class="fc" id="L20">    ) = updateNamespace(namespaceId, req) {</span>
-<span class="fc" id="L21">        ResponseEntity(Assembler.assemble(it), HttpStatus.ACCEPTED)</span>
-<span class="fc" id="L22">    }</span>
+<span class="fc" id="L24">    ) = retry {</span>
+<span class="fc" id="L25">        updateNamespace(namespaceId, req) {</span>
+<span class="fc" id="L26">            ResponseEntity(Assembler.assemble(it), HttpStatus.ACCEPTED)</span>
+        }
+<span class="fc" id="L28">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

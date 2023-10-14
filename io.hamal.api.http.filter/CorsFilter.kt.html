@@ -16,7 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter
         filterChain: FilterChain
     ) {
 <span class="nc" id="L18">        response.setHeader(&quot;Access-Control-Allow-Origin&quot;, &quot;*&quot;)</span>
-<span class="nc" id="L19">        response.setHeader(&quot;Access-Control-Allow-Methods&quot;, &quot;GET, POST, PUT, DELETE, OPTIONS&quot;)</span>
+<span class="nc" id="L19">        response.setHeader(&quot;Access-Control-Allow-Methods&quot;, &quot;GET,PATCH, POST, PUT, DELETE, OPTIONS&quot;)</span>
 <span class="nc" id="L20">        response.setHeader(&quot;Access-Control-Max-Age&quot;, &quot;3600&quot;)</span>
 <span class="nc" id="L21">        response.setHeader(&quot;Access-Control-Allow-Headers&quot;, &quot;authorization, content-type&quot;)</span>
 <span class="nc bnc" id="L22" title="All 2 branches missed.">        if (&quot;OPTIONS&quot; == request.method) {</span>
