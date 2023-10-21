@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.RestController
 
 <span class="fc" id="L14">@RestController</span>
 <span class="fc" id="L15">internal class CodeGetController(private val getCode: GetCodePort) {</span>
-    @GetMapping(&quot;/v1/code/{codeId}&quot;)
+    @GetMapping(&quot;/v1/code/{id}&quot;)
     fun getCode(
-        @PathVariable(&quot;codeId&quot;) codeId: CodeId,
-        @RequestParam(required = false, name = &quot;codeVersion&quot;, defaultValue = &quot;0&quot;) codeVersion: Int
-<span class="fc" id="L20">    ) = getCode(codeId, CodeVersion(codeVersion), ::assemble)</span>
+        @PathVariable(&quot;id&quot;) codeId: CodeId,
+        @RequestParam(required = false, name = &quot;version&quot;, defaultValue = &quot;0&quot;) codeVersion: CodeVersion
+<span class="fc" id="L20">    ) = getCode(codeId, codeVersion, ::assemble)</span>
 
     private fun assemble(code: Code) =
 <span class="fc" id="L23">        ResponseEntity.ok(</span>

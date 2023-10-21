@@ -32,7 +32,7 @@ fun State.toArrayType(array: TableProxyArray): ArrayType {
 fun State.toProxyArray(array: ArrayType): TableProxyArray {
 <span class="fc" id="L33">    return tableCreateArray(array.size).also {</span>
         // FIXME probably instead of of appending it should be set to keep the index
-<span class="fc" id="L35">        array.entries.forEach { (_, value) -&gt;</span>
+<span class="fc" id="L35">        array.value.forEach { (_, value) -&gt;</span>
 <span class="fc" id="L36">            when (value) {</span>
 <span class="pc bpc" id="L37" title="1 of 2 branches missed.">                is BooleanType -&gt; it.append(value)</span>
 <span class="fc bfc" id="L38" title="All 2 branches covered.">                is NumberType -&gt; it.append(value)</span>
@@ -78,7 +78,7 @@ fun State.toMapType(map: TableProxyMap): MapType {
 
 fun State.toProxyMap(map: MapType): TableProxyMap {
 <span class="fc" id="L80">    return tableCreateMap(map.size).also {</span>
-<span class="fc" id="L81">        map.entries.forEach { (key, value) -&gt;</span>
+<span class="fc" id="L81">        map.value.forEach { (key, value) -&gt;</span>
 <span class="fc" id="L82">            when (value) {</span>
 <span class="pc bpc" id="L83" title="1 of 2 branches missed.">                is BooleanType -&gt; it[key] = value</span>
 <span class="pc bpc" id="L84" title="1 of 2 branches missed.">                is CodeType -&gt; it[key] = value</span>

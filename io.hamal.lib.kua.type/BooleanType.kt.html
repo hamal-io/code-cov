@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 @SerialName(&quot;BooleanType&quot;)
 <span class="fc" id="L10">sealed class BooleanType(</span>
 <span class="fc" id="L11">    val value: Boolean,</span>
-) : SerializableType
+<span class="fc" id="L12">) : SerializableType()</span>
 
 <span class="pc" id="L14">@Serializable</span>
 @SerialName(&quot;TrueType&quot;)

@@ -17,7 +17,7 @@ import java.math.RoundingMode
 <span class="nc" id="L17">data class DecimalType(</span>
 <span class="nc" id="L18">    @Serializable(with = BigDecimalSerializer::class)</span>
 <span class="nc" id="L19">    val value: BigDecimal,</span>
-<span class="nc" id="L20">) : Number(), SerializableType, Comparable&lt;DecimalType&gt; {</span>
+<span class="nc" id="L20">) :  SerializableType(), Comparable&lt;DecimalType&gt; {</span>
 
 <span class="nc" id="L22">    companion object {</span>
 <span class="nc" id="L23">        val Zero = DecimalType(0)</span>
@@ -128,19 +128,19 @@ import java.math.RoundingMode
 
 <span class="nc bnc" id="L129" title="All 2 branches missed.">    fun isZero() = value.signum() == 0</span>
 
-<span class="nc" id="L131">    override fun toByte() = value.toByte()</span>
+<span class="nc" id="L131">    fun toByte() = value.toByte()</span>
 
-<span class="nc" id="L133">    override fun toShort() = value.toShort()</span>
+<span class="nc" id="L133">    fun toShort() = value.toShort()</span>
 
-<span class="nc" id="L135">    override fun toInt() = value.toInt()</span>
+<span class="nc" id="L135">    fun toInt() = value.toInt()</span>
 
-<span class="nc" id="L137">    override fun toLong() = value.toLong()</span>
+<span class="nc" id="L137">    fun toLong() = value.toLong()</span>
 
-<span class="nc" id="L139">    override fun toFloat() = value.toFloat()</span>
+<span class="nc" id="L139">    fun toFloat() = value.toFloat()</span>
 
-<span class="nc" id="L141">    override fun toChar() = value.toChar()</span>
+<span class="nc" id="L141">    fun toChar() = value.toChar()</span>
 
-<span class="nc" id="L143">    override fun toDouble() = value.toDouble()</span>
+<span class="nc" id="L143">    fun toDouble() = value.toDouble()</span>
 
 <span class="nc" id="L145">    fun toBigDecimal() = value</span>
 

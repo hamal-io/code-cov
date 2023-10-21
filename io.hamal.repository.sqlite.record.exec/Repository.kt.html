@@ -65,117 +65,115 @@ internal object CreateExec : CreateDomainObject&lt;ExecId, ExecRecord, Exec&gt; 
 <span class="nc" id="L65">                        correlation = cmd.correlation,</span>
 <span class="nc" id="L66">                        inputs = cmd.inputs,</span>
 <span class="nc" id="L67">                        code = cmd.code,</span>
-<span class="nc" id="L68">                        codeId = cmd.codeId,</span>
-<span class="nc" id="L69">                        codeVersion = cmd.codeVersion,</span>
-<span class="nc" id="L70">                        events = cmd.events</span>
+<span class="nc" id="L68">                        events = cmd.events</span>
                     )
                 )
 
-<span class="nc" id="L74">                (currentVersion(execId) as PlannedExec)</span>
-<span class="nc" id="L75">                    .also { ProjectionCurrent.upsert(this, it) }</span>
+<span class="nc" id="L72">                (currentVersion(execId) as PlannedExec)</span>
+<span class="nc" id="L73">                    .also { ProjectionCurrent.upsert(this, it) }</span>
             }
         }
     }
 
     override fun schedule(cmd: ScheduleCmd): ScheduledExec {
-<span class="nc" id="L81">        val execId = cmd.execId</span>
-<span class="nc" id="L82">        val cmdId = cmd.id</span>
-<span class="nc" id="L83">        return tx {</span>
-<span class="nc bnc" id="L84" title="All 2 branches missed.">            if (commandAlreadyApplied(cmdId, execId)) {</span>
-<span class="nc" id="L85">                versionOf(execId, cmdId) as ScheduledExec</span>
+<span class="nc" id="L79">        val execId = cmd.execId</span>
+<span class="nc" id="L80">        val cmdId = cmd.id</span>
+<span class="nc" id="L81">        return tx {</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">            if (commandAlreadyApplied(cmdId, execId)) {</span>
+<span class="nc" id="L83">                versionOf(execId, cmdId) as ScheduledExec</span>
             } else {
-<span class="nc bnc" id="L87" title="All 2 branches missed.">                check(currentVersion(execId) is PlannedExec) { &quot;$execId not planned&quot; }</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">                check(currentVersion(execId) is PlannedExec) { &quot;$execId not planned&quot; }</span>
 
-<span class="nc" id="L89">                store(ExecScheduledRecord(cmdId, execId))</span>
+<span class="nc" id="L87">                store(ExecScheduledRecord(cmdId, execId))</span>
 
-<span class="nc" id="L91">                (currentVersion(execId) as ScheduledExec).also { ProjectionCurrent.upsert(this, it) }</span>
+<span class="nc" id="L89">                (currentVersion(execId) as ScheduledExec).also { ProjectionCurrent.upsert(this, it) }</span>
             }
         }
     }
 
     override fun queue(cmd: QueueCmd): QueuedExec {
-<span class="nc" id="L97">        val execId = cmd.execId</span>
-<span class="nc" id="L98">        val cmdId = cmd.id</span>
-<span class="nc" id="L99">        return tx {</span>
-<span class="nc bnc" id="L100" title="All 2 branches missed.">            if (commandAlreadyApplied(cmdId, execId)) {</span>
-<span class="nc" id="L101">                versionOf(execId, cmdId) as QueuedExec</span>
+<span class="nc" id="L95">        val execId = cmd.execId</span>
+<span class="nc" id="L96">        val cmdId = cmd.id</span>
+<span class="nc" id="L97">        return tx {</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">            if (commandAlreadyApplied(cmdId, execId)) {</span>
+<span class="nc" id="L99">                versionOf(execId, cmdId) as QueuedExec</span>
             } else {
-<span class="nc bnc" id="L103" title="All 2 branches missed.">                check(currentVersion(execId) is ScheduledExec) { &quot;$execId not scheduled&quot; }</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">                check(currentVersion(execId) is ScheduledExec) { &quot;$execId not scheduled&quot; }</span>
 
-<span class="nc" id="L105">                store(ExecQueuedRecord(cmdId, execId))</span>
+<span class="nc" id="L103">                store(ExecQueuedRecord(cmdId, execId))</span>
 
-<span class="nc" id="L107">                (currentVersion(execId) as QueuedExec)</span>
-<span class="nc" id="L108">                    .also { ProjectionCurrent.upsert(this, it) }</span>
-<span class="nc" id="L109">                    .also { ProjectionQueue.upsert(this, it) }</span>
+<span class="nc" id="L105">                (currentVersion(execId) as QueuedExec)</span>
+<span class="nc" id="L106">                    .also { ProjectionCurrent.upsert(this, it) }</span>
+<span class="nc" id="L107">                    .also { ProjectionQueue.upsert(this, it) }</span>
             }
         }
     }
 
     override fun start(cmd: StartCmd): List&lt;StartedExec&gt; {
-<span class="nc" id="L115">        val cmdId = cmd.id</span>
-<span class="nc" id="L116">        val result = mutableListOf&lt;StartedExec&gt;()</span>
+<span class="nc" id="L113">        val cmdId = cmd.id</span>
+<span class="nc" id="L114">        val result = mutableListOf&lt;StartedExec&gt;()</span>
 
-<span class="nc" id="L118">        tx {</span>
-<span class="nc" id="L119">            ProjectionQueue.pop(this, 1).forEach { queuedExec -&gt;</span>
-<span class="nc" id="L120">                val execId = queuedExec.id</span>
-<span class="nc bnc" id="L121" title="All 2 branches missed.">                if (commandAlreadyApplied(cmdId, execId)) {</span>
-<span class="nc" id="L122">                    versionOf(execId, cmdId) as QueuedExec</span>
+<span class="nc" id="L116">        tx {</span>
+<span class="nc" id="L117">            ProjectionQueue.pop(this, 1).forEach { queuedExec -&gt;</span>
+<span class="nc" id="L118">                val execId = queuedExec.id</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">                if (commandAlreadyApplied(cmdId, execId)) {</span>
+<span class="nc" id="L120">                    versionOf(execId, cmdId) as QueuedExec</span>
                 } else {
-<span class="nc bnc" id="L124" title="All 2 branches missed.">                    check(currentVersion(execId) is QueuedExec) { &quot;$execId not queued&quot; }</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">                    check(currentVersion(execId) is QueuedExec) { &quot;$execId not queued&quot; }</span>
 
-<span class="nc" id="L126">                    store(ExecStartedRecord(cmd.id, execId))</span>
+<span class="nc" id="L124">                    store(ExecStartedRecord(cmd.id, execId))</span>
 
-<span class="nc" id="L128">                    result.add((currentVersion(execId) as StartedExec).also { ProjectionCurrent.upsert(this, it) })</span>
+<span class="nc" id="L126">                    result.add((currentVersion(execId) as StartedExec).also { ProjectionCurrent.upsert(this, it) })</span>
                 }
-<span class="nc" id="L130">            }</span>
-<span class="nc" id="L131">        }</span>
+<span class="nc" id="L128">            }</span>
+<span class="nc" id="L129">        }</span>
 
-<span class="nc" id="L133">        return result</span>
+<span class="nc" id="L131">        return result</span>
     }
 
 
     override fun complete(cmd: CompleteCmd): CompletedExec {
-<span class="nc" id="L138">        val execId = cmd.execId</span>
-<span class="nc" id="L139">        val cmdId = cmd.id</span>
-<span class="nc" id="L140">        return tx {</span>
-<span class="nc bnc" id="L141" title="All 2 branches missed.">            if (commandAlreadyApplied(cmdId, execId)) {</span>
-<span class="nc" id="L142">                versionOf(execId, cmdId) as CompletedExec</span>
+<span class="nc" id="L136">        val execId = cmd.execId</span>
+<span class="nc" id="L137">        val cmdId = cmd.id</span>
+<span class="nc" id="L138">        return tx {</span>
+<span class="nc bnc" id="L139" title="All 2 branches missed.">            if (commandAlreadyApplied(cmdId, execId)) {</span>
+<span class="nc" id="L140">                versionOf(execId, cmdId) as CompletedExec</span>
             } else {
-<span class="nc bnc" id="L144" title="All 2 branches missed.">                check(currentVersion(execId) is StartedExec) { &quot;$execId not started&quot; }</span>
+<span class="nc bnc" id="L142" title="All 2 branches missed.">                check(currentVersion(execId) is StartedExec) { &quot;$execId not started&quot; }</span>
 
-<span class="nc" id="L146">                store(ExecCompletedRecord(cmdId, execId, cmd.result))</span>
+<span class="nc" id="L144">                store(ExecCompletedRecord(cmdId, execId, cmd.result))</span>
 
-<span class="nc" id="L148">                (currentVersion(execId) as CompletedExec).also { ProjectionCurrent.upsert(this, it) }</span>
+<span class="nc" id="L146">                (currentVersion(execId) as CompletedExec).also { ProjectionCurrent.upsert(this, it) }</span>
             }
         }
     }
 
     override fun fail(cmd: FailCmd): FailedExec {
-<span class="nc" id="L154">        val execId = cmd.execId</span>
-<span class="nc" id="L155">        val cmdId = cmd.id</span>
-<span class="nc" id="L156">        return tx {</span>
-<span class="nc bnc" id="L157" title="All 2 branches missed.">            if (commandAlreadyApplied(cmdId, execId)) {</span>
-<span class="nc" id="L158">                versionOf(execId, cmdId) as FailedExec</span>
+<span class="nc" id="L152">        val execId = cmd.execId</span>
+<span class="nc" id="L153">        val cmdId = cmd.id</span>
+<span class="nc" id="L154">        return tx {</span>
+<span class="nc bnc" id="L155" title="All 2 branches missed.">            if (commandAlreadyApplied(cmdId, execId)) {</span>
+<span class="nc" id="L156">                versionOf(execId, cmdId) as FailedExec</span>
             } else {
-<span class="nc bnc" id="L160" title="All 2 branches missed.">                check(currentVersion(execId) is StartedExec) { &quot;$execId not started&quot; }</span>
+<span class="nc bnc" id="L158" title="All 2 branches missed.">                check(currentVersion(execId) is StartedExec) { &quot;$execId not started&quot; }</span>
 
-<span class="nc" id="L162">                store(ExecFailedRecord(cmdId, execId, cmd.result))</span>
+<span class="nc" id="L160">                store(ExecFailedRecord(cmdId, execId, cmd.result))</span>
 
-<span class="nc" id="L164">                (currentVersion(execId) as FailedExec).also { ProjectionCurrent.upsert(this, it) }</span>
+<span class="nc" id="L162">                (currentVersion(execId) as FailedExec).also { ProjectionCurrent.upsert(this, it) }</span>
             }
         }
     }
 
     override fun find(execId: ExecId): Exec? {
-<span class="nc" id="L170">        return ProjectionCurrent.find(connection, execId)</span>
+<span class="nc" id="L168">        return ProjectionCurrent.find(connection, execId)</span>
     }
 
     override fun list(query: ExecQuery): List&lt;Exec&gt; {
-<span class="nc" id="L174">        return ProjectionCurrent.list(connection, query)</span>
+<span class="nc" id="L172">        return ProjectionCurrent.list(connection, query)</span>
     }
 
     override fun count(query: ExecQuery): ULong {
-<span class="nc" id="L178">        return ProjectionCurrent.count(connection, query)</span>
+<span class="nc" id="L176">        return ProjectionCurrent.count(connection, query)</span>
     }
 
 }

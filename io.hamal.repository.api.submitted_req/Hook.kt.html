@@ -1,38 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Hook.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.repository.api.submitted_req</a> &gt; <span class="el_source">Hook.kt</span></div><h1>Hook.kt</h1><pre class="source lang-java linenums">package io.hamal.repository.api.submitted_req
 
 import io.hamal.lib.domain.ReqId
+import io.hamal.lib.domain._enum.HookMethod
 import io.hamal.lib.domain._enum.ReqStatus
-import io.hamal.lib.domain.vo.GroupId
-import io.hamal.lib.domain.vo.HookId
-import io.hamal.lib.domain.vo.HookName
-import io.hamal.lib.domain.vo.NamespaceId
+import io.hamal.lib.domain.vo.*
 import kotlinx.serialization.Serializable
 
-<span class="pc bpc" id="L11" title="2 of 12 branches missed.">@Serializable</span>
-<span class="fc" id="L12">data class SubmittedCreateHookReq(</span>
-<span class="fc" id="L13">    override val reqId: ReqId,</span>
-<span class="fc" id="L14">    override var status: ReqStatus,</span>
-<span class="fc" id="L15">    override val groupId: GroupId,</span>
-<span class="fc" id="L16">    val id: HookId,</span>
-<span class="fc" id="L17">    val namespaceId: NamespaceId?,</span>
-<span class="fc" id="L18">    val name: HookName,</span>
-<span class="fc" id="L19">) : SubmittedReqWithGroupId</span>
+<span class="pc bpc" id="L9" title="2 of 12 branches missed.">@Serializable</span>
+<span class="fc" id="L10">data class SubmittedCreateHookReq(</span>
+<span class="fc" id="L11">    override val reqId: ReqId,</span>
+<span class="fc" id="L12">    override var status: ReqStatus,</span>
+<span class="fc" id="L13">    override val groupId: GroupId,</span>
+<span class="fc" id="L14">    val id: HookId,</span>
+<span class="fc" id="L15">    val namespaceId: NamespaceId?,</span>
+<span class="fc" id="L16">    val name: HookName,</span>
+<span class="fc" id="L17">) : SubmittedReqWithGroupId</span>
 
 
-<span class="pc bpc" id="L22" title="2 of 12 branches missed.">@Serializable</span>
-<span class="fc" id="L23">data class SubmittedUpdateHookReq(</span>
-<span class="fc" id="L24">    override val reqId: ReqId,</span>
-<span class="fc" id="L25">    override var status: ReqStatus,</span>
-<span class="fc" id="L26">    override val groupId: GroupId,</span>
-<span class="fc" id="L27">    val id: HookId,</span>
-<span class="fc" id="L28">    val namespaceId: NamespaceId?,</span>
-<span class="fc" id="L29">    val name: HookName?,</span>
-<span class="fc" id="L30">) : SubmittedReqWithGroupId</span>
+<span class="pc bpc" id="L20" title="2 of 12 branches missed.">@Serializable</span>
+<span class="fc" id="L21">data class SubmittedUpdateHookReq(</span>
+<span class="fc" id="L22">    override val reqId: ReqId,</span>
+<span class="fc" id="L23">    override var status: ReqStatus,</span>
+<span class="fc" id="L24">    override val groupId: GroupId,</span>
+<span class="fc" id="L25">    val id: HookId,</span>
+<span class="fc" id="L26">    val namespaceId: NamespaceId?,</span>
+<span class="fc" id="L27">    val name: HookName?,</span>
+<span class="fc" id="L28">) : SubmittedReqWithGroupId</span>
 
-<span class="pc bnc" id="L32" title="All 9 branches missed.">@Serializable</span>
-<span class="nc" id="L33">data class SubmittedInvokeHookReq(</span>
-<span class="nc" id="L34">    override val reqId: ReqId,</span>
-<span class="nc" id="L35">    override var status: ReqStatus,</span>
-<span class="nc" id="L36">    val id: HookId</span>
-<span class="fc" id="L37">) : SubmittedReq</span>
+<span class="pc bnc" id="L30" title="All 13 branches missed.">@Serializable</span>
+<span class="nc" id="L31">data class SubmittedInvokeHookReq(</span>
+<span class="nc" id="L32">    override val reqId: ReqId,</span>
+<span class="nc" id="L33">    override var status: ReqStatus,</span>
+<span class="nc" id="L34">    val id: HookId,</span>
+<span class="nc" id="L35">    val groupId: GroupId,</span>
+<span class="nc" id="L36">    val method: HookMethod,</span>
+<span class="nc" id="L37">    val headers: HookHeaders,</span>
+<span class="nc" id="L38">    val parameters: HookParameters</span>
+<span class="fc" id="L39">) : SubmittedReq</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

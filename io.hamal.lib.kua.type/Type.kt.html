@@ -5,8 +5,8 @@ import kotlinx.serialization.Serializable
 interface Type
 
 <span class="fc" id="L7">@Serializable</span>
-sealed interface SerializableType : Type
+sealed class SerializableType : Type
 
-<span class="nc" id="L10">@Serializable</span>
-sealed interface TableType : SerializableType
+<span class="pc" id="L10">@Serializable</span>
+<span class="fc" id="L11">sealed class TableType : SerializableType()</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

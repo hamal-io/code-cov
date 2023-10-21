@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Trigger.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.sdk.api</a> &gt; <span class="el_source">Trigger.kt</span></div><h1>Trigger.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.sdk.api
 
+import io.hamal.lib.domain._enum.HookMethod
 import io.hamal.lib.domain._enum.TriggerType
 import io.hamal.lib.domain.vo.*
 import io.hamal.lib.http.HttpTemplate
@@ -9,84 +10,86 @@ import io.hamal.request.CreateTriggerReq
 import kotlinx.serialization.Serializable
 import kotlin.time.Duration
 
-<span class="pc bpc" id="L12" title="25 of 57 branches missed.">@Serializable</span>
-<span class="fc" id="L13">data class ApiCreateTriggerReq(</span>
-<span class="fc" id="L14">    override val type: TriggerType,</span>
-<span class="fc" id="L15">    override val name: TriggerName,</span>
-<span class="fc" id="L16">    override val funcId: FuncId,</span>
-<span class="fc" id="L17">    override val namespaceId: NamespaceId? = null,</span>
-<span class="fc" id="L18">    override val inputs: TriggerInputs,</span>
-<span class="fc" id="L19">    override val correlationId: CorrelationId? = null,</span>
-<span class="fc" id="L20">    override val duration: Duration? = null,</span>
-<span class="fc" id="L21">    override val topicId: TopicId? = null,</span>
-<span class="fc" id="L22">    override val hookId: HookId? = null</span>
-<span class="fc" id="L23">) : CreateTriggerReq</span>
+<span class="pc bpc" id="L13" title="31 of 66 branches missed.">@Serializable</span>
+<span class="fc" id="L14">data class ApiCreateTriggerReq(</span>
+<span class="fc" id="L15">    override val type: TriggerType,</span>
+<span class="fc" id="L16">    override val name: TriggerName,</span>
+<span class="fc" id="L17">    override val funcId: FuncId,</span>
+<span class="fc" id="L18">    override val namespaceId: NamespaceId? = null,</span>
+<span class="fc" id="L19">    override val inputs: TriggerInputs,</span>
+<span class="fc" id="L20">    override val correlationId: CorrelationId? = null,</span>
+<span class="fc" id="L21">    override val duration: Duration? = null,</span>
+<span class="fc" id="L22">    override val topicId: TopicId? = null,</span>
+<span class="fc" id="L23">    override val hookId: HookId? = null,</span>
+<span class="fc" id="L24">    override val hookMethods: Set&lt;HookMethod&gt;? = null</span>
+<span class="fc" id="L25">) : CreateTriggerReq</span>
 
-<span class="pc bpc" id="L25" title="2 of 7 branches missed.">@Serializable</span>
-<span class="fc" id="L26">data class ApiTriggerList(</span>
-<span class="fc" id="L27">    val triggers: List&lt;Trigger&gt;</span>
+<span class="pc bpc" id="L27" title="2 of 7 branches missed.">@Serializable</span>
+<span class="fc" id="L28">data class ApiTriggerList(</span>
+<span class="fc" id="L29">    val triggers: List&lt;Trigger&gt;</span>
 ) {
-<span class="nc" id="L29">    @Serializable</span>
+<span class="nc" id="L31">    @Serializable</span>
     sealed interface Trigger {
         val id: TriggerId
         val name: TriggerName
         val func: Func
         val namespace: Namespace
 
-<span class="pc bpc" id="L36" title="2 of 8 branches missed.">        @Serializable</span>
-<span class="fc" id="L37">        data class Func(</span>
-<span class="pc" id="L38">            val id: FuncId,</span>
-<span class="pc" id="L39">            val name: FuncName</span>
-<span class="fc" id="L40">        )</span>
+<span class="pc bpc" id="L38" title="2 of 8 branches missed.">        @Serializable</span>
+<span class="fc" id="L39">        data class Func(</span>
+<span class="pc" id="L40">            val id: FuncId,</span>
+<span class="pc" id="L41">            val name: FuncName</span>
+<span class="fc" id="L42">        )</span>
 
-<span class="pc bpc" id="L42" title="2 of 8 branches missed.">        @Serializable</span>
-<span class="fc" id="L43">        data class Namespace(</span>
-<span class="pc" id="L44">            val id: NamespaceId,</span>
-<span class="pc" id="L45">            val name: NamespaceName</span>
-<span class="fc" id="L46">        )</span>
+<span class="pc bpc" id="L44" title="2 of 8 branches missed.">        @Serializable</span>
+<span class="fc" id="L45">        data class Namespace(</span>
+<span class="pc" id="L46">            val id: NamespaceId,</span>
+<span class="pc" id="L47">            val name: NamespaceName</span>
+<span class="fc" id="L48">        )</span>
     }
 
-<span class="pc bpc" id="L49" title="3 of 13 branches missed.">    @Serializable</span>
-<span class="fc" id="L50">    class FixedRateTrigger(</span>
-<span class="fc" id="L51">        override val id: TriggerId,</span>
-<span class="fc" id="L52">        override val name: TriggerName,</span>
-<span class="fc" id="L53">        override val func: Trigger.Func,</span>
-<span class="fc" id="L54">        override val namespace: Trigger.Namespace,</span>
-<span class="pc" id="L55">        val duration: Duration</span>
-<span class="fc" id="L56">    ) : Trigger</span>
+<span class="pc bpc" id="L51" title="3 of 13 branches missed.">    @Serializable</span>
+<span class="fc" id="L52">    class FixedRateTrigger(</span>
+<span class="fc" id="L53">        override val id: TriggerId,</span>
+<span class="fc" id="L54">        override val name: TriggerName,</span>
+<span class="fc" id="L55">        override val func: Trigger.Func,</span>
+<span class="fc" id="L56">        override val namespace: Trigger.Namespace,</span>
+<span class="pc" id="L57">        val duration: Duration</span>
+<span class="fc" id="L58">    ) : Trigger</span>
 
-<span class="pc bnc" id="L58" title="All 11 branches missed.">    @Serializable</span>
-<span class="nc" id="L59">    class EventTrigger(</span>
-<span class="nc" id="L60">        override val id: TriggerId,</span>
-<span class="nc" id="L61">        override val name: TriggerName,</span>
-<span class="nc" id="L62">        override val func: Trigger.Func,</span>
-<span class="nc" id="L63">        override val namespace: Trigger.Namespace,</span>
-<span class="nc" id="L64">        val topic: Topic</span>
+<span class="pc bnc" id="L60" title="All 11 branches missed.">    @Serializable</span>
+<span class="nc" id="L61">    class EventTrigger(</span>
+<span class="nc" id="L62">        override val id: TriggerId,</span>
+<span class="nc" id="L63">        override val name: TriggerName,</span>
+<span class="nc" id="L64">        override val func: Trigger.Func,</span>
+<span class="nc" id="L65">        override val namespace: Trigger.Namespace,</span>
+<span class="nc" id="L66">        val topic: Topic</span>
     ) : Trigger {
-<span class="pc bnc" id="L66" title="All 8 branches missed.">        @Serializable</span>
-<span class="nc" id="L67">        data class Topic(</span>
-<span class="nc" id="L68">            val id: TopicId,</span>
-<span class="nc" id="L69">            val name: TopicName</span>
-<span class="fc" id="L70">        )</span>
-<span class="fc" id="L71">    }</span>
+<span class="pc bnc" id="L68" title="All 8 branches missed.">        @Serializable</span>
+<span class="nc" id="L69">        data class Topic(</span>
+<span class="nc" id="L70">            val id: TopicId,</span>
+<span class="nc" id="L71">            val name: TopicName</span>
+<span class="fc" id="L72">        )</span>
+<span class="fc" id="L73">    }</span>
 
-<span class="pc bnc" id="L73" title="All 11 branches missed.">    @Serializable</span>
-<span class="nc" id="L74">    class HookTrigger(</span>
-<span class="nc" id="L75">        override val id: TriggerId,</span>
-<span class="nc" id="L76">        override val name: TriggerName,</span>
-<span class="nc" id="L77">        override val func: Trigger.Func,</span>
-<span class="nc" id="L78">        override val namespace: Trigger.Namespace,</span>
-<span class="nc" id="L79">        val hook: Hook</span>
+<span class="pc bnc" id="L75" title="All 11 branches missed.">    @Serializable</span>
+<span class="nc" id="L76">    class HookTrigger(</span>
+<span class="nc" id="L77">        override val id: TriggerId,</span>
+<span class="nc" id="L78">        override val name: TriggerName,</span>
+<span class="nc" id="L79">        override val func: Trigger.Func,</span>
+<span class="nc" id="L80">        override val namespace: Trigger.Namespace,</span>
+<span class="nc" id="L81">        val hook: Hook</span>
     ) : Trigger {
-<span class="pc bnc" id="L81" title="All 8 branches missed.">        @Serializable</span>
-<span class="nc" id="L82">        data class Hook(</span>
-<span class="nc" id="L83">            val id: HookId,</span>
-<span class="nc" id="L84">            val name: HookName</span>
-<span class="fc" id="L85">        )</span>
-<span class="fc" id="L86">    }</span>
-<span class="fc" id="L87">}</span>
+<span class="pc bnc" id="L83" title="All 9 branches missed.">        @Serializable</span>
+<span class="nc" id="L84">        data class Hook(</span>
+<span class="nc" id="L85">            val id: HookId,</span>
+<span class="nc" id="L86">            val name: HookName,</span>
+<span class="nc" id="L87">            val methods: Set&lt;HookMethod&gt;</span>
+<span class="fc" id="L88">        )</span>
+<span class="fc" id="L89">    }</span>
+<span class="fc" id="L90">}</span>
 
-<span class="fc" id="L89">@Serializable</span>
+<span class="fc" id="L92">@Serializable</span>
 sealed interface ApiTrigger {
     val id: TriggerId
     val name: TriggerName
@@ -95,63 +98,64 @@ sealed interface ApiTrigger {
     val inputs: TriggerInputs
     val correlationId: CorrelationId?
 
-<span class="pc bpc" id="L98" title="2 of 8 branches missed.">    @Serializable</span>
-<span class="fc" id="L99">    data class Func(</span>
-<span class="fc" id="L100">        val id: FuncId,</span>
-<span class="fc" id="L101">        val name: FuncName</span>
-<span class="fc" id="L102">    )</span>
+<span class="pc bpc" id="L101" title="2 of 8 branches missed.">    @Serializable</span>
+<span class="fc" id="L102">    data class Func(</span>
+<span class="fc" id="L103">        val id: FuncId,</span>
+<span class="fc" id="L104">        val name: FuncName</span>
+<span class="fc" id="L105">    )</span>
 
-<span class="pc bpc" id="L104" title="2 of 8 branches missed.">    @Serializable</span>
-<span class="fc" id="L105">    data class Namespace(</span>
-<span class="pc" id="L106">        val id: NamespaceId,</span>
-<span class="fc" id="L107">        val name: NamespaceName</span>
-<span class="fc" id="L108">    )</span>
+<span class="pc bpc" id="L107" title="2 of 8 branches missed.">    @Serializable</span>
+<span class="fc" id="L108">    data class Namespace(</span>
+<span class="pc" id="L109">        val id: NamespaceId,</span>
+<span class="fc" id="L110">        val name: NamespaceName</span>
+<span class="fc" id="L111">    )</span>
 }
 
-<span class="pc bpc" id="L111" title="8 of 23 branches missed.">@Serializable</span>
-<span class="fc" id="L112">class ApiFixedRateTrigger(</span>
-<span class="fc" id="L113">    override val id: TriggerId,</span>
-<span class="fc" id="L114">    override val name: TriggerName,</span>
-<span class="fc" id="L115">    override val func: ApiTrigger.Func,</span>
-<span class="fc" id="L116">    override val namespace: ApiTrigger.Namespace,</span>
-<span class="fc" id="L117">    override val inputs: TriggerInputs,</span>
-<span class="fc" id="L118">    override val correlationId: CorrelationId? = null,</span>
-<span class="fc" id="L119">    val duration: Duration</span>
-<span class="fc" id="L120">) : ApiTrigger</span>
+<span class="pc bpc" id="L114" title="8 of 23 branches missed.">@Serializable</span>
+<span class="fc" id="L115">class ApiFixedRateTrigger(</span>
+<span class="fc" id="L116">    override val id: TriggerId,</span>
+<span class="fc" id="L117">    override val name: TriggerName,</span>
+<span class="fc" id="L118">    override val func: ApiTrigger.Func,</span>
+<span class="fc" id="L119">    override val namespace: ApiTrigger.Namespace,</span>
+<span class="fc" id="L120">    override val inputs: TriggerInputs,</span>
+<span class="fc" id="L121">    override val correlationId: CorrelationId? = null,</span>
+<span class="fc" id="L122">    val duration: Duration</span>
+<span class="fc" id="L123">) : ApiTrigger</span>
 
-<span class="pc bpc" id="L122" title="6 of 19 branches missed.">@Serializable</span>
-<span class="fc" id="L123">class ApiEventTrigger(</span>
-<span class="fc" id="L124">    override val id: TriggerId,</span>
-<span class="fc" id="L125">    override val name: TriggerName,</span>
-<span class="fc" id="L126">    override val func: ApiTrigger.Func,</span>
-<span class="fc" id="L127">    override val namespace: ApiTrigger.Namespace,</span>
-<span class="fc" id="L128">    override val inputs: TriggerInputs,</span>
-<span class="fc" id="L129">    override val correlationId: CorrelationId? = null,</span>
-<span class="fc" id="L130">    val topic: Topic</span>
+<span class="pc bpc" id="L125" title="6 of 19 branches missed.">@Serializable</span>
+<span class="fc" id="L126">class ApiEventTrigger(</span>
+<span class="fc" id="L127">    override val id: TriggerId,</span>
+<span class="fc" id="L128">    override val name: TriggerName,</span>
+<span class="fc" id="L129">    override val func: ApiTrigger.Func,</span>
+<span class="fc" id="L130">    override val namespace: ApiTrigger.Namespace,</span>
+<span class="fc" id="L131">    override val inputs: TriggerInputs,</span>
+<span class="fc" id="L132">    override val correlationId: CorrelationId? = null,</span>
+<span class="fc" id="L133">    val topic: Topic</span>
 ) : ApiTrigger {
-<span class="pc bpc" id="L132" title="2 of 8 branches missed.">    @Serializable</span>
-<span class="fc" id="L133">    data class Topic(</span>
-<span class="fc" id="L134">        val id: TopicId,</span>
-<span class="fc" id="L135">        val name: TopicName</span>
-<span class="fc" id="L136">    )</span>
-<span class="fc" id="L137">}</span>
+<span class="pc bpc" id="L135" title="2 of 8 branches missed.">    @Serializable</span>
+<span class="fc" id="L136">    data class Topic(</span>
+<span class="fc" id="L137">        val id: TopicId,</span>
+<span class="fc" id="L138">        val name: TopicName</span>
+<span class="fc" id="L139">    )</span>
+<span class="fc" id="L140">}</span>
 
-<span class="pc bpc" id="L139" title="6 of 19 branches missed.">@Serializable</span>
-<span class="fc" id="L140">class ApiHookTrigger(</span>
-<span class="fc" id="L141">    override val id: TriggerId,</span>
-<span class="fc" id="L142">    override val name: TriggerName,</span>
-<span class="fc" id="L143">    override val func: ApiTrigger.Func,</span>
-<span class="fc" id="L144">    override val namespace: ApiTrigger.Namespace,</span>
-<span class="fc" id="L145">    override val inputs: TriggerInputs,</span>
-<span class="fc" id="L146">    override val correlationId: CorrelationId? = null,</span>
-<span class="fc" id="L147">    val hook: Hook</span>
+<span class="pc bpc" id="L142" title="6 of 19 branches missed.">@Serializable</span>
+<span class="fc" id="L143">class ApiHookTrigger(</span>
+<span class="fc" id="L144">    override val id: TriggerId,</span>
+<span class="fc" id="L145">    override val name: TriggerName,</span>
+<span class="fc" id="L146">    override val func: ApiTrigger.Func,</span>
+<span class="fc" id="L147">    override val namespace: ApiTrigger.Namespace,</span>
+<span class="fc" id="L148">    override val inputs: TriggerInputs,</span>
+<span class="fc" id="L149">    override val correlationId: CorrelationId? = null,</span>
+<span class="fc" id="L150">    val hook: Hook</span>
 ) : ApiTrigger {
-<span class="pc bpc" id="L149" title="2 of 8 branches missed.">    @Serializable</span>
-<span class="fc" id="L150">    data class Hook(</span>
-<span class="fc" id="L151">        val id: HookId,</span>
-<span class="fc" id="L152">        val name: HookName</span>
-<span class="fc" id="L153">    )</span>
-<span class="fc" id="L154">}</span>
+<span class="pc bpc" id="L152" title="2 of 9 branches missed.">    @Serializable</span>
+<span class="fc" id="L153">    data class Hook(</span>
+<span class="fc" id="L154">        val id: HookId,</span>
+<span class="fc" id="L155">        val name: HookName,</span>
+<span class="pc" id="L156">        val methods: Set&lt;HookMethod&gt;</span>
+<span class="fc" id="L157">    )</span>
+<span class="fc" id="L158">}</span>
 
 
 interface ApiTriggerService {
@@ -161,27 +165,27 @@ interface ApiTriggerService {
 }
 
 
-<span class="nc" id="L164">internal class ApiTriggerServiceImpl(</span>
-<span class="nc" id="L165">    private val template: HttpTemplate</span>
+<span class="nc" id="L168">internal class ApiTriggerServiceImpl(</span>
+<span class="nc" id="L169">    private val template: HttpTemplate</span>
 ) : ApiTriggerService {
     override fun create(groupId: GroupId, req: ApiCreateTriggerReq) =
-<span class="nc" id="L168">        template.post(&quot;/v1/triggers&quot;)</span>
-<span class="nc" id="L169">            .path(&quot;groupId&quot;, groupId)</span>
-<span class="nc" id="L170">            .body(req)</span>
-<span class="nc" id="L171">            .execute()</span>
-<span class="nc" id="L172">            .fold(ApiSubmittedReqWithId::class)</span>
+<span class="nc" id="L172">        template.post(&quot;/v1/triggers&quot;)</span>
+<span class="nc" id="L173">            .path(&quot;groupId&quot;, groupId)</span>
+<span class="nc" id="L174">            .body(req)</span>
+<span class="nc" id="L175">            .execute()</span>
+<span class="nc" id="L176">            .fold(ApiSubmittedReqWithId::class)</span>
 
     override fun list(groupId: GroupId) =
-<span class="nc" id="L175">        template.get(&quot;/v1/groups/{groupId}/triggers&quot;)</span>
-<span class="nc" id="L176">            .path(&quot;groupId&quot;, groupId)</span>
-<span class="nc" id="L177">            .execute()</span>
-<span class="nc" id="L178">            .fold(ApiTriggerList::class)</span>
-<span class="nc" id="L179">            .triggers</span>
+<span class="nc" id="L179">        template.get(&quot;/v1/groups/{groupId}/triggers&quot;)</span>
+<span class="nc" id="L180">            .path(&quot;groupId&quot;, groupId)</span>
+<span class="nc" id="L181">            .execute()</span>
+<span class="nc" id="L182">            .fold(ApiTriggerList::class)</span>
+<span class="nc" id="L183">            .triggers</span>
 
     override fun get(triggerId: TriggerId) =
-<span class="nc" id="L182">        template.get(&quot;/v1/triggers/{triggerId}&quot;)</span>
-<span class="nc" id="L183">            .path(&quot;triggerId&quot;, triggerId)</span>
-<span class="nc" id="L184">            .execute()</span>
-<span class="nc" id="L185">            .fold(ApiTrigger::class)</span>
+<span class="nc" id="L186">        template.get(&quot;/v1/triggers/{triggerId}&quot;)</span>
+<span class="nc" id="L187">            .path(&quot;triggerId&quot;, triggerId)</span>
+<span class="nc" id="L188">            .execute()</span>
+<span class="nc" id="L189">            .fold(ApiTrigger::class)</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

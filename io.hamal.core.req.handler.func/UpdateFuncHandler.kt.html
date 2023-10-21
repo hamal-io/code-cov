@@ -7,46 +7,49 @@ import io.hamal.lib.common.domain.CmdId
 import io.hamal.repository.api.CodeCmdRepository
 import io.hamal.repository.api.Func
 import io.hamal.repository.api.FuncCmdRepository.UpdateCmd
+import io.hamal.repository.api.FuncCode
 import io.hamal.repository.api.FuncRepository
 import io.hamal.repository.api.event.FuncCreatedEvent
 import io.hamal.repository.api.submitted_req.SubmittedUpdateFuncReq
 import org.springframework.stereotype.Component
 
 @Component
-<span class="fc" id="L16">class UpdateFuncHandler(</span>
-<span class="fc" id="L17">    val codeCmdRepository: CodeCmdRepository,</span>
-<span class="fc" id="L18">    val funcRepository: FuncRepository,</span>
-<span class="fc" id="L19">    val eventEmitter: PlatformEventEmitter</span>
-<span class="fc" id="L20">) : ReqHandler&lt;SubmittedUpdateFuncReq&gt;(SubmittedUpdateFuncReq::class) {</span>
+<span class="fc" id="L17">class UpdateFuncHandler(</span>
+<span class="fc" id="L18">    val codeCmdRepository: CodeCmdRepository,</span>
+<span class="fc" id="L19">    val funcRepository: FuncRepository,</span>
+<span class="fc" id="L20">    val eventEmitter: PlatformEventEmitter</span>
+<span class="fc" id="L21">) : ReqHandler&lt;SubmittedUpdateFuncReq&gt;(SubmittedUpdateFuncReq::class) {</span>
 
     override fun invoke(req: SubmittedUpdateFuncReq) {
-<span class="fc" id="L23">        updateFunc(req).also { emitEvent(req.cmdId(), it) }</span>
-<span class="fc" id="L24">    }</span>
+<span class="fc" id="L24">        updateFunc(req).also { emitEvent(req.cmdId(), it) }</span>
+<span class="fc" id="L25">    }</span>
 }
 
 private fun UpdateFuncHandler.updateFunc(req: SubmittedUpdateFuncReq): Func {
-<span class="fc" id="L28">    val func = funcRepository.get(req.id)</span>
-<span class="fc" id="L29">    val code = codeCmdRepository.update(</span>
-<span class="fc" id="L30">        func.codeId, CodeCmdRepository.UpdateCmd(</span>
-<span class="fc" id="L31">            id = req.cmdId(),</span>
-<span class="fc" id="L32">            value = req.code</span>
+<span class="fc" id="L29">    val func = funcRepository.get(req.id)</span>
+<span class="fc" id="L30">    val code = codeCmdRepository.update(</span>
+<span class="fc" id="L31">        func.code.id, CodeCmdRepository.UpdateCmd(</span>
+<span class="fc" id="L32">            id = req.cmdId(),</span>
+<span class="fc" id="L33">            value = req.code</span>
         )
     )
 
-<span class="fc" id="L36">    return funcRepository.update(</span>
-<span class="fc" id="L37">        req.id,</span>
-<span class="fc" id="L38">        UpdateCmd(</span>
-<span class="fc" id="L39">            id = req.cmdId(),</span>
-<span class="fc" id="L40">            namespaceId = req.namespaceId,</span>
-<span class="fc" id="L41">            name = req.name,</span>
-<span class="fc" id="L42">            inputs = req.inputs,</span>
-<span class="fc" id="L43">            codeId = code.id,</span>
-<span class="fc" id="L44">            codeVersion = code.version</span>
+<span class="fc" id="L37">    return funcRepository.update(</span>
+<span class="fc" id="L38">        req.id,</span>
+<span class="fc" id="L39">        UpdateCmd(</span>
+<span class="fc" id="L40">            id = req.cmdId(),</span>
+<span class="fc" id="L41">            namespaceId = req.namespaceId,</span>
+<span class="fc" id="L42">            name = req.name,</span>
+<span class="fc" id="L43">            inputs = req.inputs,</span>
+<span class="fc" id="L44">            code = FuncCode(</span>
+<span class="fc" id="L45">                id = code.id,</span>
+<span class="fc" id="L46">                version = code.version</span>
+            )
         )
     )
 }
 
 private fun UpdateFuncHandler.emitEvent(cmdId: CmdId, func: Func) {
-<span class="fc" id="L50">    eventEmitter.emit(cmdId, FuncCreatedEvent(func))</span>
-<span class="fc" id="L51">}</span>
+<span class="fc" id="L53">    eventEmitter.emit(cmdId, FuncCreatedEvent(func))</span>
+<span class="fc" id="L54">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

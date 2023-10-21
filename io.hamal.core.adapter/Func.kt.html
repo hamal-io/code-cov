@@ -64,7 +64,7 @@ interface FuncPort : CreateFuncPort, GetFuncPort, InvokeFuncPort, ListFuncsPort,
 
     override fun &lt;T : Any&gt; invoke(funcId: FuncId, responseHandler: (Func, Code, Namespace) -&gt; T): T {
 <span class="fc" id="L66">        val func = funcQueryRepository.get(funcId)</span>
-<span class="fc" id="L67">        val code = codeQueryRepository.get(func.codeId)</span>
+<span class="fc" id="L67">        val code = codeQueryRepository.get(func.code.id)</span>
 <span class="fc" id="L68">        val namespaces = namespaceQueryRepository.get(func.namespaceId)</span>
 <span class="fc" id="L69">        return responseHandler(func, code, namespaces)</span>
     }

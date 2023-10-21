@@ -174,29 +174,30 @@ internal object CurrentTriggerProjection {
 <span class="fc" id="L174">                        name = cmd.name,</span>
 <span class="fc" id="L175">                        inputs = cmd.inputs,</span>
 <span class="fc" id="L176">                        hookId = cmd.hookId,</span>
-<span class="fc" id="L177">                        correlationId = cmd.correlationId</span>
+<span class="fc" id="L177">                        hookMethods = cmd.hookMethods,</span>
+<span class="fc" id="L178">                        correlationId = cmd.correlationId</span>
                     )
                 )
-<span class="fc" id="L180">                (currentVersion(triggerId) as HookTrigger).also(CurrentTriggerProjection::apply)</span>
+<span class="fc" id="L181">                (currentVersion(triggerId) as HookTrigger).also(CurrentTriggerProjection::apply)</span>
             }
         }
     }
 
-<span class="fc" id="L185">    override fun find(triggerId: TriggerId) = CurrentTriggerProjection.find(triggerId)</span>
+<span class="fc" id="L186">    override fun find(triggerId: TriggerId) = CurrentTriggerProjection.find(triggerId)</span>
 
     override fun list(query: TriggerQuery): List&lt;Trigger&gt; {
-<span class="fc" id="L188">        return CurrentTriggerProjection.list(query)</span>
+<span class="fc" id="L189">        return CurrentTriggerProjection.list(query)</span>
     }
 
     override fun count(query: TriggerQuery): ULong {
-<span class="nc" id="L192">        return CurrentTriggerProjection.count(query)</span>
+<span class="nc" id="L193">        return CurrentTriggerProjection.count(query)</span>
     }
 
     override fun clear() {
-<span class="fc" id="L196">        super.clear()</span>
-<span class="fc" id="L197">        CurrentTriggerProjection.clear()</span>
-<span class="fc" id="L198">    }</span>
+<span class="fc" id="L197">        super.clear()</span>
+<span class="fc" id="L198">        CurrentTriggerProjection.clear()</span>
+<span class="fc" id="L199">    }</span>
 
-<span class="nc" id="L200">    override fun close() {}</span>
+<span class="nc" id="L201">    override fun close() {}</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

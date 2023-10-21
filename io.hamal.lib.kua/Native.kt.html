@@ -24,7 +24,7 @@ import java.math.BigDecimal
     external fun pushBoolean(value: Boolean): Int
 <span class="nc" id="L25">    fun pushDecimal(value: DecimalType): Int = pushDecimal(value.toBigDecimal().toString())</span>
     external fun pushDecimal(value: String): Int
-<span class="nc" id="L27">    fun pushError(error: ErrorType): Int = pushError(error.message)</span>
+<span class="nc" id="L27">    fun pushError(error: ErrorType): Int = pushError(error.value)</span>
     external fun pushError(message: String): Int
     external fun pushFunction(value: FunctionType&lt;*, *, *, *&gt;): Int
     external fun pushNil(): Int

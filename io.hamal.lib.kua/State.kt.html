@@ -126,7 +126,7 @@ interface State {
 
 <span class="fc" id="L127">    override fun pushBoolean(value: Boolean): StackTop = StackTop(native.pushBoolean(value))</span>
 <span class="fc" id="L128">    override fun getBoolean(idx: Int): Boolean = native.toBoolean(idx)</span>
-<span class="fc" id="L129">    override fun pushError(value: ErrorType) = StackTop(native.pushError(value.message))</span>
+<span class="fc" id="L129">    override fun pushError(value: ErrorType) = StackTop(native.pushError(value.value))</span>
 <span class="fc" id="L130">    override fun pushFunction(value: FunctionType&lt;*, *, *, *&gt;) = StackTop(native.pushFunction(value))</span>
 
 <span class="fc" id="L132">    override fun getNumber(idx: Int) = native.toNumber(idx)</span>

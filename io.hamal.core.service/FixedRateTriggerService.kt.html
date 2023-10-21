@@ -3,8 +3,8 @@
 import io.hamal.core.event.PlatformEventEmitter
 import io.hamal.core.req.InvokeExecReq
 import io.hamal.core.req.SubmitRequest
-import io.hamal.lib.common.snowflake.SnowflakeId
 import io.hamal.lib.common.domain.Limit
+import io.hamal.lib.common.snowflake.SnowflakeId
 import io.hamal.lib.common.util.TimeUtils.now
 import io.hamal.lib.domain.GenerateDomainId
 import io.hamal.lib.domain.vo.CorrelationId
@@ -71,11 +71,9 @@ internal fun FixedRateTriggerService.requestInvocation(trigger: FixedRateTrigger
 <span class="nc" id="L71">            funcId = trigger.funcId,</span>
 <span class="nc bnc" id="L72" title="All 2 branches missed.">            correlationId = trigger.correlationId ?: CorrelationId(&quot;__default__&quot;),</span>
 <span class="nc" id="L73">            inputs = InvocationInputs(),</span>
-<span class="nc" id="L74">            code = null,</span>
-<span class="nc" id="L75">            codeId = func.codeId,</span>
-<span class="nc" id="L76">            codeVersion = func.codeVersion,</span>
-<span class="nc" id="L77">            events = listOf() // FIXME</span>
+<span class="nc" id="L74">            code = func.code.toExecCode(),</span>
+<span class="nc" id="L75">            events = listOf() // FIXME</span>
         )
     )
-<span class="nc" id="L80">}</span>
+<span class="nc" id="L78">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

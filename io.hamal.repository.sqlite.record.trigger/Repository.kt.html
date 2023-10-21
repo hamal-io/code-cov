@@ -119,27 +119,28 @@ internal object CreateTrigger : CreateDomainObject&lt;TriggerId, TriggerRecord, 
 <span class="nc" id="L119">                        name = cmd.name,</span>
 <span class="nc" id="L120">                        inputs = cmd.inputs,</span>
 <span class="nc" id="L121">                        hookId = cmd.hookId,</span>
-<span class="nc" id="L122">                        correlationId = cmd.correlationId</span>
+<span class="nc" id="L122">                        hookMethods = cmd.hookMethods,</span>
+<span class="nc" id="L123">                        correlationId = cmd.correlationId</span>
                     )
                 )
 
-<span class="nc" id="L126">                (currentVersion(triggerId) as HookTrigger)</span>
-<span class="nc" id="L127">                    .also { ProjectionCurrent.upsert(this, it) }</span>
-<span class="nc" id="L128">                    .also { ProjectionUniqueName.upsert(this, it) }</span>
+<span class="nc" id="L127">                (currentVersion(triggerId) as HookTrigger)</span>
+<span class="nc" id="L128">                    .also { ProjectionCurrent.upsert(this, it) }</span>
+<span class="nc" id="L129">                    .also { ProjectionUniqueName.upsert(this, it) }</span>
             }
         }
     }
 
     override fun find(triggerId: TriggerId): Trigger? {
-<span class="nc" id="L134">        return ProjectionCurrent.find(connection, triggerId)</span>
+<span class="nc" id="L135">        return ProjectionCurrent.find(connection, triggerId)</span>
     }
 
     override fun list(query: TriggerQuery): List&lt;Trigger&gt; {
-<span class="nc" id="L138">        return ProjectionCurrent.list(connection, query)</span>
+<span class="nc" id="L139">        return ProjectionCurrent.list(connection, query)</span>
     }
 
     override fun count(query: TriggerQuery): ULong {
-<span class="nc" id="L142">        return ProjectionCurrent.count(connection, query)</span>
+<span class="nc" id="L143">        return ProjectionCurrent.count(connection, query)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

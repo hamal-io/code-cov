@@ -6,92 +6,90 @@ import io.hamal.lib.domain._enum.ReqStatus.Submitted
 import io.hamal.repository.api.ReqQueryRepository
 import io.hamal.repository.api.ReqRepository
 import io.hamal.repository.api.submitted_req.SubmittedReq
-import io.hamal.repository.memory.record.CurrentExecProjection
-import io.hamal.repository.memory.record.QueueProjection
 import kotlinx.serialization.protobuf.ProtoBuf
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-<span class="fc" id="L15">class MemoryReqRepository : ReqRepository {</span>
+<span class="fc" id="L13">class MemoryReqRepository : ReqRepository {</span>
 
-<span class="pc" id="L17">    val queue = mutableListOf&lt;ReqId&gt;()</span>
-<span class="pc" id="L18">    val store = mutableMapOf&lt;ReqId, ByteArray&gt;()</span>
-<span class="pc" id="L19">    val lock = ReentrantLock()</span>
+<span class="pc" id="L15">    val queue = mutableListOf&lt;ReqId&gt;()</span>
+<span class="pc" id="L16">    val store = mutableMapOf&lt;ReqId, ByteArray&gt;()</span>
+<span class="pc" id="L17">    val lock = ReentrantLock()</span>
 
     override fun queue(req: SubmittedReq) {
-<span class="fc" id="L22">        return lock.withLock {</span>
-<span class="fc" id="L23">            store[req.reqId] = ProtoBuf { }.encodeToByteArray(SubmittedReq.serializer(), req)</span>
-<span class="fc" id="L24">            queue.add(req.reqId)</span>
-<span class="fc" id="L25">        }</span>
+<span class="fc" id="L20">        return lock.withLock {</span>
+<span class="fc" id="L21">            store[req.reqId] = ProtoBuf { }.encodeToByteArray(SubmittedReq.serializer(), req)</span>
+<span class="fc" id="L22">            queue.add(req.reqId)</span>
+<span class="fc" id="L23">        }</span>
     }
 
     override fun next(limit: Int): List&lt;SubmittedReq&gt; {
-<span class="pc" id="L29">        return lock.withLock {</span>
-<span class="fc" id="L30">            val result = mutableListOf&lt;SubmittedReq&gt;()</span>
+<span class="pc" id="L27">        return lock.withLock {</span>
+<span class="fc" id="L28">            val result = mutableListOf&lt;SubmittedReq&gt;()</span>
 
-<span class="pc bpc" id="L32" title="1 of 2 branches missed.">            repeat(limit) {</span>
-<span class="fc bfc" id="L33" title="All 2 branches covered.">                val reqId = queue.removeFirstOrNull() ?: return result</span>
-<span class="fc" id="L34">                result.add(find(reqId)!!)</span>
-<span class="fc" id="L35">            }</span>
+<span class="pc bpc" id="L30" title="1 of 2 branches missed.">            repeat(limit) {</span>
+<span class="fc bfc" id="L31" title="All 2 branches covered.">                val reqId = queue.removeFirstOrNull() ?: return result</span>
+<span class="fc" id="L32">                result.add(find(reqId)!!)</span>
+<span class="fc" id="L33">            }</span>
 
-<span class="nc" id="L37">            result</span>
+<span class="nc" id="L35">            result</span>
         }
     }
 
     override fun complete(reqId: ReqId) {
-<span class="fc" id="L42">        val req = get(reqId)</span>
-<span class="pc bpc" id="L43" title="2 of 4 branches missed.">        check(req.status == Submitted) { &quot;Req not submitted&quot; }</span>
-<span class="fc" id="L44">        lock.withLock {</span>
-<span class="fc" id="L45">            store[req.reqId] =</span>
-<span class="fc" id="L46">                ProtoBuf { }.encodeToByteArray(SubmittedReq.serializer(), req.apply { status = ReqStatus.Completed })</span>
-<span class="fc" id="L47">        }</span>
-<span class="fc" id="L48">    }</span>
+<span class="fc" id="L40">        val req = get(reqId)</span>
+<span class="pc bpc" id="L41" title="2 of 4 branches missed.">        check(req.status == Submitted) { &quot;Req not submitted&quot; }</span>
+<span class="fc" id="L42">        lock.withLock {</span>
+<span class="fc" id="L43">            store[req.reqId] =</span>
+<span class="fc" id="L44">                ProtoBuf { }.encodeToByteArray(SubmittedReq.serializer(), req.apply { status = ReqStatus.Completed })</span>
+<span class="fc" id="L45">        }</span>
+<span class="fc" id="L46">    }</span>
 
     override fun fail(reqId: ReqId) {
-<span class="fc" id="L51">        val req = get(reqId)</span>
-<span class="pc bpc" id="L52" title="2 of 4 branches missed.">        check(req.status == Submitted) { &quot;Req not submitted&quot; }</span>
-<span class="fc" id="L53">        lock.withLock {</span>
-<span class="fc" id="L54">            store[req.reqId] =</span>
-<span class="fc" id="L55">                ProtoBuf { }.encodeToByteArray(SubmittedReq.serializer(), req.apply { status = ReqStatus.Failed })</span>
-<span class="fc" id="L56">        }</span>
-<span class="fc" id="L57">    }</span>
+<span class="fc" id="L49">        val req = get(reqId)</span>
+<span class="pc bpc" id="L50" title="2 of 4 branches missed.">        check(req.status == Submitted) { &quot;Req not submitted&quot; }</span>
+<span class="fc" id="L51">        lock.withLock {</span>
+<span class="fc" id="L52">            store[req.reqId] =</span>
+<span class="fc" id="L53">                ProtoBuf { }.encodeToByteArray(SubmittedReq.serializer(), req.apply { status = ReqStatus.Failed })</span>
+<span class="fc" id="L54">        }</span>
+<span class="fc" id="L55">    }</span>
 
     override fun clear() {
-<span class="fc" id="L60">        lock.withLock {</span>
-<span class="fc" id="L61">            store.clear()</span>
-<span class="fc" id="L62">            queue.clear()</span>
-<span class="fc" id="L63">            QueueProjection.clear()</span>
-<span class="fc" id="L64">            CurrentExecProjection.clear()</span>
-<span class="fc" id="L65">        }</span>
-<span class="fc" id="L66">    }</span>
+<span class="fc" id="L58">        lock.withLock {</span>
+<span class="fc" id="L59">            store.clear()</span>
+<span class="fc" id="L60">            queue.clear()</span>
+<span class="fc" id="L61">        }</span>
+<span class="fc" id="L62">    }</span>
 
 
     override fun find(reqId: ReqId): SubmittedReq? {
-<span class="fc bfc" id="L70" title="All 2 branches covered.">        val result = lock.withLock { store[reqId] } ?: return null</span>
-<span class="fc" id="L71">        return ProtoBuf { }.decodeFromByteArray(SubmittedReq.serializer(), result)</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">        val result = lock.withLock { store[reqId] } ?: return null</span>
+<span class="fc" id="L67">        return ProtoBuf { }.decodeFromByteArray(SubmittedReq.serializer(), result)</span>
     }
 
     override fun list(query: ReqQueryRepository.ReqQuery): List&lt;SubmittedReq&gt; {
-<span class="fc" id="L75">        return lock.withLock {</span>
-<span class="fc" id="L76">            store.keys.sorted()</span>
-<span class="fc bfc" id="L77" title="All 2 branches covered.">                .dropWhile { it &lt;= query.afterId }</span>
-<span class="fc" id="L78">                .take(query.limit.value)</span>
-<span class="fc" id="L79">                .mapNotNull { find(it) }</span>
-<span class="fc" id="L80">                .reversed()</span>
+
+<span class="fc" id="L72">        return lock.withLock {</span>
+
+<span class="fc" id="L74">            store.keys.sorted()</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">                .dropWhile { it &lt;= query.afterId }</span>
+<span class="fc" id="L76">                .take(query.limit.value)</span>
+<span class="fc" id="L77">                .mapNotNull { find(it) }</span>
+<span class="fc" id="L78">                .reversed()</span>
         }
     }
 
     override fun count(query: ReqQueryRepository.ReqQuery): ULong {
-<span class="nc" id="L85">        return lock.withLock {</span>
-<span class="nc" id="L86">            store.keys.sorted()</span>
-<span class="nc bnc" id="L87" title="All 2 branches missed.">                .dropWhile { it &lt;= query.afterId }</span>
-<span class="nc" id="L88">                .count()</span>
-<span class="nc" id="L89">                .toULong()</span>
+<span class="nc" id="L83">        return lock.withLock {</span>
+<span class="nc" id="L84">            store.keys.sorted()</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">                .dropWhile { it &lt;= query.afterId }</span>
+<span class="nc" id="L86">                .count()</span>
+<span class="nc" id="L87">                .toULong()</span>
         }
     }
 
     override fun close() {
-<span class="nc" id="L94">    }</span>
+<span class="nc" id="L92">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

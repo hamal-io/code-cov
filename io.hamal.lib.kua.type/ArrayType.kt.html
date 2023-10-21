@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ArrayType.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.kua.type</a> &gt; <span class="el_source">ArrayType.kt</span></div><h1>ArrayType.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.kua.type
 
-import io.hamal.lib.common.snowflake.SnowflakeId
 import io.hamal.lib.common.domain.DomainId
+import io.hamal.lib.common.snowflake.SnowflakeId
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
@@ -17,34 +17,34 @@ import kotlin.reflect.KClass
 @SerialName(&quot;ArrayType&quot;)
 <span class="fc" id="L18">data class ArrayType(</span>
 <span class="fc" id="L19">    @Serializable(with = Serializer::class)</span>
-<span class="pc bnc" id="L20" title="All 4 branches missed.">    val entries: MutableMap&lt;Int, SerializableType&gt; = mutableMapOf(),</span>
-) : TableType {
+<span class="pc bnc" id="L20" title="All 4 branches missed.">    val value: MutableMap&lt;Int, SerializableType&gt; = mutableMapOf(),</span>
+<span class="fc" id="L21">) : TableType() {</span>
 
-<span class="fc" id="L23">    val size get() = entries.size</span>
+<span class="fc" id="L23">    val size get() = value.size</span>
 
     fun append(value: ArrayType): Int {
-<span class="nc" id="L26">        entries[entries.size + 1] = value</span>
+<span class="nc" id="L26">        this.value[this.value.size + 1] = value</span>
 <span class="nc" id="L27">        return size</span>
     }
 
     fun append(value: SerializableType): Int {
-<span class="fc" id="L31">        entries[entries.size + 1] = value</span>
+<span class="fc" id="L31">        this.value[this.value.size + 1] = value</span>
 <span class="fc" id="L32">        return size</span>
     }
 
     operator fun get(idx: Int): SerializableType {
-<span class="nc" id="L36">        return entries[idx]!!</span>
+<span class="nc" id="L36">        return value[idx]!!</span>
     }
 
 <span class="nc" id="L39">    fun getBoolean(idx: Int) = getBooleanValue(idx) == True</span>
     fun getBooleanValue(idx: Int): BooleanType {
 <span class="nc" id="L41">        checkExpectedType(idx, BooleanType::class)</span>
-<span class="nc" id="L42">        return entries[idx]!! as BooleanType</span>
+<span class="nc" id="L42">        return value[idx]!! as BooleanType</span>
     }
 
 <span class="nc" id="L45">    fun append(value: Boolean) = append(booleanOf(value))</span>
     fun append(value: BooleanType): Int {
-<span class="nc" id="L47">        entries[entries.size + 1] = value</span>
+<span class="nc" id="L47">        this.value[this.value.size + 1] = value</span>
 <span class="nc" id="L48">        return size</span>
     }
 
@@ -55,7 +55,7 @@ import kotlin.reflect.KClass
 <span class="nc" id="L55">    fun getDouble(idx: Int) = getNumberType(idx).value.toDouble()</span>
     fun getNumberType(idx: Int): NumberType {
 <span class="fc" id="L57">        checkExpectedType(idx, NumberType::class)</span>
-<span class="fc" id="L58">        return entries[idx]!! as NumberType</span>
+<span class="fc" id="L58">        return value[idx]!! as NumberType</span>
     }
 
 
@@ -64,7 +64,7 @@ import kotlin.reflect.KClass
 <span class="nc" id="L64">    fun append(value: Float) = append(value.toDouble())</span>
 <span class="nc" id="L65">    fun append(value: Double) = append(NumberType(value))</span>
     fun append(value: NumberType): Int {
-<span class="nc" id="L67">        entries[entries.size + 1] = value</span>
+<span class="nc" id="L67">        this.value[this.value.size + 1] = value</span>
 <span class="nc" id="L68">        return size</span>
     }
 
@@ -72,36 +72,36 @@ import kotlin.reflect.KClass
 <span class="nc" id="L72">    fun append(value: DomainId) = append(value.value.value)</span>
 
     fun append(value: MapType): Int {
-<span class="nc" id="L75">        entries[entries.size + 1] = value</span>
+<span class="nc" id="L75">        this.value[this.value.size + 1] = value</span>
 <span class="nc" id="L76">        return size</span>
     }
 
     fun getMap(idx: Int): MapType {
 <span class="fc" id="L80">        checkExpectedType(idx, MapType::class)</span>
-<span class="fc" id="L81">        return entries[idx]!! as MapType</span>
+<span class="fc" id="L81">        return value[idx]!! as MapType</span>
     }
 
     fun getArray(idx: Int): ArrayType {
 <span class="nc" id="L85">        checkExpectedType(idx, ArrayType::class)</span>
-<span class="nc" id="L86">        return entries[idx]!! as ArrayType</span>
+<span class="nc" id="L86">        return value[idx]!! as ArrayType</span>
     }
 
 <span class="fc" id="L89">    fun getString(idx: Int) = getStringType(idx).value</span>
     fun getStringType(idx: Int): StringType {
 <span class="fc" id="L91">        checkExpectedType(idx, StringType::class)</span>
-<span class="fc" id="L92">        return entries[idx]!! as StringType</span>
+<span class="fc" id="L92">        return value[idx]!! as StringType</span>
     }
 
 <span class="nc" id="L95">    fun append(value: String) = append(StringType(value))</span>
     fun append(value: StringType): Int {
-<span class="nc" id="L97">        entries[entries.size + 1] = value</span>
+<span class="nc" id="L97">        this.value[this.value.size + 1] = value</span>
 <span class="nc" id="L98">        return size</span>
     }
 
 <span class="nc" id="L101">    fun getCodeType(idx: Int) = CodeType(getString(idx))</span>
 
     fun type(idx: Int): KClass&lt;out Type&gt; {
-<span class="pc bpc" id="L104" title="1 of 2 branches missed.">        return entries[idx]?.let { it::class } ?: NilType::class</span>
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">        return value[idx]?.let { it::class } ?: NilType::class</span>
     }
 
     object Serializer : KSerializer&lt;MutableMap&lt;Int, SerializableType&gt;&gt; {

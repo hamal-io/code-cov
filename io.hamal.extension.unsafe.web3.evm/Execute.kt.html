@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Execute.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.extension.unsafe.web3.evm</a> &gt; <span class="el_source">Execute.kt</span></div><h1>Execute.kt</h1><pre class="source lang-java linenums">package io.hamal.extension.unsafe.web3.evm
+
+import io.hamal.lib.common.logger
+import io.hamal.lib.http.HttpTemplate
+import io.hamal.lib.kua.extension.unsafe.RunnerUnsafeExtensionConfig
+import io.hamal.lib.kua.function.Function1In2Out
+import io.hamal.lib.kua.function.FunctionContext
+import io.hamal.lib.kua.function.FunctionInput1Schema
+import io.hamal.lib.kua.function.FunctionOutput2Schema
+import io.hamal.lib.kua.type.ArrayType
+import io.hamal.lib.kua.type.ErrorType
+import io.hamal.lib.kua.type.MapType
+import io.hamal.lib.kua.type.StringType
+import io.hamal.lib.web3.eth.EthBatchService
+import io.hamal.lib.web3.eth.abi.type.EthAddress
+import io.hamal.lib.web3.eth.abi.type.EthPrefixedHexString
+import io.hamal.lib.web3.eth.abi.type.EthUint64
+import io.hamal.lib.web3.eth.domain.EthCallResponse
+import io.hamal.lib.web3.eth.domain.EthGetBlockNumberResponse
+import io.hamal.lib.web3.eth.domain.EthGetBlockResponse
+import io.hamal.lib.web3.eth.domain.EthGetLiteBlockResponse
+import io.hamal.lib.web3.eth.http.EthHttpBatchService
+import kotlin.to
+
+<span class="nc" id="L25">private val log = logger(EthExecuteFunction::class)</span>
+
+<span class="fc" id="L27">class EthExecuteFunction(</span>
+<span class="fc" id="L28">    private val config: RunnerUnsafeExtensionConfig</span>
+<span class="fc" id="L29">) : Function1In2Out&lt;ArrayType, ErrorType, ArrayType&gt;(</span>
+<span class="fc" id="L30">    FunctionInput1Schema(ArrayType::class),</span>
+<span class="fc" id="L31">    FunctionOutput2Schema(ErrorType::class, ArrayType::class)</span>
+) {
+    override fun invoke(ctx: FunctionContext, arg1: ArrayType): Pair&lt;ErrorType?, ArrayType?&gt; {
+<span class="nc" id="L34">        try {</span>
+<span class="nc" id="L35">            log.trace(&quot;Setting up batch service&quot;)</span>
+
+<span class="nc" id="L37">            val batchService = EthHttpBatchService(HttpTemplate((config.value[&quot;host&quot;] as StringType).value))</span>
+
+<span class="nc" id="L39">            arg1.value.forEach { entry -&gt;</span>
+<span class="nc" id="L40">                val v = entry.value</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">                require(v is MapType)</span>
+
+<span class="nc" id="L43">                when (v.getString(&quot;type&quot;)) {</span>
+<span class="nc bnc" id="L44" title="All 2 branches missed.">                    &quot;get_block&quot; -&gt; {</span>
+<span class="nc" id="L45">                        val block = v.getLong(&quot;block&quot;)</span>
+<span class="nc" id="L46">                        batchService.getBlock(EthUint64(block))</span>
+<span class="nc" id="L47">                        log.trace(&quot;Requesting block $block&quot;)</span>
+                    }
+
+<span class="nc bnc" id="L50" title="All 2 branches missed.">                    &quot;call&quot; -&gt; {</span>
+<span class="nc" id="L51">                        val block = v.getLong(&quot;block&quot;)</span>
+<span class="nc" id="L52">                        batchService.call(</span>
+<span class="nc" id="L53">                            EthBatchService.EthCallRequest(</span>
+<span class="nc" id="L54">                                to = EthAddress(EthPrefixedHexString(v.getString(&quot;to&quot;))),</span>
+<span class="nc" id="L55">                                data = EthPrefixedHexString(v.getString(&quot;data&quot;)),</span>
+<span class="nc" id="L56">                                blockNumber = EthUint64(block),</span>
+                            )
+                        )
+<span class="nc" id="L59">                        log.trace(&quot;Requesting block $block&quot;)</span>
+                    }
+                }
+<span class="nc" id="L62">            }</span>
+
+<span class="nc" id="L64">            return null to batchService.execute().let {</span>
+<span class="nc" id="L65">                val result = ArrayType()</span>
+<span class="nc" id="L66">                it.forEach { ethRes -&gt;</span>
+<span class="nc" id="L67">                    when (ethRes) {</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">                        is EthGetBlockNumberResponse -&gt; TODO()</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">                        is EthGetLiteBlockResponse -&gt; TODO()</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">                        is EthGetBlockResponse -&gt; {</span>
+<span class="nc" id="L71">                            val res = MapType()</span>
+<span class="nc" id="L72">                            res[&quot;number&quot;] = ethRes.result.number.value.toLong()</span>
+<span class="nc" id="L73">                            res[&quot;hash&quot;] = ethRes.result.hash.toPrefixedHexString().value</span>
+<span class="nc" id="L74">                            res[&quot;parent_hash&quot;] = ethRes.result.parentHash.toPrefixedHexString().value</span>
+<span class="nc" id="L75">                            res[&quot;gas_used&quot;] = ethRes.result.gasUsed.value.toLong()</span>
+<span class="nc" id="L76">                            res[&quot;gas_limit&quot;] = ethRes.result.gasLimit.value.toLong()</span>
+<span class="nc" id="L77">                            result.append(res)</span>
+<span class="nc" id="L78">                            log.trace(&quot;${ethRes.id} - block response: $res&quot;)</span>
+                        }
+
+<span class="nc bnc" id="L81" title="All 2 branches missed.">                        is EthCallResponse -&gt; {</span>
+<span class="nc" id="L82">                            result.append(ethRes.result.value)</span>
+<span class="nc" id="L83">                            log.trace(&quot;${ethRes.id} - call response: ${ethRes.result.value}&quot;)</span>
+                        }
+                    }
+<span class="nc" id="L86">                }</span>
+<span class="nc" id="L87">                result</span>
+            }
+
+<span class="nc" id="L90">        } catch (t: Throwable) {</span>
+<span class="nc" id="L91">            t.printStackTrace()</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">            return ErrorType(t.message ?: &quot;Unknown error&quot;) to null</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

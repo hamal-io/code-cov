@@ -93,12 +93,13 @@ import org.springframework.web.bind.annotation.RestController
                                     ),
 <span class="nc" id="L94">                                    hook = Hook(</span>
 <span class="nc" id="L95">                                        id = trigger.hookId,</span>
-<span class="nc" id="L96">                                        name = hooks[trigger.hookId]!!.name</span>
+<span class="nc" id="L96">                                        name = hooks[trigger.hookId]!!.name,</span>
+<span class="nc" id="L97">                                        methods = trigger.hookMethods</span>
                                     )
                                 )
                             }
 
-<span class="nc" id="L101">                            else -&gt; TODO()</span>
+<span class="nc" id="L102">                            else -&gt; TODO()</span>
                         }
                     }
                 )

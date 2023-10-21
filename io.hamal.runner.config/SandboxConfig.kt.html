@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SandboxConfig.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.runner.config</a> &gt; <span class="el_source">SandboxConfig.kt</span></div><h1>SandboxConfig.kt</h1><pre class="source lang-java linenums">package io.hamal.runner.config
 
-import io.hamal.extension.net.http.HttpExtensionFactory
-import io.hamal.extension.std.debug.DebugExtensionFactory
-import io.hamal.extension.std.log.DecimalExtensionFactory
-import io.hamal.extension.std.log.LogExtensionFactory
-import io.hamal.extension.std.sys.SysExtensionFactory
-import io.hamal.extension.web3.eth.EthExtensionFactory
+import io.hamal.extension.safe.std.decimal.DecimalSafeFactory
+import io.hamal.extension.safe.telegram.TelegramSafeFactory
+import io.hamal.extension.unsafe.net.http.HttpExtensionFactory
+import io.hamal.extension.unsafe.std.debug.DebugExtensionFactory
+import io.hamal.extension.unsafe.std.log.LogExtensionFactory
+import io.hamal.extension.unsafe.std.sys.SysExtensionFactory
 import io.hamal.lib.domain.vo.ExecToken
 import io.hamal.lib.http.HttpTemplate
 import io.hamal.lib.kua.NativeLoader
@@ -49,14 +49,17 @@ interface SandboxFactory {
         )
 <span class="nc" id="L50">        val sdk = ApiSdkImpl(template)</span>
 
-<span class="nc" id="L52">        return Sandbox(ctx).register(</span>
-<span class="nc" id="L53">            DecimalExtensionFactory,</span>
-<span class="nc" id="L54">            HttpExtensionFactory(),</span>
-<span class="nc" id="L55">            LogExtensionFactory(sdk.execLog),</span>
-<span class="nc" id="L56">            DebugExtensionFactory(),</span>
-<span class="nc" id="L57">            SysExtensionFactory(HttpTemplate(apiHost)),</span>
-<span class="nc" id="L58">            EthExtensionFactory()</span>
-        )
+<span class="nc" id="L52">        return Sandbox(ctx)</span>
+<span class="nc" id="L53">            .register(</span>
+<span class="nc" id="L54">                HttpExtensionFactory(),</span>
+<span class="nc" id="L55">                LogExtensionFactory(sdk.execLog),</span>
+<span class="nc" id="L56">                DebugExtensionFactory(),</span>
+<span class="nc" id="L57">                SysExtensionFactory(HttpTemplate(apiHost)),</span>
+            )
+<span class="nc" id="L59">            .register(</span>
+<span class="nc" id="L60">                DecimalSafeFactory,</span>
+<span class="nc" id="L61">                TelegramSafeFactory</span>
+            )
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -3,8 +3,8 @@
 import io.hamal.lib.domain.Event
 import io.hamal.lib.domain.vo.ExecId
 import io.hamal.lib.kua.Sandbox
-import io.hamal.lib.kua.extension.BundleExtension
-import io.hamal.lib.kua.extension.BundleExtensionFactory
+import io.hamal.lib.kua.extension.unsafe.RunnerUnsafeExtension
+import io.hamal.lib.kua.extension.unsafe.RunnerUnsafeExtensionFactory
 import io.hamal.lib.kua.table.TableProxyArray
 import io.hamal.lib.kua.type.MapType
 import io.hamal.lib.kua.type.StringType
@@ -15,10 +15,10 @@ import io.hamal.runner.run.function.FailRunFunction
 
 <span class="fc" id="L16">class RunnerContextFactory(</span>
 <span class="fc" id="L17">    private val executionCtx: RunnerContext</span>
-) : BundleExtensionFactory {
-    override fun create(sandbox: Sandbox): BundleExtension {
-<span class="fc" id="L20">        return BundleExtension(</span>
-<span class="fc" id="L21">            name = &quot;ctx&quot;,</span>
+) : RunnerUnsafeExtensionFactory {
+    override fun create(sandbox: Sandbox): RunnerUnsafeExtension {
+<span class="fc" id="L20">        return RunnerUnsafeExtension(</span>
+<span class="fc" id="L21">            name = &quot;context&quot;,</span>
 <span class="fc" id="L22">            internals = mapOf(</span>
 <span class="fc" id="L23">                &quot;events&quot; to sandbox.invocationEvents(executionCtx[RunnerInvocationEvents::class].events),</span>
 <span class="fc" id="L24">                &quot;exec_id&quot; to StringType(executionCtx[ExecId::class].value.value.toString(16)),</span>

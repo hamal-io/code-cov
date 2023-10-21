@@ -63,7 +63,7 @@ interface BridgeExecService {
         stateAfterCompletion: State,
         eventToSubmit: List&lt;EventToSubmit&gt;
     ) {
-<span class="nc" id="L66">        template.post(&quot;/v1/execs/{execId}/complete&quot;)</span>
+<span class="nc" id="L66">        template.post(&quot;/b1/execs/{execId}/complete&quot;)</span>
 <span class="nc" id="L67">            .path(&quot;execId&quot;, execId)</span>
 <span class="nc" id="L68">            .body(BridgeCompleteExecReq(result, stateAfterCompletion, eventToSubmit))</span>
 <span class="nc" id="L69">            .execute()</span>
@@ -73,7 +73,7 @@ interface BridgeExecService {
         execId: ExecId,
         result: ExecResult
     ) {
-<span class="nc" id="L76">        template.post(&quot;/v1/execs/{execId}/fail&quot;)</span>
+<span class="nc" id="L76">        template.post(&quot;/b1/execs/{execId}/fail&quot;)</span>
 <span class="nc" id="L77">            .path(&quot;execId&quot;, execId)</span>
 <span class="nc" id="L78">            .body(BridgeFailExecReq(result))</span>
 <span class="nc" id="L79">            .execute()</span>

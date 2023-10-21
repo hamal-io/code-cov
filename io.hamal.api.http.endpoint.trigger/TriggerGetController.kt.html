@@ -75,7 +75,8 @@ import org.springframework.web.bind.annotation.RestController
 <span class="fc" id="L75">                            inputs = trigger.inputs,</span>
 <span class="fc" id="L76">                            hook = ApiHookTrigger.Hook(</span>
 <span class="fc" id="L77">                                id = hook!!.id,</span>
-<span class="fc" id="L78">                                name = hook.name</span>
+<span class="fc" id="L78">                                name = hook.name,</span>
+<span class="fc" id="L79">                                methods = trigger.hookMethods</span>
                             )
                         )
                     }

@@ -4,30 +4,43 @@ import io.hamal.core.adapter.GetExecPort
 import io.hamal.core.component.Retry
 import io.hamal.lib.domain.vo.ExecId
 import io.hamal.lib.sdk.api.ApiExec
+import io.hamal.repository.api.CompletedExec
+import io.hamal.repository.api.FailedExec
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
 
-<span class="fc" id="L12">@RestController</span>
-<span class="fc" id="L13">internal class ExecGetController(</span>
-<span class="fc" id="L14">    private val retry: Retry,</span>
-<span class="fc" id="L15">    private val getExec: GetExecPort</span>
+<span class="fc" id="L14">@RestController</span>
+<span class="fc" id="L15">internal class ExecGetController(</span>
+<span class="fc" id="L16">    private val retry: Retry,</span>
+<span class="fc" id="L17">    private val getExec: GetExecPort</span>
 ) {
     @GetMapping(&quot;/v1/execs/{execId}&quot;)
     fun get(@PathVariable(&quot;execId&quot;) execId: ExecId): ResponseEntity&lt;ApiExec&gt; {
-<span class="fc" id="L19">        return retry{</span>
-<span class="fc" id="L20">            getExec(execId) { exec -&gt;</span>
-<span class="fc" id="L21">                ResponseEntity.ok(</span>
-<span class="fc" id="L22">                    ApiExec(</span>
-<span class="fc" id="L23">                        id = exec.id,</span>
-<span class="fc" id="L24">                        status = exec.status,</span>
-<span class="fc" id="L25">                        correlation = exec.correlation,</span>
-<span class="fc" id="L26">                        inputs = exec.inputs,</span>
-<span class="fc" id="L27">                        code = exec.code,</span>
-<span class="fc" id="L28">                        codeId = exec.codeId,</span>
-<span class="fc" id="L29">                        codeVersion = exec.codeVersion,</span>
-<span class="fc" id="L30">                        events = exec.events</span>
+<span class="fc" id="L21">        return retry {</span>
+<span class="fc" id="L22">            getExec(execId) { exec -&gt;</span>
+<span class="fc" id="L23">                ResponseEntity.ok(</span>
+<span class="fc" id="L24">                    ApiExec(</span>
+<span class="fc" id="L25">                        id = exec.id,</span>
+<span class="fc" id="L26">                        status = exec.status,</span>
+<span class="fc" id="L27">                        correlation = exec.correlation,</span>
+<span class="fc" id="L28">                        inputs = exec.inputs,</span>
+<span class="fc" id="L29">                        code = exec.code.let { code -&gt;</span>
+<span class="fc" id="L30">                            ApiExec.Code(</span>
+<span class="fc" id="L31">                                id = code.id,</span>
+<span class="fc" id="L32">                                version = code.version,</span>
+<span class="fc" id="L33">                                value = code.value</span>
+                            )
+                        },
+<span class="fc" id="L36">                        events = exec.events,</span>
+<span class="pc bpc" id="L37" title="1 of 2 branches missed.">                        result = if (exec is CompletedExec) {</span>
+<span class="nc" id="L38">                            exec.result</span>
+<span class="pc bpc" id="L39" title="1 of 2 branches missed.">                        } else if (exec is FailedExec) {</span>
+<span class="nc" id="L40">                            exec.result</span>
+                        } else {
+<span class="fc" id="L42">                            null</span>
+                        }
                     )
                 )
             }

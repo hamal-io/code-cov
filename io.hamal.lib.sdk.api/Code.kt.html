@@ -3,12 +3,37 @@
 import io.hamal.lib.domain.vo.CodeId
 import io.hamal.lib.domain.vo.CodeValue
 import io.hamal.lib.domain.vo.CodeVersion
+import io.hamal.lib.http.HttpTemplate
+import io.hamal.lib.sdk.fold
 import kotlinx.serialization.Serializable
 
-<span class="pc bpc" id="L8" title="2 of 9 branches missed.">@Serializable</span>
-<span class="fc" id="L9">data class ApiCode(</span>
-<span class="fc" id="L10">    val id: CodeId,</span>
-<span class="fc" id="L11">    val value: CodeValue,</span>
-<span class="fc" id="L12">    val version: CodeVersion</span>
-<span class="fc" id="L13">)</span>
+<span class="pc bpc" id="L10" title="2 of 9 branches missed.">@Serializable</span>
+<span class="fc" id="L11">data class ApiCode(</span>
+<span class="fc" id="L12">    val id: CodeId,</span>
+<span class="fc" id="L13">    val value: CodeValue,</span>
+<span class="fc" id="L14">    val version: CodeVersion</span>
+<span class="fc" id="L15">)</span>
+
+interface ApiCodeService {
+<span class="nc" id="L18">    fun get(codeId: CodeId, codeVersion: CodeVersion? = null): ApiCode</span>
+}
+
+<span class="nc" id="L21">internal class ApiCodeServiceImpl(</span>
+<span class="nc" id="L22">    private val template: HttpTemplate</span>
+) : ApiCodeService {
+
+    override fun get(codeId: CodeId, codeVersion: CodeVersion?): ApiCode {
+<span class="nc" id="L26">        return template.get(&quot;/v1/code/{codeId}&quot;)</span>
+<span class="nc" id="L27">            .path(&quot;codeId&quot;, codeId)</span>
+<span class="nc" id="L28">            .let { builder -&gt;</span>
+<span class="nc bnc" id="L29" title="All 2 branches missed.">                if (codeVersion != null) {</span>
+<span class="nc" id="L30">                    builder.parameter(&quot;code_version&quot;, codeVersion.value)</span>
+                } else {
+<span class="nc" id="L32">                    builder</span>
+                }
+            }
+<span class="nc" id="L35">            .execute()</span>
+<span class="nc" id="L36">            .fold(ApiCode::class)</span>
+    }
+}
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

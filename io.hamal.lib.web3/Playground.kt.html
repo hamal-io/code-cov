@@ -2,109 +2,74 @@
 
 import io.hamal.lib.http.HttpTemplate
 import io.hamal.lib.web3.Erc20.decimals
+import io.hamal.lib.web3.US.getReserves
 import io.hamal.lib.web3.eth.EthBatchService
-import io.hamal.lib.web3.eth.abi.EthFunction
-import io.hamal.lib.web3.eth.abi.EthInputTuple0
-import io.hamal.lib.web3.eth.abi.EthOutput
-import io.hamal.lib.web3.eth.abi.EthOutputTuple1
+import io.hamal.lib.web3.eth.abi.*
 import io.hamal.lib.web3.eth.abi.type.EthAddress
 import io.hamal.lib.web3.eth.abi.type.EthPrefixedHexString
 import io.hamal.lib.web3.eth.abi.type.EthUint64
+import io.hamal.lib.web3.eth.domain.EthCallResponse
 import io.hamal.lib.web3.eth.http.EthHttpBatchService
 
 
 object Erc20 {
 
-<span class="nc" id="L18">    val decimals = EthFunction(</span>
-<span class="nc" id="L19">        name = &quot;decimals&quot;,</span>
-<span class="nc" id="L20">        inputs = EthInputTuple0,</span>
-<span class="nc" id="L21">        outputs = EthOutputTuple1(</span>
-<span class="nc" id="L22">            EthOutput.Uint8(&quot;decimals&quot;),</span>
+<span class="nc" id="L17">    val decimals = EthFunction(</span>
+<span class="nc" id="L18">        name = &quot;decimals&quot;,</span>
+<span class="nc" id="L19">        inputs = EthInputTuple0,</span>
+<span class="nc" id="L20">        outputs = EthOutputTuple1(</span>
+<span class="nc" id="L21">            EthOutput.Uint8(&quot;decimals&quot;),</span>
         )
     )
 
-<span class="nc" id="L26">    val name = EthFunction(</span>
-<span class="nc" id="L27">        name = &quot;name&quot;,</span>
-<span class="nc" id="L28">        inputs = EthInputTuple0,</span>
-<span class="nc" id="L29">        outputs = EthOutputTuple1(</span>
-<span class="nc" id="L30">            EthOutput.String(&quot;name&quot;),</span>
+<span class="nc" id="L25">    val name = EthFunction(</span>
+<span class="nc" id="L26">        name = &quot;name&quot;,</span>
+<span class="nc" id="L27">        inputs = EthInputTuple0,</span>
+<span class="nc" id="L28">        outputs = EthOutputTuple1(</span>
+<span class="nc" id="L29">            EthOutput.String(&quot;name&quot;),</span>
         )
     )
 
-<span class="nc" id="L34">    val symbol = EthFunction(</span>
-<span class="nc" id="L35">        name = &quot;symbol&quot;,</span>
-<span class="nc" id="L36">        inputs = EthInputTuple0,</span>
-<span class="nc" id="L37">        outputs = EthOutputTuple1(</span>
-<span class="nc" id="L38">            EthOutput.String(&quot;symbol&quot;),</span>
+<span class="nc" id="L33">    val symbol = EthFunction(</span>
+<span class="nc" id="L34">        name = &quot;symbol&quot;,</span>
+<span class="nc" id="L35">        inputs = EthInputTuple0,</span>
+<span class="nc" id="L36">        outputs = EthOutputTuple1(</span>
+<span class="nc" id="L37">            EthOutput.String(&quot;symbol&quot;),</span>
+        )
+    )
+}
+
+object US{
+<span class="nc" id="L43">    val getReserves = EthFunction(</span>
+<span class="nc" id="L44">        &quot;getReserves&quot;,</span>
+<span class="nc" id="L45">        EthInput.Tuple0(),</span>
+<span class="nc" id="L46">        EthOutput.Tuple3(</span>
+<span class="nc" id="L47">            EthOutput.Uint112(&quot;_reserve0&quot;),</span>
+<span class="nc" id="L48">            EthOutput.Uint112(&quot;_reserve1&quot;),</span>
+<span class="nc" id="L49">            EthOutput.Uint32(&quot;_blockTimestampLast&quot;)</span>
         )
     )
 }
 
 
 fun main() {
-<span class="nc" id="L45">    val srv = EthHttpBatchService(</span>
-<span class="nc" id="L46">        HttpTemplate(&quot;http://localhost:8000&quot;)</span>
+<span class="nc" id="L56">    val srv = EthHttpBatchService(</span>
+<span class="nc" id="L57">        HttpTemplate(&quot;http://localhost:10001&quot;)</span>
     )
 
-
-<span class="nc" id="L50">    val response = srv</span>
-<span class="nc" id="L51">        .call(</span>
-<span class="nc" id="L52">        EthBatchService.EthCallRequest(</span>
-<span class="nc" id="L53">            to = EthAddress(EthPrefixedHexString(&quot;0x570febdf89c07f256c75686caca215289bb11cfc&quot;)),</span>
-<span class="nc" id="L54">            data = EthPrefixedHexString(&quot;0x0902f1ac&quot;),</span>
-<span class="nc" id="L55">            blockNumber = EthUint64(12040752L)</span>
+<span class="nc" id="L60">    val response = srv</span>
+<span class="nc" id="L61">        .call(</span>
+<span class="nc" id="L62">        EthBatchService.EthCallRequest(</span>
+<span class="nc" id="L63">            to = EthAddress(EthPrefixedHexString(&quot;0x570febdf89c07f256c75686caca215289bb11cfc&quot;)),</span>
+<span class="nc" id="L64">            data = EthPrefixedHexString(&quot;0x0902f1ac&quot;),</span>
+<span class="nc" id="L65">            blockNumber = EthUint64(12040753L)</span>
         )
-    )
-//        .callFunction(
-//            to = EthAddress(EthPrefixedHexString(&quot;0x570febdf89c07f256c75686caca215289bb11cfc&quot;)),
-//            function = getReserves,
-//            blockNumber = EthUint64(12040752L)
-//        )
-//        .execute().first()
-//
-//
-//    require(response is EthCallResp)
-//    println(response)
-//
-//    val x = getReserves.outputs.decodeToMap(response.result)
-//    System.out.println(x[&quot;_reserve0&quot;])
-//    System.out.println(x[&quot;_reserve1&quot;])
+<span class="nc" id="L67">    ).execute()</span>
 
-//    val response = srv
-////        .call(
-////        EthBatchService.EthCallRequest(
-////            to = EthAddress(EthPrefixedHexString(&quot;0x570febdf89c07f256c75686caca215289bb11cfc&quot;)),
-////            data = EthPrefixedHexString(&quot;0x0902f1ac&quot;),
-////            blockNumber = EthUint64(12040752L)
-////        )
-////    )
-////        .callFunction(
-////            to = EthAddress(EthPrefixedHexString(&quot;0x570febdf89c07f256c75686caca215289bb11cfc&quot;)),
-////            function = getReserves,
-////            blockNumber = EthUint64(12040752L)
-////        )
-////        .callFunction(
-////            to = EthAddress(EthPrefixedHexString(&quot;0x570febdf89c07f256c75686caca215289bb11cfc&quot;)),
-////            function = decimals,
-////            blockNumber = EthUint64(12040752L)
-////        )
-//        .call(
-//            to = EthAddress(EthPrefixedHexString(&quot;0x570febdf89c07f256c75686caca215289bb11cfc&quot;)),
-//            function = decimals,
-//            blockNumber = EthUint64(12040752L)
-//        )
-//        .execute().first()
-//
-//    println(response)
-//
-//
-//    require(response is EthCallResponse)
-//
-//    val x = decimals.outputs.decodeToMap(response.result)
-//
-//    println(x)
+<span class="nc" id="L69">    val x = getReserves.outputs.decodeToMap((response[0] as EthCallResponse).result)</span>
+<span class="nc" id="L70">    System.out.println(x[&quot;_reserve0&quot;])</span>
+<span class="nc" id="L71">    System.out.println(x[&quot;_reserve1&quot;])</span>
 
-<span class="nc" id="L107">    println(decimals.signature.encoded.toPrefixedHexString())</span>
-
-<span class="nc" id="L109">}</span>
+<span class="nc" id="L73">    println(decimals.signature.encoded.toPrefixedHexString())</span>
+<span class="nc" id="L74">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

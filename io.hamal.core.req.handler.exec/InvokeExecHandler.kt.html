@@ -45,23 +45,21 @@ import org.springframework.stereotype.Component
 <span class="fc" id="L45">                correlation = correlation,</span>
 <span class="pc bpc" id="L46" title="1 of 4 branches missed.">                inputs = merge(func?.inputs ?: FuncInputs(), req.inputs),</span>
 <span class="fc" id="L47">                code = req.code,</span>
-<span class="fc" id="L48">                codeId = req.codeId,</span>
-<span class="fc" id="L49">                codeVersion = req.codeVersion,</span>
-<span class="fc" id="L50">                events = req.events,</span>
+<span class="fc" id="L48">                events = req.events,</span>
             )
         )
     }
 
     private fun emitEvent(cmdId: CmdId, exec: PlannedExec) {
-<span class="fc" id="L56">        eventEmitter.emit(cmdId, ExecPlannedEvent(exec))</span>
-<span class="fc" id="L57">    }</span>
+<span class="fc" id="L54">        eventEmitter.emit(cmdId, ExecPlannedEvent(exec))</span>
+<span class="fc" id="L55">    }</span>
 }
 
-<span class="nc" id="L60">internal fun InvocationInputs.toExecInputs() = ExecInputs(this.value)</span>
+<span class="nc" id="L58">internal fun InvocationInputs.toExecInputs() = ExecInputs(this.value)</span>
 internal fun merge(funcInputs: FuncInputs, invocationInputs: InvocationInputs): ExecInputs {
-<span class="fc" id="L62">    val result = ExecInputs()</span>
-<span class="fc" id="L63">    funcInputs.value.entries.forEach { result.value[it.key] = it.value }</span>
-<span class="fc" id="L64">    invocationInputs.value.entries.forEach { result.value[it.key] = it.value }</span>
-<span class="fc" id="L65">    return result</span>
+<span class="fc" id="L60">    val result = ExecInputs()</span>
+<span class="fc" id="L61">    funcInputs.value.value.forEach { result.value[it.key] = it.value }</span>
+<span class="fc" id="L62">    invocationInputs.value.value.forEach { result.value[it.key] = it.value }</span>
+<span class="fc" id="L63">    return result</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

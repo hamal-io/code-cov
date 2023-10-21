@@ -8,39 +8,46 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.format.FormatterRegistry
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.json.KotlinSerializationJsonHttpMessageConverter
+import org.springframework.web.servlet.config.annotation.PathMatchConfigurer
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
-<span class="fc" id="L13">@Configuration</span>
-<span class="fc" id="L14">open class WebConfig : WebMvcConfigurer {</span>
+
+<span class="fc" id="L15">@Configuration</span>
+<span class="fc" id="L16">open class WebConfig : WebMvcConfigurer {</span>
 
     @Bean
     @OptIn(ExperimentalSerializationApi::class)
-<span class="fc" id="L18">    open fun json(): Json = Json {</span>
-<span class="fc" id="L19">        explicitNulls = false</span>
-<span class="fc" id="L20">        ignoreUnknownKeys = true</span>
-<span class="fc" id="L21">        encodeDefaults = true</span>
-<span class="fc" id="L22">    }</span>
+<span class="fc" id="L20">    open fun json(): Json = Json {</span>
+<span class="fc" id="L21">        explicitNulls = false</span>
+<span class="fc" id="L22">        ignoreUnknownKeys = true</span>
+<span class="fc" id="L23">        encodeDefaults = true</span>
+<span class="fc" id="L24">    }</span>
 
     override fun configureMessageConverters(converters: MutableList&lt;HttpMessageConverter&lt;*&gt;&gt;) {
-<span class="fc" id="L25">        super.configureMessageConverters(converters)</span>
-<span class="fc" id="L26">        converters.add(KotlinSerializationJsonHttpMessageConverter(json()))</span>
-<span class="fc" id="L27">    }</span>
+<span class="fc" id="L27">        super.configureMessageConverters(converters)</span>
+<span class="fc" id="L28">        converters.add(KotlinSerializationJsonHttpMessageConverter(json()))</span>
+<span class="fc" id="L29">    }</span>
 
     override fun addFormatters(registry: FormatterRegistry) {
-<span class="fc" id="L30">        super.addFormatters(registry)</span>
-<span class="fc" id="L31">        registry.addConverter(AccountIdConverter)</span>
-<span class="fc" id="L32">        registry.addConverter(CorrelationIdConverter)</span>
-<span class="fc" id="L33">        registry.addConverter(ExecIdConverter)</span>
-<span class="fc" id="L34">        registry.addConverter(ExecLogIdConverter)</span>
-<span class="fc" id="L35">        registry.addConverter(FuncIdConverter)</span>
-<span class="fc" id="L36">        registry.addConverter(GroupIdConverter)</span>
-<span class="fc" id="L37">        registry.addConverter(NamespaceIdConverter)</span>
-<span class="fc" id="L38">        registry.addConverter(LimitConverter)</span>
-<span class="fc" id="L39">        registry.addConverter(ReqIdConverter)</span>
-<span class="fc" id="L40">        registry.addConverter(TopicEntryIdConverter)</span>
-<span class="fc" id="L41">        registry.addConverter(TopicIdConverter)</span>
-<span class="fc" id="L42">        registry.addConverter(TopicNameConverter)</span>
-<span class="fc" id="L43">        registry.addConverter(TriggerIdConverter)</span>
-<span class="fc" id="L44">    }</span>
+<span class="fc" id="L32">        super.addFormatters(registry)</span>
+<span class="fc" id="L33">        registry.addConverter(AccountIdConverter)</span>
+<span class="fc" id="L34">        registry.addConverter(CodeVersionConverter)</span>
+<span class="fc" id="L35">        registry.addConverter(CorrelationIdConverter)</span>
+<span class="fc" id="L36">        registry.addConverter(ExecIdConverter)</span>
+<span class="fc" id="L37">        registry.addConverter(ExecLogIdConverter)</span>
+<span class="fc" id="L38">        registry.addConverter(FuncIdConverter)</span>
+<span class="fc" id="L39">        registry.addConverter(GroupIdConverter)</span>
+<span class="fc" id="L40">        registry.addConverter(NamespaceIdConverter)</span>
+<span class="fc" id="L41">        registry.addConverter(LimitConverter)</span>
+<span class="fc" id="L42">        registry.addConverter(ReqIdConverter)</span>
+<span class="fc" id="L43">        registry.addConverter(TopicEntryIdConverter)</span>
+<span class="fc" id="L44">        registry.addConverter(TopicIdConverter)</span>
+<span class="fc" id="L45">        registry.addConverter(TopicNameConverter)</span>
+<span class="fc" id="L46">        registry.addConverter(TriggerIdConverter)</span>
+<span class="fc" id="L47">    }</span>
+
+    override fun configurePathMatch(configurer: PathMatchConfigurer) {
+<span class="fc" id="L50">        configurer.setUseTrailingSlashMatch(true)</span>
+<span class="fc" id="L51">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

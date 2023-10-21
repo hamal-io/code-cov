@@ -2,41 +2,87 @@
 
 import io.hamal.lib.domain.GenerateDomainId
 import io.hamal.lib.domain.ReqId
+import io.hamal.lib.domain._enum.HookMethod
+import io.hamal.lib.domain._enum.HookMethod.*
 import io.hamal.lib.domain._enum.ReqStatus
+import io.hamal.lib.domain._enum.ReqStatus.Submitted
+import io.hamal.lib.domain.vo.HookHeaders
 import io.hamal.lib.domain.vo.HookId
+import io.hamal.lib.domain.vo.HookParameters
+import io.hamal.lib.kua.type.MapType
+import io.hamal.lib.kua.type.StringType
+import io.hamal.repository.api.HookQueryRepository
 import io.hamal.repository.api.ReqCmdRepository
 import io.hamal.repository.api.submitted_req.SubmittedInvokeHookReq
 import jakarta.servlet.http.HttpServletRequest
+import kotlinx.serialization.Serializable
 import org.springframework.http.HttpStatus.ACCEPTED
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
-<span class="nc" id="L14">@RestController</span>
-<span class="nc" id="L15">internal class HookInvokeController(</span>
-<span class="nc" id="L16">    private val generateDomainId: GenerateDomainId, private val reqCmdRepository: ReqCmdRepository</span>
+<span class="nc" id="L23">@RestController</span>
+<span class="nc" id="L24">internal class HookInvokeController(</span>
+<span class="nc" id="L25">    private val generateDomainId: GenerateDomainId,</span>
+<span class="nc" id="L26">    private val reqCmdRepository: ReqCmdRepository,</span>
+<span class="nc" id="L27">    private val hookQueryRepository: HookQueryRepository</span>
 ) {
     @GetMapping(&quot;/v1/webhooks/{id}&quot;)
-    fun webhookGet(
-        @PathVariable(&quot;id&quot;) id: HookId,
-        req: HttpServletRequest
-    ): ResponseEntity&lt;SubmittedInvokeHookReq&gt; {
-<span class="nc" id="L23">        println(req)</span>
-<span class="nc" id="L24">        val result = SubmittedInvokeHookReq(</span>
-<span class="nc" id="L25">            reqId = generateDomainId(::ReqId), status = ReqStatus.Submitted, id = id</span>
-<span class="nc" id="L26">        ).also(reqCmdRepository::queue)</span>
-<span class="nc" id="L27">        return ResponseEntity(result, ACCEPTED)</span>
-    }
+<span class="nc" id="L30">    fun webhookGet(@PathVariable(&quot;id&quot;) id: HookId, req: HttpServletRequest) = handle(id, req)</span>
 
     @PostMapping(&quot;/v1/webhooks/{id}&quot;)
-<span class="nc" id="L31">    fun webhookPost(@PathVariable(&quot;id&quot;) id: HookId): ResponseEntity&lt;Unit&gt; = ResponseEntity.noContent().build()</span>
+<span class="nc" id="L33">    fun webhookPost(@PathVariable(&quot;id&quot;) id: HookId, req: HttpServletRequest) = handle(id, req)</span>
 
     @PatchMapping(&quot;/v1/webhooks/{id}&quot;)
-<span class="nc" id="L34">    fun webhookPatch(@PathVariable(&quot;id&quot;) id: HookId): ResponseEntity&lt;Unit&gt; = ResponseEntity.noContent().build()</span>
+<span class="nc" id="L36">    fun webhookPatch(@PathVariable(&quot;id&quot;) id: HookId, req: HttpServletRequest) = handle(id, req)</span>
 
     @PutMapping(&quot;/v1/webhooks/{id}&quot;)
-<span class="nc" id="L37">    fun webhookPut(@PathVariable(&quot;id&quot;) id: HookId): ResponseEntity&lt;Unit&gt; = ResponseEntity.noContent().build()</span>
+<span class="nc" id="L39">    fun webhookPut(@PathVariable(&quot;id&quot;) id: HookId, req: HttpServletRequest) = handle(id, req)</span>
 
     @DeleteMapping(&quot;/v1/webhooks/{id}&quot;)
-<span class="nc" id="L40">    fun webhookDelete(@PathVariable(&quot;id&quot;) id: HookId): ResponseEntity&lt;Unit&gt; = ResponseEntity.noContent().build()</span>
+<span class="nc" id="L42">    fun webhookDelete(@PathVariable(&quot;id&quot;) id: HookId, req: HttpServletRequest) = handle(id, req)</span>
+
+    private fun handle(id: HookId, req: HttpServletRequest): ResponseEntity&lt;Response&gt; {
+<span class="nc" id="L45">        val hook = hookQueryRepository.get(id)</span>
+
+<span class="nc" id="L47">        val result = SubmittedInvokeHookReq(</span>
+<span class="nc" id="L48">            reqId = generateDomainId(::ReqId),</span>
+<span class="nc" id="L49">            status = Submitted,</span>
+<span class="nc" id="L50">            id = id,</span>
+<span class="nc" id="L51">            groupId = hook.groupId,</span>
+<span class="nc" id="L52">            method = req.method(),</span>
+<span class="nc" id="L53">            headers = req.headers(),</span>
+<span class="nc" id="L54">            parameters = req.parameters()</span>
+<span class="nc" id="L55">        ).also(reqCmdRepository::queue)</span>
+<span class="nc" id="L56">        return ResponseEntity(Response(result), ACCEPTED)</span>
+    }
+
+<span class="nc" id="L59">    private fun HttpServletRequest.headers() = HookHeaders(</span>
+<span class="nc" id="L60">        MapType(headerNames.asSequence()</span>
+<span class="nc" id="L61">            .map { headerName -&gt; headerName to StringType(getHeader(headerName)) }</span>
+<span class="nc" id="L62">            .toMap()</span>
+<span class="nc" id="L63">            .toMutableMap()</span>
+<span class="nc" id="L64">        ))</span>
+
+<span class="nc" id="L66">    private fun HttpServletRequest.parameters() = HookParameters(</span>
+<span class="nc" id="L67">        MapType(parameterMap.map { (key, value) -&gt; key to StringType(value.joinToString(&quot;,&quot;)) }.toMap().toMutableMap())</span>
+<span class="nc" id="L68">    )</span>
+
+<span class="nc bnc" id="L70" title="All 6 branches missed.">    private fun HttpServletRequest.method(): HookMethod = when (method.lowercase()) {</span>
+<span class="nc" id="L71">        &quot;delete&quot; -&gt; Delete</span>
+<span class="nc" id="L72">        &quot;get&quot; -&gt; Get</span>
+<span class="nc" id="L73">        &quot;patch&quot; -&gt; Patch</span>
+<span class="nc" id="L74">        &quot;post&quot; -&gt; Post</span>
+<span class="nc" id="L75">        &quot;put&quot; -&gt; Put</span>
+<span class="nc" id="L76">        else -&gt; throw IllegalArgumentException(&quot;${method.lowercase()} not supported&quot;)</span>
+<span class="nc" id="L77">    }</span>
+
+<span class="nc bnc" id="L79" title="All 9 branches missed.">    @Serializable</span>
+<span class="nc" id="L80">    data class Response(</span>
+<span class="nc" id="L81">        val reqId: ReqId,</span>
+<span class="nc" id="L82">        val status: ReqStatus,</span>
+<span class="nc" id="L83">        val id: HookId</span>
+    ) {
+<span class="nc" id="L85">        constructor(req: SubmittedInvokeHookReq) : this(req.reqId, req.status, req.id)</span>
+<span class="nc" id="L86">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

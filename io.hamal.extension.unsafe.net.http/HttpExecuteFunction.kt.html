@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HttpExecuteFunction.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.extension.unsafe.net.http</a> &gt; <span class="el_source">HttpExecuteFunction.kt</span></div><h1>HttpExecuteFunction.kt</h1><pre class="source lang-java linenums">package io.hamal.extension.unsafe.net.http
+
+import io.hamal.lib.http.HttpTemplate
+import io.hamal.lib.kua.function.Function1In2Out
+import io.hamal.lib.kua.function.FunctionContext
+import io.hamal.lib.kua.function.FunctionInput1Schema
+import io.hamal.lib.kua.function.FunctionOutput2Schema
+import io.hamal.lib.kua.type.ArrayType
+import io.hamal.lib.kua.type.ErrorType
+import io.hamal.lib.kua.type.MapType
+import io.hamal.lib.kua.type.NumberType
+
+<span class="fc" id="L13">class HttpExecuteFunction : Function1In2Out&lt;ArrayType, ErrorType, ArrayType&gt;(</span>
+<span class="fc" id="L14">    FunctionInput1Schema(ArrayType::class),</span>
+<span class="fc" id="L15">    FunctionOutput2Schema(ErrorType::class, ArrayType::class)</span>
+) {
+    override fun invoke(ctx: FunctionContext, arg1: ArrayType): Pair&lt;ErrorType?, ArrayType?&gt; {
+<span class="fc" id="L18">        val results = mutableListOf&lt;MapType&gt;()</span>
+<span class="fc bfc" id="L19" title="All 2 branches covered.">        for (idx in 0 until arg1.size) {</span>
+<span class="fc" id="L20">            val map = arg1.getMap(idx + 1)</span>
+
+<span class="fc" id="L22">            val method = map.getString(&quot;method&quot;)</span>
+<span class="fc" id="L23">            val url = map.getString(&quot;url&quot;)</span>
+
+<span class="fc bfc" id="L25" title="All 2 branches covered.">            if (method == &quot;GET&quot;) {</span>
+<span class="fc" id="L26">                try {</span>
+<span class="fc" id="L27">                    val response = HttpTemplate().get(url).execute()</span>
+
+<span class="fc" id="L29">                    results.add(MapType().also {</span>
+<span class="fc" id="L30">                        it[&quot;statusCode&quot;] = NumberType(response.statusCode.value)</span>
+<span class="fc" id="L31">                    })</span>
+
+<span class="nc" id="L33">                } catch (t: Throwable) {</span>
+                    // FIXME
+                }
+            }
+
+<span class="fc bfc" id="L38" title="All 2 branches covered.">            if (method == &quot;POST&quot;) {</span>
+<span class="fc" id="L39">                try {</span>
+<span class="fc" id="L40">                    val response = HttpTemplate().post(url)</span>
+<span class="fc" id="L41">                        .execute()</span>
+
+<span class="fc" id="L43">                    results.add(MapType().also {</span>
+<span class="fc" id="L44">                        it[&quot;statusCode&quot;] = NumberType(response.statusCode.value)</span>
+<span class="fc" id="L45">                    })</span>
+<span class="nc" id="L46">                } catch (t: Throwable) {</span>
+                    // FIXME
+                }
+            }
+
+
+<span class="fc bfc" id="L52" title="All 2 branches covered.">            if (method == &quot;PATCH&quot;) {</span>
+<span class="fc" id="L53">                try {</span>
+<span class="fc" id="L54">                    val response = HttpTemplate().patch(url).execute()</span>
+<span class="fc" id="L55">                    results.add(MapType().also {</span>
+<span class="fc" id="L56">                        it[&quot;statusCode&quot;] = NumberType(response.statusCode.value)</span>
+<span class="fc" id="L57">                    })</span>
+<span class="nc" id="L58">                } catch (t: Throwable) {</span>
+                    // FIXME
+                }
+            }
+
+<span class="fc bfc" id="L63" title="All 2 branches covered.">            if (method == &quot;PUT&quot;) {</span>
+<span class="fc" id="L64">                try {</span>
+<span class="fc" id="L65">                    val response = HttpTemplate().put(url).execute()</span>
+<span class="fc" id="L66">                    results.add(MapType().also {</span>
+<span class="fc" id="L67">                        it[&quot;statusCode&quot;] = NumberType(response.statusCode.value)</span>
+<span class="fc" id="L68">                    })</span>
+<span class="nc" id="L69">                } catch (t: Throwable) {</span>
+                    // FIXME
+                }
+            }
+
+<span class="fc bfc" id="L74" title="All 2 branches covered.">            if (method == &quot;DELETE&quot;) {</span>
+<span class="fc" id="L75">                try {</span>
+<span class="fc" id="L76">                    val response = HttpTemplate().delete(url).execute()</span>
+
+<span class="fc" id="L78">                    results.add(MapType().also {</span>
+<span class="fc" id="L79">                        it[&quot;statusCode&quot;] = NumberType(response.statusCode.value)</span>
+<span class="fc" id="L80">                    })</span>
+<span class="nc" id="L81">                } catch (t: Throwable) {</span>
+                    // FIXME
+                }
+            }
+
+        }
+
+<span class="fc" id="L88">        return null to ArrayType(results.mapIndexed { index, value -&gt; index + 1 to value }.toMap().toMutableMap())</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

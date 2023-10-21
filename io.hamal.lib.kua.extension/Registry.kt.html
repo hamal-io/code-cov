@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Registry.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.kua.extension</a> &gt; <span class="el_source">Registry.kt</span></div><h1>Registry.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.kua.extension
+
+import io.hamal.lib.kua.Sandbox
+import io.hamal.lib.kua.extension.safe.RunnerSafeExtension
+import io.hamal.lib.kua.extension.unsafe.RunnerUnsafeExtension
+import io.hamal.lib.kua.function.FunctionType
+import io.hamal.lib.kua.table.TableProxyMap
+
+<span class="pc" id="L9">class RunnerExtensionRegistry(val sb: Sandbox) {</span>
+
+<span class="pc" id="L11">    val state = sb.state</span>
+<span class="fc" id="L12">    val unsafeExtensions = mutableMapOf&lt;String, RunnerUnsafeExtension&gt;()</span>
+<span class="fc" id="L13">    val safeExtensions = mutableMapOf&lt;String, RunnerSafeExtension&gt;()</span>
+<span class="pc" id="L14">    val factories = mutableMapOf&lt;String, TableProxyMap&gt;()</span>
+
+<span class="fc" id="L16">    fun isSafeExtension(name: String) = safeExtensions.keys.contains(name)</span>
+
+<span class="fc" id="L18">    fun isUnsafeExtension(name: String) = unsafeExtensions.keys.contains(name)</span>
+
+    fun register(extension: RunnerUnsafeExtension) {
+<span class="fc" id="L21">        unsafeExtensions[extension.name] = extension</span>
+        // FIXME load the factory
+<span class="fc" id="L23">        loadUnsafeExtensionFactory(extension.name)</span>
+<span class="fc" id="L24">    }</span>
+
+    fun register(extension: RunnerSafeExtension) {
+<span class="fc" id="L27">        safeExtensions[extension.name] = extension</span>
+        // FIXME load the factory
+<span class="fc" id="L29">        loadSafeExtensionFactory(extension.name)</span>
+<span class="fc" id="L30">    }</span>
+
+    fun loadUnsafeExtensionFactory(name: String): TableProxyMap {
+<span class="fc" id="L33">        val extension = unsafeExtensions[name]!!</span>
+<span class="fc" id="L34">        val internals = extension.internals</span>
+<span class="fc" id="L35">        val internalTable = state.tableCreateMap(internals.size)</span>
+
+<span class="fc" id="L37">        internals.forEach { entry -&gt;</span>
+<span class="fc" id="L38">            val fn = entry.value</span>
+<span class="pc bpc" id="L39" title="1 of 2 branches missed.">            require(fn is FunctionType&lt;*, *, *, *&gt;)</span>
+<span class="fc" id="L40">            internalTable[entry.key] = fn</span>
+<span class="fc" id="L41">        }</span>
+
+<span class="fc" id="L43">        sb.setGlobal(&quot;_internal&quot;, internalTable)</span>
+
+<span class="fc" id="L45">        state.load(unsafeExtensions[name]!!.factoryCode)</span>
+<span class="fc" id="L46">        state.load(&quot;_factory = extension()&quot;)</span>
+<span class="fc" id="L47">        sb.unsetGlobal(&quot;_internal&quot;)</span>
+
+        // FIXME cache factory so that it does not have to be loaded over and over again
+<span class="fc" id="L50">        val factory = state.getGlobalTableMap(&quot;_factory&quot;)</span>
+<span class="fc" id="L51">        factories[name] = factory</span>
+
+<span class="fc" id="L53">        state.unsetGlobal(&quot;extension&quot;)</span>
+<span class="fc" id="L54">        return factory</span>
+    }
+
+    fun loadSafeExtensionFactory(name: String): TableProxyMap {
+<span class="fc" id="L58">        val extension = safeExtensions[name]!!</span>
+
+<span class="fc" id="L60">        state.load(extension.factoryCode)</span>
+<span class="fc" id="L61">        state.load(&quot;_factory = extension()&quot;)</span>
+
+        // FIXME cache factory so that it does not have to be loaded over and over again
+<span class="fc" id="L64">        val factory = state.getGlobalTableMap(&quot;_factory&quot;)</span>
+<span class="fc" id="L65">        factories[name] = factory</span>
+
+<span class="fc" id="L67">        state.unsetGlobal(&quot;extension&quot;)</span>
+<span class="fc" id="L68">        return factory</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

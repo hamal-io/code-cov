@@ -69,53 +69,51 @@ internal object CreateFunc : CreateDomainObject&lt;FuncId, FuncRecord, Func&gt; 
 <span class="nc" id="L69">                        namespaceId = cmd.namespaceId,</span>
 <span class="nc" id="L70">                        name = cmd.name,</span>
 <span class="nc" id="L71">                        inputs = cmd.inputs,</span>
-<span class="nc" id="L72">                        codeId = cmd.codeId,</span>
-<span class="nc" id="L73">                        codeVersion = cmd.codeVersion</span>
+<span class="nc" id="L72">                        code = cmd.code</span>
                     )
                 )
 
-<span class="nc" id="L77">                currentVersion(funcId)</span>
-<span class="nc" id="L78">                    .also { ProjectionCurrent.upsert(this, it) }</span>
-<span class="nc" id="L79">                    .also { ProjectionUniqueName.upsert(this, it) }</span>
+<span class="nc" id="L76">                currentVersion(funcId)</span>
+<span class="nc" id="L77">                    .also { ProjectionCurrent.upsert(this, it) }</span>
+<span class="nc" id="L78">                    .also { ProjectionUniqueName.upsert(this, it) }</span>
             }
         }
     }
 
     override fun update(funcId: FuncId, cmd: UpdateCmd): Func {
-<span class="nc" id="L85">        val cmdId = cmd.id</span>
-<span class="nc" id="L86">        return tx {</span>
-<span class="nc bnc" id="L87" title="All 2 branches missed.">            if (commandAlreadyApplied(cmdId, funcId)) {</span>
-<span class="nc" id="L88">                versionOf(funcId, cmdId)</span>
+<span class="nc" id="L84">        val cmdId = cmd.id</span>
+<span class="nc" id="L85">        return tx {</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">            if (commandAlreadyApplied(cmdId, funcId)) {</span>
+<span class="nc" id="L87">                versionOf(funcId, cmdId)</span>
             } else {
-<span class="nc" id="L90">                val currentVersion = versionOf(funcId, cmdId)</span>
-<span class="nc" id="L91">                store(</span>
-<span class="nc" id="L92">                    FuncUpdatedRecord(</span>
-<span class="nc" id="L93">                        entityId = funcId,</span>
-<span class="nc" id="L94">                        cmdId = cmdId,</span>
-<span class="nc bnc" id="L95" title="All 2 branches missed.">                        namespaceId = cmd.namespaceId ?: currentVersion.namespaceId,</span>
-<span class="nc bnc" id="L96" title="All 2 branches missed.">                        name = cmd.name ?: currentVersion.name,</span>
-<span class="nc bnc" id="L97" title="All 2 branches missed.">                        inputs = cmd.inputs ?: currentVersion.inputs,</span>
-<span class="nc bnc" id="L98" title="All 2 branches missed.">                        codeId = cmd.codeId ?: currentVersion.codeId,</span>
-<span class="nc bnc" id="L99" title="All 2 branches missed.">                        codeVersion = cmd.codeVersion ?: currentVersion.codeVersion</span>
+<span class="nc" id="L89">                val currentVersion = versionOf(funcId, cmdId)</span>
+<span class="nc" id="L90">                store(</span>
+<span class="nc" id="L91">                    FuncUpdatedRecord(</span>
+<span class="nc" id="L92">                        entityId = funcId,</span>
+<span class="nc" id="L93">                        cmdId = cmdId,</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">                        namespaceId = cmd.namespaceId ?: currentVersion.namespaceId,</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">                        name = cmd.name ?: currentVersion.name,</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">                        inputs = cmd.inputs ?: currentVersion.inputs,</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">                        code = cmd.code ?: currentVersion.code</span>
                     )
                 )
-<span class="nc" id="L102">                currentVersion(funcId)</span>
-<span class="nc" id="L103">                    .also { ProjectionCurrent.upsert(this, it) }</span>
-<span class="nc" id="L104">                    .also { ProjectionUniqueName.upsert(this, it) }</span>
+<span class="nc" id="L100">                currentVersion(funcId)</span>
+<span class="nc" id="L101">                    .also { ProjectionCurrent.upsert(this, it) }</span>
+<span class="nc" id="L102">                    .also { ProjectionUniqueName.upsert(this, it) }</span>
             }
         }
     }
 
     override fun find(funcId: FuncId): Func? {
-<span class="nc" id="L110">        return ProjectionCurrent.find(connection, funcId)</span>
+<span class="nc" id="L108">        return ProjectionCurrent.find(connection, funcId)</span>
     }
 
     override fun list(query: FuncQuery): List&lt;Func&gt; {
-<span class="nc" id="L114">        return ProjectionCurrent.list(connection, query)</span>
+<span class="nc" id="L112">        return ProjectionCurrent.list(connection, query)</span>
     }
 
     override fun count(query: FuncQuery): ULong {
-<span class="nc" id="L118">        return ProjectionCurrent.count(connection, query)</span>
+<span class="nc" id="L116">        return ProjectionCurrent.count(connection, query)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

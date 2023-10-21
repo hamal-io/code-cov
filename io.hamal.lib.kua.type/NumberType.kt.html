@@ -10,11 +10,11 @@ import kotlinx.serialization.encoding.Encoder
 import java.text.DecimalFormat
 
 <span class="pc bpc" id="L12" title="2 of 7 branches missed.">@Serializable</span>
-@SerialName(&quot;DoubleType&quot;)
+@SerialName(&quot;NumberType&quot;)
 <span class="fc" id="L14">data class NumberType(</span>
 <span class="fc" id="L15">    @Serializable(with = Serializer::class)</span>
 <span class="fc" id="L16">    val value: Double</span>
-) : SerializableType {
+<span class="fc" id="L17">) : SerializableType() {</span>
 <span class="fc" id="L18">    constructor(value: Int) : this(value.toDouble())</span>
 
 <span class="nc" id="L20">    companion object {</span>

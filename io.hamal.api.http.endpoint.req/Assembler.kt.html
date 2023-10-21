@@ -115,9 +115,15 @@ internal object Assembler {
 <span class="nc" id="L115">                token = r.token</span>
             )
 
+<span class="nc bnc" id="L118" title="All 2 branches missed.">            is SubmittedInvokeHookReq -&gt; ApiSubmittedReqWithId(</span>
+<span class="nc" id="L119">                reqId = r.reqId,</span>
+<span class="nc" id="L120">                status = r.status,</span>
+<span class="nc" id="L121">                groupId = r.groupId,</span>
+<span class="nc" id="L122">                id = r.id</span>
+            )
 
-<span class="nc bnc" id="L119" title="All 2 branches missed.">            is TestSubmittedReq -&gt; TODO()</span>
-<span class="nc" id="L120">            is SubmittedInvokeHookReq -&gt; throw IllegalStateException()</span>
+<span class="nc" id="L125">            is TestSubmittedReq -&gt; TODO()</span>
+
         }
     }
 }

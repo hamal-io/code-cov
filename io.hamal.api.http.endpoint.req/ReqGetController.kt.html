@@ -11,10 +11,8 @@ import org.springframework.web.bind.annotation.RestController
 <span class="fc" id="L11">@RestController</span>
 <span class="fc" id="L12">internal class ReqGetController(private val getReq: GetReqPort) {</span>
     @GetMapping(&quot;/v1/reqs/{reqId}&quot;)
-    fun getReq(
-        @PathVariable(&quot;reqId&quot;) reqId: ReqId,
-<span class="fc" id="L16">    ) = getReq(reqId) {</span>
-<span class="fc" id="L17">        ResponseEntity(Assembler.assemble(it), HttpStatus.ACCEPTED)</span>
-<span class="fc" id="L18">    }</span>
+<span class="fc" id="L14">    fun getReq(@PathVariable(&quot;reqId&quot;) reqId: ReqId) = getReq(reqId) {</span>
+<span class="fc" id="L15">        ResponseEntity(Assembler.assemble(it), HttpStatus.ACCEPTED)</span>
+<span class="fc" id="L16">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

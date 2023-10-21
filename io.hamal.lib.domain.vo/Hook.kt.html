@@ -5,19 +5,31 @@ import io.hamal.lib.common.domain.DomainIdSerializer
 import io.hamal.lib.common.domain.DomainName
 import io.hamal.lib.common.domain.DomainNameSerializer
 import io.hamal.lib.common.snowflake.SnowflakeId
+import io.hamal.lib.domain.vo.base.Inputs
+import io.hamal.lib.domain.vo.base.InputsSerializer
+import io.hamal.lib.kua.type.MapType
 import kotlinx.serialization.Serializable
 
-<span class="nc" id="L10">@Serializable(with = HookId.Serializer::class)</span>
-<span class="fc" id="L11">class HookId(override val value: SnowflakeId) : DomainId() {</span>
-<span class="fc" id="L12">    constructor(value: Int) : this(SnowflakeId(value.toLong()))</span>
-<span class="fc" id="L13">    constructor(value: String) : this(SnowflakeId(value.toLong(16)))</span>
+<span class="nc" id="L13">@Serializable(with = HookId.Serializer::class)</span>
+<span class="fc" id="L14">class HookId(override val value: SnowflakeId) : DomainId() {</span>
+<span class="fc" id="L15">    constructor(value: Int) : this(SnowflakeId(value.toLong()))</span>
+<span class="fc" id="L16">    constructor(value: String) : this(SnowflakeId(value.toLong(16)))</span>
 
-<span class="fc" id="L15">    internal object Serializer : DomainIdSerializer&lt;HookId&gt;(::HookId)</span>
+<span class="fc" id="L18">    internal object Serializer : DomainIdSerializer&lt;HookId&gt;(::HookId)</span>
 }
 
-
-<span class="nc" id="L19">@Serializable(with = HookName.Serializer::class)</span>
-<span class="fc" id="L20">class HookName(override val value: String) : DomainName() {</span>
-<span class="fc" id="L21">    internal object Serializer : DomainNameSerializer&lt;HookName&gt;(::HookName)</span>
+<span class="nc" id="L21">@Serializable(with = HookName.Serializer::class)</span>
+<span class="fc" id="L22">class HookName(override val value: String) : DomainName() {</span>
+<span class="fc" id="L23">    internal object Serializer : DomainNameSerializer&lt;HookName&gt;(::HookName)</span>
 }
+
+<span class="nc" id="L26">@Serializable(with = HookHeaders.Serializer::class)</span>
+<span class="nc" id="L27">class HookHeaders(override val value: MapType = MapType()) : Inputs() {</span>
+<span class="nc" id="L28">    internal object Serializer : InputsSerializer&lt;HookHeaders&gt;(::HookHeaders)</span>
+<span class="nc" id="L29">}</span>
+
+<span class="nc" id="L31">@Serializable(with = HookParameters.Serializer::class)</span>
+<span class="nc" id="L32">class HookParameters(override val value: MapType = MapType()) : Inputs() {</span>
+<span class="nc" id="L33">    internal object Serializer : InputsSerializer&lt;HookParameters&gt;(::HookParameters)</span>
+<span class="nc" id="L34">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

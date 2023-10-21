@@ -5,40 +5,40 @@ import io.hamal.core.req.ReqHandler
 import io.hamal.core.req.SubmitRequest
 import io.hamal.lib.common.domain.Limit
 import io.hamal.lib.domain.GenerateDomainId
-import io.hamal.lib.domain._enum.TriggerType
+import io.hamal.lib.domain._enum.TriggerType.Hook
 import io.hamal.lib.domain.vo.CorrelationId
 import io.hamal.lib.domain.vo.ExecId
 import io.hamal.lib.domain.vo.InvocationInputs
-import io.hamal.repository.api.Func
-import io.hamal.repository.api.FuncQueryRepository
-import io.hamal.repository.api.HookQueryRepository
-import io.hamal.repository.api.TriggerQueryRepository
+import io.hamal.repository.api.*
+import io.hamal.repository.api.TriggerQueryRepository.TriggerQuery
 import io.hamal.repository.api.submitted_req.SubmittedInvokeHookReq
 import org.springframework.stereotype.Component
 
 @Component
-<span class="nc" id="L20">class InvokeHookHandler(</span>
-<span class="nc" id="L21">    private val hookQueryRepository: HookQueryRepository,</span>
-<span class="nc" id="L22">    private val triggerQueryRepository: TriggerQueryRepository,</span>
-<span class="nc" id="L23">    private val funcQueryRepository: FuncQueryRepository,</span>
-<span class="nc" id="L24">    private val submitRequest: SubmitRequest,</span>
-<span class="nc" id="L25">    private val generateDomainId: GenerateDomainId,</span>
-<span class="nc" id="L26">) : ReqHandler&lt;SubmittedInvokeHookReq&gt;(SubmittedInvokeHookReq::class) {</span>
+<span class="nc" id="L18">class InvokeHookHandler(</span>
+<span class="nc" id="L19">    private val hookQueryRepository: HookQueryRepository,</span>
+<span class="nc" id="L20">    private val triggerQueryRepository: TriggerQueryRepository,</span>
+<span class="nc" id="L21">    private val funcQueryRepository: FuncQueryRepository,</span>
+<span class="nc" id="L22">    private val submitRequest: SubmitRequest,</span>
+<span class="nc" id="L23">    private val generateDomainId: GenerateDomainId</span>
+<span class="nc" id="L24">) : ReqHandler&lt;SubmittedInvokeHookReq&gt;(SubmittedInvokeHookReq::class) {</span>
 
     /**
      * At least once delivery is good enough for now
      */
     override fun invoke(req: SubmittedInvokeHookReq) {
-<span class="nc" id="L32">        val hook = hookQueryRepository.get(req.id)</span>
+<span class="nc bnc" id="L30" title="All 2 branches missed.">        val hook = hookQueryRepository.find(req.id) ?: return</span>
 
-<span class="nc" id="L34">        val triggers = triggerQueryRepository.list(</span>
-<span class="nc" id="L35">            TriggerQueryRepository.TriggerQuery(</span>
-<span class="nc" id="L36">                types = listOf(TriggerType.Hook),</span>
-<span class="nc" id="L37">                limit = Limit.all,</span>
-<span class="nc" id="L38">                groupIds = listOf(hook.groupId),</span>
-<span class="nc" id="L39">                hookIds = listOf(hook.id)</span>
+<span class="nc" id="L32">        val triggers = triggerQueryRepository.list(</span>
+<span class="nc" id="L33">            TriggerQuery(</span>
+<span class="nc" id="L34">                types = listOf(Hook),</span>
+<span class="nc" id="L35">                limit = Limit.all,</span>
+<span class="nc" id="L36">                groupIds = listOf(hook.groupId),</span>
+<span class="nc" id="L37">                hookIds = listOf(hook.id)</span>
             )
         )
+<span class="nc" id="L40">            .filterIsInstance&lt;HookTrigger&gt;()</span>
+<span class="nc" id="L41">            .filter { it.hookMethods.contains(req.method) }</span>
 
 <span class="nc" id="L43">        val funcs = funcQueryRepository.list(</span>
 <span class="nc" id="L44">            FuncQueryRepository.FuncQuery(</span>
@@ -47,25 +47,20 @@ import org.springframework.stereotype.Component
             )
 <span class="nc" id="L48">        ).associateBy(Func::id)</span>
 
+<span class="nc" id="L50">        triggers.forEach { trigger -&gt;</span>
+<span class="nc" id="L51">            val func = funcs[trigger.funcId]!!</span>
 
-<span class="nc" id="L51">        triggers.forEach { trigger -&gt;</span>
-<span class="nc" id="L52">            val func = funcs[trigger.funcId]!!</span>
-
-<span class="nc" id="L54">            submitRequest(</span>
-<span class="nc" id="L55">                InvokeExecReq(</span>
-<span class="nc" id="L56">                    execId = generateDomainId(::ExecId),</span>
-<span class="nc" id="L57">                    funcId = trigger.funcId,</span>
-<span class="nc bnc" id="L58" title="All 2 branches missed.">                    correlationId = trigger.correlationId ?: CorrelationId(&quot;__default__&quot;),</span>
-<span class="nc" id="L59">                    inputs = InvocationInputs(),</span>
-<span class="nc" id="L60">                    code = null,</span>
-<span class="nc" id="L61">                    codeId = func.codeId,</span>
-<span class="nc" id="L62">                    codeVersion = func.codeVersion,</span>
-<span class="nc" id="L63">                    events = listOf(</span>
-                        // FIXME webhook specifics
-                    )
+<span class="nc" id="L53">            submitRequest(</span>
+<span class="nc" id="L54">                InvokeExecReq(</span>
+<span class="nc" id="L55">                    execId = generateDomainId(::ExecId),</span>
+<span class="nc" id="L56">                    funcId = trigger.funcId,</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">                    correlationId = trigger.correlationId ?: CorrelationId(&quot;__default__&quot;),</span>
+<span class="nc" id="L58">                    inputs = InvocationInputs(),</span>
+<span class="nc" id="L59">                    code = func.code.toExecCode(),</span>
+<span class="nc" id="L60">                    events = listOf()</span>
                 )
             )
-<span class="nc" id="L68">        }</span>
-<span class="nc" id="L69">    }</span>
+<span class="nc" id="L63">        }</span>
+<span class="nc" id="L64">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
