@@ -16,15 +16,15 @@ import io.hamal.lib.kua.type.StringType
 ) {
     //FIXME refactor me
     override fun invoke(ctx: FunctionContext, arg1: StringType): TableProxyMap {
-<span class="fc bfc" id="L19" title="All 2 branches covered.">        if (registry.isSafeExtension(arg1.value)) {</span>
-<span class="fc" id="L20">            ctx.setGlobal(&quot;_factory&quot;, registry.loadSafeExtensionFactory(arg1.value))</span>
+<span class="fc bfc" id="L19" title="All 2 branches covered.">        if (registry.isScript(arg1.value)) {</span>
+<span class="fc" id="L20">            ctx.setGlobal(&quot;_factory&quot;, registry.loadScriptExtensionFactory(arg1.value))</span>
 <span class="fc" id="L21">            ctx.load(&quot;_instance = _factory()&quot;)</span>
 
 <span class="fc" id="L23">            val result = ctx.getGlobalTableMap(&quot;_instance&quot;)</span>
 
 <span class="fc" id="L25">            val config = ctx.tableCreateMap(2)</span>
-<span class="fc" id="L26">            config[&quot;get&quot;] = registry.safeExtensions[arg1.value]!!.getConfigFunction()</span>
-<span class="fc" id="L27">            config[&quot;update&quot;] = registry.safeExtensions[arg1.value]!!.updateConfigFunction()</span>
+<span class="fc" id="L26">            config[&quot;get&quot;] = registry.scriptExtensions[arg1.value]!!.configGetFunction()</span>
+<span class="fc" id="L27">            config[&quot;update&quot;] = registry.scriptExtensions[arg1.value]!!.configUpdateFunction()</span>
 <span class="fc" id="L28">            result[&quot;config&quot;] = config</span>
 
 <span class="fc" id="L30">            ctx.unsetGlobal(&quot;_factory&quot;)</span>
@@ -34,15 +34,15 @@ import io.hamal.lib.kua.type.StringType
 <span class="fc" id="L34">            return result</span>
         }
 
-<span class="pc bpc" id="L37" title="1 of 2 branches missed.">        if (registry.isUnsafeExtension(arg1.value)) {</span>
-<span class="fc" id="L38">            ctx.setGlobal(&quot;_factory&quot;, registry.loadUnsafeExtensionFactory(arg1.value))</span>
+<span class="pc bpc" id="L37" title="1 of 2 branches missed.">        if (registry.isPlugin(arg1.value)) {</span>
+<span class="fc" id="L38">            ctx.setGlobal(&quot;_factory&quot;, registry.loadPluginExtensionFactory(arg1.value))</span>
 <span class="fc" id="L39">            ctx.load(&quot;_instance = _factory()&quot;)</span>
 
 <span class="fc" id="L41">            val result = ctx.getGlobalTableMap(&quot;_instance&quot;)</span>
 
 <span class="fc" id="L43">            val config = ctx.tableCreateMap(2)</span>
-<span class="fc" id="L44">            config[&quot;get&quot;] = registry.unsafeExtensions[arg1.value]!!.getConfigFunction()</span>
-<span class="fc" id="L45">            config[&quot;update&quot;] = registry.unsafeExtensions[arg1.value]!!.updateConfigFunction()</span>
+<span class="fc" id="L44">            config[&quot;get&quot;] = registry.pluginExtensions[arg1.value]!!.configGetFunction()</span>
+<span class="fc" id="L45">            config[&quot;update&quot;] = registry.pluginExtensions[arg1.value]!!.configUpdateFunction()</span>
 <span class="fc" id="L46">            result[&quot;config&quot;] = config</span>
 
 <span class="fc" id="L48">            ctx.unsetGlobal(&quot;_factory&quot;)</span>

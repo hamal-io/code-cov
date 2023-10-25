@@ -14,18 +14,18 @@ import java.math.RoundingMode
 
 <span class="pc bnc" id="L15" title="All 7 branches missed.">@Serializable</span>
 @SerialName(&quot;DecimalType&quot;)
-<span class="nc" id="L17">data class DecimalType(</span>
-<span class="nc" id="L18">    @Serializable(with = BigDecimalSerializer::class)</span>
+<span class="fc" id="L17">data class DecimalType(</span>
+<span class="fc" id="L18">    @Serializable(with = BigDecimalSerializer::class)</span>
 <span class="nc" id="L19">    val value: BigDecimal,</span>
-<span class="nc" id="L20">) :  SerializableType(), Comparable&lt;DecimalType&gt; {</span>
+<span class="fc" id="L20">) : SerializableType(), Comparable&lt;DecimalType&gt; {</span>
 
 <span class="nc" id="L22">    companion object {</span>
-<span class="nc" id="L23">        val Zero = DecimalType(0)</span>
-<span class="nc" id="L24">        val One = DecimalType(1)</span>
+<span class="pc" id="L23">        val Zero = DecimalType(0)</span>
+<span class="pc" id="L24">        val One = DecimalType(1)</span>
 
 <span class="nc" id="L26">        operator fun invoke(value: Byte): DecimalType = DecimalType(BigDecimal.valueOf(value.toLong()))</span>
 <span class="nc" id="L27">        operator fun invoke(value: Short): DecimalType = DecimalType(BigDecimal.valueOf(value.toLong()))</span>
-<span class="nc" id="L28">        operator fun invoke(value: Int): DecimalType = DecimalType(BigDecimal.valueOf(value.toLong()))</span>
+<span class="fc" id="L28">        operator fun invoke(value: Int): DecimalType = DecimalType(BigDecimal.valueOf(value.toLong()))</span>
 <span class="nc" id="L29">        operator fun invoke(value: Long): DecimalType = DecimalType(BigDecimal.valueOf(value))</span>
 <span class="nc" id="L30">        operator fun invoke(value: Number): DecimalType = DecimalType(BigDecimal.valueOf(value.toDouble()))</span>
 <span class="nc" id="L31">        operator fun invoke(value: SnowflakeId): DecimalType = DecimalType(BigDecimal.valueOf(value.value))</span>
@@ -43,16 +43,16 @@ import java.math.RoundingMode
         }
 
         operator fun invoke(value: String): DecimalType {
-<span class="nc bnc" id="L46" title="All 2 branches missed.">            require(value.isNumber()) { IllegalArgumentException(&quot;NaN&quot;) }</span>
-<span class="nc" id="L47">            return DecimalType(BigDecimal(value.trim(), mathContext))</span>
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">            require(isNumber(value)) { IllegalArgumentException(&quot;NaN&quot;) }</span>
+<span class="fc" id="L47">            return DecimalType(BigDecimal(value.trim(), mathContext))</span>
         }
 
-        private fun String.isNumber(): Boolean {
-<span class="nc" id="L51">            val regex = &quot;-?[0-9]+(\\.[0-9]+)?&quot;.toRegex()</span>
-<span class="nc" id="L52">            return matches(regex)</span>
+        fun isNumber(value: String): Boolean {
+<span class="fc" id="L51">            val regex = &quot;-?[0-9]+(\\.[0-9]+)?&quot;.toRegex()</span>
+<span class="fc" id="L52">            return value.matches(regex)</span>
         }
 
-<span class="nc" id="L55">        private val mathContext = MathContext.DECIMAL128</span>
+<span class="fc" id="L55">        private val mathContext = MathContext.DECIMAL128</span>
     }
 
 <span class="nc" id="L58">    fun plus(other: DecimalType) = DecimalType(value.add(other.value, mathContext))</span>
@@ -110,7 +110,7 @@ import java.math.RoundingMode
 <span class="nc" id="L110">    fun negate() = DecimalType(value.negate(mathContext))</span>
 
 
-<span class="nc" id="L113">    override fun toString() = value.toString()</span>
+<span class="fc" id="L113">    override fun toString() = value.toString()</span>
 
 <span class="nc" id="L115">    override operator fun compareTo(other: DecimalType) = value.compareTo(other.value)</span>
 
@@ -142,7 +142,7 @@ import java.math.RoundingMode
 
 <span class="nc" id="L143">    fun toDouble() = value.toDouble()</span>
 
-<span class="nc" id="L145">    fun toBigDecimal() = value</span>
+<span class="fc" id="L145">    fun toBigDecimal() = value</span>
 
     object BigDecimalSerializer : KSerializer&lt;BigDecimal&gt; {
         override fun deserialize(decoder: Decoder): BigDecimal {

@@ -15,87 +15,91 @@ fun State.toArrayType(array: TableProxyArray): ArrayType {
 <span class="fc" id="L15">            when (val value = state.getAny(index).value) {</span>
 <span class="pc bpc" id="L16" title="1 of 2 branches missed.">                is ArrayType,</span>
 <span class="pc bpc" id="L17" title="1 of 2 branches missed.">                is BooleanType,</span>
-<span class="fc bfc" id="L18" title="All 2 branches covered.">                is MapType,</span>
-<span class="fc bfc" id="L19" title="All 2 branches covered.">                is NumberType,</span>
-<span class="pc bpc" id="L20" title="1 of 2 branches missed.">                is StringType -&gt; value as SerializableType</span>
+<span class="pc bpc" id="L18" title="1 of 2 branches missed.">                is DecimalType,</span>
+<span class="fc bfc" id="L19" title="All 2 branches covered.">                is MapType,</span>
+<span class="fc bfc" id="L20" title="All 2 branches covered.">                is NumberType,</span>
+<span class="pc bpc" id="L21" title="1 of 2 branches missed.">                is StringType -&gt; value as SerializableType</span>
 
-<span class="nc bnc" id="L22" title="All 2 branches missed.">                is TableProxyMap -&gt; toMapType(value)</span>
-<span class="nc bnc" id="L23" title="All 2 branches missed.">                is TableProxyArray -&gt; toArrayType(value)</span>
-<span class="nc" id="L24">                else -&gt; TODO(&quot;$value&quot;)</span>
+<span class="nc bnc" id="L23" title="All 2 branches missed.">                is TableProxyMap -&gt; toMapType(value)</span>
+<span class="nc bnc" id="L24" title="All 2 branches missed.">                is TableProxyArray -&gt; toArrayType(value)</span>
+<span class="nc" id="L25">                else -&gt; TODO(&quot;$value&quot;)</span>
             }
         }
-<span class="fc" id="L27">    ).forEach { (_, value) -&gt; result.append(value) }</span>
+<span class="fc" id="L28">    ).forEach { (_, value) -&gt; result.append(value) }</span>
 
-<span class="fc" id="L29">    return result</span>
+<span class="fc" id="L30">    return result</span>
 }
 
 fun State.toProxyArray(array: ArrayType): TableProxyArray {
-<span class="fc" id="L33">    return tableCreateArray(array.size).also {</span>
+<span class="fc" id="L34">    return tableCreateArray(array.size).also {</span>
         // FIXME probably instead of of appending it should be set to keep the index
-<span class="fc" id="L35">        array.value.forEach { (_, value) -&gt;</span>
-<span class="fc" id="L36">            when (value) {</span>
-<span class="pc bpc" id="L37" title="1 of 2 branches missed.">                is BooleanType -&gt; it.append(value)</span>
-<span class="fc bfc" id="L38" title="All 2 branches covered.">                is NumberType -&gt; it.append(value)</span>
-<span class="fc bfc" id="L39" title="All 2 branches covered.">                is StringType -&gt; it.append(value)</span>
-<span class="fc bfc" id="L40" title="All 2 branches covered.">                is MapType -&gt; {</span>
-<span class="fc" id="L41">                    it.append(toProxyMap(value)); pop(1)</span>
+<span class="fc" id="L36">        array.value.forEach { (_, value) -&gt;</span>
+<span class="fc" id="L37">            when (value) {</span>
+<span class="fc bfc" id="L38" title="All 2 branches covered.">                is BooleanType -&gt; it.append(value)</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">                is DecimalType -&gt; it.append(value)</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">                is NumberType -&gt; it.append(value)</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">                is StringType -&gt; it.append(value)</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">                is MapType -&gt; {</span>
+<span class="fc" id="L43">                    it.append(toProxyMap(value)); pop(1)</span>
                 }
 
-<span class="pc bpc" id="L44" title="1 of 2 branches missed.">                is ArrayType -&gt; {</span>
-<span class="fc" id="L45">                    it.append(toProxyArray(value)); pop(1)</span>
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">                is ArrayType -&gt; {</span>
+<span class="fc" id="L47">                    it.append(toProxyArray(value)); pop(1)</span>
                 }
 
-<span class="nc" id="L48">                else -&gt; TODO(&quot;$value&quot;)</span>
+<span class="nc" id="L50">                else -&gt; TODO(&quot;$value&quot;)</span>
             }
-<span class="fc" id="L50">        }</span>
-<span class="fc" id="L51">    }</span>
+<span class="fc" id="L52">        }</span>
+<span class="fc" id="L53">    }</span>
 }
 
 fun State.toMapType(map: TableProxyMap): MapType {
-<span class="fc" id="L55">    val store = mutableMapOf&lt;String, SerializableType&gt;()</span>
+<span class="fc" id="L57">    val store = mutableMapOf&lt;String, SerializableType&gt;()</span>
 
-<span class="fc" id="L57">    TableEntryIterator(</span>
-<span class="fc" id="L58">        index = map.index,</span>
-<span class="fc" id="L59">        state = this,</span>
-<span class="fc" id="L60">        keyExtractor = { state, index -&gt; state.getStringType(index) },</span>
+<span class="fc" id="L59">    TableEntryIterator(</span>
+<span class="fc" id="L60">        index = map.index,</span>
+<span class="fc" id="L61">        state = this,</span>
+<span class="fc" id="L62">        keyExtractor = { state, index -&gt; state.getStringType(index) },</span>
         valueExtractor = { state, index -&gt;
-<span class="fc" id="L62">            when (val value = state.getAny(index).value) {</span>
-<span class="fc bfc" id="L63" title="All 2 branches covered.">                is ArrayType,</span>
-<span class="fc bfc" id="L64" title="All 2 branches covered.">                is BooleanType,</span>
-<span class="fc bfc" id="L65" title="All 2 branches covered.">                is MapType,</span>
-<span class="fc bfc" id="L66" title="All 2 branches covered.">                is NumberType,</span>
-<span class="pc bpc" id="L67" title="1 of 2 branches missed.">                is StringType -&gt; value as SerializableType</span>
+<span class="fc" id="L64">            when (val value = state.getAny(index).value) {</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">                is ArrayType,</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">                is BooleanType,</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">                is DecimalType,</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">                is MapType,</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">                is NumberType,</span>
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">                is StringType -&gt; value as SerializableType</span>
 
-<span class="nc bnc" id="L69" title="All 2 branches missed.">                is TableProxyMap -&gt; toMapType(value)</span>
-<span class="nc bnc" id="L70" title="All 2 branches missed.">                is TableProxyArray -&gt; toArrayType(value)</span>
-<span class="nc" id="L71">                else -&gt; TODO(&quot;$value&quot;)</span>
+<span class="nc bnc" id="L72" title="All 2 branches missed.">                is TableProxyMap -&gt; toMapType(value)</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">                is TableProxyArray -&gt; toArrayType(value)</span>
+<span class="nc" id="L74">                else -&gt; TODO(&quot;$value&quot;)</span>
             }
         }
-<span class="fc" id="L74">    ).forEach { (key, value) -&gt; store[key.value] = value }</span>
+<span class="fc" id="L77">    ).forEach { (key, value) -&gt; store[key.value] = value }</span>
 
-<span class="fc" id="L76">    return MapType(store)</span>
+<span class="fc" id="L79">    return MapType(store)</span>
 }
 
 fun State.toProxyMap(map: MapType): TableProxyMap {
-<span class="fc" id="L80">    return tableCreateMap(map.size).also {</span>
-<span class="fc" id="L81">        map.value.forEach { (key, value) -&gt;</span>
-<span class="fc" id="L82">            when (value) {</span>
-<span class="pc bpc" id="L83" title="1 of 2 branches missed.">                is BooleanType -&gt; it[key] = value</span>
-<span class="pc bpc" id="L84" title="1 of 2 branches missed.">                is CodeType -&gt; it[key] = value</span>
-<span class="pc bpc" id="L85" title="1 of 2 branches missed.">                is NilType -&gt; it[key] = NilType</span>
-<span class="fc bfc" id="L86" title="All 2 branches covered.">                is NumberType -&gt; it[key] = value</span>
-<span class="fc bfc" id="L87" title="All 2 branches covered.">                is StringType -&gt; it[key] = value</span>
-<span class="pc bpc" id="L88" title="1 of 2 branches missed.">                is MapType -&gt; {</span>
-<span class="fc" id="L89">                    it[key] = toProxyMap(value); pop(1)</span>
+<span class="fc" id="L83">    return tableCreateMap(map.size).also {</span>
+<span class="fc" id="L84">        map.value.forEach { (key, value) -&gt;</span>
+<span class="fc" id="L85">            when (value) {</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">                is BooleanType -&gt; it[key] = value</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">                is DecimalType -&gt; it[key] = value</span>
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">                is CodeType -&gt; it[key] = value</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">                is NilType -&gt; it[key] = NilType</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">                is NumberType -&gt; it[key] = value</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">                is StringType -&gt; it[key] = value</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">                is MapType -&gt; {</span>
+<span class="fc" id="L93">                    it[key] = toProxyMap(value); pop(1)</span>
                 }
 
-<span class="nc bnc" id="L92" title="All 2 branches missed.">                is ArrayType -&gt; {</span>
-<span class="nc" id="L93">                    it[key] = toProxyArray(value); pop(1)</span>
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">                is ArrayType -&gt; {</span>
+<span class="fc" id="L97">                    it[key] = toProxyArray(value); pop(1)</span>
                 }
 
-<span class="nc" id="L96">                else -&gt; TODO(&quot;$value&quot;)</span>
+<span class="nc" id="L100">                else -&gt; TODO(&quot;$value&quot;)</span>
             }
-<span class="fc" id="L98">        }</span>
-<span class="fc" id="L99">    }</span>
+<span class="fc" id="L102">        }</span>
+<span class="fc" id="L103">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

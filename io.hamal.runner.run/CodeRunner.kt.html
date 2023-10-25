@@ -89,37 +89,38 @@ interface CodeRunner {
 <span class="fc" id="L89">                    log.debug(&quot;Failed exec: $execId&quot;)</span>
                 }
             } else {
-<span class="nc" id="L92">                connector.fail(</span>
-<span class="nc" id="L93">                    execId,</span>
-<span class="nc" id="L94">                    ExecResult(</span>
-<span class="nc bnc" id="L95" title="All 2 branches missed.">                        MapType(mutableMapOf(&quot;message&quot; to StringType(e.message ?: &quot;Unknown reason&quot;)))</span>
+<span class="nc" id="L92">                e.printStackTrace()</span>
+<span class="nc" id="L93">                connector.fail(</span>
+<span class="nc" id="L94">                    execId,</span>
+<span class="nc" id="L95">                    ExecResult(</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">                        MapType(mutableMapOf(&quot;message&quot; to StringType(e.message ?: &quot;Unknown reason&quot;)))</span>
                     )
                 )
-<span class="nc" id="L98">                log.debug(&quot;Failed exec: $execId&quot;)</span>
+<span class="nc" id="L99">                log.debug(&quot;Failed exec: $execId&quot;)</span>
             }
-<span class="nc" id="L100">        } catch (a: AssertionError) {</span>
-<span class="nc" id="L101">            a.printStackTrace()</span>
-<span class="nc" id="L102">            connector.fail(</span>
-<span class="nc" id="L103">                execId,</span>
-<span class="nc" id="L104">                ExecResult(</span>
-<span class="nc bnc" id="L105" title="All 2 branches missed.">                    MapType(mutableMapOf(&quot;message&quot; to StringType(a.message ?: &quot;Unknown reason&quot;)))</span>
+<span class="nc" id="L101">        } catch (a: AssertionError) {</span>
+<span class="nc" id="L102">            a.printStackTrace()</span>
+<span class="nc" id="L103">            connector.fail(</span>
+<span class="nc" id="L104">                execId,</span>
+<span class="nc" id="L105">                ExecResult(</span>
+<span class="nc bnc" id="L106" title="All 2 branches missed.">                    MapType(mutableMapOf(&quot;message&quot; to StringType(a.message ?: &quot;Unknown reason&quot;)))</span>
                 )
             )
-<span class="nc" id="L108">            log.debug(&quot;Assertion error: $execId - ${a.message}&quot;)</span>
-<span class="fc" id="L109">        } catch (t: Throwable) {</span>
-<span class="fc" id="L110">            t.printStackTrace()</span>
-<span class="fc" id="L111">            connector.fail(</span>
-<span class="fc" id="L112">                execId,</span>
-<span class="fc" id="L113">                ExecResult(</span>
-<span class="pc bpc" id="L114" title="1 of 2 branches missed.">                    MapType(mutableMapOf(&quot;message&quot; to StringType(t.message ?: &quot;Unknown reason&quot;)))</span>
+<span class="nc" id="L109">            log.debug(&quot;Assertion error: $execId - ${a.message}&quot;)</span>
+<span class="fc" id="L110">        } catch (t: Throwable) {</span>
+<span class="fc" id="L111">            t.printStackTrace()</span>
+<span class="fc" id="L112">            connector.fail(</span>
+<span class="fc" id="L113">                execId,</span>
+<span class="fc" id="L114">                ExecResult(</span>
+<span class="pc bpc" id="L115" title="1 of 2 branches missed.">                    MapType(mutableMapOf(&quot;message&quot; to StringType(t.message ?: &quot;Unknown reason&quot;)))</span>
                 )
             )
-<span class="fc" id="L117">            log.debug(&quot;Failed exec: $execId&quot;)</span>
+<span class="fc" id="L118">            log.debug(&quot;Failed exec: $execId&quot;)</span>
         }
-<span class="fc" id="L119">    }</span>
+<span class="fc" id="L120">    }</span>
 
     companion object {
-<span class="fc" id="L122">        private val log = logger(CodeRunnerImpl::class)</span>
+<span class="fc" id="L123">        private val log = logger(CodeRunnerImpl::class)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

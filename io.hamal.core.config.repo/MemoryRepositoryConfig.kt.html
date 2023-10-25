@@ -112,22 +112,31 @@ import org.springframework.context.annotation.Profile
 <span class="fc" id="L112">    open fun reqQueryRepository(): ReqQueryRepository = reqRepository()</span>
 
     @Bean
-<span class="fc" id="L115">    open fun stateRepository(): StateRepository = MemoryStateRepository()</span>
+<span class="fc" id="L115">    open fun snippetRepository() = MemorySnippetRepository()</span>
 
     @Bean
-<span class="fc" id="L118">    open fun stateCmdRepository(): StateCmdRepository = stateRepository()</span>
+<span class="fc" id="L118">    open fun snippetCmdRepository(): SnippetCmdRepository = snippetRepository()</span>
 
     @Bean
-<span class="fc" id="L121">    open fun stateQueryRepository(): StateQueryRepository = stateRepository()</span>
+<span class="fc" id="L121">    open fun snippetQueryRepository(): SnippetQueryRepository = snippetRepository()</span>
 
     @Bean
-<span class="fc" id="L124">    open fun triggerRepository(): TriggerRepository = MemoryTriggerRepository()</span>
+<span class="fc" id="L124">    open fun stateRepository(): StateRepository = MemoryStateRepository()</span>
 
     @Bean
-<span class="fc" id="L127">    open fun triggerCmdRepository(): TriggerCmdRepository = triggerRepository()</span>
+<span class="fc" id="L127">    open fun stateCmdRepository(): StateCmdRepository = stateRepository()</span>
 
     @Bean
-<span class="fc" id="L130">    open fun triggerQueryRepository(): TriggerQueryRepository = triggerRepository()</span>
+<span class="fc" id="L130">    open fun stateQueryRepository(): StateQueryRepository = stateRepository()</span>
+
+    @Bean
+<span class="fc" id="L133">    open fun triggerRepository(): TriggerRepository = MemoryTriggerRepository()</span>
+
+    @Bean
+<span class="fc" id="L136">    open fun triggerCmdRepository(): TriggerCmdRepository = triggerRepository()</span>
+
+    @Bean
+<span class="fc" id="L139">    open fun triggerQueryRepository(): TriggerQueryRepository = triggerRepository()</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

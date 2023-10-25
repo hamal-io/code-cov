@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HttpExecute.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.plugin.net.http.function</a> &gt; <span class="el_source">HttpExecute.kt</span></div><h1>HttpExecute.kt</h1><pre class="source lang-java linenums">package io.hamal.plugin.net.http.function
+
+import io.hamal.plugin.net.http.converter.convertToType
+import io.hamal.plugin.net.http.converter.toJson
+import io.hamal.lib.http.*
+import io.hamal.lib.kua.function.Function1In2Out
+import io.hamal.lib.kua.function.FunctionContext
+import io.hamal.lib.kua.function.FunctionInput1Schema
+import io.hamal.lib.kua.function.FunctionOutput2Schema
+import io.hamal.lib.kua.type.*
+import kotlinx.serialization.json.JsonElement
+
+
+<span class="fc" id="L14">class HttpExecuteFunction : Function1In2Out&lt;ArrayType, ErrorType, TableType&gt;(</span>
+<span class="fc" id="L15">    FunctionInput1Schema(ArrayType::class),</span>
+<span class="fc" id="L16">    FunctionOutput2Schema(ErrorType::class, TableType::class)</span>
+) {
+    override fun invoke(ctx: FunctionContext, arg1: ArrayType): Pair&lt;ErrorType?, TableType?&gt; {
+<span class="fc" id="L19">        val results = mutableListOf&lt;MapType&gt;()</span>
+<span class="fc bfc" id="L20" title="All 2 branches covered.">        for (idx in 0 until arg1.size) {</span>
+<span class="fc" id="L21">            val map = arg1.getMap(idx + 1)</span>
+
+<span class="fc" id="L23">            val method = map.getString(&quot;method&quot;)</span>
+<span class="fc" id="L24">            val url = map.getString(&quot;url&quot;)</span>
+
+<span class="fc" id="L26">            val headers = map.get(&quot;headers&quot;)</span>
+<span class="fc bfc" id="L27" title="All 2 branches covered.">            if (method == &quot;GET&quot;) {</span>
+<span class="fc" id="L28">                val template = HttpTemplateImpl().get(url).header(&quot;accept&quot;, &quot;application/json&quot;)</span>
+
+<span class="fc bfc" id="L30" title="All 2 branches covered.">                if (headers is MapType) {</span>
+<span class="fc" id="L31">                    headers.value.forEach { key, value -&gt;</span>
+<span class="fc" id="L32">                        template.header(</span>
+<span class="fc" id="L33">                            key,</span>
+<span class="fc" id="L34">                            when (value) {</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">                                is StringType -&gt; value.value</span>
+<span class="pc bpc" id="L36" title="1 of 2 branches missed.">                                is False -&gt; &quot;false&quot;</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">                                is True -&gt; &quot;true&quot;</span>
+<span class="pc bpc" id="L38" title="1 of 2 branches missed.">                                is CodeType -&gt; value.value</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">                                is DecimalType -&gt; value.toString()</span>
+<span class="pc bpc" id="L40" title="1 of 2 branches missed.">                                is ErrorType -&gt; value.value</span>
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">                                is NilType -&gt; &quot;&quot;</span>
+<span class="pc bpc" id="L42" title="1 of 2 branches missed.">                                is NumberType -&gt; value.value.toString()</span>
+<span class="nc bnc" id="L43" title="All 2 branches missed.">                                is AnySerializableType -&gt; TODO()</span>
+<span class="nc bnc" id="L44" title="All 2 branches missed.">                                is ArrayType -&gt; TODO()</span>
+<span class="nc" id="L45">                                is MapType -&gt; throw IllegalArgumentException(&quot;MapType not supported&quot;)</span>
+                            }
+                        )
+<span class="fc" id="L48">                    }</span>
+                }
+
+
+<span class="fc" id="L52">                val response = template.execute()</span>
+<span class="fc" id="L53">                results.add(response.toMap())</span>
+            }
+
+<span class="fc bfc" id="L56" title="All 2 branches covered.">            if (method == &quot;POST&quot;) {</span>
+
+<span class="fc" id="L58">                val json = map.get(&quot;json&quot;)</span>
+
+<span class="fc" id="L60">                val template = HttpTemplateImpl().post(url)</span>
+
+<span class="fc" id="L62">                template.header(&quot;accept&quot;, &quot;application/json&quot;)</span>
+<span class="fc" id="L63">                template.header(&quot;content-type&quot;, &quot;application/json&quot;)</span>
+
+                // FIXME
+<span class="fc bfc" id="L66" title="All 2 branches covered.">                if (json !is NilType) {</span>
+<span class="fc" id="L67">                    template.body(json.toJson())</span>
+                }
+
+<span class="fc bfc" id="L70" title="All 2 branches covered.">                if (headers is MapType) {</span>
+<span class="fc" id="L71">                    headers.value.forEach { key, value -&gt;</span>
+<span class="fc" id="L72">                        template.header(</span>
+<span class="fc" id="L73">                            key,</span>
+<span class="fc" id="L74">                            when (value) {</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">                                is StringType -&gt; value.value</span>
+<span class="pc bpc" id="L76" title="1 of 2 branches missed.">                                is False -&gt; &quot;false&quot;</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">                                is True -&gt; &quot;true&quot;</span>
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">                                is CodeType -&gt; value.value</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">                                is DecimalType -&gt; value.toString()</span>
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">                                is ErrorType -&gt; value.value</span>
+<span class="pc bpc" id="L81" title="1 of 2 branches missed.">                                is NilType -&gt; &quot;&quot;</span>
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">                                is NumberType -&gt; value.value.toString()</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">                                is AnySerializableType -&gt; TODO()</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">                                is ArrayType -&gt; TODO()</span>
+<span class="nc" id="L85">                                is MapType -&gt; throw IllegalArgumentException(&quot;MapType not supported&quot;)</span>
+                            }
+                        )
+<span class="fc" id="L88">                    }</span>
+                }
+
+<span class="fc" id="L91">                val response = template.execute()</span>
+<span class="fc" id="L92">                results.add(response.toMap())</span>
+            }
+
+
+<span class="fc bfc" id="L96" title="All 2 branches covered.">            if (method == &quot;PATCH&quot;) {</span>
+<span class="fc" id="L97">                val json = map.get(&quot;json&quot;)</span>
+
+<span class="fc" id="L99">                val template = HttpTemplateImpl().patch(url)</span>
+
+<span class="fc" id="L101">                template.header(&quot;accept&quot;, &quot;application/json&quot;)</span>
+<span class="fc" id="L102">                template.header(&quot;content-type&quot;, &quot;application/json&quot;)</span>
+
+                // FIXME
+<span class="fc bfc" id="L105" title="All 2 branches covered.">                if (json !is NilType) {</span>
+
+<span class="fc" id="L107">                    template.body(json.toJson())</span>
+                }
+
+<span class="fc bfc" id="L110" title="All 2 branches covered.">                if (headers is MapType) {</span>
+<span class="fc" id="L111">                    headers.value.forEach { key, value -&gt;</span>
+<span class="fc" id="L112">                        template.header(</span>
+<span class="fc" id="L113">                            key,</span>
+<span class="fc" id="L114">                            when (value) {</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">                                is StringType -&gt; value.value</span>
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">                                is False -&gt; &quot;false&quot;</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">                                is True -&gt; &quot;true&quot;</span>
+<span class="pc bpc" id="L118" title="1 of 2 branches missed.">                                is CodeType -&gt; value.value</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">                                is DecimalType -&gt; value.toString()</span>
+<span class="pc bpc" id="L120" title="1 of 2 branches missed.">                                is ErrorType -&gt; value.value</span>
+<span class="pc bpc" id="L121" title="1 of 2 branches missed.">                                is NilType -&gt; &quot;&quot;</span>
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">                                is NumberType -&gt; value.value.toString()</span>
+<span class="nc bnc" id="L123" title="All 2 branches missed.">                                is AnySerializableType -&gt; TODO()</span>
+<span class="nc bnc" id="L124" title="All 2 branches missed.">                                is ArrayType -&gt; TODO()</span>
+<span class="nc" id="L125">                                is MapType -&gt; throw IllegalArgumentException(&quot;MapType not supported&quot;)</span>
+                            }
+                        )
+<span class="fc" id="L128">                    }</span>
+                }
+
+<span class="fc" id="L131">                val response = template.execute()</span>
+<span class="fc" id="L132">                results.add(response.toMap())</span>
+            }
+
+<span class="fc bfc" id="L135" title="All 2 branches covered.">            if (method == &quot;PUT&quot;) {</span>
+<span class="fc" id="L136">                val json = map.get(&quot;json&quot;)</span>
+
+<span class="fc" id="L138">                val template = HttpTemplateImpl().put(url)</span>
+
+<span class="fc" id="L140">                template.header(&quot;accept&quot;, &quot;application/json&quot;)</span>
+<span class="fc" id="L141">                template.header(&quot;content-type&quot;, &quot;application/json&quot;)</span>
+
+<span class="fc bfc" id="L143" title="All 2 branches covered.">                if (headers is MapType) {</span>
+<span class="fc" id="L144">                    headers.value.forEach { key, value -&gt;</span>
+<span class="fc" id="L145">                        template.header(</span>
+<span class="fc" id="L146">                            key,</span>
+<span class="fc" id="L147">                            when (value) {</span>
+<span class="fc bfc" id="L148" title="All 2 branches covered.">                                is StringType -&gt; value.value</span>
+<span class="pc bpc" id="L149" title="1 of 2 branches missed.">                                is False -&gt; &quot;false&quot;</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">                                is True -&gt; &quot;true&quot;</span>
+<span class="pc bpc" id="L151" title="1 of 2 branches missed.">                                is CodeType -&gt; value.value</span>
+<span class="fc bfc" id="L152" title="All 2 branches covered.">                                is DecimalType -&gt; value.toString()</span>
+<span class="pc bpc" id="L153" title="1 of 2 branches missed.">                                is ErrorType -&gt; value.value</span>
+<span class="pc bpc" id="L154" title="1 of 2 branches missed.">                                is NilType -&gt; &quot;&quot;</span>
+<span class="pc bpc" id="L155" title="1 of 2 branches missed.">                                is NumberType -&gt; value.value.toString()</span>
+<span class="nc bnc" id="L156" title="All 2 branches missed.">                                is AnySerializableType -&gt; TODO()</span>
+<span class="nc bnc" id="L157" title="All 2 branches missed.">                                is ArrayType -&gt; TODO()</span>
+<span class="nc" id="L158">                                is MapType -&gt; throw IllegalArgumentException(&quot;MapType not supported&quot;)</span>
+                            }
+                        )
+<span class="fc" id="L161">                    }</span>
+                }
+
+                // FIXME
+<span class="fc bfc" id="L165" title="All 2 branches covered.">                if (json !is NilType) {</span>
+
+<span class="fc" id="L167">                    template.body(json.toJson())</span>
+                }
+
+<span class="fc" id="L170">                val response = template.execute()</span>
+<span class="fc" id="L171">                results.add(response.toMap())</span>
+            }
+
+<span class="fc bfc" id="L174" title="All 2 branches covered.">            if (method == &quot;DELETE&quot;) {</span>
+<span class="fc" id="L175">                val template = HttpTemplateImpl().delete(url).header(&quot;accept&quot;, &quot;application/json&quot;)</span>
+
+<span class="fc bfc" id="L177" title="All 2 branches covered.">                if (headers is MapType) {</span>
+<span class="fc" id="L178">                    headers.value.forEach { key, value -&gt;</span>
+<span class="fc" id="L179">                        template.header(</span>
+<span class="fc" id="L180">                            key,</span>
+<span class="fc" id="L181">                            when (value) {</span>
+<span class="fc bfc" id="L182" title="All 2 branches covered.">                                is StringType -&gt; value.value</span>
+<span class="pc bpc" id="L183" title="1 of 2 branches missed.">                                is False -&gt; &quot;false&quot;</span>
+<span class="fc bfc" id="L184" title="All 2 branches covered.">                                is True -&gt; &quot;true&quot;</span>
+<span class="pc bpc" id="L185" title="1 of 2 branches missed.">                                is CodeType -&gt; value.value</span>
+<span class="fc bfc" id="L186" title="All 2 branches covered.">                                is DecimalType -&gt; value.toString()</span>
+<span class="pc bpc" id="L187" title="1 of 2 branches missed.">                                is ErrorType -&gt; value.value</span>
+<span class="pc bpc" id="L188" title="1 of 2 branches missed.">                                is NilType -&gt; &quot;&quot;</span>
+<span class="pc bpc" id="L189" title="1 of 2 branches missed.">                                is NumberType -&gt; value.value.toString()</span>
+<span class="nc bnc" id="L190" title="All 2 branches missed.">                                is AnySerializableType -&gt; TODO()</span>
+<span class="nc bnc" id="L191" title="All 2 branches missed.">                                is ArrayType -&gt; TODO()</span>
+<span class="nc" id="L192">                                is MapType -&gt; throw IllegalArgumentException(&quot;MapType not supported&quot;)</span>
+                            }
+                        )
+<span class="fc" id="L195">                    }</span>
+                }
+
+<span class="fc" id="L198">                val response = template.execute()</span>
+<span class="fc" id="L199">                results.add(response.toMap())</span>
+            }
+
+        }
+
+<span class="fc" id="L204">        return null to ArrayType(results.mapIndexed { index, value -&gt; index + 1 to value }.toMap().toMutableMap())</span>
+    }
+}
+
+
+<span class="fc" id="L209">private fun HttpResponse.toMap() = MapType().also {</span>
+<span class="fc" id="L210">    it[&quot;status_code&quot;] = NumberType(statusCode.value)</span>
+<span class="fc bfc" id="L211" title="All 2 branches covered.">    it[&quot;content_type&quot;] = headers.find(&quot;content-type&quot;)?.let { type -&gt; StringType(type) } ?: NilType</span>
+<span class="fc bfc" id="L212" title="All 2 branches covered.">    it[&quot;content_length&quot;] = headers.find(&quot;content-length&quot;)?.let { length -&gt; NumberType(length.toInt()) } ?: NilType</span>
+<span class="fc" id="L213">    it[&quot;headers&quot;] = headers()</span>
+<span class="fc" id="L214">    it[&quot;content&quot;] = content()</span>
+<span class="fc" id="L215">}</span>
+
+<span class="fc" id="L217">private fun HttpResponse.content() = when (this) {</span>
+<span class="fc bfc" id="L218" title="All 2 branches covered.">    is SuccessHttpResponse -&gt; {</span>
+<span class="fc bfc" id="L219" title="All 2 branches covered.">        if (isNotEmpty) {</span>
+<span class="fc" id="L220">            val el = result(JsonElement::class)</span>
+<span class="fc" id="L221">            el.convertToType()</span>
+        } else {
+<span class="fc" id="L223">            MapType()</span>
+        }
+    }
+
+<span class="fc bfc" id="L227" title="All 2 branches covered.">    is ErrorHttpResponse -&gt; {</span>
+<span class="fc bfc" id="L228" title="All 2 branches covered.">        if (isNotEmpty) {</span>
+<span class="fc" id="L229">            val el = error(JsonElement::class)</span>
+<span class="fc" id="L230">            el.convertToType()</span>
+        } else {
+<span class="fc" id="L232">            MapType()</span>
+        }
+    }
+
+<span class="fc" id="L236">    else -&gt; NilType</span>
+<span class="fc" id="L237">}</span>
+
+
+<span class="fc" id="L240">private fun HttpResponse.headers() = MapType(</span>
+<span class="fc" id="L241">    headers.map {</span>
+<span class="fc" id="L242">        it.key.lowercase() to StringType(it.value)</span>
+<span class="fc" id="L243">    }.toMap().toMutableMap()</span>
+<span class="fc" id="L244">)</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

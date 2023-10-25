@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Playground.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.web3</a> &gt; <span class="el_source">Playground.kt</span></div><h1>Playground.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.web3
 
-import io.hamal.lib.http.HttpTemplate
+import io.hamal.lib.http.HttpTemplateImpl
 import io.hamal.lib.web3.Erc20.decimals
 import io.hamal.lib.web3.US.getReserves
 import io.hamal.lib.web3.eth.EthBatchService
@@ -54,7 +54,7 @@ object US{
 
 fun main() {
 <span class="nc" id="L56">    val srv = EthHttpBatchService(</span>
-<span class="nc" id="L57">        HttpTemplate(&quot;http://localhost:10001&quot;)</span>
+<span class="nc" id="L57">        HttpTemplateImpl(&quot;http://localhost:10001&quot;)</span>
     )
 
 <span class="nc" id="L60">    val response = srv</span>

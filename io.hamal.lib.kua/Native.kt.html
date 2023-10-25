@@ -22,7 +22,7 @@ import java.math.BigDecimal
     external fun getGlobal(key: String)
 
     external fun pushBoolean(value: Boolean): Int
-<span class="nc" id="L25">    fun pushDecimal(value: DecimalType): Int = pushDecimal(value.toBigDecimal().toString())</span>
+<span class="fc" id="L25">    fun pushDecimal(value: DecimalType): Int = pushDecimal(value.toBigDecimal().toString())</span>
     external fun pushDecimal(value: String): Int
 <span class="nc" id="L27">    fun pushError(error: ErrorType): Int = pushError(error.value)</span>
     external fun pushError(message: String): Int
@@ -34,7 +34,7 @@ import java.math.BigDecimal
     external fun pop(total: Int): Int
 
     external fun toBoolean(idx: Int): Boolean
-<span class="nc" id="L37">    fun toDecimal(idx: Int) = DecimalType(BigDecimal(toDecimalString(idx)))</span>
+<span class="fc" id="L37">    fun toDecimal(idx: Int) = DecimalType(BigDecimal(toDecimalString(idx)))</span>
     external fun toDecimalString(idx: Int): String
     external fun toError(idx: Int): ErrorType
     external fun toNumber(idx: Int): Double

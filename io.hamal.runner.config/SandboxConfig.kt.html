@@ -1,64 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SandboxConfig.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.runner.config</a> &gt; <span class="el_source">SandboxConfig.kt</span></div><h1>SandboxConfig.kt</h1><pre class="source lang-java linenums">package io.hamal.runner.config
 
-import io.hamal.extension.safe.std.decimal.DecimalSafeFactory
-import io.hamal.extension.safe.telegram.TelegramSafeFactory
-import io.hamal.extension.unsafe.net.http.HttpExtensionFactory
-import io.hamal.extension.unsafe.std.debug.DebugExtensionFactory
-import io.hamal.extension.unsafe.std.log.LogExtensionFactory
-import io.hamal.extension.unsafe.std.sys.SysExtensionFactory
+import io.hamal.script.std.decimal.DecimalScriptFactory
+import io.hamal.script.telegram.TelegramScriptFactory
+import io.hamal.plugin.net.http.HttpPluginFactory
+import io.hamal.plugin.std.debug.DebugPluginFactory
+import io.hamal.plugin.std.log.LogPluginFactory
+import io.hamal.plugin.web3.evm.EthPluginFactory
 import io.hamal.lib.domain.vo.ExecToken
-import io.hamal.lib.http.HttpTemplate
+import io.hamal.lib.http.HttpTemplateImpl
 import io.hamal.lib.kua.NativeLoader
 import io.hamal.lib.kua.NativeLoader.Preference.Jar
 import io.hamal.lib.kua.Sandbox
 import io.hamal.lib.kua.SandboxContext
 import io.hamal.lib.sdk.ApiSdkImpl
+import io.hamal.plugin.std.sys.SysPluginFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
-<span class="nc" id="L20">@Configuration</span>
-<span class="nc" id="L21">open class SandboxConfig {</span>
+<span class="nc" id="L21">@Configuration</span>
+<span class="nc" id="L22">open class SandboxConfig {</span>
     @Bean
     open fun sandboxFactory(
         @Value(&quot;\${io.hamal.runner.api.host}&quot;) apiHost: String,
         @Value(&quot;\${io.hamal.runner.bridge.host}&quot;) bridgeHost: String
-<span class="nc" id="L26">    ): SandboxFactory = RunnerSandboxFactory(</span>
-<span class="nc" id="L27">        apiHost, bridgeHost</span>
-<span class="nc" id="L28">    )</span>
+<span class="nc" id="L27">    ): SandboxFactory = RunnerSandboxFactory(</span>
+<span class="nc" id="L28">        apiHost, bridgeHost</span>
+<span class="nc" id="L29">    )</span>
 }
 
 interface SandboxFactory {
     fun create(ctx: SandboxContext): Sandbox
 }
 
-<span class="nc" id="L35">class RunnerSandboxFactory(</span>
-<span class="nc" id="L36">    private val apiHost: String,</span>
-<span class="nc" id="L37">    private val bridgeHost: String</span>
+<span class="nc" id="L36">class RunnerSandboxFactory(</span>
+<span class="nc" id="L37">    private val apiHost: String,</span>
+<span class="nc" id="L38">    private val bridgeHost: String</span>
 
 ) : SandboxFactory {
     override fun create(ctx: SandboxContext): Sandbox {
-<span class="nc" id="L41">        NativeLoader.load(Jar)</span>
+<span class="nc" id="L42">        NativeLoader.load(Jar)</span>
 
-<span class="nc" id="L43">        val execToken = ctx[ExecToken::class]</span>
-<span class="nc" id="L44">        val template = HttpTemplate(</span>
-<span class="nc" id="L45">            baseUrl = apiHost,</span>
+<span class="nc" id="L44">        val execToken = ctx[ExecToken::class]</span>
+<span class="nc" id="L45">        val template = HttpTemplateImpl(</span>
+<span class="nc" id="L46">            baseUrl = apiHost,</span>
             headerFactory = {
-<span class="nc" id="L47">                set(&quot;x-runner-exec-token&quot;, execToken.value)</span>
-<span class="nc" id="L48">            }</span>
+<span class="nc" id="L48">                set(&quot;x-runner-exec-token&quot;, execToken.value)</span>
+<span class="nc" id="L49">            }</span>
         )
-<span class="nc" id="L50">        val sdk = ApiSdkImpl(template)</span>
+<span class="nc" id="L51">        val sdk = ApiSdkImpl(template)</span>
 
-<span class="nc" id="L52">        return Sandbox(ctx)</span>
-<span class="nc" id="L53">            .register(</span>
-<span class="nc" id="L54">                HttpExtensionFactory(),</span>
-<span class="nc" id="L55">                LogExtensionFactory(sdk.execLog),</span>
-<span class="nc" id="L56">                DebugExtensionFactory(),</span>
-<span class="nc" id="L57">                SysExtensionFactory(HttpTemplate(apiHost)),</span>
+<span class="nc" id="L53">        return Sandbox(ctx)</span>
+<span class="nc" id="L54">            .register(</span>
+<span class="nc" id="L55">                HttpPluginFactory(),</span>
+<span class="nc" id="L56">                LogPluginFactory(sdk.execLog),</span>
+<span class="nc" id="L57">                DebugPluginFactory(),</span>
+<span class="nc" id="L58">                SysPluginFactory(HttpTemplateImpl(apiHost)),</span>
+<span class="nc" id="L59">                EthPluginFactory()</span>
             )
-<span class="nc" id="L59">            .register(</span>
-<span class="nc" id="L60">                DecimalSafeFactory,</span>
-<span class="nc" id="L61">                TelegramSafeFactory</span>
+<span class="nc" id="L61">            .register(</span>
+<span class="nc" id="L62">                DecimalScriptFactory,</span>
+<span class="nc" id="L63">                TelegramScriptFactory</span>
             )
     }
 }

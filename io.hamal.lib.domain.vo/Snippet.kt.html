@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Snippet.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.domain.vo</a> &gt; <span class="el_source">Snippet.kt</span></div><h1>Snippet.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.domain.vo
+
+import io.hamal.lib.common.snowflake.SnowflakeId
+import io.hamal.lib.common.domain.DomainId
+import io.hamal.lib.common.domain.DomainIdSerializer
+import io.hamal.lib.common.domain.DomainName
+import io.hamal.lib.common.domain.DomainNameSerializer
+import io.hamal.lib.domain.vo.base.Inputs
+import io.hamal.lib.domain.vo.base.InputsSerializer
+import io.hamal.lib.kua.type.MapType
+import kotlinx.serialization.Serializable
+
+
+<span class="nc" id="L14">@Serializable(with = SnippetId.Serializer::class)</span>
+<span class="fc" id="L15">class SnippetId(override val value: SnowflakeId) : DomainId() {</span>
+<span class="fc" id="L16">    constructor(value: Int) : this(SnowflakeId(value.toLong()))</span>
+<span class="fc" id="L17">    constructor(value: String) : this(SnowflakeId(value.toLong(16)))</span>
+
+<span class="fc" id="L19">    internal object Serializer : DomainIdSerializer&lt;SnippetId&gt;(::SnippetId)</span>
+}
+
+<span class="nc" id="L22">@Serializable(with = SnippetName.Serializer::class)</span>
+<span class="fc" id="L23">class SnippetName(override val value: String) : DomainName() {</span>
+<span class="fc" id="L24">    internal object Serializer : DomainNameSerializer&lt;SnippetName&gt;(::SnippetName)</span>
+}
+
+<span class="nc" id="L27">@Serializable(with = SnippetInputs.Serializer::class)</span>
+<span class="fc" id="L28">class SnippetInputs(override val value: MapType = MapType()) : Inputs() {</span>
+<span class="fc" id="L29">    internal object Serializer : InputsSerializer&lt;SnippetInputs&gt;(::SnippetInputs)</span>
+<span class="fc" id="L30">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

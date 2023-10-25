@@ -15,6 +15,7 @@ import io.hamal.repository.sqlite.record.func.SqliteFuncRepository
 import io.hamal.repository.sqlite.record.group.SqliteGroupRepository
 import io.hamal.repository.sqlite.record.hook.SqliteHookRepository
 import io.hamal.repository.sqlite.record.namespace.SqliteNamespaceRepository
+import io.hamal.repository.sqlite.record.snippet.SqliteSnippetRepository
 import io.hamal.repository.sqlite.record.trigger.SqliteTriggerRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -22,124 +23,133 @@ import org.springframework.context.annotation.Profile
 import kotlin.io.path.Path
 
 
-<span class="nc" id="L25">@Configuration</span>
+<span class="nc" id="L26">@Configuration</span>
 @Profile(&quot;sqlite&quot;)
-<span class="nc" id="L27">open class SqliteRepositoryConfig(backendBasePath: BackendBasePath) {</span>
+<span class="nc" id="L28">open class SqliteRepositoryConfig(backendBasePath: BackendBasePath) {</span>
 
     @Bean
-<span class="nc" id="L30">    open fun platformEventBrokerRepository() = SqliteBrokerRepository(SqliteBroker(path.resolve(&quot;platform-event&quot;)))</span>
+<span class="nc" id="L31">    open fun platformEventBrokerRepository() = SqliteBrokerRepository(SqliteBroker(path.resolve(&quot;platform-event&quot;)))</span>
 
     @Bean
-<span class="nc" id="L33">    open fun eventBrokerRepository() = SqliteBrokerRepository(SqliteBroker(path.resolve(&quot;event&quot;)))</span>
+<span class="nc" id="L34">    open fun eventBrokerRepository() = SqliteBrokerRepository(SqliteBroker(path.resolve(&quot;event&quot;)))</span>
 
     @Bean
-<span class="nc" id="L36">    open fun accountRepository() = SqliteAccountRepository(SqliteAccountRepository.Config(path))</span>
+<span class="nc" id="L37">    open fun accountRepository() = SqliteAccountRepository(SqliteAccountRepository.Config(path))</span>
 
     @Bean
-<span class="nc" id="L39">    open fun accountQueryRepository() = accountRepository()</span>
+<span class="nc" id="L40">    open fun accountQueryRepository() = accountRepository()</span>
 
     @Bean
-<span class="nc" id="L42">    open fun accountCmdRepository() = accountRepository()</span>
+<span class="nc" id="L43">    open fun accountCmdRepository() = accountRepository()</span>
 
     @Bean
-<span class="nc" id="L45">    open fun authRepository() = SqliteAuthRepository(SqliteAuthRepository.Config(path))</span>
+<span class="nc" id="L46">    open fun authRepository() = SqliteAuthRepository(SqliteAuthRepository.Config(path))</span>
 
     @Bean
-<span class="nc" id="L48">    open fun authQueryRepository() = authRepository()</span>
+<span class="nc" id="L49">    open fun authQueryRepository() = authRepository()</span>
 
     @Bean
-<span class="nc" id="L51">    open fun authCmdRepository() = authRepository()</span>
+<span class="nc" id="L52">    open fun authCmdRepository() = authRepository()</span>
 
     @Bean
-<span class="nc" id="L54">    open fun codeRepository() = SqliteCodeRepository(SqliteCodeRepository.Config(path))</span>
+<span class="nc" id="L55">    open fun codeRepository() = SqliteCodeRepository(SqliteCodeRepository.Config(path))</span>
 
     @Bean
-<span class="nc" id="L57">    open fun codeCmdRepository() = codeRepository()</span>
+<span class="nc" id="L58">    open fun codeCmdRepository() = codeRepository()</span>
 
     @Bean
-<span class="nc" id="L60">    open fun codeQueryRepository() = codeRepository()</span>
+<span class="nc" id="L61">    open fun codeQueryRepository() = codeRepository()</span>
 
     @Bean
-<span class="nc" id="L63">    open fun funcRepository() = SqliteFuncRepository(SqliteFuncRepository.Config(path))</span>
+<span class="nc" id="L64">    open fun funcRepository() = SqliteFuncRepository(SqliteFuncRepository.Config(path))</span>
 
     @Bean
-<span class="nc" id="L66">    open fun funcCmdRepository(): FuncCmdRepository = funcRepository()</span>
+<span class="nc" id="L67">    open fun funcCmdRepository(): FuncCmdRepository = funcRepository()</span>
 
     @Bean
-<span class="nc" id="L69">    open fun funcQueryRepository(): FuncQueryRepository = funcRepository()</span>
+<span class="nc" id="L70">    open fun funcQueryRepository(): FuncQueryRepository = funcRepository()</span>
 
     @Bean
-<span class="nc" id="L72">    open fun groupRepository() = SqliteGroupRepository(SqliteGroupRepository.Config(path))</span>
+<span class="nc" id="L73">    open fun groupRepository() = SqliteGroupRepository(SqliteGroupRepository.Config(path))</span>
 
     @Bean
-<span class="nc" id="L75">    open fun groupQueryRepository() = groupRepository()</span>
+<span class="nc" id="L76">    open fun groupQueryRepository() = groupRepository()</span>
 
     @Bean
-<span class="nc" id="L78">    open fun groupCmdRepository() = groupRepository()</span>
+<span class="nc" id="L79">    open fun groupCmdRepository() = groupRepository()</span>
 
     @Bean
-<span class="nc" id="L81">    open fun hookRepository() = SqliteHookRepository(SqliteHookRepository.Config(path))</span>
+<span class="nc" id="L82">    open fun hookRepository() = SqliteHookRepository(SqliteHookRepository.Config(path))</span>
 
     @Bean
-<span class="nc" id="L84">    open fun hookQueryRepository() = hookRepository()</span>
+<span class="nc" id="L85">    open fun hookQueryRepository() = hookRepository()</span>
 
     @Bean
-<span class="nc" id="L87">    open fun hookCmdRepository() = hookRepository()</span>
+<span class="nc" id="L88">    open fun hookCmdRepository() = hookRepository()</span>
 
     @Bean
-<span class="nc" id="L90">    open fun namespaceRepository() = SqliteNamespaceRepository(SqliteNamespaceRepository.Config(path))</span>
+<span class="nc" id="L91">    open fun namespaceRepository() = SqliteNamespaceRepository(SqliteNamespaceRepository.Config(path))</span>
 
     @Bean
-<span class="nc" id="L93">    open fun namespaceCmdRepository(): NamespaceCmdRepository = namespaceRepository()</span>
+<span class="nc" id="L94">    open fun namespaceCmdRepository(): NamespaceCmdRepository = namespaceRepository()</span>
 
     @Bean
-<span class="nc" id="L96">    open fun namespaceQueryRepository(): NamespaceQueryRepository = namespaceRepository()</span>
+<span class="nc" id="L97">    open fun namespaceQueryRepository(): NamespaceQueryRepository = namespaceRepository()</span>
 
     @Bean
-<span class="nc" id="L99">    open fun execRepository() = SqliteExecRepository(SqliteExecRepository.Config(path))</span>
+<span class="nc" id="L100">    open fun execRepository() = SqliteExecRepository(SqliteExecRepository.Config(path))</span>
 
     @Bean
-<span class="nc" id="L102">    open fun execCmdRepository(): ExecCmdRepository = execRepository()</span>
+<span class="nc" id="L103">    open fun execCmdRepository(): ExecCmdRepository = execRepository()</span>
 
     @Bean
-<span class="nc" id="L105">    open fun execQueryRepository(): ExecQueryRepository = execRepository()</span>
+<span class="nc" id="L106">    open fun execQueryRepository(): ExecQueryRepository = execRepository()</span>
 
     @Bean
-<span class="nc" id="L108">    open fun execLogRepository(): ExecLogRepository = MemoryExecLogRepository()</span>
+<span class="nc" id="L109">    open fun execLogRepository(): ExecLogRepository = MemoryExecLogRepository()</span>
 
     @Bean
-<span class="nc" id="L111">    open fun execLogCmdRepository(): ExecLogCmdRepository = execLogRepository()</span>
+<span class="nc" id="L112">    open fun execLogCmdRepository(): ExecLogCmdRepository = execLogRepository()</span>
 
     @Bean
-<span class="nc" id="L114">    open fun execLogQueryRepository(): ExecLogQueryRepository = execLogRepository()</span>
+<span class="nc" id="L115">    open fun execLogQueryRepository(): ExecLogQueryRepository = execLogRepository()</span>
 
     @Bean
-<span class="nc" id="L117">    open fun triggerRepository() = SqliteTriggerRepository(SqliteTriggerRepository.Config(path))</span>
+<span class="nc" id="L118">    open fun snippetRepository() = SqliteSnippetRepository(SqliteSnippetRepository.Config(path))</span>
 
     @Bean
-<span class="nc" id="L120">    open fun triggerCmdRepository(): TriggerCmdRepository = triggerRepository()</span>
+<span class="nc" id="L121">    open fun snippetCmdRepository(): SnippetCmdRepository = snippetRepository()</span>
 
     @Bean
-<span class="nc" id="L123">    open fun triggerQueryRepository(): TriggerQueryRepository = triggerRepository()</span>
+<span class="nc" id="L124">    open fun snippetQueryRepository(): SnippetQueryRepository = snippetRepository()</span>
 
     @Bean
-<span class="nc" id="L126">    open fun stateRepository() = SqliteStateRepository(SqliteStateRepository.Config(path))</span>
+<span class="nc" id="L127">    open fun triggerRepository() = SqliteTriggerRepository(SqliteTriggerRepository.Config(path))</span>
 
     @Bean
-<span class="nc" id="L129">    open fun stateCmdRepository(): StateCmdRepository = stateRepository()</span>
+<span class="nc" id="L130">    open fun triggerCmdRepository(): TriggerCmdRepository = triggerRepository()</span>
 
     @Bean
-<span class="nc" id="L132">    open fun stateQueryRepository(): StateQueryRepository = stateRepository()</span>
+<span class="nc" id="L133">    open fun triggerQueryRepository(): TriggerQueryRepository = triggerRepository()</span>
 
     @Bean
-<span class="nc" id="L135">    open fun reqRepository(): ReqRepository = MemoryReqRepository()</span>
+<span class="nc" id="L136">    open fun stateRepository() = SqliteStateRepository(SqliteStateRepository.Config(path))</span>
 
     @Bean
-<span class="nc" id="L138">    open fun reqCmdRepository(): ReqCmdRepository = reqRepository()</span>
+<span class="nc" id="L139">    open fun stateCmdRepository(): StateCmdRepository = stateRepository()</span>
 
     @Bean
-<span class="nc" id="L141">    open fun reqQueryRepository(): ReqQueryRepository = reqRepository()</span>
+<span class="nc" id="L142">    open fun stateQueryRepository(): StateQueryRepository = stateRepository()</span>
 
-<span class="nc" id="L143">    private val path = Path(backendBasePath.value)</span>
+    @Bean
+<span class="nc" id="L145">    open fun reqRepository(): ReqRepository = MemoryReqRepository()</span>
+
+    @Bean
+<span class="nc" id="L148">    open fun reqCmdRepository(): ReqCmdRepository = reqRepository()</span>
+
+    @Bean
+<span class="nc" id="L151">    open fun reqQueryRepository(): ReqQueryRepository = reqRepository()</span>
+
+<span class="nc" id="L153">    private val path = Path(backendBasePath.value)</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

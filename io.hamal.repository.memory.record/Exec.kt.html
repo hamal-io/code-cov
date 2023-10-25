@@ -46,7 +46,7 @@ internal object CurrentExecProjection {
 <span class="fc" id="L46">    }</span>
 }
 
-//FIXME this must be concurrent safe
+//FIXME this must be concurrent script
 internal object QueueProjection {
 <span class="fc" id="L51">    private val queue = mutableListOf&lt;QueuedExec&gt;()</span>
     fun add(exec: QueuedExec) {

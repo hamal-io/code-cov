@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TableProxyArray.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.kua.table</a> &gt; <span class="el_source">TableProxyArray.kt</span></div><h1>TableProxyArray.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.kua.table
 
-import io.hamal.lib.common.snowflake.SnowflakeId
 import io.hamal.lib.common.domain.DomainId
+import io.hamal.lib.common.snowflake.SnowflakeId
 import io.hamal.lib.kua.State
 import io.hamal.lib.kua.type.*
 import kotlin.reflect.KClass
@@ -20,10 +20,10 @@ import kotlin.reflect.KClass
 <span class="nc" id="L20">        return state.getBooleanValue(-1)</span>
     }
 
-<span class="nc" id="L23">    fun append(value: BooleanType) = append(value.value)</span>
+<span class="fc" id="L23">    fun append(value: BooleanType) = append(value.value)</span>
     fun append(value: Boolean): Int {
-<span class="nc" id="L25">        state.native.pushBoolean(value)</span>
-<span class="nc" id="L26">        return state.tableAppend(index)</span>
+<span class="fc" id="L25">        state.native.pushBoolean(value)</span>
+<span class="fc" id="L26">        return state.tableAppend(index)</span>
     }
 
 
@@ -46,36 +46,41 @@ import kotlin.reflect.KClass
 <span class="fc" id="L46">        return state.tableAppend(index)</span>
     }
 
-<span class="nc" id="L49">    fun append(value: DomainId) = append(value.value.value)</span>
-<span class="nc" id="L50">    fun append(value: SnowflakeId) = append(value.value.toString(16))</span>
+    fun append(value: DecimalType): Int {
+<span class="fc" id="L50">        state.native.pushDecimal(value)</span>
+<span class="fc" id="L51">        return state.tableAppend(index)</span>
+    }
 
-<span class="nc" id="L52">    fun getString(idx: Int) = getStringType(idx).value</span>
+<span class="nc" id="L54">    fun append(value: DomainId) = append(value.value.value)</span>
+<span class="nc" id="L55">    fun append(value: SnowflakeId) = append(value.value.toString(16))</span>
+
+<span class="nc" id="L57">    fun getString(idx: Int) = getStringType(idx).value</span>
     fun getStringType(idx: Int): StringType {
-<span class="nc" id="L54">        val type = state.tableGetRawIdx(index, idx)</span>
-<span class="nc" id="L55">        type.checkExpectedType(StringType::class)</span>
-<span class="nc" id="L56">        return state.getStringType(-1)</span>
+<span class="nc" id="L59">        val type = state.tableGetRawIdx(index, idx)</span>
+<span class="nc" id="L60">        type.checkExpectedType(StringType::class)</span>
+<span class="nc" id="L61">        return state.getStringType(-1)</span>
     }
 
-<span class="fc" id="L59">    fun append(value: StringType) = append(value.value)</span>
+<span class="fc" id="L64">    fun append(value: StringType) = append(value.value)</span>
     fun append(value: String): Int {
-<span class="fc" id="L61">        state.native.pushString(value)</span>
-<span class="fc" id="L62">        return state.tableAppend(index)</span>
-    }
-
-    fun append(value: TableProxyMap): Int {
-<span class="fc" id="L66">        state.pushTable(value)</span>
+<span class="fc" id="L66">        state.native.pushString(value)</span>
 <span class="fc" id="L67">        return state.tableAppend(index)</span>
     }
 
-    fun append(value: TableProxyArray): Int {
+    fun append(value: TableProxyMap): Int {
 <span class="fc" id="L71">        state.pushTable(value)</span>
 <span class="fc" id="L72">        return state.tableAppend(index)</span>
+    }
+
+    fun append(value: TableProxyArray): Int {
+<span class="fc" id="L76">        state.pushTable(value)</span>
+<span class="fc" id="L77">        return state.tableAppend(index)</span>
     }
 }
 
 private fun KClass&lt;out Type&gt;.checkExpectedType(expected: KClass&lt;out Type&gt;) {
-<span class="nc bnc" id="L77" title="All 2 branches missed.">    check(this == expected) {</span>
-<span class="nc" id="L78">        &quot;Expected type to be $expected but was $this&quot;</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">    check(this == expected) {</span>
+<span class="nc" id="L83">        &quot;Expected type to be $expected but was $this&quot;</span>
     }
-<span class="nc" id="L80">}</span>
+<span class="nc" id="L85">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

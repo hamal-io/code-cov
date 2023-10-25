@@ -102,112 +102,114 @@ interface State {
     override fun getAny(idx: Int): AnyType {
 <span class="fc" id="L103">        return when (val type = type(idx)) {</span>
 <span class="fc bfc" id="L104" title="All 2 branches covered.">            BooleanType::class -&gt; AnyType(getBooleanValue(idx))</span>
-<span class="fc bfc" id="L105" title="All 2 branches covered.">            NumberType::class -&gt; AnyType(getNumberType(idx))</span>
-<span class="fc bfc" id="L106" title="All 2 branches covered.">            StringType::class -&gt; AnyType(getStringType(idx))</span>
-<span class="pc bpc" id="L107" title="1 of 2 branches missed.">            TableType::class -&gt; {</span>
-<span class="fc bfc" id="L108" title="All 2 branches covered.">                if (native.tableGetLength(idx) &gt; 0) {</span>
-<span class="fc" id="L109">                    when (tableKeyType(idx)) {</span>
-<span class="fc bfc" id="L110" title="All 2 branches covered.">                        StringType::class -&gt; AnyType(getMapType(idx))</span>
-<span class="pc bpc" id="L111" title="1 of 2 branches missed.">                        NumberType::class -&gt; AnyType(getArrayType(idx))</span>
-<span class="nc" id="L112">                        else -&gt; throw IllegalStateException(&quot;Must either be number or string&quot;)</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">            DecimalType::class -&gt; AnyType(native.toDecimal(idx))</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">            NumberType::class -&gt; AnyType(getNumberType(idx))</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">            StringType::class -&gt; AnyType(getStringType(idx))</span>
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">            TableType::class -&gt; {</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">                if (native.tableGetLength(idx) &gt; 0) {</span>
+<span class="fc" id="L110">                    when (tableKeyType(idx)) {</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">                        StringType::class -&gt; AnyType(getMapType(idx))</span>
+<span class="pc bpc" id="L112" title="1 of 2 branches missed.">                        NumberType::class -&gt; AnyType(getArrayType(idx))</span>
+<span class="nc" id="L113">                        else -&gt; throw IllegalStateException(&quot;Must either be number or string&quot;)</span>
                     }
                 } else {
-<span class="fc" id="L115">                    AnyType(ArrayType())</span>
+<span class="fc" id="L116">                    AnyType(ArrayType())</span>
                 }
             } // FIXME what about table and array ?
-<span class="nc" id="L118">            else -&gt; TODO(&quot;$type not supported yet&quot;)</span>
+<span class="nc" id="L119">            else -&gt; TODO(&quot;$type not supported yet&quot;)</span>
         }
     }
 
     override fun getArrayType(idx: Int): ArrayType {
-<span class="fc" id="L123">        val ref = TableProxyArray(absIndex(idx), this)</span>
-<span class="fc" id="L124">        return toArrayType(ref)</span>
+<span class="fc" id="L124">        val ref = TableProxyArray(absIndex(idx), this)</span>
+<span class="fc" id="L125">        return toArrayType(ref)</span>
     }
 
-<span class="fc" id="L127">    override fun pushBoolean(value: Boolean): StackTop = StackTop(native.pushBoolean(value))</span>
-<span class="fc" id="L128">    override fun getBoolean(idx: Int): Boolean = native.toBoolean(idx)</span>
-<span class="fc" id="L129">    override fun pushError(value: ErrorType) = StackTop(native.pushError(value.value))</span>
-<span class="fc" id="L130">    override fun pushFunction(value: FunctionType&lt;*, *, *, *&gt;) = StackTop(native.pushFunction(value))</span>
+<span class="fc" id="L128">    override fun pushBoolean(value: Boolean): StackTop = StackTop(native.pushBoolean(value))</span>
+<span class="fc" id="L129">    override fun getBoolean(idx: Int): Boolean = native.toBoolean(idx)</span>
+<span class="fc" id="L130">    override fun pushError(value: ErrorType) = StackTop(native.pushError(value.value))</span>
+<span class="fc" id="L131">    override fun pushFunction(value: FunctionType&lt;*, *, *, *&gt;) = StackTop(native.pushFunction(value))</span>
 
-<span class="fc" id="L132">    override fun getNumber(idx: Int) = native.toNumber(idx)</span>
-<span class="fc" id="L133">    override fun pushNumber(value: Double) = StackTop(native.pushNumber(value))</span>
-<span class="fc" id="L134">    override fun getString(idx: Int) = native.toString(idx)</span>
-<span class="fc" id="L135">    override fun pushString(value: String) = StackTop(native.pushString(value))</span>
+<span class="fc" id="L133">    override fun getNumber(idx: Int) = native.toNumber(idx)</span>
+<span class="fc" id="L134">    override fun pushNumber(value: Double) = StackTop(native.pushNumber(value))</span>
+<span class="fc" id="L135">    override fun getString(idx: Int) = native.toString(idx)</span>
+<span class="fc" id="L136">    override fun pushString(value: String) = StackTop(native.pushString(value))</span>
 
-<span class="fc" id="L137">    override fun pushTable(proxy: TableProxyMap) = StackTop(native.pushTop(proxy.index))</span>
-<span class="fc" id="L138">    override fun pushTable(proxy: TableProxyArray) = StackTop(native.pushTop(proxy.index))</span>
-
-    //FIXME type check
-<span class="fc" id="L141">    override fun getTableMapProxy(idx: Int): TableProxyMap = TableProxyMap(absIndex(idx), this)</span>
+<span class="fc" id="L138">    override fun pushTable(proxy: TableProxyMap) = StackTop(native.pushTop(proxy.index))</span>
+<span class="fc" id="L139">    override fun pushTable(proxy: TableProxyArray) = StackTop(native.pushTop(proxy.index))</span>
 
     //FIXME type check
-<span class="fc" id="L144">    override fun getTableArrayProxy(idx: Int): TableProxyArray = TableProxyArray(absIndex(idx), this)</span>
+<span class="fc" id="L142">    override fun getTableMapProxy(idx: Int): TableProxyMap = TableProxyMap(absIndex(idx), this)</span>
+
+    //FIXME type check
+<span class="fc" id="L145">    override fun getTableArrayProxy(idx: Int): TableProxyArray = TableProxyArray(absIndex(idx), this)</span>
 
     override fun getMapType(idx: Int): MapType {
-<span class="fc" id="L147">        val ref = TableProxyMap(absIndex(idx), this)</span>
-<span class="fc" id="L148">        return toMapType(ref)</span>
+<span class="fc" id="L148">        val ref = TableProxyMap(absIndex(idx), this)</span>
+<span class="fc" id="L149">        return toMapType(ref)</span>
     }
 
     override fun setGlobal(name: String, value: FunctionType&lt;*, *, *, *&gt;) {
-<span class="fc" id="L152">        native.pushFunction(value)</span>
-<span class="fc" id="L153">        native.setGlobal(name)</span>
-<span class="fc" id="L154">    }</span>
+<span class="fc" id="L153">        native.pushFunction(value)</span>
+<span class="fc" id="L154">        native.setGlobal(name)</span>
+<span class="fc" id="L155">    }</span>
 
     override fun setGlobal(name: String, value: TableProxyMap) {
-<span class="fc" id="L157">        native.pushTop(value.index)</span>
-<span class="fc" id="L158">        native.setGlobal(name)</span>
-<span class="fc" id="L159">    }</span>
+<span class="fc" id="L158">        native.pushTop(value.index)</span>
+<span class="fc" id="L159">        native.setGlobal(name)</span>
+<span class="fc" id="L160">    }</span>
 
     override fun setGlobal(name: String, value: TableProxyArray) {
-<span class="fc" id="L162">        native.pushTop(value.index)</span>
-<span class="fc" id="L163">        native.setGlobal(name)</span>
-<span class="fc" id="L164">    }</span>
+<span class="fc" id="L163">        native.pushTop(value.index)</span>
+<span class="fc" id="L164">        native.setGlobal(name)</span>
+<span class="fc" id="L165">    }</span>
 
     override fun getGlobalTableMap(name: String): TableProxyMap {
-<span class="fc" id="L167">        native.getGlobal(name)</span>
-<span class="fc" id="L168">        return getTableMapProxy(top.value)</span>
+<span class="fc" id="L168">        native.getGlobal(name)</span>
+<span class="fc" id="L169">        return getTableMapProxy(top.value)</span>
     }
 
     override fun unsetGlobal(name: String) {
-<span class="fc" id="L172">        native.pushNil()</span>
-<span class="fc" id="L173">        native.setGlobal(name)</span>
-<span class="fc" id="L174">    }</span>
+<span class="fc" id="L173">        native.pushNil()</span>
+<span class="fc" id="L174">        native.setGlobal(name)</span>
+<span class="fc" id="L175">    }</span>
 
     override fun tableCreateMap(capacity: Int): TableProxyMap {
-<span class="fc" id="L177">        return TableProxyMap(</span>
-<span class="fc" id="L178">            index = native.tableCreate(0, capacity),</span>
-<span class="fc" id="L179">            state = this</span>
+<span class="fc" id="L178">        return TableProxyMap(</span>
+<span class="fc" id="L179">            index = native.tableCreate(0, capacity),</span>
+<span class="fc" id="L180">            state = this</span>
         )
     }
 
     override fun tableCreateArray(capacity: Int): TableProxyArray {
-<span class="fc" id="L184">        return TableProxyArray(</span>
-<span class="fc" id="L185">            index = native.tableCreate(capacity, 0),</span>
-<span class="fc" id="L186">            state = this</span>
+<span class="fc" id="L185">        return TableProxyArray(</span>
+<span class="fc" id="L186">            index = native.tableCreate(capacity, 0),</span>
+<span class="fc" id="L187">            state = this</span>
         )
     }
 
-<span class="fc" id="L190">    override fun tableAppend(idx: Int) = native.tableAppend(idx)</span>
-<span class="fc" id="L191">    override fun tableSetRaw(idx: Int) = native.tableSetRaw(idx)</span>
-<span class="nc" id="L192">    override fun tableSetRawIdx(stackIdx: Int, tableIdx: Int) = native.tableSetRawIdx(stackIdx, tableIdx)</span>
-<span class="fc" id="L193">    override fun tableGetRaw(idx: Int) = luaToType(native.tableGetRaw(idx))</span>
-<span class="nc" id="L194">    override fun tableGetRawIdx(stackIdx: Int, tableIdx: Int) = luaToType(native.tableGetRawIdx(stackIdx, tableIdx))</span>
+<span class="fc" id="L191">    override fun tableAppend(idx: Int) = native.tableAppend(idx)</span>
+<span class="fc" id="L192">    override fun tableSetRaw(idx: Int) = native.tableSetRaw(idx)</span>
+<span class="nc" id="L193">    override fun tableSetRawIdx(stackIdx: Int, tableIdx: Int) = native.tableSetRawIdx(stackIdx, tableIdx)</span>
+<span class="fc" id="L194">    override fun tableGetRaw(idx: Int) = luaToType(native.tableGetRaw(idx))</span>
+<span class="nc" id="L195">    override fun tableGetRawIdx(stackIdx: Int, tableIdx: Int) = luaToType(native.tableGetRawIdx(stackIdx, tableIdx))</span>
 
     override fun load(code: String) {
-<span class="fc" id="L197">        native.load(code)</span>
-<span class="fc" id="L198">    }</span>
+<span class="fc" id="L198">        native.load(code)</span>
+<span class="fc" id="L199">    }</span>
 
     override fun close() {
-<span class="fc" id="L201">        native.close()</span>
-<span class="fc" id="L202">    }</span>
+<span class="fc" id="L202">        native.close()</span>
+<span class="fc" id="L203">    }</span>
 }
 
-<span class="pc bpc" id="L205" title="2 of 6 branches missed.">private fun luaToType(value: Int) = when (value) {</span>
+<span class="pc bpc" id="L206" title="2 of 7 branches missed.">private fun luaToType(value: Int) = when (value) {</span>
     0 -&gt; NilType::class
     1 -&gt; BooleanType::class
     3 -&gt; NumberType::class
     4 -&gt; StringType::class
     5 -&gt; TableType::class
-<span class="nc" id="L211">    else -&gt; TODO(&quot;$value not implemented yet&quot;)</span>
-<span class="fc" id="L212">}</span>
+    11 -&gt; DecimalType::class
+<span class="nc" id="L213">    else -&gt; TODO(&quot;$value not implemented yet&quot;)</span>
+<span class="fc" id="L214">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

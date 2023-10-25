@@ -4,7 +4,7 @@ import io.hamal.lib.http.HttpRequest.HttpMethod
 import io.hamal.lib.http.HttpRequest.HttpMethod.*
 import org.apache.http.impl.client.HttpClientBuilder
 
-interface HttpOperations {
+interface HttpTemplate {
     fun delete(url: String): HttpRequest
     fun get(url: String): HttpRequest
     fun patch(url: String): HttpRequestWithBody
@@ -12,19 +12,19 @@ interface HttpOperations {
     fun put(url: String): HttpRequestWithBody
 }
 
-<span class="fc" id="L15">class HttpTemplate(</span>
+<span class="fc" id="L15">class HttpTemplateImpl(</span>
 <span class="fc" id="L16">    private var baseUrl: String = &quot;&quot;,</span>
 <span class="fc" id="L17">    private val headerFactory: HttpMutableHeaders.() -&gt; Unit = {},</span>
 <span class="fc" id="L18">    private var serdeFactory: HttpSerdeFactory.() -&gt; Unit = {},</span>
 <span class="fc" id="L19">    private var httpClientFactory: HttpClientBuilder.() -&gt; Unit = {}</span>
-) : HttpOperations {
+) : HttpTemplate {
 <span class="fc" id="L21">    override fun delete(url: String): HttpRequest = requestWith(Delete, url)</span>
 <span class="fc" id="L22">    override fun get(url: String): HttpRequest = requestWith(Get, url)</span>
 <span class="fc" id="L23">    override fun patch(url: String): HttpRequestWithBody = requestWith(Patch, url)</span>
 <span class="fc" id="L24">    override fun post(url: String): HttpRequestWithBody = requestWith(Post, url)</span>
 <span class="fc" id="L25">    override fun put(url: String): HttpRequestWithBody = requestWith(Put, url)</span>
-    private fun requestWith(method: HttpMethod, url: String): DefaultHttpRequest {
-<span class="fc" id="L27">        return DefaultHttpRequest(</span>
+    private fun requestWith(method: HttpMethod, url: String): HttpRequestImpl {
+<span class="fc" id="L27">        return HttpRequestImpl(</span>
 <span class="fc" id="L28">            method = method,</span>
 <span class="fc" id="L29">            url = baseUrl + url,</span>
 <span class="fc" id="L30">            headers = HttpMutableHeaders().apply(headerFactory),</span>

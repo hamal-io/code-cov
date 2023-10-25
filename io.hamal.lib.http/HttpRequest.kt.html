@@ -49,7 +49,7 @@ interface HttpRequestWithBody : HttpRequest {
 inline fun &lt;reified BODY_TYPE : Any&gt; HttpRequestWithBody.body(body: BODY_TYPE): HttpRequestWithBody =
     body(body, BODY_TYPE::class)
 
-<span class="fc" id="L52">class DefaultHttpRequest(</span>
+<span class="fc" id="L52">class HttpRequestImpl(</span>
 <span class="fc" id="L53">    override var url: String,</span>
 <span class="fc" id="L54">    override val method: HttpRequest.HttpMethod,</span>
 <span class="fc" id="L55">    override val serdeFactory: HttpSerdeFactory,</span>
@@ -59,7 +59,7 @@ inline fun &lt;reified BODY_TYPE : Any&gt; HttpRequestWithBody.body(body: BODY_T
 
 <span class="fc" id="L60">    private val parameters = mutableListOf&lt;HttpParameter&gt;()</span>
 <span class="fc" id="L61">    private val bodies = mutableListOf&lt;HttpBody&gt;()</span>
-    override fun &lt;BODY_TYPE : Any&gt; body(body: BODY_TYPE, clazz: KClass&lt;BODY_TYPE&gt;): DefaultHttpRequest {
+    override fun &lt;BODY_TYPE : Any&gt; body(body: BODY_TYPE, clazz: KClass&lt;BODY_TYPE&gt;): HttpRequestImpl {
 <span class="fc" id="L63">        val serializer = serdeFactory.contentSerializer</span>
 <span class="fc" id="L64">        bodies.add(</span>
 <span class="fc" id="L65">            HttpStringBody(</span>
@@ -93,22 +93,22 @@ inline fun &lt;reified BODY_TYPE : Any&gt; HttpRequestWithBody.body(body: BODY_T
 <span class="nc" id="L93">        return this</span>
     }
 
-    override fun path(key: String, value: String): DefaultHttpRequest {
+    override fun path(key: String, value: String): HttpRequestImpl {
 <span class="fc" id="L97">        url = url.replace(&quot;{${key}}&quot;, value)</span>
 <span class="fc" id="L98">        return this</span>
     }
 
-    override fun header(key: String, value: String): DefaultHttpRequest {
+    override fun header(key: String, value: String): HttpRequestImpl {
 <span class="fc" id="L102">        headers[key] = value</span>
 <span class="fc" id="L103">        return this</span>
     }
 
-    override fun parameter(key: String, value: String): DefaultHttpRequest {
+    override fun parameter(key: String, value: String): HttpRequestImpl {
 <span class="fc" id="L107">        parameters.add(HttpParameter(key, value))</span>
 <span class="fc" id="L108">        return this</span>
     }
 
-    override fun parameter(key: String, value: Number): DefaultHttpRequest {
+    override fun parameter(key: String, value: Number): HttpRequestImpl {
 <span class="fc" id="L112">        parameters.add(HttpParameter(key, value))</span>
 <span class="fc" id="L113">        return this</span>
     }
@@ -128,7 +128,7 @@ inline fun &lt;reified BODY_TYPE : Any&gt; HttpRequestWithBody.body(body: BODY_T
 <span class="nc" id="L128">        return this</span>
     }
 
-    override fun parameter(key: String, value: Boolean): DefaultHttpRequest {
+    override fun parameter(key: String, value: Boolean): HttpRequestImpl {
 <span class="fc" id="L132">        parameters.add(HttpParameter(key, value))</span>
 <span class="fc" id="L133">        return this</span>
     }

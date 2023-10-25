@@ -200,6 +200,6 @@ internal interface HttpRequestFacade {
 }
 
 internal fun HttpHeaders.toBasicHeaders(): List&lt;BasicHeader&gt; {
-<span class="fc" id="L203">    return mapping.map { BasicHeader(it.key, it.value) }</span>
+<span class="fc" id="L203">    return map { BasicHeader(it.key, it.value) }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BridgeConfig.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.runner.config</a> &gt; <span class="el_source">BridgeConfig.kt</span></div><h1>BridgeConfig.kt</h1><pre class="source lang-java linenums">package io.hamal.runner.config
 
-import io.hamal.lib.http.HttpTemplate
+import io.hamal.lib.http.HttpTemplateImpl
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration
     @Bean
     open fun httpTemplate(
         @Value(&quot;\${io.hamal.runner.bridge.host}&quot;) host: String
-<span class="nc" id="L13">    ) = HttpTemplate(</span>
+<span class="nc" id="L13">    ) = HttpTemplateImpl(</span>
 <span class="nc" id="L14">        baseUrl = host,</span>
 <span class="nc" id="L15">        headerFactory = {</span>
 <span class="nc" id="L16">            set(&quot;x-runner-token&quot;, &quot;i_am_runner_let_me_in&quot;)</span>
