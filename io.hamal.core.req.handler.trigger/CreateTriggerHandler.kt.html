@@ -53,7 +53,7 @@ import org.springframework.stereotype.Component
 <span class="fc" id="L53">                        name = req.name,</span>
 <span class="fc" id="L54">                        correlationId = req.correlationId,</span>
 <span class="fc" id="L55">                        funcId = req.funcId,</span>
-<span class="pc bpc" id="L56" title="1 of 2 branches missed.">                        namespaceId = req.namespaceId ?: namespaceQueryRepository.get(NamespaceName(&quot;hamal&quot;)).id,</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">                        namespaceId = req.namespaceId ?: namespaceQueryRepository.get(NamespaceName(&quot;hamal&quot;)).id,</span>
 <span class="fc" id="L57">                        inputs = req.inputs,</span>
 <span class="fc" id="L58">                        topicId = topic.id,</span>
                     )
@@ -71,7 +71,7 @@ import org.springframework.stereotype.Component
 <span class="fc" id="L71">                        name = req.name,</span>
 <span class="fc" id="L72">                        correlationId = req.correlationId,</span>
 <span class="fc" id="L73">                        funcId = req.funcId,</span>
-<span class="pc bpc" id="L74" title="1 of 2 branches missed.">                        namespaceId = req.namespaceId ?: namespaceQueryRepository.get(NamespaceName(&quot;hamal&quot;)).id,</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">                        namespaceId = req.namespaceId ?: namespaceQueryRepository.get(NamespaceName(&quot;hamal&quot;)).id,</span>
 <span class="fc" id="L75">                        inputs = req.inputs,</span>
 <span class="fc" id="L76">                        hookId = hook.id,</span>
 <span class="pc bpc" id="L77" title="1 of 2 branches missed.">                        hookMethods = req.hookMethods ?: setOf(Post)</span>

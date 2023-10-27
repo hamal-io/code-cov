@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Extension.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.repository.memory.record</a> &gt; <span class="el_source">Extension.kt</span></div><h1>Extension.kt</h1><pre class="source lang-java linenums">package io.hamal.repository.memory.record
+
+import io.hamal.lib.domain.vo.ExtensionId
+import io.hamal.repository.api.Extension
+import io.hamal.repository.api.ExtensionCmdRepository.CreateCmd
+import io.hamal.repository.api.ExtensionCmdRepository.UpdateCmd
+import io.hamal.repository.api.ExtensionQueryRepository.ExtensionQuery
+import io.hamal.repository.api.ExtensionRepository
+import io.hamal.repository.record.extension.CreateExtensionFromRecords
+import io.hamal.repository.record.extension.ExtensionCreationRecord
+import io.hamal.repository.record.extension.ExtensionRecord
+import io.hamal.repository.record.extension.ExtensionUpdatedRecord
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
+
+internal object CurrentExtensionProjection {
+<span class="fc" id="L17">    private val projection = mutableMapOf&lt;ExtensionId, Extension&gt;()</span>
+    fun apply(ext: Extension) {
+<span class="fc" id="L19">        val currentExt = projection[ext.id]</span>
+<span class="fc" id="L20">        projection.remove(ext.id)</span>
+
+<span class="fc" id="L22">        val extInGroup = projection.values.filter { it.groupId == ext.groupId }</span>
+<span class="pc bpc" id="L23" title="1 of 2 branches missed.">        if (extInGroup.any { it.name == ext.name }) {</span>
+<span class="nc bnc" id="L24" title="All 2 branches missed.">            if (currentExt != null) {</span>
+<span class="nc" id="L25">                projection[currentExt.id] = currentExt</span>
+            }
+<span class="nc" id="L27">            throw IllegalArgumentException(&quot;${ext.name} already exists in group ${ext.groupId}&quot;)</span>
+        }
+
+<span class="fc" id="L30">        projection[ext.id] = ext</span>
+<span class="fc" id="L31">    }</span>
+
+<span class="fc" id="L33">    fun find(extId: ExtensionId): Extension? = projection[extId]</span>
+
+    fun list(query: ExtensionQuery): List&lt;Extension&gt; {
+<span class="pc bpc" id="L36" title="3 of 4 branches missed.">        return projection.filter { query.extIds.isEmpty() || it.key in query.extIds }</span>
+<span class="fc" id="L37">            .map { it.value }</span>
+<span class="fc" id="L38">            .reversed()</span>
+<span class="fc" id="L39">            .asSequence()</span>
+<span class="pc bpc" id="L40" title="1 of 2 branches missed.">            .filter { if (query.groupIds.isEmpty()) true else query.groupIds.contains(it.groupId) }</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">            .dropWhile { it.id &gt;= query.afterId }</span>
+<span class="fc" id="L42">            .take(query.limit.value)</span>
+<span class="fc" id="L43">            .toList()</span>
+    }
+
+    fun count(query: ExtensionQuery): ULong {
+<span class="nc bnc" id="L47" title="All 4 branches missed.">        return projection.filter { query.extIds.isEmpty() || it.key in query.extIds }</span>
+<span class="nc" id="L48">            .map { it.value }</span>
+<span class="nc" id="L49">            .reversed()</span>
+<span class="nc" id="L50">            .asSequence()</span>
+<span class="nc bnc" id="L51" title="All 2 branches missed.">            .filter { if (query.groupIds.isEmpty()) true else query.groupIds.contains(it.groupId) }</span>
+<span class="nc bnc" id="L52" title="All 2 branches missed.">            .dropWhile { it.id &gt;= query.afterId }</span>
+<span class="nc" id="L53">            .count()</span>
+<span class="nc" id="L54">            .toULong()</span>
+    }
+
+    fun clear() {
+<span class="fc" id="L58">        projection.clear()</span>
+<span class="fc" id="L59">    }</span>
+}
+
+<span class="pc" id="L62">class MemoryExtensionRepository : MemoryRecordRepository&lt;ExtensionId, ExtensionRecord, Extension&gt;(</span>
+<span class="fc" id="L63">    createDomainObject = CreateExtensionFromRecords,</span>
+    recordClass = ExtensionRecord::class
+), ExtensionRepository {
+<span class="fc" id="L66">    private val lock = ReentrantLock()</span>
+    override fun create(cmd: CreateCmd): Extension {
+<span class="fc" id="L68">        return lock.withLock {</span>
+<span class="fc" id="L69">            val extId = cmd.extId</span>
+<span class="fc" id="L70">            val cmdId = cmd.id</span>
+<span class="pc bpc" id="L71" title="1 of 2 branches missed.">            if (commandAlreadyApplied(cmdId, extId)) {</span>
+<span class="nc" id="L72">                versionOf(extId, cmd.id)</span>
+            } else {
+<span class="fc" id="L74">                store(</span>
+<span class="fc" id="L75">                    ExtensionCreationRecord(</span>
+<span class="fc" id="L76">                        cmdId = cmd.id,</span>
+<span class="fc" id="L77">                        entityId = extId,</span>
+<span class="fc" id="L78">                        groupId = cmd.groupId,</span>
+<span class="fc" id="L79">                        name = cmd.name,</span>
+<span class="fc" id="L80">                        code = cmd.code</span>
+                    )
+                )
+<span class="fc" id="L83">                (currentVersion(extId)).also(CurrentExtensionProjection::apply)</span>
+            }
+        }
+    }
+
+    override fun update(extId: ExtensionId, cmd: UpdateCmd): Extension {
+<span class="fc" id="L89">        return lock.withLock {</span>
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">            if (commandAlreadyApplied(cmd.id, extId)) {</span>
+<span class="nc" id="L91">                versionOf(extId, cmd.id)</span>
+            } else {
+<span class="fc" id="L93">                val currentVersion = versionOf(extId, cmd.id)</span>
+<span class="fc" id="L94">                store(</span>
+<span class="fc" id="L95">                    ExtensionUpdatedRecord(</span>
+<span class="fc" id="L96">                        entityId = extId,</span>
+<span class="fc" id="L97">                        cmdId = cmd.id,</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">                        name = cmd.name ?: currentVersion.name,</span>
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">                        code = cmd.code ?: currentVersion.code</span>
+                    )
+                )
+<span class="fc" id="L102">                (currentVersion(extId)).also(CurrentExtensionProjection::apply)</span>
+            }
+        }
+    }
+
+<span class="nc" id="L107">    override fun close() {}</span>
+
+<span class="fc" id="L109">    override fun find(extId: ExtensionId): Extension? = CurrentExtensionProjection.find(extId)</span>
+
+<span class="fc" id="L111">    override fun list(query: ExtensionQuery): List&lt;Extension&gt; = CurrentExtensionProjection.list(query)</span>
+
+<span class="nc" id="L113">    override fun count(query: ExtensionQuery): ULong = CurrentExtensionProjection.count(query)</span>
+
+    override fun clear() {
+<span class="fc" id="L116">        super.clear()</span>
+<span class="fc" id="L117">        CurrentExtensionProjection.clear()</span>
+<span class="fc" id="L118">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

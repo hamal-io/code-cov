@@ -91,29 +91,28 @@ internal object CreateFunc : CreateDomainObject&lt;FuncId, FuncRecord, Func&gt; 
 <span class="nc" id="L91">                    FuncUpdatedRecord(</span>
 <span class="nc" id="L92">                        entityId = funcId,</span>
 <span class="nc" id="L93">                        cmdId = cmdId,</span>
-<span class="nc bnc" id="L94" title="All 2 branches missed.">                        namespaceId = cmd.namespaceId ?: currentVersion.namespaceId,</span>
-<span class="nc bnc" id="L95" title="All 2 branches missed.">                        name = cmd.name ?: currentVersion.name,</span>
-<span class="nc bnc" id="L96" title="All 2 branches missed.">                        inputs = cmd.inputs ?: currentVersion.inputs,</span>
-<span class="nc bnc" id="L97" title="All 2 branches missed.">                        code = cmd.code ?: currentVersion.code</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">                        name = cmd.name ?: currentVersion.name,</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">                        inputs = cmd.inputs ?: currentVersion.inputs,</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">                        code = cmd.code ?: currentVersion.code</span>
                     )
                 )
-<span class="nc" id="L100">                currentVersion(funcId)</span>
-<span class="nc" id="L101">                    .also { ProjectionCurrent.upsert(this, it) }</span>
-<span class="nc" id="L102">                    .also { ProjectionUniqueName.upsert(this, it) }</span>
+<span class="nc" id="L99">                currentVersion(funcId)</span>
+<span class="nc" id="L100">                    .also { ProjectionCurrent.upsert(this, it) }</span>
+<span class="nc" id="L101">                    .also { ProjectionUniqueName.upsert(this, it) }</span>
             }
         }
     }
 
     override fun find(funcId: FuncId): Func? {
-<span class="nc" id="L108">        return ProjectionCurrent.find(connection, funcId)</span>
+<span class="nc" id="L107">        return ProjectionCurrent.find(connection, funcId)</span>
     }
 
     override fun list(query: FuncQuery): List&lt;Func&gt; {
-<span class="nc" id="L112">        return ProjectionCurrent.list(connection, query)</span>
+<span class="nc" id="L111">        return ProjectionCurrent.list(connection, query)</span>
     }
 
     override fun count(query: FuncQuery): ULong {
-<span class="nc" id="L116">        return ProjectionCurrent.count(connection, query)</span>
+<span class="nc" id="L115">        return ProjectionCurrent.count(connection, query)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

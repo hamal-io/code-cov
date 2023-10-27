@@ -70,13 +70,14 @@ interface TriggerQueryRepository {
 <span class="pc" id="L70">        var funcIds: List&lt;FuncId&gt; = listOf(),</span>
 <span class="pc" id="L71">        var topicIds: List&lt;TopicId&gt; = listOf(),</span>
 <span class="pc" id="L72">        var hookIds: List&lt;HookId&gt; = listOf(),</span>
-<span class="pc" id="L73">        var groupIds: List&lt;GroupId&gt;</span>
-<span class="fc" id="L74">    )</span>
+<span class="pc" id="L73">        var groupIds: List&lt;GroupId&gt; = listOf(),</span>
+<span class="pc" id="L74">        var namespaceIds: List&lt;NamespaceId&gt; = listOf()</span>
+<span class="fc" id="L75">    )</span>
 }
 
 
-<span class="nc" id="L78">@Serializable</span>
-<span class="nc" id="L79">sealed interface Trigger : DomainObject&lt;TriggerId&gt; {</span>
+<span class="nc" id="L79">@Serializable</span>
+<span class="nc" id="L80">sealed interface Trigger : DomainObject&lt;TriggerId&gt; {</span>
     val cmdId: CmdId
     val groupId: GroupId
     val name: TriggerName
@@ -85,52 +86,52 @@ interface TriggerQueryRepository {
     val correlationId: CorrelationId?
     val inputs: TriggerInputs
     val type: TriggerType
-<span class="nc" id="L88">}</span>
+<span class="nc" id="L89">}</span>
 
-<span class="pc bpc" id="L90" title="26 of 30 branches missed.">@Serializable</span>
-<span class="pc" id="L91">class FixedRateTrigger(</span>
-<span class="fc" id="L92">    override val cmdId: CmdId,</span>
-<span class="fc" id="L93">    override val id: TriggerId,</span>
-<span class="fc" id="L94">    override val groupId: GroupId,</span>
-<span class="fc" id="L95">    override val name: TriggerName,</span>
-<span class="fc" id="L96">    override val funcId: FuncId,</span>
-<span class="fc" id="L97">    override val namespaceId: NamespaceId,</span>
-<span class="fc" id="L98">    override val inputs: TriggerInputs,</span>
-<span class="fc" id="L99">    val duration: Duration,</span>
-<span class="pc" id="L100">    override val correlationId: CorrelationId? = null</span>
+<span class="pc bpc" id="L91" title="26 of 30 branches missed.">@Serializable</span>
+<span class="pc" id="L92">class FixedRateTrigger(</span>
+<span class="fc" id="L93">    override val cmdId: CmdId,</span>
+<span class="fc" id="L94">    override val id: TriggerId,</span>
+<span class="fc" id="L95">    override val groupId: GroupId,</span>
+<span class="fc" id="L96">    override val name: TriggerName,</span>
+<span class="fc" id="L97">    override val funcId: FuncId,</span>
+<span class="fc" id="L98">    override val namespaceId: NamespaceId,</span>
+<span class="fc" id="L99">    override val inputs: TriggerInputs,</span>
+<span class="fc" id="L100">    val duration: Duration,</span>
+<span class="pc" id="L101">    override val correlationId: CorrelationId? = null</span>
 ) : Trigger {
-<span class="pc bpc" id="L102" title="2 of 4 branches missed.">    override val type = TriggerType.FixedRate</span>
-<span class="pc" id="L103">}</span>
+<span class="pc bpc" id="L103" title="2 of 4 branches missed.">    override val type = TriggerType.FixedRate</span>
+<span class="pc" id="L104">}</span>
 
-<span class="pc bpc" id="L105" title="20 of 24 branches missed.">@Serializable</span>
-<span class="pc" id="L106">class EventTrigger(</span>
-<span class="fc" id="L107">    override val cmdId: CmdId,</span>
-<span class="fc" id="L108">    override val id: TriggerId,</span>
-<span class="fc" id="L109">    override val groupId: GroupId,</span>
-<span class="fc" id="L110">    override val name: TriggerName,</span>
-<span class="fc" id="L111">    override val funcId: FuncId,</span>
-<span class="fc" id="L112">    override val namespaceId: NamespaceId,</span>
-<span class="fc" id="L113">    override val inputs: TriggerInputs,</span>
-<span class="fc" id="L114">    val topicId: TopicId,</span>
-<span class="pc" id="L115">    override val correlationId: CorrelationId? = null</span>
+<span class="pc bpc" id="L106" title="20 of 24 branches missed.">@Serializable</span>
+<span class="pc" id="L107">class EventTrigger(</span>
+<span class="fc" id="L108">    override val cmdId: CmdId,</span>
+<span class="fc" id="L109">    override val id: TriggerId,</span>
+<span class="fc" id="L110">    override val groupId: GroupId,</span>
+<span class="fc" id="L111">    override val name: TriggerName,</span>
+<span class="fc" id="L112">    override val funcId: FuncId,</span>
+<span class="fc" id="L113">    override val namespaceId: NamespaceId,</span>
+<span class="fc" id="L114">    override val inputs: TriggerInputs,</span>
+<span class="fc" id="L115">    val topicId: TopicId,</span>
+<span class="pc" id="L116">    override val correlationId: CorrelationId? = null</span>
 ) : Trigger {
-<span class="pc bpc" id="L117" title="2 of 4 branches missed.">    override val type = TriggerType.Event</span>
-<span class="pc" id="L118">}</span>
+<span class="pc bpc" id="L118" title="2 of 4 branches missed.">    override val type = TriggerType.Event</span>
+<span class="pc" id="L119">}</span>
 
 
-<span class="pc bpc" id="L121" title="21 of 25 branches missed.">@Serializable</span>
-<span class="pc" id="L122">class HookTrigger(</span>
-<span class="fc" id="L123">    override val cmdId: CmdId,</span>
-<span class="fc" id="L124">    override val id: TriggerId,</span>
-<span class="fc" id="L125">    override val groupId: GroupId,</span>
-<span class="fc" id="L126">    override val name: TriggerName,</span>
-<span class="fc" id="L127">    override val funcId: FuncId,</span>
-<span class="fc" id="L128">    override val namespaceId: NamespaceId,</span>
-<span class="fc" id="L129">    override val inputs: TriggerInputs,</span>
-<span class="pc" id="L130">    override val correlationId: CorrelationId? = null,</span>
-<span class="fc" id="L131">    val hookId: HookId,</span>
-<span class="fc" id="L132">    val hookMethods: Set&lt;HookMethod&gt;</span>
+<span class="pc bpc" id="L122" title="21 of 25 branches missed.">@Serializable</span>
+<span class="pc" id="L123">class HookTrigger(</span>
+<span class="fc" id="L124">    override val cmdId: CmdId,</span>
+<span class="fc" id="L125">    override val id: TriggerId,</span>
+<span class="fc" id="L126">    override val groupId: GroupId,</span>
+<span class="fc" id="L127">    override val name: TriggerName,</span>
+<span class="fc" id="L128">    override val funcId: FuncId,</span>
+<span class="fc" id="L129">    override val namespaceId: NamespaceId,</span>
+<span class="fc" id="L130">    override val inputs: TriggerInputs,</span>
+<span class="pc" id="L131">    override val correlationId: CorrelationId? = null,</span>
+<span class="fc" id="L132">    val hookId: HookId,</span>
+<span class="fc" id="L133">    val hookMethods: Set&lt;HookMethod&gt;</span>
 ) : Trigger {
-<span class="pc bpc" id="L134" title="2 of 4 branches missed.">    override val type = TriggerType.Hook</span>
-<span class="pc" id="L135">}</span>
+<span class="pc bpc" id="L135" title="2 of 4 branches missed.">    override val type = TriggerType.Hook</span>
+<span class="pc" id="L136">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

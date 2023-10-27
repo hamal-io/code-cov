@@ -28,14 +28,13 @@ import kotlinx.serialization.Transient
 <span class="fc" id="L28">    val code: FuncCode</span>
 <span class="pc" id="L29">) : FuncRecord()</span>
 
-<span class="nc bnc" id="L31" title="All 12 branches missed.">@Serializable</span>
+<span class="nc bnc" id="L31" title="All 11 branches missed.">@Serializable</span>
 @SerialName(&quot;FUR&quot;)
 <span class="fc" id="L33">data class FuncUpdatedRecord(</span>
 <span class="fc" id="L34">    override val entityId: FuncId,</span>
 <span class="fc" id="L35">    override val cmdId: CmdId,</span>
-<span class="fc" id="L36">    val namespaceId: NamespaceId,</span>
-<span class="fc" id="L37">    val name: FuncName,</span>
-<span class="fc" id="L38">    val inputs: FuncInputs,</span>
-<span class="fc" id="L39">    val code: FuncCode</span>
-<span class="pc" id="L40">) : FuncRecord()</span>
+<span class="fc" id="L36">    val name: FuncName,</span>
+<span class="fc" id="L37">    val inputs: FuncInputs,</span>
+<span class="fc" id="L38">    val code: FuncCode</span>
+<span class="pc" id="L39">) : FuncRecord()</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

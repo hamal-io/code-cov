@@ -25,13 +25,12 @@ private fun UpdateHookHandler.updateHook(req: SubmittedUpdateHookReq): Hook {
 <span class="fc" id="L25">    return hookRepository.update(</span>
 <span class="fc" id="L26">        req.id, UpdateCmd(</span>
 <span class="fc" id="L27">            id = req.cmdId(),</span>
-<span class="fc" id="L28">            namespaceId = req.namespaceId,</span>
-<span class="fc" id="L29">            name = req.name,</span>
+<span class="fc" id="L28">            name = req.name,</span>
         )
     )
 }
 
 private fun UpdateHookHandler.emitEvent(cmdId: CmdId, hook: Hook) {
-<span class="fc" id="L35">    eventEmitter.emit(cmdId, HookCreatedEvent(hook))</span>
-<span class="fc" id="L36">}</span>
+<span class="fc" id="L34">    eventEmitter.emit(cmdId, HookCreatedEvent(hook))</span>
+<span class="fc" id="L35">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

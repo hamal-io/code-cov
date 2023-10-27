@@ -49,32 +49,32 @@ interface FuncCmdRepository : CmdRepository {
 
 <span class="pc" id="L50">    data class UpdateCmd(</span>
 <span class="fc" id="L51">        val id: CmdId,</span>
-<span class="pc" id="L52">        val namespaceId: NamespaceId? = null,</span>
-<span class="pc" id="L53">        val name: FuncName? = null,</span>
-<span class="pc" id="L54">        val inputs: FuncInputs? = null,</span>
-<span class="pc" id="L55">        val code: FuncCode? = null</span>
-<span class="nc" id="L56">    )</span>
+<span class="pc" id="L52">        val name: FuncName? = null,</span>
+<span class="pc" id="L53">        val inputs: FuncInputs? = null,</span>
+<span class="pc" id="L54">        val code: FuncCode? = null</span>
+<span class="nc" id="L55">    )</span>
 }
 
 interface FuncQueryRepository {
-<span class="fc bfc" id="L60" title="All 2 branches covered.">    fun get(funcId: FuncId) = find(funcId) ?: throw NoSuchElementException(&quot;Func not found&quot;)</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">    fun get(funcId: FuncId) = find(funcId) ?: throw NoSuchElementException(&quot;Func not found&quot;)</span>
     fun find(funcId: FuncId): Func?
     fun list(query: FuncQuery): List&lt;Func&gt;
-<span class="fc" id="L63">    fun list(funcIds: List&lt;FuncId&gt;): List&lt;Func&gt; = list(</span>
-<span class="fc" id="L64">        FuncQuery(</span>
-<span class="fc" id="L65">            limit = Limit.all,</span>
-<span class="fc" id="L66">            groupIds = listOf(),</span>
-<span class="fc" id="L67">            funcIds = funcIds,</span>
+<span class="fc" id="L62">    fun list(funcIds: List&lt;FuncId&gt;): List&lt;Func&gt; = list(</span>
+<span class="fc" id="L63">        FuncQuery(</span>
+<span class="fc" id="L64">            limit = Limit.all,</span>
+<span class="fc" id="L65">            groupIds = listOf(),</span>
+<span class="fc" id="L66">            funcIds = funcIds,</span>
         )
-<span class="fc" id="L69">    )</span>
+<span class="fc" id="L68">    )</span>
 
     fun count(query: FuncQuery): ULong
 
-<span class="fc" id="L73">    data class FuncQuery(</span>
-<span class="pc" id="L74">        var afterId: FuncId = FuncId(SnowflakeId(Long.MAX_VALUE)),</span>
-<span class="pc" id="L75">        var limit: Limit = Limit(1),</span>
-<span class="pc" id="L76">        var funcIds: List&lt;FuncId&gt; = listOf(),</span>
-<span class="pc" id="L77">        var groupIds: List&lt;GroupId&gt;</span>
+<span class="fc" id="L72">    data class FuncQuery(</span>
+<span class="pc" id="L73">        var afterId: FuncId = FuncId(SnowflakeId(Long.MAX_VALUE)),</span>
+<span class="pc" id="L74">        var limit: Limit = Limit(1),</span>
+<span class="pc" id="L75">        var funcIds: List&lt;FuncId&gt; = listOf(),</span>
+<span class="pc" id="L76">        var namespaceIds: List&lt;NamespaceId&gt; = listOf(),</span>
+<span class="pc" id="L77">        var groupIds: List&lt;GroupId&gt; = listOf()</span>
 <span class="fc" id="L78">    )</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

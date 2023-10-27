@@ -8,7 +8,7 @@ import io.hamal.lib.domain.CorrelatedState
 import io.hamal.lib.domain.EventToSubmit
 import io.hamal.lib.domain.GenerateDomainId
 import io.hamal.lib.domain.State
-import io.hamal.lib.domain.vo.GroupId
+import io.hamal.lib.domain.vo.NamespaceId
 import io.hamal.lib.domain.vo.TopicEntryPayload
 import io.hamal.lib.domain.vo.TopicId
 import io.hamal.repository.api.*
@@ -26,57 +26,62 @@ import org.springframework.stereotype.Component
 <span class="fc" id="L26">    private val eventEmitter: PlatformEventEmitter,</span>
 <span class="fc" id="L27">    private val stateCmdRepository: StateCmdRepository,</span>
 <span class="fc" id="L28">    private val eventBrokerRepository: BrokerRepository,</span>
-<span class="fc" id="L29">    private val generateDomainId: GenerateDomainId</span>
-<span class="fc" id="L30">) : ReqHandler&lt;SubmittedCompleteExecReq&gt;(SubmittedCompleteExecReq::class) {</span>
+<span class="fc" id="L29">    private val generateDomainId: GenerateDomainId,</span>
+<span class="fc" id="L30">    private val namespaceQueryRepository: NamespaceQueryRepository</span>
+<span class="fc" id="L31">) : ReqHandler&lt;SubmittedCompleteExecReq&gt;(SubmittedCompleteExecReq::class) {</span>
 
     override fun invoke(req: SubmittedCompleteExecReq) {
-<span class="fc" id="L33">        val cmdId = req.cmdId()</span>
+<span class="fc" id="L34">        val cmdId = req.cmdId()</span>
 
-<span class="fc" id="L35">        val exec = execQueryRepository.get(req.id)</span>
-<span class="fc bfc" id="L36" title="All 2 branches covered.">        require(exec is StartedExec) { &quot;Exec not in status Started&quot; }</span>
+<span class="fc" id="L36">        val exec = execQueryRepository.get(req.id)</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">        require(exec is StartedExec) { &quot;Exec not in status Started&quot; }</span>
 
-<span class="fc" id="L38">        completeExec(req)</span>
-<span class="fc" id="L39">            .also { emitCompletionEvent(cmdId, it) }</span>
-<span class="fc" id="L40">            .also { setState(cmdId, it, req.state) }</span>
-<span class="fc" id="L41">            .also { appendEvents(cmdId, req.groupId, req.events) }</span>
+<span class="fc" id="L39">        val namespaceId = exec.namespaceId</span>
 
-<span class="fc" id="L43">    }</span>
+<span class="fc" id="L41">        completeExec(req)</span>
+<span class="fc" id="L42">            .also { emitCompletionEvent(cmdId, it) }</span>
+<span class="fc" id="L43">            .also { setState(cmdId, it, req.state) }</span>
+<span class="fc" id="L44">            .also { appendEvents(cmdId, namespaceId, req.events) }</span>
+
+<span class="fc" id="L46">    }</span>
 
     private fun completeExec(req: SubmittedCompleteExecReq) =
-<span class="fc" id="L46">        execCmdRepository.complete(ExecCmdRepository.CompleteCmd(req.cmdId(), req.id, req.result))</span>
+<span class="fc" id="L49">        execCmdRepository.complete(ExecCmdRepository.CompleteCmd(req.cmdId(), req.id, req.result))</span>
 
     private fun emitCompletionEvent(cmdId: CmdId, exec: CompletedExec) {
-<span class="fc" id="L49">        eventEmitter.emit(cmdId, ExecutionCompletedEvent(exec))</span>
-<span class="fc" id="L50">    }</span>
+<span class="fc" id="L52">        eventEmitter.emit(cmdId, ExecutionCompletedEvent(exec))</span>
+<span class="fc" id="L53">    }</span>
 
     private fun setState(cmdId: CmdId, exec: CompletedExec, state: State) {
-<span class="fc" id="L53">        val correlation = exec.correlation</span>
-<span class="fc bfc" id="L54" title="All 2 branches covered.">        if (correlation != null) {</span>
-<span class="fc" id="L55">            stateCmdRepository.set(</span>
-<span class="fc" id="L56">                cmdId, CorrelatedState(</span>
-<span class="fc" id="L57">                    correlation = correlation,</span>
-<span class="fc" id="L58">                    value = state</span>
+<span class="fc" id="L56">        val correlation = exec.correlation</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">        if (correlation != null) {</span>
+<span class="fc" id="L58">            stateCmdRepository.set(</span>
+<span class="fc" id="L59">                cmdId, CorrelatedState(</span>
+<span class="fc" id="L60">                    correlation = correlation,</span>
+<span class="fc" id="L61">                    value = state</span>
                 )
             )
         }
-<span class="fc" id="L62">    }</span>
+<span class="fc" id="L65">    }</span>
 
-    private fun appendEvents(cmdId: CmdId, groupId: GroupId, events: List&lt;EventToSubmit&gt;) {
-<span class="fc" id="L65">        events.forEach { evt -&gt;</span>
+    private fun appendEvents(cmdId: CmdId, namespaceId: NamespaceId, events: List&lt;EventToSubmit&gt;) {
+<span class="fc" id="L68">        events.forEach { evt -&gt;</span>
             //FIXME create topic if not exists
-<span class="fc" id="L67">            val topicName = evt.topicName</span>
-<span class="pc bpc" id="L68" title="1 of 2 branches missed.">            val topic = eventBrokerRepository.findTopic(groupId, topicName) ?: eventBrokerRepository.create(</span>
-<span class="fc" id="L69">                cmdId, TopicToCreate(</span>
-<span class="fc" id="L70">                    id = generateDomainId(::TopicId),</span>
-<span class="fc" id="L71">                    name = topicName,</span>
-<span class="fc" id="L72">                    groupId = groupId</span>
+<span class="fc" id="L70">            val topicName = evt.topicName</span>
+<span class="fc" id="L71">            val namespace = namespaceQueryRepository.get(namespaceId)</span>
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">            val topic = eventBrokerRepository.findTopic(namespaceId, topicName) ?: eventBrokerRepository.create(</span>
+<span class="fc" id="L73">                cmdId, TopicToCreate(</span>
+<span class="fc" id="L74">                    id = generateDomainId(::TopicId),</span>
+<span class="fc" id="L75">                    name = topicName,</span>
+<span class="fc" id="L76">                    namespaceId = namespaceId,</span>
+<span class="fc" id="L77">                    groupId = namespace.groupId</span>
                 )
             )
-<span class="fc" id="L75">            appender.append(cmdId, topic, TopicEntryPayload(evt.payload.value))</span>
-<span class="fc" id="L76">        }</span>
-<span class="fc" id="L77">    }</span>
+<span class="fc" id="L80">            appender.append(cmdId, topic, TopicEntryPayload(evt.payload.value))</span>
+<span class="fc" id="L81">        }</span>
+<span class="fc" id="L82">    }</span>
 
-<span class="fc" id="L79">    private val appender = ProtobufAppender(TopicEntryPayload::class, eventBrokerRepository)</span>
+<span class="fc" id="L84">    private val appender = ProtobufAppender(TopicEntryPayload::class, eventBrokerRepository)</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

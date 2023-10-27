@@ -30,7 +30,7 @@ import kotlin.time.Duration.Companion.milliseconds
 <span class="pc" id="L30">    internal val triggerQueryRepository: TriggerQueryRepository,</span>
 <span class="pc" id="L31">    internal val submitRequest: SubmitRequest,</span>
 <span class="pc" id="L32">    internal val generateDomainId: GenerateDomainId,</span>
-<span class="pc" id="L33">    internal val async: Async,</span>
+<span class="fc" id="L33">    private val async: Async,</span>
 <span class="fc" id="L34">    private val funcQueryRepository: FuncQueryRepository</span>
 ) {
 
@@ -68,7 +68,7 @@ import kotlin.time.Duration.Companion.milliseconds
 <span class="nc" id="L68">                                InvokeExecReq(</span>
 <span class="nc" id="L69">                                    execId = generateDomainId(::ExecId),</span>
 <span class="nc" id="L70">                                    funcId = trigger.funcId,</span>
-<span class="nc bnc" id="L71" title="All 2 branches missed.">                                    correlationId = trigger.correlationId ?: CorrelationId(&quot;__default__&quot;),</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">                                    correlationId = trigger.correlationId ?: CorrelationId.default,</span>
 <span class="nc" id="L72">                                    inputs = InvocationInputs(),</span>
 <span class="nc" id="L73">                                    code = func.code.toExecCode(),</span>
 <span class="nc" id="L74">                                    events = entries.map {</span>

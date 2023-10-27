@@ -38,91 +38,92 @@ internal object CurrentFuncProjection {
 <span class="fc" id="L38">            .reversed()</span>
 <span class="fc" id="L39">            .asSequence()</span>
 <span class="fc bfc" id="L40" title="All 2 branches covered.">            .filter { if (query.groupIds.isEmpty()) true else query.groupIds.contains(it.groupId) }</span>
-<span class="fc bfc" id="L41" title="All 2 branches covered.">            .dropWhile { it.id &gt;= query.afterId }</span>
-<span class="fc" id="L42">            .take(query.limit.value)</span>
-<span class="fc" id="L43">            .toList()</span>
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">            .filter { if (query.namespaceIds.isEmpty()) true else query.namespaceIds.contains(it.namespaceId) }</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">            .dropWhile { it.id &gt;= query.afterId }</span>
+<span class="fc" id="L43">            .take(query.limit.value)</span>
+<span class="fc" id="L44">            .toList()</span>
     }
 
     fun count(query: FuncQuery): ULong {
-<span class="nc bnc" id="L47" title="All 4 branches missed.">        return projection.filter { query.funcIds.isEmpty() || it.key in query.funcIds }</span>
-<span class="nc" id="L48">            .map { it.value }</span>
-<span class="nc" id="L49">            .reversed()</span>
-<span class="nc" id="L50">            .asSequence()</span>
-<span class="nc bnc" id="L51" title="All 2 branches missed.">            .filter { if (query.groupIds.isEmpty()) true else query.groupIds.contains(it.groupId) }</span>
-<span class="nc bnc" id="L52" title="All 2 branches missed.">            .dropWhile { it.id &gt;= query.afterId }</span>
-<span class="nc" id="L53">            .count()</span>
-<span class="nc" id="L54">            .toULong()</span>
+<span class="nc bnc" id="L48" title="All 4 branches missed.">        return projection.filter { query.funcIds.isEmpty() || it.key in query.funcIds }</span>
+<span class="nc" id="L49">            .map { it.value }</span>
+<span class="nc" id="L50">            .reversed()</span>
+<span class="nc" id="L51">            .asSequence()</span>
+<span class="nc bnc" id="L52" title="All 2 branches missed.">            .filter { if (query.groupIds.isEmpty()) true else query.groupIds.contains(it.groupId) }</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">            .filter { if (query.namespaceIds.isEmpty()) true else query.namespaceIds.contains(it.namespaceId) }</span>
+<span class="nc bnc" id="L54" title="All 2 branches missed.">            .dropWhile { it.id &gt;= query.afterId }</span>
+<span class="nc" id="L55">            .count()</span>
+<span class="nc" id="L56">            .toULong()</span>
     }
 
     fun clear() {
-<span class="fc" id="L58">        projection.clear()</span>
-<span class="fc" id="L59">    }</span>
+<span class="fc" id="L60">        projection.clear()</span>
+<span class="fc" id="L61">    }</span>
 }
 
-<span class="fc" id="L62">class MemoryFuncRepository : MemoryRecordRepository&lt;FuncId, FuncRecord, Func&gt;(</span>
-<span class="fc" id="L63">    createDomainObject = CreateFuncFromRecords,</span>
+<span class="fc" id="L64">class MemoryFuncRepository : MemoryRecordRepository&lt;FuncId, FuncRecord, Func&gt;(</span>
+<span class="fc" id="L65">    createDomainObject = CreateFuncFromRecords,</span>
     recordClass = FuncRecord::class
 ), FuncRepository {
-<span class="fc" id="L66">    private val lock = ReentrantLock()</span>
+<span class="fc" id="L68">    private val lock = ReentrantLock()</span>
     override fun create(cmd: CreateCmd): Func {
-<span class="fc" id="L68">        return lock.withLock {</span>
-<span class="fc" id="L69">            val funcId = cmd.funcId</span>
-<span class="fc" id="L70">            val cmdId = cmd.id</span>
-<span class="pc bpc" id="L71" title="1 of 2 branches missed.">            if (commandAlreadyApplied(cmdId, funcId)) {</span>
-<span class="nc" id="L72">                versionOf(funcId, cmd.id)</span>
+<span class="fc" id="L70">        return lock.withLock {</span>
+<span class="fc" id="L71">            val funcId = cmd.funcId</span>
+<span class="fc" id="L72">            val cmdId = cmd.id</span>
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">            if (commandAlreadyApplied(cmdId, funcId)) {</span>
+<span class="nc" id="L74">                versionOf(funcId, cmd.id)</span>
             } else {
-<span class="fc" id="L74">                store(</span>
-<span class="fc" id="L75">                    FuncCreationRecord(</span>
-<span class="fc" id="L76">                        cmdId = cmd.id,</span>
-<span class="fc" id="L77">                        entityId = funcId,</span>
-<span class="fc" id="L78">                        groupId = cmd.groupId,</span>
-<span class="fc" id="L79">                        namespaceId = cmd.namespaceId,</span>
-<span class="fc" id="L80">                        name = cmd.name,</span>
-<span class="fc" id="L81">                        inputs = cmd.inputs,</span>
-<span class="fc" id="L82">                        code = cmd.code</span>
+<span class="fc" id="L76">                store(</span>
+<span class="fc" id="L77">                    FuncCreationRecord(</span>
+<span class="fc" id="L78">                        cmdId = cmd.id,</span>
+<span class="fc" id="L79">                        entityId = funcId,</span>
+<span class="fc" id="L80">                        groupId = cmd.groupId,</span>
+<span class="fc" id="L81">                        namespaceId = cmd.namespaceId,</span>
+<span class="fc" id="L82">                        name = cmd.name,</span>
+<span class="fc" id="L83">                        inputs = cmd.inputs,</span>
+<span class="fc" id="L84">                        code = cmd.code</span>
                     )
                 )
-<span class="fc" id="L85">                (currentVersion(funcId)).also(CurrentFuncProjection::apply)</span>
+<span class="fc" id="L87">                (currentVersion(funcId)).also(CurrentFuncProjection::apply)</span>
             }
         }
     }
 
     override fun update(funcId: FuncId, cmd: FuncCmdRepository.UpdateCmd): Func {
-<span class="fc" id="L91">        return lock.withLock {</span>
-<span class="pc bpc" id="L92" title="1 of 2 branches missed.">            if (commandAlreadyApplied(cmd.id, funcId)) {</span>
-<span class="nc" id="L93">                versionOf(funcId, cmd.id)</span>
+<span class="fc" id="L93">        return lock.withLock {</span>
+<span class="pc bpc" id="L94" title="1 of 2 branches missed.">            if (commandAlreadyApplied(cmd.id, funcId)) {</span>
+<span class="nc" id="L95">                versionOf(funcId, cmd.id)</span>
             } else {
-<span class="fc" id="L95">                val currentVersion = versionOf(funcId, cmd.id)</span>
-<span class="fc" id="L96">                store(</span>
-<span class="fc" id="L97">                    FuncUpdatedRecord(</span>
-<span class="fc" id="L98">                        entityId = funcId,</span>
-<span class="fc" id="L99">                        cmdId = cmd.id,</span>
-<span class="fc bfc" id="L100" title="All 2 branches covered.">                        namespaceId = cmd.namespaceId ?: currentVersion.namespaceId,</span>
-<span class="fc bfc" id="L101" title="All 2 branches covered.">                        name = cmd.name ?: currentVersion.name,</span>
-<span class="fc bfc" id="L102" title="All 2 branches covered.">                        inputs = cmd.inputs ?: currentVersion.inputs,</span>
-<span class="pc bpc" id="L103" title="1 of 2 branches missed.">                        code = cmd.code ?: currentVersion.code</span>
+<span class="fc" id="L97">                val currentVersion = versionOf(funcId, cmd.id)</span>
+<span class="fc" id="L98">                store(</span>
+<span class="fc" id="L99">                    FuncUpdatedRecord(</span>
+<span class="fc" id="L100">                        entityId = funcId,</span>
+<span class="fc" id="L101">                        cmdId = cmd.id,</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">                        name = cmd.name ?: currentVersion.name,</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">                        inputs = cmd.inputs ?: currentVersion.inputs,</span>
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">                        code = cmd.code ?: currentVersion.code</span>
                     )
                 )
-<span class="fc" id="L106">                (currentVersion(funcId)).also(CurrentFuncProjection::apply)</span>
+<span class="fc" id="L107">                (currentVersion(funcId)).also(CurrentFuncProjection::apply)</span>
             }
         }
     }
 
-<span class="fc" id="L111">    override fun find(funcId: FuncId): Func? = CurrentFuncProjection.find(funcId)</span>
+<span class="fc" id="L112">    override fun find(funcId: FuncId): Func? = CurrentFuncProjection.find(funcId)</span>
 
     override fun list(query: FuncQuery): List&lt;Func&gt; {
-<span class="fc" id="L114">        return CurrentFuncProjection.list(query)</span>
+<span class="fc" id="L115">        return CurrentFuncProjection.list(query)</span>
     }
 
     override fun count(query: FuncQuery): ULong {
-<span class="nc" id="L118">        return CurrentFuncProjection.count(query)</span>
+<span class="nc" id="L119">        return CurrentFuncProjection.count(query)</span>
     }
 
     override fun clear() {
-<span class="fc" id="L122">        super.clear()</span>
-<span class="fc" id="L123">        CurrentFuncProjection.clear()</span>
-<span class="fc" id="L124">    }</span>
+<span class="fc" id="L123">        super.clear()</span>
+<span class="fc" id="L124">        CurrentFuncProjection.clear()</span>
+<span class="fc" id="L125">    }</span>
 
-<span class="nc" id="L126">    override fun close() {}</span>
+<span class="nc" id="L127">    override fun close() {}</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

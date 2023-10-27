@@ -31,17 +31,18 @@ import kotlin.time.toJavaDuration
 <span class="nc" id="L31">                CodeRunnerImpl(connector, sandboxFactory).run(</span>
 <span class="nc" id="L32">                    UnitOfWork(</span>
 <span class="nc" id="L33">                        id = uow.id,</span>
-<span class="nc" id="L34">                        groupId = uow.groupId,</span>
-<span class="nc" id="L35">                        inputs = uow.inputs,</span>
-<span class="nc" id="L36">                        state = uow.state,</span>
-<span class="nc" id="L37">                        code = uow.code,</span>
-<span class="nc" id="L38">                        correlation = uow.correlation,</span>
-<span class="nc" id="L39">                        events = uow.events</span>
+<span class="nc" id="L34">                        namespaceId = uow.namespaceId,</span>
+<span class="nc" id="L35">                        groupId = uow.groupId,</span>
+<span class="nc" id="L36">                        inputs = uow.inputs,</span>
+<span class="nc" id="L37">                        state = uow.state,</span>
+<span class="nc" id="L38">                        code = uow.code,</span>
+<span class="nc" id="L39">                        correlation = uow.correlation,</span>
+<span class="nc" id="L40">                        events = uow.events</span>
                     )
                 )
-<span class="nc" id="L42">            }</span>
-<span class="nc" id="L43">        }, pollEveryMs.milliseconds.toJavaDuration())</span>
-<span class="nc" id="L44">    }</span>
+<span class="nc" id="L43">            }</span>
+<span class="nc" id="L44">        }, pollEveryMs.milliseconds.toJavaDuration())</span>
+<span class="nc" id="L45">    }</span>
 }
 
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -87,9 +87,9 @@ internal object CurrentSnippetProjection {
 <span class="fc" id="L87">                    SnippetUpdatedRecord(</span>
 <span class="fc" id="L88">                        entityId = snippetId,</span>
 <span class="fc" id="L89">                        cmdId = cmd.id,</span>
-<span class="pc bpc" id="L90" title="1 of 2 branches missed.">                        name = cmd.name ?: currentVersion.name,</span>
-<span class="pc bpc" id="L91" title="1 of 2 branches missed.">                        inputs = cmd.inputs ?: currentVersion.inputs,</span>
-<span class="pc bpc" id="L92" title="1 of 2 branches missed.">                        value = cmd.value ?: currentVersion.value</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">                        name = cmd.name ?: currentVersion.name,</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">                        inputs = cmd.inputs ?: currentVersion.inputs,</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">                        value = cmd.value ?: currentVersion.value</span>
                     )
                 )
 <span class="fc" id="L95">                (currentVersion(snippetId)).also(CurrentSnippetProjection::apply)</span>

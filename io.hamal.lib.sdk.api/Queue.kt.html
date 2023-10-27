@@ -3,26 +3,24 @@
 import io.hamal.lib.domain.Correlation
 import io.hamal.lib.domain.Event
 import io.hamal.lib.domain.State
-import io.hamal.lib.domain.vo.CodeValue
-import io.hamal.lib.domain.vo.ExecId
-import io.hamal.lib.domain.vo.ExecInputs
-import io.hamal.lib.domain.vo.GroupId
+import io.hamal.lib.domain.vo.*
 import kotlinx.serialization.Serializable
 
 
-<span class="pc bpc" id="L13" title="2 of 7 branches missed.">@Serializable</span>
-<span class="fc" id="L14">data class ApiUnitOfWorkList(</span>
-<span class="fc" id="L15">    val work: List&lt;UnitOfWork&gt;</span>
+<span class="pc bpc" id="L10" title="2 of 7 branches missed.">@Serializable</span>
+<span class="fc" id="L11">data class ApiUnitOfWorkList(</span>
+<span class="fc" id="L12">    val work: List&lt;UnitOfWork&gt;</span>
 ) {
-<span class="pc bpc" id="L17" title="3 of 19 branches missed.">    @Serializable</span>
-<span class="pc" id="L18">    data class UnitOfWork(</span>
-<span class="fc" id="L19">        val id: ExecId,</span>
-<span class="pc" id="L20">        val groupId: GroupId,</span>
-<span class="fc" id="L21">        val inputs: ExecInputs,</span>
-<span class="pc" id="L22">        val state: State,</span>
-<span class="fc" id="L23">        val code: CodeValue,</span>
-<span class="pc" id="L24">        val correlation: Correlation? = null,</span>
-<span class="pc" id="L25">        val events: List&lt;Event&gt;</span>
-<span class="pc" id="L26">    )</span>
-<span class="fc" id="L27">}</span>
+<span class="pc bpc" id="L14" title="3 of 20 branches missed.">    @Serializable</span>
+<span class="pc" id="L15">    data class UnitOfWork(</span>
+<span class="fc" id="L16">        val id: ExecId,</span>
+<span class="fc" id="L17">        val namespaceId: NamespaceId,</span>
+<span class="fc" id="L18">        val groupId: GroupId,</span>
+<span class="fc" id="L19">        val inputs: ExecInputs,</span>
+<span class="pc" id="L20">        val state: State,</span>
+<span class="fc" id="L21">        val code: CodeValue,</span>
+<span class="pc" id="L22">        val correlation: Correlation? = null,</span>
+<span class="pc" id="L23">        val events: List&lt;Event&gt;</span>
+<span class="pc" id="L24">    )</span>
+<span class="fc" id="L25">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

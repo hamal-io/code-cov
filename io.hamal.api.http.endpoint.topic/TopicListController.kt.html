@@ -3,40 +3,42 @@
 import io.hamal.core.adapter.ListTopicsPort
 import io.hamal.lib.common.domain.Limit
 import io.hamal.lib.domain.vo.GroupId
+import io.hamal.lib.domain.vo.NamespaceId
 import io.hamal.lib.domain.vo.TopicId
 import io.hamal.lib.domain.vo.TopicName
 import io.hamal.lib.sdk.api.ApiTopicList
 import io.hamal.lib.sdk.api.ApiTopicList.Topic
-import io.hamal.repository.api.log.BrokerTopicsRepository
+import io.hamal.repository.api.log.BrokerTopicsRepository.TopicQuery
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 <span class="fc" id="L17">@RestController</span>
 <span class="fc" id="L18">internal class TopicListController(private val listTopics: ListTopicsPort) {</span>
-    @GetMapping(&quot;/v1/groups/{groupId}/topics&quot;)
-    fun listGroupTopics(
-        @PathVariable(&quot;groupId&quot;) groupId: GroupId,
+    @GetMapping(&quot;/v1/topics&quot;)
+<span class="nc" id="L20">    fun listGroupTopics(</span>
         @RequestParam(required = false, name = &quot;after_id&quot;, defaultValue = &quot;7FFFFFFFFFFFFFFF&quot;) afterId: TopicId,
         @RequestParam(required = false, name = &quot;names&quot;, defaultValue = &quot;&quot;) topicNames: List&lt;TopicName&gt;,
-        @RequestParam(required = false, name = &quot;limit&quot;, defaultValue = &quot;100&quot;) limit: Limit
+        @RequestParam(required = false, name = &quot;limit&quot;, defaultValue = &quot;100&quot;) limit: Limit,
+<span class="nc" id="L24">        @RequestParam(required = false, name = &quot;group_ids&quot;, defaultValue = &quot;&quot;) groupIds: List&lt;GroupId&gt; = listOf(),</span>
+<span class="nc" id="L25">        @RequestParam(required = false, name = &quot;namespace_ids&quot;, defaultValue = &quot;&quot;) namespaceIds: List&lt;NamespaceId&gt; = listOf()</span>
     ): ResponseEntity&lt;ApiTopicList&gt; {
-<span class="fc" id="L26">        return listTopics(</span>
-<span class="fc" id="L27">            BrokerTopicsRepository.TopicQuery(</span>
-<span class="fc" id="L28">                afterId = afterId,</span>
-<span class="fc" id="L29">                names = topicNames,</span>
-<span class="fc" id="L30">                limit = limit,</span>
-<span class="fc" id="L31">                groupIds = listOf(groupId)</span>
+<span class="fc" id="L27">        return listTopics(</span>
+<span class="fc" id="L28">            TopicQuery(</span>
+<span class="fc" id="L29">                afterId = afterId,</span>
+<span class="fc" id="L30">                names = topicNames,</span>
+<span class="fc" id="L31">                limit = limit,</span>
+<span class="fc" id="L32">                groupIds = groupIds,</span>
+<span class="fc" id="L33">                namespaceIds = namespaceIds</span>
             )
         ) { topics -&gt;
-<span class="fc" id="L34">            ResponseEntity.ok(</span>
-<span class="fc" id="L35">                ApiTopicList(</span>
-<span class="fc" id="L36">                    topics = topics.map { topic -&gt;</span>
-<span class="fc" id="L37">                        Topic(</span>
-<span class="fc" id="L38">                            id = topic.id,</span>
-<span class="fc" id="L39">                            name = topic.name</span>
+<span class="fc" id="L36">            ResponseEntity.ok(</span>
+<span class="fc" id="L37">                ApiTopicList(</span>
+<span class="fc" id="L38">                    topics = topics.map { topic -&gt;</span>
+<span class="fc" id="L39">                        Topic(</span>
+<span class="fc" id="L40">                            id = topic.id,</span>
+<span class="fc" id="L41">                            name = topic.name</span>
                         )
                     }
                 )

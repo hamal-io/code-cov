@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Repository.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.repository.sqlite.record.extension</a> &gt; <span class="el_source">Repository.kt</span></div><h1>Repository.kt</h1><pre class="source lang-java linenums">package io.hamal.repository.sqlite.record.extension
+
+import io.hamal.lib.domain.vo.ExtensionId
+import io.hamal.lib.sqlite.SqliteBaseRepository
+import io.hamal.repository.api.Extension
+import io.hamal.repository.api.ExtensionCmdRepository.CreateCmd
+import io.hamal.repository.api.ExtensionCmdRepository.UpdateCmd
+import io.hamal.repository.api.ExtensionQueryRepository.ExtensionQuery
+import io.hamal.repository.api.ExtensionRepository
+import io.hamal.repository.record.CreateDomainObject
+import io.hamal.repository.record.extension.ExtensionCreationRecord
+import io.hamal.repository.record.extension.ExtensionEntity
+import io.hamal.repository.record.extension.ExtensionRecord
+import io.hamal.repository.record.extension.ExtensionUpdatedRecord
+import io.hamal.repository.sqlite.record.SqliteRecordRepository
+import java.nio.file.Path
+
+internal object CreateExtension : CreateDomainObject&lt;ExtensionId, ExtensionRecord, Extension&gt; {
+    override fun invoke(recs: List&lt;ExtensionRecord&gt;): Extension {
+<span class="nc bnc" id="L20" title="All 4 branches missed.">        check(recs.isNotEmpty()) { &quot;At least one record is required&quot; }</span>
+<span class="nc" id="L21">        val firstRecord = recs.first()</span>
+<span class="nc bnc" id="L22" title="All 2 branches missed.">        check(firstRecord is ExtensionCreationRecord)</span>
+
+<span class="nc" id="L24">        var result = ExtensionEntity(</span>
+<span class="nc" id="L25">            cmdId = firstRecord.cmdId,</span>
+<span class="nc" id="L26">            id = firstRecord.entityId,</span>
+<span class="nc" id="L27">            groupId = firstRecord.groupId,</span>
+<span class="nc" id="L28">            sequence = firstRecord.sequence()</span>
+        )
+
+<span class="nc" id="L31">        recs.forEach { record -&gt;</span>
+<span class="nc" id="L32">            result = result.apply(record)</span>
+<span class="nc" id="L33">        }</span>
+
+<span class="nc" id="L35">        return result.toDomainObject()</span>
+    }
+}
+
+<span class="nc" id="L39">class SqliteExtensionRepository(</span>
+    config: Config
+<span class="nc" id="L41">) : SqliteRecordRepository&lt;ExtensionId, ExtensionRecord, Extension&gt;(</span>
+<span class="nc" id="L42">    config = config,</span>
+<span class="nc" id="L43">    createDomainObject = CreateExtension,</span>
+    recordClass = ExtensionRecord::class,
+<span class="nc" id="L45">    projections = listOf(</span>
+<span class="nc" id="L46">        ProjectionCurrent</span>
+    )
+), ExtensionRepository {
+
+<span class="nc" id="L50">    data class Config(</span>
+<span class="nc" id="L51">        override val path: Path</span>
+    ) : SqliteBaseRepository.Config {
+<span class="nc" id="L53">        override val filename = &quot;extension.db&quot;</span>
+    }
+
+    override fun create(cmd: CreateCmd): Extension {
+<span class="nc" id="L57">        val extId = cmd.extId</span>
+<span class="nc" id="L58">        val cmdId = cmd.id</span>
+<span class="nc" id="L59">        return tx {</span>
+<span class="nc bnc" id="L60" title="All 2 branches missed.">            if (commandAlreadyApplied(cmdId, extId)) {</span>
+<span class="nc" id="L61">                versionOf(extId, cmdId)</span>
+            } else {
+<span class="nc" id="L63">                store(</span>
+<span class="nc" id="L64">                    ExtensionCreationRecord(</span>
+<span class="nc" id="L65">                        cmdId = cmdId,</span>
+<span class="nc" id="L66">                        entityId = extId,</span>
+<span class="nc" id="L67">                        groupId = cmd.groupId,</span>
+<span class="nc" id="L68">                        name = cmd.name,</span>
+<span class="nc" id="L69">                        code = cmd.code</span>
+                    )
+                )
+<span class="nc" id="L72">                currentVersion(extId).also { ProjectionCurrent.upsert(this, it) }</span>
+            }
+        }
+    }
+
+    override fun update(extId: ExtensionId, cmd: UpdateCmd): Extension {
+<span class="nc" id="L78">        val cmdId = cmd.id</span>
+<span class="nc" id="L79">        return tx {</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">            if (commandAlreadyApplied(cmdId, extId)) {</span>
+<span class="nc" id="L81">                versionOf(extId, cmdId)</span>
+            } else {
+<span class="nc" id="L83">                val currentVersion = versionOf(extId, cmdId)</span>
+<span class="nc" id="L84">                store(</span>
+<span class="nc" id="L85">                    ExtensionUpdatedRecord(</span>
+<span class="nc" id="L86">                        entityId = extId,</span>
+<span class="nc" id="L87">                        cmdId = cmdId,</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">                        name = cmd.name ?: currentVersion.name,</span>
+<span class="nc bnc" id="L89" title="All 2 branches missed.">                        code = cmd.code ?: currentVersion.code</span>
+                    )
+                )
+<span class="nc" id="L92">                currentVersion(extId)</span>
+<span class="nc" id="L93">                    .also { ProjectionCurrent.upsert(this, it) }</span>
+            }
+        }
+    }
+
+<span class="nc" id="L98">    override fun find(extId: ExtensionId): Extension? = ProjectionCurrent.find(connection, extId)</span>
+
+
+<span class="nc" id="L101">    override fun list(query: ExtensionQuery): List&lt;Extension&gt; = ProjectionCurrent.list(connection, query)</span>
+
+
+<span class="nc" id="L104">    override fun count(query: ExtensionQuery): ULong = ProjectionCurrent.count(connection, query)</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

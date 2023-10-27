@@ -6,6 +6,7 @@ import io.hamal.lib.common.domain.CmdId
 import io.hamal.lib.common.util.HashUtils.md5
 import io.hamal.lib.domain.GenerateDomainId
 import io.hamal.lib.domain.vo.GroupId
+import io.hamal.lib.domain.vo.NamespaceId
 import io.hamal.lib.domain.vo.TopicId
 import io.hamal.repository.api.event.PlatformEvent
 import io.hamal.repository.api.log.BrokerRepository
@@ -19,48 +20,48 @@ import org.springframework.stereotype.Service
 import java.util.concurrent.ScheduledFuture
 import kotlin.time.Duration.Companion.milliseconds
 
-<span class="fc" id="L22">@Service</span>
-<span class="fc" id="L23">internal class PlatformEventService(</span>
-<span class="fc" id="L24">    private val async: Async,</span>
-<span class="fc" id="L25">    private val generateDomainId: GenerateDomainId,</span>
-<span class="fc" id="L26">    private val platformEventContainer: PlatformEventContainer,</span>
-<span class="fc" id="L27">    private val platformEventBrokerRepository: BrokerRepository</span>
+<span class="fc" id="L23">@Service</span>
+<span class="fc" id="L24">internal class PlatformEventService(</span>
+<span class="fc" id="L25">    private val async: Async,</span>
+<span class="fc" id="L26">    private val generateDomainId: GenerateDomainId,</span>
+<span class="fc" id="L27">    private val platformEventContainer: PlatformEventContainer,</span>
+<span class="fc" id="L28">    private val platformEventBrokerRepository: BrokerRepository</span>
 ) : DisposableBean, ApplicationListener&lt;ContextRefreshedEvent&gt; {
 
-<span class="fc" id="L30">    private val scheduledTasks = mutableListOf&lt;ScheduledFuture&lt;*&gt;&gt;()</span>
+<span class="fc" id="L31">    private val scheduledTasks = mutableListOf&lt;ScheduledFuture&lt;*&gt;&gt;()</span>
 
     override fun onApplicationEvent(event: ContextRefreshedEvent) {
-<span class="fc" id="L33">        val instanceTopics = platformEventContainer.topicNames().map { topicName -&gt;</span>
-<span class="fc" id="L34">            val topicId = generateDomainId(::TopicId)</span>
-<span class="pc bpc" id="L35" title="1 of 2 branches missed.">            platformEventBrokerRepository.findTopic(GroupId.root, topicName) ?: platformEventBrokerRepository.create(</span>
-<span class="fc" id="L36">                CmdId(topicId), TopicToCreate(topicId, topicName, GroupId.root)</span>
+<span class="fc" id="L34">        val instanceTopics = platformEventContainer.topicNames().map { topicName -&gt;</span>
+<span class="fc" id="L35">            val topicId = generateDomainId(::TopicId)</span>
+<span class="pc bpc" id="L36" title="1 of 2 branches missed.">            platformEventBrokerRepository.findTopic(NamespaceId.root, topicName) ?: platformEventBrokerRepository.create(</span>
+<span class="fc" id="L37">                CmdId(topicId), TopicToCreate(topicId, topicName, NamespaceId.root,GroupId.root)</span>
             )
         }
 
-<span class="fc" id="L40">        instanceTopics.forEach { topic -&gt;</span>
-<span class="fc" id="L41">            val consumer = ProtobufLogConsumer(</span>
-<span class="fc" id="L42">                ConsumerId(&quot;core-event-service&quot;), topic, platformEventBrokerRepository, PlatformEvent::class</span>
+<span class="fc" id="L41">        instanceTopics.forEach { topic -&gt;</span>
+<span class="fc" id="L42">            val consumer = ProtobufLogConsumer(</span>
+<span class="fc" id="L43">                ConsumerId(&quot;core-event-service&quot;), topic, platformEventBrokerRepository, PlatformEvent::class</span>
             )
 
-<span class="fc" id="L45">            scheduledTasks.add(</span>
-<span class="fc" id="L46">                async.atFixedRate(1.milliseconds) {</span>
-<span class="fc" id="L47">                    consumer.consume(10) { chunkId, evt -&gt;</span>
-<span class="nc" id="L48">                        platformEventContainer[evt::class].forEach { handler -&gt;</span>
-<span class="nc" id="L49">                            val cmdId = CmdId(md5(&quot;${evt.topicName}-${chunkId.value.value}&quot;))</span>
-<span class="nc" id="L50">                            handler.handle(cmdId, evt)</span>
-<span class="nc" id="L51">                        }</span>
-<span class="nc" id="L52">                    }</span>
-<span class="fc" id="L53">                },</span>
+<span class="fc" id="L46">            scheduledTasks.add(</span>
+<span class="fc" id="L47">                async.atFixedRate(1.milliseconds) {</span>
+<span class="fc" id="L48">                    consumer.consume(10) { chunkId, evt -&gt;</span>
+<span class="nc" id="L49">                        platformEventContainer[evt::class].forEach { handler -&gt;</span>
+<span class="nc" id="L50">                            val cmdId = CmdId(md5(&quot;${evt.topicName}-${chunkId.value.value}&quot;))</span>
+<span class="nc" id="L51">                            handler.handle(cmdId, evt)</span>
+<span class="nc" id="L52">                        }</span>
+<span class="nc" id="L53">                    }</span>
+<span class="fc" id="L54">                },</span>
             )
-<span class="fc" id="L55">        }</span>
-<span class="fc" id="L56">    }</span>
+<span class="fc" id="L56">        }</span>
+<span class="fc" id="L57">    }</span>
 
 
     override fun destroy() {
-<span class="nc" id="L60">        scheduledTasks.forEach {</span>
-<span class="nc" id="L61">            it.cancel(false)</span>
-<span class="nc" id="L62">        }</span>
-<span class="nc" id="L63">    }</span>
+<span class="nc" id="L61">        scheduledTasks.forEach {</span>
+<span class="nc" id="L62">            it.cancel(false)</span>
+<span class="nc" id="L63">        }</span>
+<span class="nc" id="L64">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

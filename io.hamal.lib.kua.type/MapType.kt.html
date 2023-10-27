@@ -13,130 +13,157 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlin.reflect.KClass
 
-<span class="pc bpc" id="L16" title="2 of 9 branches missed.">@Serializable</span>
+<span class="pc bpc" id="L16" title="2 of 18 branches missed.">@Serializable</span>
 @SerialName(&quot;MapType&quot;)
 <span class="fc" id="L18">data class MapType(</span>
 <span class="fc" id="L19">    @Serializable(with = Serializer::class)</span>
 <span class="fc bfc" id="L20" title="All 4 branches covered.">    val value: MutableMap&lt;String, SerializableType&gt; = mutableMapOf(),</span>
-<span class="fc" id="L21">) : TableType() {</span>
+<span class="fc" id="L21">) : TableType(), Map&lt;String, SerializableType&gt; {</span>
 
 <span class="fc" id="L23">    constructor(vararg pairs: Pair&lt;String, SerializableType&gt;) : this(mutableMapOf(*pairs))</span>
 
-<span class="fc" id="L25">    val size get() = value.size</span>
+<span class="fc" id="L25">    override val size get() = value.size</span>
+<span class="fc bfc" id="L26" title="All 4 branches covered.">    override val entries: Set&lt;Map.Entry&lt;String, SerializableType&gt;&gt; = value.entries</span>
+<span class="pc bpc" id="L27" title="1 of 4 branches missed.">    override val keys: Set&lt;String&gt; = value.keys</span>
+<span class="fc bfc" id="L28" title="All 4 branches covered.">    override val values: Collection&lt;SerializableType&gt; = value.values</span>
+<span class="nc" id="L29">    override fun containsKey(key: String): Boolean = this.value.containsKey(key)</span>
 
-<span class="fc bfc" id="L27" title="All 2 branches covered.">    operator fun get(key: String): SerializableType = value[key] ?: NilType</span>
+<span class="nc" id="L31">    override fun isEmpty(): Boolean = value.isEmpty()</span>
+<span class="nc" id="L32">    override fun containsValue(value: SerializableType): Boolean = this.value.containsValue(value)</span>
+
+<span class="fc bfc" id="L34" title="All 2 branches covered.">    override operator fun get(key: String): SerializableType = value[key] ?: NilType</span>
     operator fun set(key: String, value: SerializableType): Int {
-<span class="fc" id="L29">        this.value[key] = value</span>
-<span class="fc" id="L30">        return size</span>
+<span class="fc" id="L36">        this.value[key] = value</span>
+<span class="fc" id="L37">        return size</span>
     }
 
-<span class="nc" id="L33">    operator fun set(key: String, value: AnySerializableType) = set(key, value.value)</span>
+<span class="nc" id="L40">    operator fun set(key: String, value: AnySerializableType) = set(key, value.value)</span>
 
-<span class="nc" id="L35">    fun unset(key: StringType) = unset(key.value)</span>
-<span class="nc" id="L36">    operator fun set(key: String, value: NilType) = unset(key)</span>
-<span class="nc" id="L37">    operator fun set(key: StringType, value: NilType) = unset(key.value)</span>
+<span class="nc" id="L42">    fun unset(key: StringType) = unset(key.value)</span>
+<span class="nc" id="L43">    operator fun set(key: String, value: NilType) = unset(key)</span>
+<span class="nc" id="L44">    operator fun set(key: StringType, value: NilType) = unset(key.value)</span>
     fun unset(key: String): Int {
-<span class="nc" id="L39">        value.remove(key)</span>
-<span class="nc" id="L40">        return size</span>
+<span class="nc" id="L46">        value.remove(key)</span>
+<span class="nc" id="L47">        return size</span>
     }
 
-<span class="nc" id="L43">    fun getBooleanValue(key: StringType) = getBooleanValue(key.value)</span>
-<span class="nc" id="L44">    fun getBoolean(key: String): Boolean = getBooleanValue(key).value</span>
-<span class="nc" id="L45">    fun getBoolean(key: StringType): Boolean = getBoolean(key.value)</span>
+<span class="nc" id="L50">    fun getArrayType(key: StringType): ArrayType = getArrayType(key.value)</span>
+    fun getArrayType(key: String): ArrayType {
+<span class="nc" id="L52">        checkExpectedType(key, ArrayType::class)</span>
+<span class="nc" id="L53">        return value[key]!! as ArrayType</span>
+    }
+
+<span class="nc" id="L56">    fun getBooleanValue(key: StringType) = getBooleanValue(key.value)</span>
+<span class="nc" id="L57">    fun getBoolean(key: String): Boolean = getBooleanValue(key).value</span>
+<span class="nc" id="L58">    fun getBoolean(key: StringType): Boolean = getBoolean(key.value)</span>
     fun getBooleanValue(key: String): BooleanType {
-<span class="nc" id="L47">        checkExpectedType(key, BooleanType::class)</span>
-<span class="nc" id="L48">        return value[key]!! as BooleanType</span>
+<span class="nc" id="L60">        checkExpectedType(key, BooleanType::class)</span>
+<span class="nc" id="L61">        return value[key]!! as BooleanType</span>
     }
 
-<span class="nc" id="L51">    operator fun set(key: StringType, value: BooleanType) = set(key, value.value)</span>
-<span class="nc" id="L52">    operator fun set(key: StringType, value: Boolean) = set(key.value, booleanOf(value))</span>
-<span class="nc" id="L53">    operator fun set(key: String, value: Boolean) = set(key, booleanOf(value))</span>
+<span class="nc" id="L64">    operator fun set(key: StringType, value: BooleanType) = set(key, value.value)</span>
+<span class="nc" id="L65">    operator fun set(key: StringType, value: Boolean) = set(key.value, booleanOf(value))</span>
+<span class="nc" id="L66">    operator fun set(key: String, value: Boolean) = set(key, booleanOf(value))</span>
     operator fun set(key: String, value: BooleanType): Int {
-<span class="nc" id="L55">        this.value[key] = value</span>
-<span class="nc" id="L56">        return size</span>
+<span class="nc" id="L68">        this.value[key] = value</span>
+<span class="nc" id="L69">        return size</span>
     }
 
-
-<span class="nc" id="L60">    fun getCodeType(key: String) = CodeType(getString(key))</span>
-<span class="nc" id="L61">    fun getCodeType(key: StringType) = getCodeType(key.value)</span>
-<span class="nc" id="L62">    operator fun set(key: StringType, value: CodeType) = set(key.value, value)</span>
+<span class="nc" id="L72">    fun getCodeType(key: String) = CodeType(getString(key))</span>
+<span class="nc" id="L73">    fun getCodeType(key: StringType) = getCodeType(key.value)</span>
+<span class="nc" id="L74">    operator fun set(key: StringType, value: CodeType) = set(key.value, value)</span>
     operator fun set(key: String, value: CodeType): Int {
-<span class="nc" id="L64">        this.value[key] = StringType(value.value)</span>
-<span class="nc" id="L65">        return size</span>
+<span class="nc" id="L76">        this.value[key] = StringType(value.value)</span>
+<span class="nc" id="L77">        return size</span>
     }
 
-<span class="nc" id="L68">    operator fun set(key: String, value: DomainId) = set(key, value.value.value.toString(16))</span>
-<span class="nc" id="L69">    operator fun set(key: StringType, value: DomainId) = set(key.value, value.value.value.toString(16))</span>
-<span class="nc" id="L70">    operator fun set(key: String, value: SnowflakeId) = set(key, value.value.toString(16))</span>
-<span class="nc" id="L71">    operator fun set(key: StringType, value: SnowflakeId) = set(key.value, value.value.toString(16))</span>
+<span class="nc" id="L80">    operator fun set(key: String, value: DomainId) = set(key, value.value.value.toString(16))</span>
+<span class="nc" id="L81">    operator fun set(key: StringType, value: DomainId) = set(key.value, value.value.value.toString(16))</span>
+<span class="nc" id="L82">    operator fun set(key: String, value: SnowflakeId) = set(key, value.value.toString(16))</span>
+<span class="nc" id="L83">    operator fun set(key: StringType, value: SnowflakeId) = set(key.value, value.value.toString(16))</span>
 
-<span class="nc" id="L73">    fun getInt(key: String): Int = getNumberValue(key).value.toInt()</span>
-<span class="nc" id="L74">    fun getInt(key: StringType) = getInt(key.value)</span>
-<span class="nc" id="L75">    fun getLong(key: String): Long = getNumberValue(key).value.toLong()</span>
-<span class="nc" id="L76">    fun getLong(key: StringType): Long = getLong(key.value)</span>
-<span class="nc" id="L77">    fun getFloat(key: String): Float = getNumberValue(key).value.toFloat()</span>
-<span class="nc" id="L78">    fun getFloat(key: StringType): Float = getFloat(key.value)</span>
-<span class="nc" id="L79">    fun getDouble(key: String): Double = getNumberValue(key).value</span>
-<span class="nc" id="L80">    fun getDouble(key: StringType): Double = getDouble(key.value)</span>
-<span class="nc" id="L81">    fun getNumberValue(key: StringType): NumberType = getNumberValue(key.value)</span>
+<span class="nc" id="L85">    fun getInt(key: String): Int = getNumberValue(key).value.toInt()</span>
+<span class="nc" id="L86">    fun getInt(key: StringType) = getInt(key.value)</span>
+<span class="nc" id="L87">    fun getLong(key: String): Long = getNumberValue(key).value.toLong()</span>
+<span class="nc" id="L88">    fun getLong(key: StringType): Long = getLong(key.value)</span>
+<span class="nc" id="L89">    fun getFloat(key: String): Float = getNumberValue(key).value.toFloat()</span>
+<span class="nc" id="L90">    fun getFloat(key: StringType): Float = getFloat(key.value)</span>
+<span class="nc" id="L91">    fun getDouble(key: String): Double = getNumberValue(key).value</span>
+<span class="nc" id="L92">    fun getDouble(key: StringType): Double = getDouble(key.value)</span>
+<span class="nc" id="L93">    fun getNumberValue(key: StringType): NumberType = getNumberValue(key.value)</span>
     fun getNumberValue(key: String): NumberType {
-<span class="nc" id="L83">        checkExpectedType(key, NumberType::class)</span>
-<span class="nc" id="L84">        return value[key]!! as NumberType</span>
+<span class="nc" id="L95">        checkExpectedType(key, NumberType::class)</span>
+<span class="nc" id="L96">        return value[key]!! as NumberType</span>
     }
 
-<span class="nc" id="L87">    operator fun set(key: String, value: Int) = set(key, value.toDouble())</span>
-<span class="nc" id="L88">    operator fun set(key: String, value: Long) = set(key, value.toDouble())</span>
-<span class="nc" id="L89">    operator fun set(key: String, value: Float) = set(key, value.toDouble())</span>
-<span class="nc" id="L90">    operator fun set(key: String, value: Double) = set(key, NumberType(value))</span>
-<span class="nc" id="L91">    operator fun set(key: StringType, value: NumberType) = set(key.value, value.value)</span>
+<span class="nc" id="L99">    operator fun set(key: String, value: Int) = set(key, value.toDouble())</span>
+<span class="nc" id="L100">    operator fun set(key: String, value: Long) = set(key, value.toDouble())</span>
+<span class="nc" id="L101">    operator fun set(key: String, value: Float) = set(key, value.toDouble())</span>
+<span class="nc" id="L102">    operator fun set(key: String, value: Double) = set(key, NumberType(value))</span>
+<span class="nc" id="L103">    operator fun set(key: StringType, value: NumberType) = set(key.value, value.value)</span>
     operator fun set(key: String, value: NumberType): Int {
-<span class="fc" id="L93">        this.value[key] = value</span>
-<span class="fc" id="L94">        return size</span>
+<span class="fc" id="L105">        this.value[key] = value</span>
+<span class="fc" id="L106">        return size</span>
     }
 
     operator fun set(key: String, value: MapType): Int {
-<span class="fc" id="L98">        this.value[key] = value</span>
-<span class="fc" id="L99">        return size</span>
+<span class="fc" id="L110">        this.value[key] = value</span>
+<span class="fc" id="L111">        return size</span>
     }
 
-<span class="nc" id="L102">    fun getStringType(key: StringType) = getStringType(key.value)</span>
-<span class="fc" id="L103">    fun getString(key: String): String = getStringType(key).value</span>
-<span class="nc" id="L104">    fun getString(key: StringType): String = getString(key.value)</span>
+<span class="nc" id="L114">    fun getStringType(key: StringType) = getStringType(key.value)</span>
+<span class="fc" id="L115">    fun getString(key: String): String = getStringType(key).value</span>
+<span class="nc" id="L116">    fun getString(key: StringType): String = getString(key.value)</span>
     fun getStringType(key: String): StringType {
-<span class="fc" id="L106">        checkExpectedType(key, StringType::class)</span>
-<span class="fc" id="L107">        return value[key]!! as StringType</span>
+<span class="fc" id="L118">        checkExpectedType(key, StringType::class)</span>
+<span class="fc" id="L119">        return value[key]!! as StringType</span>
     }
 
-<span class="nc" id="L110">    operator fun set(key: String, value: String) = set(key, StringType(value))</span>
-<span class="nc" id="L111">    operator fun set(key: StringType, value: StringType) = set(key.value, value.value)</span>
+
+<span class="nc" id="L123">    fun findStringType(key: StringType) = findStringType(key.value)</span>
+<span class="nc bnc" id="L124" title="All 2 branches missed.">    fun findString(key: String): String? = findStringType(key)?.value</span>
+<span class="nc" id="L125">    fun findString(key: StringType): String? = findString(key.value)</span>
+    fun findStringType(key: String): StringType? {
+<span class="nc bnc" id="L127" title="All 2 branches missed.">        if (isNull(key)) {</span>
+<span class="nc" id="L128">            return null</span>
+        }
+<span class="nc" id="L130">        checkExpectedType(key, StringType::class)</span>
+<span class="nc" id="L131">        return value[key]!! as StringType</span>
+    }
+
+
+<span class="nc" id="L135">    operator fun set(key: String, value: String) = set(key, StringType(value))</span>
+<span class="nc" id="L136">    operator fun set(key: StringType, value: StringType) = set(key.value, value.value)</span>
     operator fun set(key: String, value: StringType): Int {
-<span class="nc" id="L113">        this.value[key] = value</span>
-<span class="nc" id="L114">        return size</span>
+<span class="nc" id="L138">        this.value[key] = value</span>
+<span class="nc" id="L139">        return size</span>
     }
 
     fun type(key: String): KClass&lt;out Type&gt; {
-<span class="pc bpc" id="L118" title="1 of 2 branches missed.">        return value[key]?.let { it::class } ?: NilType::class</span>
+<span class="pc bpc" id="L143" title="1 of 2 branches missed.">        return value[key]?.let { it::class } ?: NilType::class</span>
     }
 
     object Serializer : KSerializer&lt;MutableMap&lt;String, SerializableType&gt;&gt; {
-<span class="fc" id="L122">        private val delegate = MapSerializer(String.serializer(), SerializableType.serializer())</span>
+<span class="fc" id="L147">        private val delegate = MapSerializer(String.serializer(), SerializableType.serializer())</span>
 
         @OptIn(ExperimentalSerializationApi::class)
-<span class="fc" id="L125">        override val descriptor = SerialDescriptor(&quot;MapType&quot;, delegate.descriptor)</span>
+<span class="fc" id="L150">        override val descriptor = SerialDescriptor(&quot;MapType&quot;, delegate.descriptor)</span>
 
         override fun deserialize(decoder: Decoder): MutableMap&lt;String, SerializableType&gt; {
-<span class="fc" id="L128">            return delegate.deserialize(decoder).toMutableMap()</span>
+<span class="fc" id="L153">            return delegate.deserialize(decoder).toMutableMap()</span>
         }
 
         override fun serialize(encoder: Encoder, value: MutableMap&lt;String, SerializableType&gt;) {
-<span class="fc" id="L132">            return delegate.serialize(encoder, value)</span>
+<span class="fc" id="L157">            return delegate.serialize(encoder, value)</span>
         }
     }
-<span class="fc" id="L135">}</span>
+<span class="fc" id="L160">}</span>
+
+<span class="nc" id="L162">internal fun MapType.isNull(key: String) = type(key) == NilType::class</span>
 
 internal fun MapType.checkExpectedType(key: String, expected: KClass&lt;out Type&gt;) {
-<span class="pc bpc" id="L138" title="1 of 2 branches missed.">    check(type(key) == expected) {</span>
-<span class="nc" id="L139">        &quot;Expected type to be $expected but was $this&quot;</span>
+<span class="pc bpc" id="L165" title="1 of 2 branches missed.">    check(type(key) == expected) {</span>
+<span class="nc" id="L166">        &quot;Expected type to be $expected but was $this&quot;</span>
     }
-<span class="fc" id="L141">}</span>
+<span class="fc" id="L168">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -2,7 +2,7 @@
 
 import io.hamal.api.http.endpoint.req.Assembler.assemble
 import io.hamal.core.adapter.InvokeAdhocPort
-import io.hamal.lib.domain.vo.GroupId
+import io.hamal.lib.domain.vo.NamespaceId
 import io.hamal.lib.sdk.api.ApiInvokeAdhocReq
 import io.hamal.lib.sdk.api.ApiSubmittedReq
 import org.springframework.http.HttpStatus.ACCEPTED
@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.RestController
 
 <span class="fc" id="L15">@RestController</span>
 <span class="fc" id="L16">internal class AdhocController(private val invokeAdhoc: InvokeAdhocPort) {</span>
-    @PostMapping(&quot;/v1/groups/{groupId}/adhoc&quot;)
+    @PostMapping(&quot;/v1/namespaces/{namespaceId}/adhoc&quot;)
     fun groupAdhoc(
-        @PathVariable(&quot;groupId&quot;) groupId: GroupId,
+        @PathVariable(&quot;namespaceId&quot;) namespaceId: NamespaceId,
         @RequestBody req: ApiInvokeAdhocReq
     ): ResponseEntity&lt;ApiSubmittedReq&gt; =
-<span class="fc" id="L22">        invokeAdhoc(groupId, req) {</span>
+<span class="fc" id="L22">        invokeAdhoc(namespaceId, req) {</span>
 <span class="fc" id="L23">            ResponseEntity(assemble(it), ACCEPTED)</span>
 <span class="fc" id="L24">        }</span>
 }

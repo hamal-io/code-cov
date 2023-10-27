@@ -28,17 +28,18 @@ import kotlinx.serialization.Serializable
 <span class="nc" id="L28">data class BridgeUnitOfWorkList(</span>
 <span class="nc" id="L29">    val work: List&lt;UnitOfWork&gt;</span>
 ) {
-<span class="nc bnc" id="L31" title="All 19 branches missed.">    @Serializable</span>
+<span class="nc bnc" id="L31" title="All 20 branches missed.">    @Serializable</span>
 <span class="nc" id="L32">    data class UnitOfWork(</span>
 <span class="nc" id="L33">        val id: ExecId,</span>
-<span class="nc" id="L34">        val groupId: GroupId,</span>
-<span class="nc" id="L35">        val inputs: ExecInputs,</span>
-<span class="nc" id="L36">        val state: State,</span>
-<span class="nc" id="L37">        val code: CodeValue,</span>
-<span class="nc" id="L38">        val correlation: Correlation? = null,</span>
-<span class="nc" id="L39">        val events: List&lt;Event&gt;</span>
-<span class="nc" id="L40">    )</span>
-<span class="nc" id="L41">}</span>
+<span class="nc" id="L34">        val namespaceId: NamespaceId,</span>
+<span class="nc" id="L35">        val groupId: GroupId,</span>
+<span class="nc" id="L36">        val inputs: ExecInputs,</span>
+<span class="nc" id="L37">        val state: State,</span>
+<span class="nc" id="L38">        val code: CodeValue,</span>
+<span class="nc" id="L39">        val correlation: Correlation? = null,</span>
+<span class="nc" id="L40">        val events: List&lt;Event&gt;</span>
+<span class="nc" id="L41">    )</span>
+<span class="nc" id="L42">}</span>
 
 
 interface BridgeExecService {
@@ -47,14 +48,14 @@ interface BridgeExecService {
     fun fail(execId: ExecId, result: ExecResult)
 }
 
-<span class="nc" id="L50">internal class BridgeExecServiceImpl(</span>
-<span class="nc" id="L51">    private val template: HttpTemplateImpl</span>
+<span class="nc" id="L51">internal class BridgeExecServiceImpl(</span>
+<span class="nc" id="L52">    private val template: HttpTemplateImpl</span>
 ) : BridgeExecService {
 
     override fun poll(): BridgeUnitOfWorkList {
-<span class="nc" id="L55">        return template.post(&quot;/v1/dequeue&quot;)</span>
-<span class="nc" id="L56">            .execute()</span>
-<span class="nc" id="L57">            .fold(BridgeUnitOfWorkList::class)</span>
+<span class="nc" id="L56">        return template.post(&quot;/v1/dequeue&quot;)</span>
+<span class="nc" id="L57">            .execute()</span>
+<span class="nc" id="L58">            .fold(BridgeUnitOfWorkList::class)</span>
     }
 
     override fun complete(
@@ -63,20 +64,20 @@ interface BridgeExecService {
         stateAfterCompletion: State,
         eventToSubmit: List&lt;EventToSubmit&gt;
     ) {
-<span class="nc" id="L66">        template.post(&quot;/b1/execs/{execId}/complete&quot;)</span>
-<span class="nc" id="L67">            .path(&quot;execId&quot;, execId)</span>
-<span class="nc" id="L68">            .body(BridgeCompleteExecReq(result, stateAfterCompletion, eventToSubmit))</span>
-<span class="nc" id="L69">            .execute()</span>
-<span class="nc" id="L70">    }</span>
+<span class="nc" id="L67">        template.post(&quot;/b1/execs/{execId}/complete&quot;)</span>
+<span class="nc" id="L68">            .path(&quot;execId&quot;, execId)</span>
+<span class="nc" id="L69">            .body(BridgeCompleteExecReq(result, stateAfterCompletion, eventToSubmit))</span>
+<span class="nc" id="L70">            .execute()</span>
+<span class="nc" id="L71">    }</span>
 
     override fun fail(
         execId: ExecId,
         result: ExecResult
     ) {
-<span class="nc" id="L76">        template.post(&quot;/b1/execs/{execId}/fail&quot;)</span>
-<span class="nc" id="L77">            .path(&quot;execId&quot;, execId)</span>
-<span class="nc" id="L78">            .body(BridgeFailExecReq(result))</span>
-<span class="nc" id="L79">            .execute()</span>
-<span class="nc" id="L80">    }</span>
+<span class="nc" id="L77">        template.post(&quot;/b1/execs/{execId}/fail&quot;)</span>
+<span class="nc" id="L78">            .path(&quot;execId&quot;, execId)</span>
+<span class="nc" id="L79">            .body(BridgeFailExecReq(result))</span>
+<span class="nc" id="L80">            .execute()</span>
+<span class="nc" id="L81">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

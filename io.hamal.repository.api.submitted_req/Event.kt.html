@@ -2,28 +2,26 @@
 
 import io.hamal.lib.domain.ReqId
 import io.hamal.lib.domain._enum.ReqStatus
-import io.hamal.lib.domain.vo.GroupId
-import io.hamal.lib.domain.vo.TopicEntryPayload
-import io.hamal.lib.domain.vo.TopicId
-import io.hamal.lib.domain.vo.TopicName
+import io.hamal.lib.domain.vo.*
 import kotlinx.serialization.Serializable
 
-<span class="pc bpc" id="L11" title="2 of 11 branches missed.">@Serializable</span>
-<span class="fc" id="L12">data class SubmittedCreateTopicReq(</span>
-<span class="fc" id="L13">    override val reqId: ReqId,</span>
-<span class="fc" id="L14">    override var status: ReqStatus,</span>
-<span class="fc" id="L15">    override val groupId: GroupId,</span>
-<span class="fc" id="L16">    val id: TopicId,</span>
-<span class="fc" id="L17">    val name: TopicName</span>
-<span class="fc" id="L18">) : SubmittedReqWithGroupId</span>
+<span class="pc bpc" id="L8" title="2 of 12 branches missed.">@Serializable</span>
+<span class="fc" id="L9">data class SubmittedCreateTopicReq(</span>
+<span class="fc" id="L10">    override val reqId: ReqId,</span>
+<span class="fc" id="L11">    override var status: ReqStatus,</span>
+<span class="fc" id="L12">    override val groupId: GroupId,</span>
+<span class="fc" id="L13">    val id: TopicId,</span>
+<span class="fc" id="L14">    val namespaceId: NamespaceId,</span>
+<span class="fc" id="L15">    val name: TopicName</span>
+<span class="fc" id="L16">) : SubmittedReqWithGroupId</span>
 
 
-<span class="pc bpc" id="L21" title="2 of 11 branches missed.">@Serializable</span>
-<span class="fc" id="L22">data class SubmittedAppendToTopicReq(</span>
-<span class="fc" id="L23">    override val reqId: ReqId,</span>
-<span class="fc" id="L24">    override var status: ReqStatus,</span>
-<span class="fc" id="L25">    override val groupId: GroupId,</span>
-<span class="fc" id="L26">    val id: TopicId,</span>
-<span class="fc" id="L27">    val payload: TopicEntryPayload</span>
-<span class="fc" id="L28">) : SubmittedReqWithGroupId</span>
+<span class="pc bpc" id="L19" title="2 of 11 branches missed.">@Serializable</span>
+<span class="fc" id="L20">data class SubmittedAppendToTopicReq(</span>
+<span class="fc" id="L21">    override val reqId: ReqId,</span>
+<span class="fc" id="L22">    override var status: ReqStatus,</span>
+<span class="fc" id="L23">    override val groupId: GroupId,</span>
+<span class="fc" id="L24">    val id: TopicId,</span>
+<span class="fc" id="L25">    val payload: TopicEntryPayload</span>
+<span class="fc" id="L26">) : SubmittedReqWithGroupId</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

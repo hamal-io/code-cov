@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Broker.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.repository.api.log</a> &gt; <span class="el_source">Broker.kt</span></div><h1>Broker.kt</h1><pre class="source lang-java linenums">package io.hamal.repository.api.log
 
-import io.hamal.lib.common.snowflake.SnowflakeId
 import io.hamal.lib.common.domain.CmdId
 import io.hamal.lib.common.domain.Limit
+import io.hamal.lib.common.snowflake.SnowflakeId
 import io.hamal.lib.domain.vo.*
 import io.hamal.repository.api.CmdRepository
 import io.hamal.repository.api.log.BrokerTopicsRepository.TopicQuery
@@ -15,7 +15,8 @@ interface CreateTopic {
 <span class="fc" id="L15">    data class TopicToCreate(</span>
 <span class="fc" id="L16">        val id: TopicId,</span>
 <span class="fc" id="L17">        val name: TopicName,</span>
-<span class="fc" id="L18">        val groupId: GroupId</span>
+<span class="fc" id="L18">        val namespaceId: NamespaceId,</span>
+<span class="fc" id="L19">        val groupId: GroupId</span>
     )
 }
 
@@ -34,18 +35,18 @@ interface ReadFromTopic {
 }
 
 interface FindTopic {
-<span class="fc bfc" id="L37" title="All 2 branches covered.">    fun getTopic(topicId: TopicId): Topic = findTopic(topicId) ?: throw NoSuchElementException(&quot;Topic not found&quot;)</span>
+<span class="fc bfc" id="L38" title="All 2 branches covered.">    fun getTopic(topicId: TopicId): Topic = findTopic(topicId) ?: throw NoSuchElementException(&quot;Topic not found&quot;)</span>
 
     fun findTopic(topicId: TopicId): Topic?
 
-    fun findTopic(groupId: GroupId, topicName: TopicName): Topic?
+    fun findTopic(namespaceId: NamespaceId, topicName: TopicName): Topic?
 }
 
 interface ResolveTopic {
-    fun resolveTopic(groupId: GroupId, name: TopicName): Topic?
+    fun resolveTopic(namespaceId: NamespaceId, name: TopicName): Topic?
 }
 
-<span class="fc" id="L48">interface BrokerRepository :</span>
+<span class="fc" id="L49">interface BrokerRepository :</span>
     CmdRepository,
     CreateTopic,
     AppendToTopic,
@@ -55,24 +56,24 @@ interface ResolveTopic {
     ResolveTopic {
 
     fun listTopics(query: TopicQuery): List&lt;Topic&gt;
-<span class="pc" id="L58">    fun list(topicIds: List&lt;TopicId&gt;) = topicIds.map(::getTopic) //FIXME as one request  ?!</span>
+<span class="pc" id="L59">    fun list(topicIds: List&lt;TopicId&gt;) = topicIds.map(::getTopic) //FIXME as one request  ?!</span>
 
     @OptIn(ExperimentalSerializationApi::class)
     fun listEntries(topic: Topic, query: TopicEntryQuery): List&lt;TopicEntry&gt; {
-<span class="fc" id="L62">        val firstId = ChunkId(SnowflakeId(query.afterId.value.value + 1))</span>
-<span class="fc" id="L63">        return read(firstId, topic, query.limit.value)</span>
-<span class="fc" id="L64">            .map { chunk -&gt;</span>
-<span class="fc" id="L65">                val payload = ProtoBuf.decodeFromByteArray(TopicEntryPayload.serializer(), chunk.bytes)</span>
-<span class="fc" id="L66">                TopicEntry(</span>
-<span class="fc" id="L67">                    id = TopicEntryId(chunk.id.value),</span>
-<span class="fc" id="L68">                    payload = payload</span>
+<span class="fc" id="L63">        val firstId = ChunkId(SnowflakeId(query.afterId.value.value + 1))</span>
+<span class="fc" id="L64">        return read(firstId, topic, query.limit.value)</span>
+<span class="fc" id="L65">            .map { chunk -&gt;</span>
+<span class="fc" id="L66">                val payload = ProtoBuf.decodeFromByteArray(TopicEntryPayload.serializer(), chunk.bytes)</span>
+<span class="fc" id="L67">                TopicEntry(</span>
+<span class="fc" id="L68">                    id = TopicEntryId(chunk.id.value),</span>
+<span class="fc" id="L69">                    payload = payload</span>
                 )
             }
     }
 
-<span class="pc" id="L73">    data class TopicEntryQuery(</span>
-<span class="pc" id="L74">        var afterId: TopicEntryId = TopicEntryId(0),</span>
-<span class="pc" id="L75">        var limit: Limit = Limit(1)</span>
-<span class="nc" id="L76">    )</span>
-<span class="fc" id="L77">}</span>
+<span class="pc" id="L74">    data class TopicEntryQuery(</span>
+<span class="pc" id="L75">        var afterId: TopicEntryId = TopicEntryId(0),</span>
+<span class="pc" id="L76">        var limit: Limit = Limit(1)</span>
+<span class="nc" id="L77">    )</span>
+<span class="fc" id="L78">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

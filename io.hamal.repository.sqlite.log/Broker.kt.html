@@ -2,7 +2,7 @@
 
 import io.hamal.lib.common.KeyedOnce
 import io.hamal.lib.common.domain.CmdId
-import io.hamal.lib.domain.vo.GroupId
+import io.hamal.lib.domain.vo.NamespaceId
 import io.hamal.lib.domain.vo.TopicId
 import io.hamal.lib.domain.vo.TopicName
 import io.hamal.repository.api.log.*
@@ -41,56 +41,59 @@ import java.nio.file.Path
 <span class="fc" id="L41">        topicsRepository.create(</span>
 <span class="fc" id="L42">            cmdId,</span>
 <span class="fc" id="L43">            TopicToCreate(</span>
-<span class="fc" id="L44">                topicToCreate.id,</span>
-<span class="fc" id="L45">                topicToCreate.name,</span>
-<span class="fc" id="L46">                topicToCreate.groupId</span>
+<span class="fc" id="L44">                id = topicToCreate.id,</span>
+<span class="fc" id="L45">                name = topicToCreate.name,</span>
+<span class="fc" id="L46">                namespaceId = topicToCreate.namespaceId,</span>
+<span class="fc" id="L47">                groupId = topicToCreate.groupId</span>
             )
-<span class="fc" id="L48">        )</span>
+<span class="fc" id="L49">        )</span>
 
     override fun append(cmdId: CmdId, topic: Topic, bytes: ByteArray) {
-<span class="fc" id="L51">        resolveRepository(topic).append(cmdId, bytes)</span>
-<span class="fc" id="L52">    }</span>
+<span class="fc" id="L52">        resolveRepository(topic).append(cmdId, bytes)</span>
+<span class="fc" id="L53">    }</span>
 
     override fun close() {
-<span class="fc" id="L55">        topicsRepository.close()</span>
-<span class="fc" id="L56">        consumersRepository.close()</span>
-<span class="fc" id="L57">        topicRepositoryMapping.keys().forEach { topic -&gt;</span>
-<span class="fc" id="L58">            resolveRepository(topic).close()</span>
-<span class="fc" id="L59">        }</span>
-<span class="fc" id="L60">    }</span>
+<span class="fc" id="L56">        topicsRepository.close()</span>
+<span class="fc" id="L57">        consumersRepository.close()</span>
+<span class="fc" id="L58">        topicRepositoryMapping.keys().forEach { topic -&gt;</span>
+<span class="fc" id="L59">            resolveRepository(topic).close()</span>
+<span class="fc" id="L60">        }</span>
+<span class="fc" id="L61">    }</span>
 
     override fun consume(consumerId: ConsumerId, topic: Topic, limit: Int): List&lt;Chunk&gt; {
-<span class="fc" id="L63">        val nextChunkId = consumersRepository.nextChunkId(consumerId, topic.id)</span>
-<span class="fc" id="L64">        return resolveRepository(topic).read(nextChunkId, limit)</span>
+<span class="fc" id="L64">        val nextChunkId = consumersRepository.nextChunkId(consumerId, topic.id)</span>
+<span class="fc" id="L65">        return resolveRepository(topic).read(nextChunkId, limit)</span>
     }
 
     override fun commit(consumerId: ConsumerId, topic: Topic, chunkId: ChunkId) {
-<span class="fc" id="L68">        consumersRepository.commit(consumerId, topic.id, chunkId)</span>
-<span class="fc" id="L69">    }</span>
+<span class="fc" id="L69">        consumersRepository.commit(consumerId, topic.id, chunkId)</span>
+<span class="fc" id="L70">    }</span>
 
-<span class="nc" id="L71">    override fun findTopic(topicId: TopicId) = topicsRepository.find(topicId)</span>
-<span class="fc" id="L72">    override fun findTopic(groupId: GroupId, topicName: TopicName) = topicsRepository.find(groupId, topicName)</span>
+<span class="nc" id="L72">    override fun findTopic(topicId: TopicId) = topicsRepository.find(topicId)</span>
+    override fun findTopic(namespaceId: NamespaceId, topicName: TopicName) =
+<span class="fc" id="L74">        topicsRepository.find(namespaceId, topicName)</span>
+
     override fun listTopics(query: TopicQuery): List&lt;Topic&gt; {
-<span class="nc" id="L74">        return topicsRepository.list(query)</span>
+<span class="nc" id="L77">        return topicsRepository.list(query)</span>
     }
-    
-<span class="nc" id="L77">    override fun resolveTopic(groupId: GroupId, name: TopicName) = topicsRepository.find(groupId, name)</span>
+
+<span class="nc" id="L80">    override fun resolveTopic(namespaceId: NamespaceId, name: TopicName) = topicsRepository.find(namespaceId, name)</span>
 
     override fun clear() {
-<span class="nc" id="L80">        topicsRepository.clear()</span>
-<span class="nc" id="L81">        consumersRepository.clear()</span>
-<span class="nc" id="L82">        topicRepositoryMapping.keys().forEach { topic -&gt;</span>
-<span class="nc" id="L83">            resolveRepository(topic).clear()</span>
-<span class="nc" id="L84">        }</span>
-<span class="nc" id="L85">    }</span>
+<span class="nc" id="L83">        topicsRepository.clear()</span>
+<span class="nc" id="L84">        consumersRepository.clear()</span>
+<span class="nc" id="L85">        topicRepositoryMapping.keys().forEach { topic -&gt;</span>
+<span class="nc" id="L86">            resolveRepository(topic).clear()</span>
+<span class="nc" id="L87">        }</span>
+<span class="nc" id="L88">    }</span>
 
 
     override fun read(firstId: ChunkId, topic: Topic, limit: Int): List&lt;Chunk&gt; {
-<span class="nc" id="L89">        return resolveRepository(topic).read(firstId, limit)</span>
+<span class="nc" id="L92">        return resolveRepository(topic).read(firstId, limit)</span>
     }
 
-<span class="fc" id="L92">    private fun resolveRepository(topic: Topic) = topicRepositoryMapping(topic) {</span>
-<span class="fc" id="L93">        SqliteTopicRepository(topic, path = broker.path)</span>
-<span class="fc" id="L94">    }</span>
+<span class="fc" id="L95">    private fun resolveRepository(topic: Topic) = topicRepositoryMapping(topic) {</span>
+<span class="fc" id="L96">        SqliteTopicRepository(topic, path = broker.path)</span>
+<span class="fc" id="L97">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

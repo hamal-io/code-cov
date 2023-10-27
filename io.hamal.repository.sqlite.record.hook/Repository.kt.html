@@ -89,27 +89,26 @@ internal object CreateHook : CreateDomainObject&lt;HookId, HookRecord, Hook&gt; 
 <span class="nc" id="L89">                    HookUpdatedRecord(</span>
 <span class="nc" id="L90">                        entityId = hookId,</span>
 <span class="nc" id="L91">                        cmdId = cmdId,</span>
-<span class="nc bnc" id="L92" title="All 2 branches missed.">                        namespaceId = cmd.namespaceId ?: currentVersion.namespaceId,</span>
-<span class="nc bnc" id="L93" title="All 2 branches missed.">                        name = cmd.name ?: currentVersion.name</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">                        name = cmd.name ?: currentVersion.name</span>
                     )
                 )
-<span class="nc" id="L96">                currentVersion(hookId)</span>
-<span class="nc" id="L97">                    .also { ProjectionCurrent.upsert(this, it) }</span>
-<span class="nc" id="L98">                    .also { ProjectionUniqueName.upsert(this, it) }</span>
+<span class="nc" id="L95">                currentVersion(hookId)</span>
+<span class="nc" id="L96">                    .also { ProjectionCurrent.upsert(this, it) }</span>
+<span class="nc" id="L97">                    .also { ProjectionUniqueName.upsert(this, it) }</span>
             }
         }
     }
 
     override fun find(hookId: HookId): Hook? {
-<span class="nc" id="L104">        return ProjectionCurrent.find(connection, hookId)</span>
+<span class="nc" id="L103">        return ProjectionCurrent.find(connection, hookId)</span>
     }
 
     override fun list(query: HookQuery): List&lt;Hook&gt; {
-<span class="nc" id="L108">        return ProjectionCurrent.list(connection, query)</span>
+<span class="nc" id="L107">        return ProjectionCurrent.list(connection, query)</span>
     }
 
     override fun count(query: HookQuery): ULong {
-<span class="nc" id="L112">        return ProjectionCurrent.count(connection, query)</span>
+<span class="nc" id="L111">        return ProjectionCurrent.count(connection, query)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

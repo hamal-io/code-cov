@@ -17,24 +17,23 @@ import kotlinx.serialization.Serializable
 <span class="fc" id="L17">) : SubmittedReqWithGroupId</span>
 
 
-<span class="pc bpc" id="L20" title="2 of 12 branches missed.">@Serializable</span>
+<span class="pc bpc" id="L20" title="2 of 11 branches missed.">@Serializable</span>
 <span class="fc" id="L21">data class SubmittedUpdateHookReq(</span>
 <span class="fc" id="L22">    override val reqId: ReqId,</span>
 <span class="fc" id="L23">    override var status: ReqStatus,</span>
 <span class="fc" id="L24">    override val groupId: GroupId,</span>
 <span class="fc" id="L25">    val id: HookId,</span>
-<span class="fc" id="L26">    val namespaceId: NamespaceId?,</span>
-<span class="fc" id="L27">    val name: HookName?,</span>
-<span class="fc" id="L28">) : SubmittedReqWithGroupId</span>
+<span class="fc" id="L26">    val name: HookName?,</span>
+<span class="fc" id="L27">) : SubmittedReqWithGroupId</span>
 
-<span class="pc bnc" id="L30" title="All 13 branches missed.">@Serializable</span>
-<span class="nc" id="L31">data class SubmittedInvokeHookReq(</span>
-<span class="nc" id="L32">    override val reqId: ReqId,</span>
-<span class="nc" id="L33">    override var status: ReqStatus,</span>
-<span class="nc" id="L34">    val id: HookId,</span>
-<span class="nc" id="L35">    val groupId: GroupId,</span>
-<span class="nc" id="L36">    val method: HookMethod,</span>
-<span class="nc" id="L37">    val headers: HookHeaders,</span>
-<span class="nc" id="L38">    val parameters: HookParameters</span>
-<span class="fc" id="L39">) : SubmittedReq</span>
+<span class="pc bnc" id="L29" title="All 13 branches missed.">@Serializable</span>
+<span class="nc" id="L30">data class SubmittedInvokeHookReq(</span>
+<span class="nc" id="L31">    override val reqId: ReqId,</span>
+<span class="nc" id="L32">    override var status: ReqStatus,</span>
+<span class="nc" id="L33">    val id: HookId,</span>
+<span class="nc" id="L34">    val groupId: GroupId,</span>
+<span class="nc" id="L35">    val method: HookMethod,</span>
+<span class="nc" id="L36">    val headers: HookHeaders,</span>
+<span class="nc" id="L37">    val parameters: HookParameters</span>
+<span class="fc" id="L38">) : SubmittedReq</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

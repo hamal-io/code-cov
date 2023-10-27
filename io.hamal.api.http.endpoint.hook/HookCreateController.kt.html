@@ -3,7 +3,7 @@
 import io.hamal.api.http.endpoint.req.Assembler
 import io.hamal.core.adapter.CreateHookPort
 import io.hamal.core.component.Retry
-import io.hamal.lib.domain.vo.GroupId
+import io.hamal.lib.domain.vo.NamespaceId
 import io.hamal.lib.sdk.api.ApiCreateHookReq
 import io.hamal.lib.sdk.api.ApiSubmittedReq
 import org.springframework.http.HttpStatus.ACCEPTED
@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.RestController
 <span class="fc" id="L18">    private val retry: Retry,</span>
 <span class="fc" id="L19">    private val createHook: CreateHookPort</span>
 ) {
-    @PostMapping(&quot;/v1/groups/{groupId}/hooks&quot;)
+    @PostMapping(&quot;/v1/namespaces/{namespaceId}/hooks&quot;)
     fun createHook(
-        @PathVariable(&quot;groupId&quot;) groupId: GroupId,
+        @PathVariable(&quot;namespaceId&quot;) namespaceId: NamespaceId,
         @RequestBody req: ApiCreateHookReq
 <span class="fc" id="L25">    ): ResponseEntity&lt;ApiSubmittedReq&gt; = retry {</span>
-<span class="fc" id="L26">        createHook(groupId, req) {</span>
+<span class="fc" id="L26">        createHook(namespaceId, req) {</span>
 <span class="fc" id="L27">            ResponseEntity(Assembler.assemble(it), ACCEPTED)</span>
         }
 <span class="fc" id="L29">    }</span>

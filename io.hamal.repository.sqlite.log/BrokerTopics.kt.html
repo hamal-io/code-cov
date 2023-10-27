@@ -3,10 +3,11 @@
 import io.hamal.lib.common.domain.CmdId
 import io.hamal.lib.common.util.TimeUtils
 import io.hamal.lib.domain.vo.GroupId
+import io.hamal.lib.domain.vo.NamespaceId
 import io.hamal.lib.domain.vo.TopicId
 import io.hamal.lib.domain.vo.TopicName
-import io.hamal.lib.sqlite.SqliteBaseRepository
 import io.hamal.lib.sqlite.Connection
+import io.hamal.lib.sqlite.SqliteBaseRepository
 import io.hamal.repository.api.log.BrokerTopicsRepository
 import io.hamal.repository.api.log.BrokerTopicsRepository.TopicQuery
 import io.hamal.repository.api.log.BrokerTopicsRepository.TopicToCreate
@@ -14,127 +15,134 @@ import io.hamal.repository.api.log.Topic
 import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
 
-<span class="fc" id="L17">data class SqliteBrokerTopics(</span>
-<span class="fc" id="L18">    val path: Path</span>
+<span class="fc" id="L18">data class SqliteBrokerTopics(</span>
+<span class="fc" id="L19">    val path: Path</span>
 )
 
-<span class="fc" id="L21">class SqliteBrokerTopicsRepository(</span>
-<span class="pc" id="L22">    internal val brokerTopics: SqliteBrokerTopics,</span>
-<span class="fc" id="L23">) : SqliteBaseRepository(object : Config {</span>
-<span class="fc" id="L24">    override val path: Path get() = brokerTopics.path</span>
-<span class="fc" id="L25">    override val filename: String get() = &quot;topics.db&quot;</span>
+<span class="fc" id="L22">class SqliteBrokerTopicsRepository(</span>
+<span class="pc" id="L23">    internal val brokerTopics: SqliteBrokerTopics,</span>
+<span class="fc" id="L24">) : SqliteBaseRepository(object : Config {</span>
+<span class="fc" id="L25">    override val path: Path get() = brokerTopics.path</span>
+<span class="fc" id="L26">    override val filename: String get() = &quot;topics.db&quot;</span>
 }), BrokerTopicsRepository {
 
-<span class="fc" id="L28">    private val topicMapping = ConcurrentHashMap&lt;TopicName, Topic&gt;()</span>
+<span class="fc" id="L29">    private val topicMapping = ConcurrentHashMap&lt;TopicName, Topic&gt;()</span>
     override fun setupConnection(connection: Connection) {
-<span class="fc" id="L30">        connection.execute(&quot;&quot;&quot;PRAGMA journal_mode = wal;&quot;&quot;&quot;)</span>
-<span class="fc" id="L31">        connection.execute(&quot;&quot;&quot;PRAGMA locking_mode = exclusive;&quot;&quot;&quot;)</span>
-<span class="fc" id="L32">        connection.execute(&quot;&quot;&quot;PRAGMA temp_store = memory;&quot;&quot;&quot;)</span>
-<span class="fc" id="L33">        connection.execute(&quot;&quot;&quot;PRAGMA synchronous = off;&quot;&quot;&quot;)</span>
-<span class="fc" id="L34">    }</span>
+<span class="fc" id="L31">        connection.execute(&quot;&quot;&quot;PRAGMA journal_mode = wal;&quot;&quot;&quot;)</span>
+<span class="fc" id="L32">        connection.execute(&quot;&quot;&quot;PRAGMA locking_mode = exclusive;&quot;&quot;&quot;)</span>
+<span class="fc" id="L33">        connection.execute(&quot;&quot;&quot;PRAGMA temp_store = memory;&quot;&quot;&quot;)</span>
+<span class="fc" id="L34">        connection.execute(&quot;&quot;&quot;PRAGMA synchronous = off;&quot;&quot;&quot;)</span>
+<span class="fc" id="L35">    }</span>
 
     override fun setupSchema(connection: Connection) {
-<span class="fc" id="L37">        connection.tx {</span>
-<span class="fc" id="L38">            execute(</span>
-<span class="fc" id="L39">                &quot;&quot;&quot;</span>
+<span class="fc" id="L38">        connection.tx {</span>
+<span class="fc" id="L39">            execute(</span>
+<span class="fc" id="L40">                &quot;&quot;&quot;</span>
          CREATE TABLE IF NOT EXISTS topics (
-            id INTEGER PRIMARY KEY,
-            name TEXT NOT NULL ,
-            group_id INTEGER NOT NULL,
-            instant DATETIME NOT NULL,
-            UNIQUE(group_id, name)
+            id              INTEGER PRIMARY KEY,
+            name            TEXT NOT NULL ,
+            group_id        INTEGER NOT NULL,
+            namespace_id    INTEGER NOT NULL,
+            instant         DATETIME NOT NULL,
+            UNIQUE(namespace_id, name)
         );
         &quot;&quot;&quot;
             )
-<span class="fc" id="L49">        }</span>
-<span class="fc" id="L50">    }</span>
+<span class="fc" id="L51">        }</span>
+<span class="fc" id="L52">    }</span>
 
     override fun create(cmdId: CmdId, toCreate: TopicToCreate): Topic {
-<span class="fc" id="L53">        try {</span>
-<span class="fc" id="L54">            return connection.execute&lt;Topic&gt;(&quot;INSERT INTO topics(id, name,group_id, instant) VALUES (:id, :name,:groupId, :now) RETURNING id,name, group_id&quot;) {</span>
-<span class="fc" id="L55">                query {</span>
-<span class="fc" id="L56">                    set(&quot;id&quot;, toCreate.id)</span>
-<span class="fc" id="L57">                    set(&quot;name&quot;, toCreate.name)</span>
-<span class="fc" id="L58">                    set(&quot;groupId&quot;, toCreate.groupId)</span>
-<span class="fc" id="L59">                    set(&quot;now&quot;, TimeUtils.now())</span>
+<span class="fc" id="L55">        try {</span>
+<span class="fc" id="L56">            return connection.execute&lt;Topic&gt;(&quot;INSERT INTO topics(id, name,namespace_id, group_id, instant) VALUES (:id, :name,:namespaceId, :groupId, :now) RETURNING id, name, namespace_id, group_id&quot;) {</span>
+<span class="fc" id="L57">                query {</span>
+<span class="fc" id="L58">                    set(&quot;id&quot;, toCreate.id)</span>
+<span class="fc" id="L59">                    set(&quot;name&quot;, toCreate.name)</span>
+<span class="fc" id="L60">                    set(&quot;namespaceId&quot;, toCreate.namespaceId)</span>
+<span class="fc" id="L61">                    set(&quot;groupId&quot;, toCreate.groupId)</span>
+<span class="fc" id="L62">                    set(&quot;now&quot;, TimeUtils.now())</span>
                 }
-<span class="fc" id="L61">                map { rs -&gt;</span>
-<span class="fc" id="L62">                    Topic(</span>
-<span class="fc" id="L63">                        id = rs.getDomainId(&quot;id&quot;, ::TopicId),</span>
-<span class="fc" id="L64">                        name = TopicName(rs.getString(&quot;name&quot;)),</span>
-<span class="fc" id="L65">                        groupId = rs.getDomainId(&quot;group_id&quot;, ::GroupId)</span>
+<span class="fc" id="L64">                map { rs -&gt;</span>
+<span class="fc" id="L65">                    Topic(</span>
+<span class="fc" id="L66">                        id = rs.getDomainId(&quot;id&quot;, ::TopicId),</span>
+<span class="fc" id="L67">                        name = TopicName(rs.getString(&quot;name&quot;)),</span>
+<span class="fc" id="L68">                        namespaceId = rs.getDomainId(&quot;namespace_id&quot;, ::NamespaceId),</span>
+<span class="fc" id="L69">                        groupId = rs.getDomainId(&quot;group_id&quot;, ::GroupId)</span>
                     )
                 }
             }!!
-<span class="nc" id="L69">        } catch (t: Throwable) {</span>
-<span class="nc bnc" id="L70" title="All 2 branches missed.">            if (t.message!!.contains(&quot;(UNIQUE constraint failed: topics.group_id, topics.name)&quot;)) {</span>
-<span class="nc" id="L71">                throw IllegalArgumentException(&quot;Topic already exists&quot;)</span>
+<span class="nc" id="L73">        } catch (t: Throwable) {</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">            if (t.message!!.contains(&quot;(UNIQUE constraint failed: topics.namespace_id, topics.name)&quot;)) {</span>
+<span class="nc" id="L75">                throw IllegalArgumentException(&quot;Topic already exists&quot;)</span>
             }
-<span class="nc" id="L73">            throw t</span>
+<span class="nc" id="L77">            throw t</span>
         }
     }
 
-    override fun find(groupId: GroupId, name: TopicName): Topic? =
-<span class="pc bpc" id="L78" title="1 of 2 branches missed.">        topicMapping[name]</span>
-<span class="fc" id="L79">            ?: connection.executeQueryOne(&quot;SELECT id, name, group_id FROM topics WHERE name = :name AND group_id = :groupId&quot;) {</span>
-<span class="fc" id="L80">                query {</span>
-<span class="fc" id="L81">                    set(&quot;name&quot;, name.value)</span>
-<span class="fc" id="L82">                    set(&quot;groupId&quot;, groupId.value)</span>
+    override fun find(namespaceId: NamespaceId, name: TopicName): Topic? =
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">        topicMapping[name]</span>
+<span class="fc" id="L83">            ?: connection.executeQueryOne(&quot;SELECT id, name, namespace_id, group_id FROM topics WHERE name = :name AND namespace_id = :namespaceId&quot;) {</span>
+<span class="fc" id="L84">                query {</span>
+<span class="fc" id="L85">                    set(&quot;name&quot;, name.value)</span>
+<span class="fc" id="L86">                    set(&quot;namespaceId&quot;, namespaceId.value)</span>
                 }
-<span class="fc" id="L84">                map { rs -&gt;</span>
-<span class="fc" id="L85">                    Topic(</span>
-<span class="fc" id="L86">                        id = rs.getDomainId(&quot;id&quot;, ::TopicId),</span>
-<span class="fc" id="L87">                        name = TopicName(rs.getString(&quot;name&quot;)),</span>
-<span class="fc" id="L88">                        groupId = rs.getDomainId(&quot;group_id&quot;, ::GroupId)</span>
+<span class="fc" id="L88">                map { rs -&gt;</span>
+<span class="fc" id="L89">                    Topic(</span>
+<span class="fc" id="L90">                        id = rs.getDomainId(&quot;id&quot;, ::TopicId),</span>
+<span class="fc" id="L91">                        name = TopicName(rs.getString(&quot;name&quot;)),</span>
+<span class="fc" id="L92">                        namespaceId = rs.getDomainId(&quot;namespace_id&quot;, ::NamespaceId),</span>
+<span class="fc" id="L93">                        groupId = rs.getDomainId(&quot;group_id&quot;, ::GroupId)</span>
                     )
                 }
-<span class="pc bpc" id="L91" title="1 of 2 branches missed.">            }?.also { topicMapping[it.name] = it }</span>
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">            }?.also { topicMapping[it.name] = it }</span>
 
-<span class="nc bnc" id="L93" title="All 6 branches missed.">    override fun find(id: TopicId): Topic? = topicMapping.values.find { it.id == id }</span>
-<span class="nc" id="L94">        ?: connection.executeQueryOne(&quot;SELECT id, name, group_id FROM topics WHERE id = :id&quot;) {</span>
-<span class="nc" id="L95">            query {</span>
-<span class="nc" id="L96">                set(&quot;id&quot;, id)</span>
+<span class="nc bnc" id="L98" title="All 6 branches missed.">    override fun find(id: TopicId): Topic? = topicMapping.values.find { it.id == id }</span>
+<span class="nc" id="L99">        ?: connection.executeQueryOne(&quot;SELECT id, name, namespace_id, group_id FROM topics WHERE id = :id&quot;) {</span>
+<span class="nc" id="L100">            query {</span>
+<span class="nc" id="L101">                set(&quot;id&quot;, id)</span>
             }
-<span class="nc" id="L98">            map { rs -&gt;</span>
-<span class="nc" id="L99">                Topic(</span>
-<span class="nc" id="L100">                    id = rs.getDomainId(&quot;id&quot;, ::TopicId),</span>
-<span class="nc" id="L101">                    name = TopicName(rs.getString(&quot;name&quot;)),</span>
-<span class="nc" id="L102">                    groupId = rs.getDomainId(&quot;group_id&quot;, ::GroupId)</span>
+<span class="nc" id="L103">            map { rs -&gt;</span>
+<span class="nc" id="L104">                Topic(</span>
+<span class="nc" id="L105">                    id = rs.getDomainId(&quot;id&quot;, ::TopicId),</span>
+<span class="nc" id="L106">                    name = TopicName(rs.getString(&quot;name&quot;)),</span>
+<span class="nc" id="L107">                    namespaceId = rs.getDomainId(&quot;namespace_id&quot;, ::NamespaceId),</span>
+<span class="nc" id="L108">                    groupId = rs.getDomainId(&quot;group_id&quot;, ::GroupId)</span>
                 )
             }
-<span class="nc bnc" id="L105" title="All 2 branches missed.">        }?.also { topicMapping[it.name] = it }</span>
+<span class="nc bnc" id="L111" title="All 2 branches missed.">        }?.also { topicMapping[it.name] = it }</span>
 
     override fun list(query: TopicQuery): List&lt;Topic&gt; {
-<span class="nc" id="L108">        return connection.executeQuery&lt;Topic&gt;(</span>
+<span class="nc" id="L114">        return connection.executeQuery&lt;Topic&gt;(</span>
             &quot;&quot;&quot;
                 SELECT
-                    id, name, group_id
+                    id, name, namespace_id, group_id
                 FROM 
                     topics
                 WHERE
                     id &lt; :afterId
-<span class="nc" id="L116">                    ${query.names()}</span>
-<span class="nc" id="L117">                    ${query.groupIds()}</span>
+<span class="nc" id="L122">                    ${query.names()}</span>
+<span class="nc" id="L123">                    ${query.groupIds()}</span>
+<span class="nc" id="L124">                    ${query.namespaceIds()}</span>
                 ORDER BY id DESC
                 LIMIT :limit
-<span class="nc" id="L120">            &quot;&quot;&quot;.trimIndent()</span>
+<span class="nc" id="L127">            &quot;&quot;&quot;.trimIndent()</span>
         ) {
-<span class="nc" id="L122">            query {</span>
-<span class="nc" id="L123">                set(&quot;afterId&quot;, query.afterId)</span>
-<span class="nc" id="L124">                set(&quot;limit&quot;, query.limit)</span>
+<span class="nc" id="L129">            query {</span>
+<span class="nc" id="L130">                set(&quot;afterId&quot;, query.afterId)</span>
+<span class="nc" id="L131">                set(&quot;limit&quot;, query.limit)</span>
             }
-<span class="nc" id="L126">            map { rs -&gt;</span>
-<span class="nc" id="L127">                Topic(</span>
-<span class="nc" id="L128">                    id = rs.getDomainId(&quot;id&quot;, ::TopicId),</span>
-<span class="nc" id="L129">                    name = TopicName(rs.getString(&quot;name&quot;)),</span>
-<span class="nc" id="L130">                    groupId = rs.getDomainId(&quot;group_id&quot;, ::GroupId)</span>
+<span class="nc" id="L133">            map { rs -&gt;</span>
+<span class="nc" id="L134">                Topic(</span>
+<span class="nc" id="L135">                    id = rs.getDomainId(&quot;id&quot;, ::TopicId),</span>
+<span class="nc" id="L136">                    name = TopicName(rs.getString(&quot;name&quot;)),</span>
+<span class="nc" id="L137">                    namespaceId = rs.getDomainId(&quot;namespace_id&quot;, ::NamespaceId),</span>
+<span class="nc" id="L138">                    groupId = rs.getDomainId(&quot;group_id&quot;, ::GroupId)</span>
                 )
             }
         }
     }
 
     override fun count(query: TopicQuery): ULong {
-<span class="nc bnc" id="L137" title="All 2 branches missed.">        return connection.executeQueryOne(</span>
+<span class="nc bnc" id="L145" title="All 2 branches missed.">        return connection.executeQueryOne(</span>
             &quot;&quot;&quot;
             SELECT 
                 COUNT(*) as count 
@@ -142,43 +150,52 @@ import java.util.concurrent.ConcurrentHashMap
                 topics
             WHERE
                 id &lt; :afterId
-<span class="nc" id="L145">                ${query.names()}</span>
-<span class="nc" id="L146">                ${query.groupIds()}</span>
-<span class="nc" id="L147">        &quot;&quot;&quot;.trimIndent()</span>
+<span class="nc" id="L153">                ${query.names()}</span>
+<span class="nc" id="L154">                ${query.groupIds()}</span>
+<span class="nc" id="L155">                ${query.namespaceIds()}</span>
+<span class="nc" id="L156">        &quot;&quot;&quot;.trimIndent()</span>
         ) {
-<span class="nc" id="L149">            query {</span>
-<span class="nc" id="L150">                set(&quot;afterId&quot;, query.afterId)</span>
+<span class="nc" id="L158">            query {</span>
+<span class="nc" id="L159">                set(&quot;afterId&quot;, query.afterId)</span>
             }
-<span class="nc" id="L152">            map {</span>
-<span class="nc" id="L153">                it.getLong(&quot;count&quot;).toULong()</span>
+<span class="nc" id="L161">            map {</span>
+<span class="nc" id="L162">                it.getLong(&quot;count&quot;).toULong()</span>
             }
-<span class="nc" id="L155">        } ?: 0UL</span>
+<span class="nc" id="L164">        } ?: 0UL</span>
     }
 
     override fun clear() {
-<span class="nc" id="L159">        connection.tx {</span>
-<span class="nc" id="L160">            execute(&quot;DELETE FROM topics&quot;)</span>
-<span class="nc" id="L161">        }</span>
-<span class="nc" id="L162">    }</span>
+<span class="nc" id="L168">        connection.tx {</span>
+<span class="nc" id="L169">            execute(&quot;DELETE FROM topics&quot;)</span>
+<span class="nc" id="L170">        }</span>
+<span class="nc" id="L171">    }</span>
 
     override fun close() {
-<span class="fc" id="L165">        connection.close()</span>
-<span class="fc" id="L166">    }</span>
+<span class="fc" id="L174">        connection.close()</span>
+<span class="fc" id="L175">    }</span>
 
 
     private fun TopicQuery.names(): String {
-<span class="nc bnc" id="L170" title="All 2 branches missed.">        return if (names.isEmpty()) {</span>
-<span class="nc" id="L171">            &quot;&quot;</span>
+<span class="nc bnc" id="L179" title="All 2 branches missed.">        return if (names.isEmpty()) {</span>
+<span class="nc" id="L180">            &quot;&quot;</span>
         } else {
-<span class="nc" id="L173">            &quot;AND name IN (${names.joinToString(&quot;,&quot;) { &quot;'${it.value}'&quot; }})&quot;</span>
+<span class="nc" id="L182">            &quot;AND name IN (${names.joinToString(&quot;,&quot;) { &quot;'${it.value}'&quot; }})&quot;</span>
         }
     }
 
     private fun TopicQuery.groupIds(): String {
-<span class="nc bnc" id="L178" title="All 2 branches missed.">        return if (groupIds.isEmpty()) {</span>
-<span class="nc" id="L179">            &quot;&quot;</span>
+<span class="nc bnc" id="L187" title="All 2 branches missed.">        return if (groupIds.isEmpty()) {</span>
+<span class="nc" id="L188">            &quot;&quot;</span>
         } else {
-<span class="nc" id="L181">            &quot;AND group_id IN (${groupIds.joinToString(&quot;,&quot;) { &quot;${it.value.value}&quot; }})&quot;</span>
+<span class="nc" id="L190">            &quot;AND group_id IN (${groupIds.joinToString(&quot;,&quot;) { &quot;${it.value.value}&quot; }})&quot;</span>
+        }
+    }
+
+    private fun TopicQuery.namespaceIds(): String {
+<span class="nc bnc" id="L195" title="All 2 branches missed.">        return if (namespaceIds.isEmpty()) {</span>
+<span class="nc" id="L196">            &quot;&quot;</span>
+        } else {
+<span class="nc" id="L198">            &quot;AND namespace_id IN (${namespaceIds.joinToString(&quot;,&quot;) { &quot;${it.value.value}&quot; }})&quot;</span>
         }
     }
 }

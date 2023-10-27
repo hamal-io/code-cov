@@ -8,14 +8,15 @@ import io.hamal.lib.domain.vo.*
 
 <span class="fc" id="L9">data class UnitOfWork(</span>
 <span class="fc" id="L10">    val id: ExecId,</span>
-<span class="fc" id="L11">    val groupId: GroupId,</span>
-<span class="pc" id="L12">    val inputs: ExecInputs,</span>
-<span class="fc" id="L13">    val state: State,</span>
-<span class="fc" id="L14">    val code: CodeValue,</span>
-<span class="fc" id="L15">    val token: ExecToken = ExecToken(&quot;let_me_in&quot;), // FIXME</span>
-<span class="pc" id="L16">    val correlation: Correlation? = null,</span>
-<span class="fc" id="L17">    val events: List&lt;Event&gt; = listOf()</span>
-<span class="fc" id="L18">)</span>
+<span class="fc" id="L11">    val namespaceId: NamespaceId,</span>
+<span class="fc" id="L12">    val groupId: GroupId,</span>
+<span class="pc" id="L13">    val inputs: ExecInputs,</span>
+<span class="fc" id="L14">    val state: State,</span>
+<span class="fc" id="L15">    val code: CodeValue,</span>
+<span class="fc" id="L16">    val token: ExecToken = ExecToken(&quot;let_me_in&quot;), // FIXME</span>
+<span class="pc" id="L17">    val correlation: Correlation? = null,</span>
+<span class="fc" id="L18">    val events: List&lt;Event&gt; = listOf()</span>
+<span class="fc" id="L19">)</span>
 
 // FIXME ConnectorState, ConnectorEvent, ConnectorError
 interface Connector {

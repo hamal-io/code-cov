@@ -2,6 +2,7 @@
 
 import io.hamal.core.req.SubmitRequest
 import io.hamal.lib.domain.vo.GroupId
+import io.hamal.lib.domain.vo.NamespaceId
 import io.hamal.lib.domain.vo.TopicEntryPayload
 import io.hamal.lib.domain.vo.TopicId
 import io.hamal.lib.sdk.api.ApiAppendEntryReq
@@ -24,7 +25,7 @@ interface AppendEntryToTopicPort {
 
 interface CreateTopicPort {
     operator fun &lt;T : Any&gt; invoke(
-        groupId: GroupId,
+        namespaceId: NamespaceId,
         req: CreateTopicReq,
         responseHandler: (SubmittedReqWithGroupId) -&gt; T
     ): T
@@ -55,10 +56,10 @@ interface ListTopicsPort {
 interface TopicPort : AppendEntryToTopicPort, CreateTopicPort, GetTopicPort, ListTopicsPort, ListTopicEntriesPort
 
 
-<span class="fc" id="L58">@Component</span>
-<span class="fc" id="L59">class TopicAdapter(</span>
-<span class="fc" id="L60">    private val submitRequest: SubmitRequest,</span>
-<span class="fc" id="L61">    private val eventBrokerRepository: BrokerRepository</span>
+<span class="fc" id="L59">@Component</span>
+<span class="fc" id="L60">class TopicAdapter(</span>
+<span class="fc" id="L61">    private val submitRequest: SubmitRequest,</span>
+<span class="fc" id="L62">    private val eventBrokerRepository: BrokerRepository</span>
 ) : TopicPort {
 
     override fun &lt;T : Any&gt; invoke(
@@ -66,32 +67,32 @@ interface TopicPort : AppendEntryToTopicPort, CreateTopicPort, GetTopicPort, Lis
         topAppend: TopicEntryPayload,
         responseHandler: (SubmittedReqWithGroupId) -&gt; T
     ): T {
-<span class="fc" id="L69">        ensureTopicExists(topicId)</span>
-<span class="fc" id="L70">        return responseHandler(submitRequest(ApiAppendEntryReq(topicId, topAppend)))</span>
+<span class="fc" id="L70">        ensureTopicExists(topicId)</span>
+<span class="fc" id="L71">        return responseHandler(submitRequest(ApiAppendEntryReq(topicId, topAppend)))</span>
     }
 
     override fun &lt;T : Any&gt; invoke(
-        groupId: GroupId,
+        namespaceId: NamespaceId,
         req: CreateTopicReq,
         responseHandler: (SubmittedReqWithGroupId) -&gt; T
     ): T =
-<span class="fc" id="L78">        responseHandler(submitRequest(groupId, req))</span>
+<span class="fc" id="L79">        responseHandler(submitRequest(namespaceId, req))</span>
 
     override fun &lt;T : Any&gt; invoke(topicId: TopicId, responseHandler: (Topic) -&gt; T): T =
-<span class="fc" id="L81">        responseHandler(eventBrokerRepository.getTopic(topicId))</span>
+<span class="fc" id="L82">        responseHandler(eventBrokerRepository.getTopic(topicId))</span>
 
     override fun &lt;T : Any&gt; invoke(query: TopicQuery, responseHandler: (List&lt;Topic&gt;) -&gt; T): T =
-<span class="fc" id="L84">        responseHandler(eventBrokerRepository.listTopics(query))</span>
+<span class="fc" id="L85">        responseHandler(eventBrokerRepository.listTopics(query))</span>
 
     override fun &lt;T : Any&gt; invoke(
         topicId: TopicId,
         query: TopicEntryQuery,
         responseHandler: (List&lt;TopicEntry&gt;, Topic) -&gt; T
     ): T {
-<span class="fc" id="L91">        val topic = eventBrokerRepository.getTopic(topicId)</span>
-<span class="fc" id="L92">        return responseHandler(eventBrokerRepository.listEntries(topic, query), topic)</span>
+<span class="fc" id="L92">        val topic = eventBrokerRepository.getTopic(topicId)</span>
+<span class="fc" id="L93">        return responseHandler(eventBrokerRepository.listEntries(topic, query), topic)</span>
     }
 
-<span class="fc" id="L95">    private fun ensureTopicExists(topicId: TopicId) = eventBrokerRepository.getTopic(topicId)</span>
+<span class="fc" id="L96">    private fun ensureTopicExists(topicId: TopicId) = eventBrokerRepository.getTopic(topicId)</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

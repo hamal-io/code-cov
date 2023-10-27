@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Entity.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.repository.record.extension</a> &gt; <span class="el_source">Entity.kt</span></div><h1>Entity.kt</h1><pre class="source lang-java linenums">package io.hamal.repository.record.extension
+
+import io.hamal.lib.common.domain.CmdId
+import io.hamal.lib.domain.vo.ExtensionId
+import io.hamal.lib.domain.vo.ExtensionName
+import io.hamal.lib.domain.vo.GroupId
+import io.hamal.repository.api.Extension
+import io.hamal.repository.api.ExtensionCode
+import io.hamal.repository.record.CreateDomainObject
+import io.hamal.repository.record.RecordEntity
+import io.hamal.repository.record.RecordSequence
+
+<span class="fc" id="L13">data class ExtensionEntity(</span>
+<span class="fc" id="L14">    override val cmdId: CmdId,</span>
+<span class="fc" id="L15">    override val id: ExtensionId,</span>
+<span class="pc" id="L16">    val groupId: GroupId,</span>
+<span class="fc" id="L17">    override val sequence: RecordSequence,</span>
+
+<span class="pc" id="L19">    var name: ExtensionName? = null,</span>
+<span class="pc" id="L20">    var code: ExtensionCode? = null</span>
+) : RecordEntity&lt;ExtensionId, ExtensionRecord, Extension&gt; {
+    override fun apply(rec: ExtensionRecord): ExtensionEntity {
+<span class="fc" id="L23">        return when (rec) {</span>
+<span class="fc bfc" id="L24" title="All 2 branches covered.">            is ExtensionCreationRecord -&gt; copy(</span>
+<span class="fc" id="L25">                id = rec.entityId,</span>
+<span class="fc" id="L26">                cmdId = rec.cmdId,</span>
+<span class="fc" id="L27">                sequence = rec.sequence(),</span>
+<span class="fc" id="L28">                name = rec.name,</span>
+<span class="fc" id="L29">                code = rec.code</span>
+            )
+
+<span class="fc" id="L32">            is ExtensionUpdatedRecord -&gt; copy(</span>
+<span class="fc" id="L33">                id = rec.entityId,</span>
+<span class="fc" id="L34">                cmdId = rec.cmdId,</span>
+<span class="fc" id="L35">                name = rec.name,</span>
+<span class="fc" id="L36">                code = rec.code</span>
+            )
+        }
+    }
+
+    override fun toDomainObject(): Extension {
+<span class="fc" id="L42">        return Extension(</span>
+<span class="fc" id="L43">            cmdId = cmdId,</span>
+<span class="fc" id="L44">            id = id,</span>
+<span class="fc" id="L45">            groupId = groupId,</span>
+<span class="fc" id="L46">            name = name!!,</span>
+<span class="fc" id="L47">            code = code!!</span>
+        )
+    }
+<span class="fc" id="L50">}</span>
+
+fun List&lt;ExtensionRecord&gt;.createEntity(): ExtensionEntity {
+<span class="pc bpc" id="L53" title="2 of 4 branches missed.">    check(isNotEmpty()) { &quot;At least one record is required&quot; }</span>
+<span class="fc" id="L54">    val firstRecord = first()</span>
+<span class="pc bpc" id="L55" title="1 of 2 branches missed.">    check(firstRecord is ExtensionCreationRecord)</span>
+
+<span class="fc" id="L57">    var result = ExtensionEntity(</span>
+<span class="fc" id="L58">        id = firstRecord.entityId,</span>
+<span class="fc" id="L59">        groupId = firstRecord.groupId,</span>
+<span class="fc" id="L60">        cmdId = firstRecord.cmdId,</span>
+<span class="fc" id="L61">        sequence = firstRecord.sequence()</span>
+    )
+
+<span class="fc" id="L64">    forEach { record -&gt;</span>
+<span class="fc" id="L65">        result = result.apply(record)</span>
+<span class="fc" id="L66">    }</span>
+
+<span class="fc" id="L68">    return result</span>
+}
+
+object CreateExtensionFromRecords : CreateDomainObject&lt;ExtensionId, ExtensionRecord, Extension&gt; {
+    override fun invoke(recs: List&lt;ExtensionRecord&gt;): Extension {
+<span class="fc" id="L73">        return recs.createEntity().toDomainObject()</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

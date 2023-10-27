@@ -5,14 +5,15 @@ import io.hamal.repository.api.CmdRepository
 
 <span class="fc" id="L6">data class Topic(</span>
 <span class="fc" id="L7">    val id: TopicId,</span>
-<span class="fc" id="L8">    val groupId: GroupId,</span>
-<span class="fc" id="L9">    val name: TopicName</span>
+<span class="pc" id="L8">    val namespaceId: NamespaceId,</span>
+<span class="fc" id="L9">    val groupId: GroupId,</span>
+<span class="fc" id="L10">    val name: TopicName</span>
 )
 
 interface TopicRepository : CmdRepository, ChunkAppender, ChunkReader, ChunkCounter
 
-<span class="fc" id="L14">data class TopicEntry(</span>
-<span class="fc" id="L15">    val id: TopicEntryId,</span>
-<span class="fc" id="L16">    val payload: TopicEntryPayload</span>
+<span class="fc" id="L15">data class TopicEntry(</span>
+<span class="fc" id="L16">    val id: TopicEntryId,</span>
+<span class="fc" id="L17">    val payload: TopicEntryPayload</span>
 )
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

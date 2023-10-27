@@ -4,6 +4,7 @@ import io.hamal.core.adapter.ListFuncsPort
 import io.hamal.lib.common.domain.Limit
 import io.hamal.lib.domain.vo.FuncId
 import io.hamal.lib.domain.vo.GroupId
+import io.hamal.lib.domain.vo.NamespaceId
 import io.hamal.lib.sdk.api.ApiFuncList
 import io.hamal.lib.sdk.api.ApiFuncList.Func
 import io.hamal.lib.sdk.api.ApiFuncList.Func.Namespace
@@ -13,34 +14,36 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
-<span class="fc" id="L16">@RestController</span>
-<span class="fc" id="L17">internal class FuncListController(private val listFunc: ListFuncsPort) {</span>
+<span class="fc" id="L17">@RestController</span>
+<span class="fc" id="L18">internal class FuncListController(private val listFunc: ListFuncsPort) {</span>
 
     @GetMapping(&quot;/v1/funcs&quot;)
     fun listFunc(
         @RequestParam(required = false, name = &quot;after_id&quot;, defaultValue = &quot;7FFFFFFFFFFFFFFF&quot;) afterId: FuncId,
         @RequestParam(required = false, name = &quot;limit&quot;, defaultValue = &quot;100&quot;) limit: Limit,
-        @RequestParam(required = false, name = &quot;group_ids&quot;, defaultValue = &quot;&quot;) groupIds: List&lt;GroupId&gt;
+        @RequestParam(required = false, name = &quot;group_ids&quot;, defaultValue = &quot;&quot;) groupIds: List&lt;GroupId&gt;,
+        @RequestParam(required = false, name = &quot;namespace_ids&quot;, defaultValue = &quot;&quot;) namespaceIds: List&lt;NamespaceId&gt;
     ): ResponseEntity&lt;ApiFuncList&gt; {
-<span class="fc" id="L25">        return listFunc(</span>
-<span class="fc" id="L26">            FuncQuery(</span>
-<span class="fc" id="L27">                afterId = afterId,</span>
-<span class="fc" id="L28">                limit = limit,</span>
-<span class="fc" id="L29">                groupIds = groupIds</span>
+<span class="fc" id="L27">        return listFunc(</span>
+<span class="fc" id="L28">            FuncQuery(</span>
+<span class="fc" id="L29">                afterId = afterId,</span>
+<span class="fc" id="L30">                limit = limit,</span>
+<span class="fc" id="L31">                groupIds = groupIds,</span>
+<span class="fc" id="L32">                namespaceIds = namespaceIds</span>
             ),
             // assembler
         ) { funcs, namespaces -&gt;
 
-<span class="fc" id="L34">            ResponseEntity.ok(ApiFuncList(</span>
-<span class="fc" id="L35">                funcs.map { func -&gt;</span>
-<span class="fc" id="L36">                    val namespace = namespaces[func.namespaceId]!!</span>
-<span class="fc" id="L37">                    Func(</span>
-<span class="fc" id="L38">                        id = func.id,</span>
-<span class="fc" id="L39">                        namespace = Namespace(</span>
-<span class="fc" id="L40">                            id = namespace.id,</span>
-<span class="fc" id="L41">                            name = namespace.name</span>
+<span class="fc" id="L37">            ResponseEntity.ok(ApiFuncList(</span>
+<span class="fc" id="L38">                funcs.map { func -&gt;</span>
+<span class="fc" id="L39">                    val namespace = namespaces[func.namespaceId]!!</span>
+<span class="fc" id="L40">                    Func(</span>
+<span class="fc" id="L41">                        id = func.id,</span>
+<span class="fc" id="L42">                        namespace = Namespace(</span>
+<span class="fc" id="L43">                            id = namespace.id,</span>
+<span class="fc" id="L44">                            name = namespace.name</span>
                         ),
-<span class="fc" id="L43">                        name = func.name</span>
+<span class="fc" id="L46">                        name = func.name</span>
                     )
                 }
             ))

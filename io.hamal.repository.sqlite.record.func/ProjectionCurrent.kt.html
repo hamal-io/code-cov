@@ -46,22 +46,23 @@ internal object ProjectionCurrent : SqliteProjection&lt;FuncId, FuncRecord, Func
                 id &lt; :afterId
 <span class="nc" id="L47">                ${query.ids()}</span>
 <span class="nc" id="L48">                ${query.groupIds()}</span>
+<span class="nc" id="L49">                ${query.namespaceIds()}</span>
             ORDER BY id DESC
             LIMIT :limit
-<span class="nc" id="L51">        &quot;&quot;&quot;.trimIndent()</span>
+<span class="nc" id="L52">        &quot;&quot;&quot;.trimIndent()</span>
         ) {
-<span class="nc" id="L53">            query {</span>
-<span class="nc" id="L54">                set(&quot;afterId&quot;, query.afterId)</span>
-<span class="nc" id="L55">                set(&quot;limit&quot;, query.limit)</span>
+<span class="nc" id="L54">            query {</span>
+<span class="nc" id="L55">                set(&quot;afterId&quot;, query.afterId)</span>
+<span class="nc" id="L56">                set(&quot;limit&quot;, query.limit)</span>
             }
-<span class="nc" id="L57">            map { rs -&gt;</span>
-<span class="nc" id="L58">                protobuf.decodeFromByteArray(Func.serializer(), rs.getBytes(&quot;data&quot;))</span>
+<span class="nc" id="L58">            map { rs -&gt;</span>
+<span class="nc" id="L59">                protobuf.decodeFromByteArray(Func.serializer(), rs.getBytes(&quot;data&quot;))</span>
             }
         }
     }
 
     fun count(connection: Connection, query: FuncQuery): ULong {
-<span class="nc bnc" id="L64" title="All 2 branches missed.">        return connection.executeQueryOne(</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">        return connection.executeQueryOne(</span>
             &quot;&quot;&quot;
             SELECT 
                 COUNT(*) as count 
@@ -69,64 +70,75 @@ internal object ProjectionCurrent : SqliteProjection&lt;FuncId, FuncRecord, Func
                 current
             WHERE
                 id &lt; :afterId
-<span class="nc" id="L72">                ${query.ids()}</span>
-<span class="nc" id="L73">                ${query.groupIds()}</span>
-<span class="nc" id="L74">        &quot;&quot;&quot;.trimIndent()</span>
+<span class="nc" id="L73">                ${query.ids()}</span>
+<span class="nc" id="L74">                ${query.groupIds()}</span>
+<span class="nc" id="L75">                ${query.namespaceIds()}</span>
+<span class="nc" id="L76">        &quot;&quot;&quot;.trimIndent()</span>
         ) {
-<span class="nc" id="L76">            query {</span>
-<span class="nc" id="L77">                set(&quot;afterId&quot;, query.afterId)</span>
+<span class="nc" id="L78">            query {</span>
+<span class="nc" id="L79">                set(&quot;afterId&quot;, query.afterId)</span>
             }
-<span class="nc" id="L79">            map {</span>
-<span class="nc" id="L80">                it.getLong(&quot;count&quot;).toULong()</span>
+<span class="nc" id="L81">            map {</span>
+<span class="nc" id="L82">                it.getLong(&quot;count&quot;).toULong()</span>
             }
-<span class="nc" id="L82">        } ?: 0UL</span>
+<span class="nc" id="L84">        } ?: 0UL</span>
     }
 
     override fun upsert(tx: SqliteRecordTransaction&lt;FuncId, FuncRecord, Func&gt;, obj: Func) {
-<span class="nc" id="L86">        tx.execute(</span>
+<span class="nc" id="L88">        tx.execute(</span>
             &quot;&quot;&quot;
                 INSERT OR REPLACE INTO current
-                    (id, group_id, data) 
+                    (id, group_id, namespace_id, data) 
                 VALUES
-                    (:id, :groupId, :data)
-<span class="nc" id="L92">            &quot;&quot;&quot;.trimIndent()</span>
+                    (:id, :groupId, :namespaceId, :data)
+<span class="nc" id="L94">            &quot;&quot;&quot;.trimIndent()</span>
         ) {
-<span class="nc" id="L94">            set(&quot;id&quot;, obj.id)</span>
-<span class="nc" id="L95">            set(&quot;groupId&quot;, obj.groupId)</span>
-<span class="nc" id="L96">            set(&quot;data&quot;, protobuf.encodeToByteArray(Func.serializer(), obj))</span>
+<span class="nc" id="L96">            set(&quot;id&quot;, obj.id)</span>
+<span class="nc" id="L97">            set(&quot;groupId&quot;, obj.groupId)</span>
+<span class="nc" id="L98">            set(&quot;namespaceId&quot;, obj.namespaceId)</span>
+<span class="nc" id="L99">            set(&quot;data&quot;, protobuf.encodeToByteArray(Func.serializer(), obj))</span>
         }
-<span class="nc" id="L98">    }</span>
+<span class="nc" id="L101">    }</span>
 
     override fun setupSchema(connection: Connection) {
-<span class="nc" id="L101">        connection.execute(</span>
+<span class="nc" id="L104">        connection.execute(</span>
             &quot;&quot;&quot;
             CREATE TABLE IF NOT EXISTS current (
                  id             INTEGER NOT NULL,
                  group_id       INTEGER NOT NULL,
+                 namespace_id   INTEGER NOT NULL,
                  data           BLOB NOT NULL,
                  PRIMARY KEY    (id)
             );
-<span class="nc" id="L109">        &quot;&quot;&quot;.trimIndent()</span>
+<span class="nc" id="L113">        &quot;&quot;&quot;.trimIndent()</span>
         )
-<span class="nc" id="L111">    }</span>
-
-    override fun clear(tx: Transaction) {
-<span class="nc" id="L114">        tx.execute(&quot;&quot;&quot;DELETE FROM current&quot;&quot;&quot;)</span>
 <span class="nc" id="L115">    }</span>
 
+    override fun clear(tx: Transaction) {
+<span class="nc" id="L118">        tx.execute(&quot;&quot;&quot;DELETE FROM current&quot;&quot;&quot;)</span>
+<span class="nc" id="L119">    }</span>
+
     private fun FuncQuery.ids(): String {
-<span class="nc bnc" id="L118" title="All 2 branches missed.">        return if (funcIds.isEmpty()) {</span>
-<span class="nc" id="L119">            &quot;&quot;</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">        return if (funcIds.isEmpty()) {</span>
+<span class="nc" id="L123">            &quot;&quot;</span>
         } else {
-<span class="nc" id="L121">            &quot;AND id IN (${funcIds.joinToString(&quot;,&quot;) { &quot;${it.value.value}&quot; }})&quot;</span>
+<span class="nc" id="L125">            &quot;AND id IN (${funcIds.joinToString(&quot;,&quot;) { &quot;${it.value.value}&quot; }})&quot;</span>
         }
     }
 
     private fun FuncQuery.groupIds(): String {
-<span class="nc bnc" id="L126" title="All 2 branches missed.">        return if (groupIds.isEmpty()) {</span>
-<span class="nc" id="L127">            &quot;&quot;</span>
+<span class="nc bnc" id="L130" title="All 2 branches missed.">        return if (groupIds.isEmpty()) {</span>
+<span class="nc" id="L131">            &quot;&quot;</span>
         } else {
-<span class="nc" id="L129">            &quot;AND group_id IN (${groupIds.joinToString(&quot;,&quot;) { &quot;${it.value.value}&quot; }})&quot;</span>
+<span class="nc" id="L133">            &quot;AND group_id IN (${groupIds.joinToString(&quot;,&quot;) { &quot;${it.value.value}&quot; }})&quot;</span>
+        }
+    }
+
+    private fun FuncQuery.namespaceIds(): String {
+<span class="nc bnc" id="L138" title="All 2 branches missed.">        return if (namespaceIds.isEmpty()) {</span>
+<span class="nc" id="L139">            &quot;&quot;</span>
+        } else {
+<span class="nc" id="L141">            &quot;AND namespace_id IN (${namespaceIds.joinToString(&quot;,&quot;) { &quot;${it.value.value}&quot; }})&quot;</span>
         }
     }
 }

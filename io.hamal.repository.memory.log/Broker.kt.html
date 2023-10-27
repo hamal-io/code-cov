@@ -2,7 +2,7 @@
 
 import io.hamal.lib.common.KeyedOnce
 import io.hamal.lib.common.domain.CmdId
-import io.hamal.lib.domain.vo.GroupId
+import io.hamal.lib.domain.vo.NamespaceId
 import io.hamal.lib.domain.vo.TopicId
 import io.hamal.lib.domain.vo.TopicName
 import io.hamal.repository.api.log.*
@@ -52,26 +52,27 @@ import io.hamal.repository.api.log.BrokerTopicsRepository.TopicToCreate
 <span class="fc" id="L52">        topicsRepository.create(</span>
 <span class="fc" id="L53">            cmdId,</span>
 <span class="fc" id="L54">            TopicToCreate(</span>
-<span class="fc" id="L55">                topicToCreate.id,</span>
-<span class="fc" id="L56">                topicToCreate.name,</span>
-<span class="fc" id="L57">                topicToCreate.groupId</span>
+<span class="fc" id="L55">                id = topicToCreate.id,</span>
+<span class="fc" id="L56">                name = topicToCreate.name,</span>
+<span class="fc" id="L57">                namespaceId = topicToCreate.namespaceId,</span>
+<span class="fc" id="L58">                groupId = topicToCreate.groupId</span>
             )
-<span class="fc" id="L59">        )</span>
+<span class="fc" id="L60">        )</span>
 
-<span class="fc" id="L61">    override fun findTopic(topicId: TopicId) = topicsRepository.find(topicId)</span>
-<span class="fc" id="L62">    override fun findTopic(groupId: GroupId, topicName: TopicName) = topicsRepository.find(groupId, topicName)</span>
+<span class="fc" id="L62">    override fun findTopic(topicId: TopicId) = topicsRepository.find(topicId)</span>
+<span class="fc" id="L63">    override fun findTopic(namespaceId: NamespaceId, topicName: TopicName) = topicsRepository.find(namespaceId, topicName)</span>
     override fun listTopics(query: TopicQuery): List&lt;Topic&gt; {
-<span class="fc" id="L64">        return topicsRepository.list(query)</span>
+<span class="fc" id="L65">        return topicsRepository.list(query)</span>
     }
 
-<span class="fc" id="L67">    override fun resolveTopic(groupId: GroupId, name: TopicName) = topicsRepository.find(groupId, name)</span>
+<span class="fc" id="L68">    override fun resolveTopic(namespaceId: NamespaceId, name: TopicName) = topicsRepository.find(namespaceId, name)</span>
 
     override fun read(firstId: ChunkId, topic: Topic, limit: Int): List&lt;Chunk&gt; {
-<span class="fc" id="L70">        return resolveRepository(topic).read(firstId, limit)</span>
+<span class="fc" id="L71">        return resolveRepository(topic).read(firstId, limit)</span>
     }
 
-<span class="fc" id="L73">    private fun resolveRepository(topic: Topic) = repositoryMapping(topic) {</span>
-<span class="fc" id="L74">        MemoryTopicRepository(topic)</span>
-<span class="fc" id="L75">    }</span>
+<span class="fc" id="L74">    private fun resolveRepository(topic: Topic) = repositoryMapping(topic) {</span>
+<span class="fc" id="L75">        MemoryTopicRepository(topic)</span>
+<span class="fc" id="L76">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -20,10 +20,7 @@ import org.springframework.context.annotation.Configuration
     open fun platformEventEmitter(
         platformEventBrokerRepository: BrokerRepository,
         generateDomainId: GenerateDomainId
-<span class="fc" id="L23">    ): PlatformEventEmitter = PlatformEventEmitter(</span>
-<span class="fc" id="L24">        generateDomainId,</span>
-<span class="fc" id="L25">        platformEventBrokerRepository</span>
-<span class="fc" id="L26">    )</span>
+<span class="fc" id="L23">    ): PlatformEventEmitter = PlatformEventEmitter(generateDomainId, platformEventBrokerRepository)</span>
 
     @Bean
     open fun platformEventContainer(
@@ -32,14 +29,14 @@ import org.springframework.context.annotation.Configuration
         fixedRateTriggerService: FixedRateTriggerService,
         orchestrationService: OrchestrationService,
         eventEmitter: PlatformEventEmitter
-<span class="fc" id="L35">    ) = PlatformEventContainerFactory()</span>
-<span class="fc" id="L36">        .register(TriggerCreatedEvent::class, TriggerCreatedHandler(fixedRateTriggerService))</span>
-<span class="fc" id="L37">        .register(ExecPlannedEvent::class, ExecPlannedHandler(orchestrationService))</span>
-<span class="fc" id="L38">        .register(ExecScheduledEvent::class, ExecScheduledHandler(execCmdRepository, eventEmitter))</span>
-<span class="fc" id="L39">        .register(ExecutionQueuedEvent::class, ExecQueuedHandler())</span>
-<span class="fc" id="L40">        .register(ExecutionCompletedEvent::class, ExecCompletedHandler(orchestrationService))</span>
-<span class="fc" id="L41">        .register(ExecutionFailedEvent::class, ExecFailedHandler(orchestrationService))</span>
-<span class="fc" id="L42">        .create()</span>
+<span class="fc" id="L32">    ) = PlatformEventContainerFactory()</span>
+<span class="fc" id="L33">        .register(TriggerCreatedEvent::class, TriggerCreatedHandler(fixedRateTriggerService))</span>
+<span class="fc" id="L34">        .register(ExecPlannedEvent::class, ExecPlannedHandler(orchestrationService))</span>
+<span class="fc" id="L35">        .register(ExecScheduledEvent::class, ExecScheduledHandler(execCmdRepository, eventEmitter))</span>
+<span class="fc" id="L36">        .register(ExecutionQueuedEvent::class, ExecQueuedHandler())</span>
+<span class="fc" id="L37">        .register(ExecutionCompletedEvent::class, ExecCompletedHandler(orchestrationService))</span>
+<span class="fc" id="L38">        .register(ExecutionFailedEvent::class, ExecFailedHandler(orchestrationService))</span>
+<span class="fc" id="L39">        .create()</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -36,30 +36,30 @@ interface HookCmdRepository : CmdRepository {
 
 <span class="pc" id="L37">    data class UpdateCmd(</span>
 <span class="fc" id="L38">        val id: CmdId,</span>
-<span class="pc" id="L39">        val namespaceId: NamespaceId? = null,</span>
-<span class="pc" id="L40">        val name: HookName? = null</span>
-<span class="nc" id="L41">    )</span>
+<span class="pc" id="L39">        val name: HookName? = null</span>
+<span class="nc" id="L40">    )</span>
 }
 
 interface HookQueryRepository {
-<span class="fc bfc" id="L45" title="All 2 branches covered.">    fun get(hookId: HookId) = find(hookId) ?: throw NoSuchElementException(&quot;Hook not found&quot;)</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">    fun get(hookId: HookId) = find(hookId) ?: throw NoSuchElementException(&quot;Hook not found&quot;)</span>
     fun find(hookId: HookId): Hook?
     fun list(query: HookQuery): List&lt;Hook&gt;
-<span class="fc" id="L48">    fun list(hookIds: List&lt;HookId&gt;): List&lt;Hook&gt; = list(</span>
-<span class="fc" id="L49">        HookQuery(</span>
-<span class="fc" id="L50">            limit = Limit.all,</span>
-<span class="fc" id="L51">            groupIds = listOf(),</span>
-<span class="fc" id="L52">            hookIds = hookIds,</span>
+<span class="fc" id="L47">    fun list(hookIds: List&lt;HookId&gt;): List&lt;Hook&gt; = list(</span>
+<span class="fc" id="L48">        HookQuery(</span>
+<span class="fc" id="L49">            limit = Limit.all,</span>
+<span class="fc" id="L50">            groupIds = listOf(),</span>
+<span class="fc" id="L51">            hookIds = hookIds,</span>
         )
-<span class="fc" id="L54">    )</span>
+<span class="fc" id="L53">    )</span>
 
     fun count(query: HookQuery): ULong
 
-<span class="fc" id="L58">    data class HookQuery(</span>
-<span class="pc" id="L59">        var afterId: HookId = HookId(SnowflakeId(Long.MAX_VALUE)),</span>
-<span class="pc" id="L60">        var limit: Limit = Limit(1),</span>
-<span class="pc" id="L61">        var hookIds: List&lt;HookId&gt; = listOf(),</span>
-<span class="pc" id="L62">        var groupIds: List&lt;GroupId&gt;</span>
+<span class="fc" id="L57">    data class HookQuery(</span>
+<span class="pc" id="L58">        var afterId: HookId = HookId(SnowflakeId(Long.MAX_VALUE)),</span>
+<span class="pc" id="L59">        var limit: Limit = Limit(1),</span>
+<span class="pc" id="L60">        var hookIds: List&lt;HookId&gt; = listOf(),</span>
+<span class="pc" id="L61">        var namespaceIds: List&lt;NamespaceId&gt; = listOf(),</span>
+<span class="pc" id="L62">        var groupIds: List&lt;GroupId&gt; = listOf()</span>
 <span class="fc" id="L63">    )</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

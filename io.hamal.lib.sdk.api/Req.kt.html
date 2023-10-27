@@ -1,63 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Req.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.sdk.api</a> &gt; <span class="el_source">Req.kt</span></div><h1>Req.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.sdk.api
 
-import io.hamal.lib.common.snowflake.SnowflakeId
 import io.hamal.lib.common.domain.DomainId
+import io.hamal.lib.common.snowflake.SnowflakeId
 import io.hamal.lib.domain.ReqId
 import io.hamal.lib.domain._enum.ReqStatus
 import io.hamal.lib.domain.vo.AuthToken
 import io.hamal.lib.domain.vo.GroupId
+import io.hamal.lib.domain.vo.NamespaceId
 import kotlinx.serialization.Serializable
 
-<span class="pc bpc" id="L11" title="2 of 7 branches missed.">@Serializable</span>
-<span class="fc" id="L12">data class ApiReqList(</span>
-<span class="fc" id="L13">    val reqs: List&lt;ApiSubmittedReq&gt;</span>
-<span class="fc" id="L14">)</span>
+<span class="pc bpc" id="L12" title="2 of 7 branches missed.">@Serializable</span>
+<span class="fc" id="L13">data class ApiReqList(</span>
+<span class="fc" id="L14">    val reqs: List&lt;ApiSubmittedReq&gt;</span>
+<span class="fc" id="L15">)</span>
 
-<span class="fc" id="L16">@Serializable</span>
+<span class="fc" id="L17">@Serializable</span>
 sealed interface ApiSubmittedReq {
     val reqId: ReqId
     val status: ReqStatus
 }
 
-<span class="nc" id="L22">@Serializable</span>
+<span class="nc" id="L23">@Serializable</span>
 sealed interface ApiSubmittedReqWithGroupId : ApiSubmittedReq {
     override val reqId: ReqId
     override val status: ReqStatus
+    val namespaceId: NamespaceId
     val groupId: GroupId
 }
 
-<span class="pc bpc" id="L29" title="2 of 9 branches missed.">@Serializable</span>
-<span class="fc" id="L30">data class ApiDefaultSubmittedReq(</span>
-<span class="fc" id="L31">    override val reqId: ReqId,</span>
-<span class="fc" id="L32">    override val status: ReqStatus,</span>
-<span class="fc" id="L33">    override val groupId: GroupId</span>
-<span class="fc" id="L34">) : ApiSubmittedReqWithGroupId</span>
+<span class="pc bpc" id="L31" title="2 of 10 branches missed.">@Serializable</span>
+<span class="fc" id="L32">data class ApiDefaultSubmittedReq(</span>
+<span class="fc" id="L33">    override val reqId: ReqId,</span>
+<span class="fc" id="L34">    override val status: ReqStatus,</span>
+<span class="fc" id="L35">    override val namespaceId: NamespaceId,</span>
+<span class="fc" id="L36">    override val groupId: GroupId</span>
+<span class="fc" id="L37">) : ApiSubmittedReqWithGroupId</span>
 
-<span class="pc bnc" id="L36" title="All 9 branches missed.">@Serializable</span>
-<span class="nc" id="L37">data class ApiSubmittedWithTokenReq(</span>
-<span class="nc" id="L38">    override val reqId: ReqId,</span>
-<span class="nc" id="L39">    override val status: ReqStatus,</span>
-<span class="nc" id="L40">    val token: AuthToken</span>
-<span class="fc" id="L41">) : ApiSubmittedReq</span>
+<span class="pc bnc" id="L39" title="All 9 branches missed.">@Serializable</span>
+<span class="nc" id="L40">data class ApiSubmittedWithTokenReq(</span>
+<span class="nc" id="L41">    override val reqId: ReqId,</span>
+<span class="nc" id="L42">    override val status: ReqStatus,</span>
+<span class="nc" id="L43">    val token: AuthToken</span>
+<span class="fc" id="L44">) : ApiSubmittedReq</span>
 
-<span class="pc bpc" id="L43" title="3 of 12 branches missed.">@Serializable</span>
-<span class="fc" id="L44">data class ApiSubmittedReqWithId(</span>
-<span class="fc" id="L45">    override val reqId: ReqId,</span>
-<span class="fc" id="L46">    override val status: ReqStatus,</span>
-<span class="fc" id="L47">    override val groupId: GroupId,</span>
-<span class="fc" id="L48">    val id: SnowflakeId,</span>
+<span class="pc bpc" id="L46" title="3 of 13 branches missed.">@Serializable</span>
+<span class="fc" id="L47">data class ApiSubmittedReqWithId(</span>
+<span class="fc" id="L48">    override val reqId: ReqId,</span>
+<span class="fc" id="L49">    override val status: ReqStatus,</span>
+<span class="fc" id="L50">    override val namespaceId: NamespaceId,</span>
+<span class="fc" id="L51">    override val groupId: GroupId,</span>
+<span class="fc" id="L52">    val id: SnowflakeId,</span>
 ) : ApiSubmittedReqWithGroupId {
 
-<span class="fc" id="L51">    constructor(reqId: ReqId, status: ReqStatus, groupId: GroupId, id: DomainId) : this(</span>
-<span class="fc" id="L52">        reqId,</span>
-<span class="fc" id="L53">        status,</span>
-<span class="fc" id="L54">        groupId,</span>
-<span class="fc" id="L55">        id.value,</span>
-<span class="fc" id="L56">    )</span>
+<span class="fc" id="L55">    constructor(reqId: ReqId, status: ReqStatus, namespaceId: NamespaceId, groupId: GroupId, id: DomainId) : this(</span>
+<span class="fc" id="L56">        reqId,</span>
+<span class="fc" id="L57">        status,</span>
+<span class="fc" id="L58">        namespaceId,</span>
+<span class="fc" id="L59">        groupId,</span>
+<span class="fc" id="L60">        id.value,</span>
+<span class="fc" id="L61">    )</span>
 
     fun &lt;DOMAIN_ID : DomainId&gt; id(block: SnowflakeId.() -&gt; DOMAIN_ID): DOMAIN_ID {
-<span class="fc" id="L59">        return block(id)</span>
+<span class="fc" id="L64">        return block(id)</span>
     }
-<span class="fc" id="L61">}</span>
+<span class="fc" id="L66">}</span>
 
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

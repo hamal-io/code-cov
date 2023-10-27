@@ -35,45 +35,44 @@ import io.hamal.repository.record.RecordSequence
 <span class="fc" id="L35">                id = rec.entityId,</span>
 <span class="fc" id="L36">                cmdId = rec.cmdId,</span>
 <span class="fc" id="L37">                sequence = rec.sequence(),</span>
-<span class="fc" id="L38">                namespaceId = rec.namespaceId,</span>
-<span class="fc" id="L39">                name = rec.name</span>
+<span class="fc" id="L38">                name = rec.name</span>
             )
         }
     }
 
     override fun toDomainObject(): Hook {
-<span class="fc" id="L45">        return Hook(</span>
-<span class="fc" id="L46">            cmdId = cmdId,</span>
-<span class="fc" id="L47">            id = id,</span>
-<span class="fc" id="L48">            groupId = groupId,</span>
-<span class="fc" id="L49">            namespaceId = namespaceId!!,</span>
-<span class="fc" id="L50">            name = name!!</span>
+<span class="fc" id="L44">        return Hook(</span>
+<span class="fc" id="L45">            cmdId = cmdId,</span>
+<span class="fc" id="L46">            id = id,</span>
+<span class="fc" id="L47">            groupId = groupId,</span>
+<span class="fc" id="L48">            namespaceId = namespaceId!!,</span>
+<span class="fc" id="L49">            name = name!!</span>
         )
     }
-<span class="fc" id="L53">}</span>
+<span class="fc" id="L52">}</span>
 
 fun List&lt;HookRecord&gt;.createEntity(): HookEntity {
-<span class="pc bpc" id="L56" title="2 of 4 branches missed.">    check(isNotEmpty()) { &quot;At least one record is required&quot; }</span>
-<span class="fc" id="L57">    val firstRecord = first()</span>
-<span class="pc bpc" id="L58" title="1 of 2 branches missed.">    check(firstRecord is HookCreationRecord)</span>
+<span class="pc bpc" id="L55" title="2 of 4 branches missed.">    check(isNotEmpty()) { &quot;At least one record is required&quot; }</span>
+<span class="fc" id="L56">    val firstRecord = first()</span>
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">    check(firstRecord is HookCreationRecord)</span>
 
-<span class="fc" id="L60">    var result = HookEntity(</span>
-<span class="fc" id="L61">        id = firstRecord.entityId,</span>
-<span class="fc" id="L62">        groupId = firstRecord.groupId,</span>
-<span class="fc" id="L63">        cmdId = firstRecord.cmdId,</span>
-<span class="fc" id="L64">        sequence = firstRecord.sequence()</span>
+<span class="fc" id="L59">    var result = HookEntity(</span>
+<span class="fc" id="L60">        id = firstRecord.entityId,</span>
+<span class="fc" id="L61">        groupId = firstRecord.groupId,</span>
+<span class="fc" id="L62">        cmdId = firstRecord.cmdId,</span>
+<span class="fc" id="L63">        sequence = firstRecord.sequence()</span>
     )
 
-<span class="fc" id="L67">    forEach { record -&gt;</span>
-<span class="fc" id="L68">        result = result.apply(record)</span>
-<span class="fc" id="L69">    }</span>
+<span class="fc" id="L66">    forEach { record -&gt;</span>
+<span class="fc" id="L67">        result = result.apply(record)</span>
+<span class="fc" id="L68">    }</span>
 
-<span class="fc" id="L71">    return result</span>
+<span class="fc" id="L70">    return result</span>
 }
 
 object CreateHookFromRecords : CreateDomainObject&lt;HookId, HookRecord, Hook&gt; {
     override fun invoke(recs: List&lt;HookRecord&gt;): Hook {
-<span class="fc" id="L76">        return recs.createEntity().toDomainObject()</span>
+<span class="fc" id="L75">        return recs.createEntity().toDomainObject()</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
