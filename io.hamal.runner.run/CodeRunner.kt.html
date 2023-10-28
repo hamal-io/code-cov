@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CodeRunner.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.runner.run</a> &gt; <span class="el_source">CodeRunner.kt</span></div><h1>CodeRunner.kt</h1><pre class="source lang-java linenums">package io.hamal.runner.run
 
 import io.hamal.lib.common.logger
-import io.hamal.lib.domain.State
 import io.hamal.lib.domain.vo.*
 import io.hamal.lib.kua.AssertionError
 import io.hamal.lib.kua.ExitError
@@ -19,107 +18,117 @@ interface CodeRunner {
     fun run(unitOfWork: UnitOfWork)
 }
 
-<span class="fc" id="L22">class CodeRunnerImpl(</span>
-<span class="fc" id="L23">    private val connector: Connector,</span>
-<span class="fc" id="L24">    private val sandboxFactory: SandboxFactory</span>
+<span class="fc" id="L21">class CodeRunnerImpl(</span>
+<span class="fc" id="L22">    private val connector: Connector,</span>
+<span class="fc" id="L23">    private val sandboxFactory: SandboxFactory</span>
 ) : CodeRunner {
 
     private lateinit var runnerContext: RunnerContext
 
-<span class="pc bpc" id="L29" title="1 of 2 branches missed.">    val context get() = runnerContext</span>
+<span class="pc bpc" id="L28" title="1 of 2 branches missed.">    val context get() = runnerContext</span>
 
     override fun run(unitOfWork: UnitOfWork) {
-<span class="fc" id="L32">        val execId = unitOfWork.id</span>
-<span class="fc" id="L33">        try {</span>
-<span class="fc" id="L34">            log.debug(&quot;Start execution: $execId&quot;)</span>
+<span class="fc" id="L31">        val execId = unitOfWork.id</span>
+<span class="fc" id="L32">        try {</span>
+<span class="fc" id="L33">            log.debug(&quot;Start execution: $execId&quot;)</span>
 
-<span class="fc" id="L36">            runnerContext = RunnerContext(</span>
-<span class="fc" id="L37">                unitOfWork.state,</span>
-<span class="fc" id="L38">                RunnerInvocationEvents(unitOfWork.events)</span>
+<span class="fc" id="L35">            runnerContext = RunnerContext(</span>
+<span class="fc" id="L36">                unitOfWork.state,</span>
+<span class="fc" id="L37">                RunnerInvocationEvents(unitOfWork.events)</span>
             )
-<span class="pc bpc" id="L40" title="1 of 2 branches missed.">            runnerContext[ExecId::class] = unitOfWork.id</span>
-<span class="pc bpc" id="L41" title="1 of 2 branches missed.">            runnerContext[NamespaceId::class] = unitOfWork.namespaceId</span>
-<span class="pc bpc" id="L42" title="1 of 2 branches missed.">            runnerContext[GroupId::class] = unitOfWork.groupId</span>
-<span class="pc bpc" id="L43" title="1 of 2 branches missed.">            runnerContext[ExecToken::class] = unitOfWork.token</span>
+<span class="pc bpc" id="L39" title="1 of 2 branches missed.">            runnerContext[ExecId::class] = unitOfWork.id</span>
+<span class="pc bpc" id="L40" title="1 of 2 branches missed.">            runnerContext[NamespaceId::class] = unitOfWork.namespaceId</span>
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">            runnerContext[GroupId::class] = unitOfWork.groupId</span>
+<span class="pc bpc" id="L42" title="1 of 2 branches missed.">            runnerContext[ExecToken::class] = unitOfWork.token</span>
 
-<span class="pc bpc" id="L45" title="1 of 2 branches missed.">            sandboxFactory.create(runnerContext)</span>
-<span class="fc" id="L46">                .use { sandbox -&gt;</span>
+<span class="pc bpc" id="L44" title="1 of 2 branches missed.">            sandboxFactory.create(runnerContext)</span>
+<span class="fc" id="L45">                .use { sandbox -&gt;</span>
 
-<span class="pc bpc" id="L48" title="1 of 2 branches missed.">                    val contextExtension = RunnerContextFactory(runnerContext).create(sandbox)</span>
+<span class="fc" id="L47">                    try {</span>
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">                        val contextExtension = RunnerContextFactory(runnerContext).create(sandbox)</span>
 
-<span class="fc" id="L50">                    val internalTable = sandbox.state.tableCreateMap(contextExtension.internals.size)</span>
-<span class="fc" id="L51">                    contextExtension.internals.forEach { entry -&gt;</span>
-<span class="fc" id="L52">                        when (val value = entry.value) {</span>
-<span class="fc bfc" id="L53" title="All 2 branches covered.">                            is StringType -&gt; internalTable[entry.key] = value</span>
-<span class="pc bpc" id="L54" title="1 of 2 branches missed.">                            is NumberType -&gt; internalTable[entry.key] = value</span>
-<span class="fc bfc" id="L55" title="All 2 branches covered.">                            is FunctionType&lt;*, *, *, *&gt; -&gt; internalTable[entry.key] = value</span>
-<span class="fc bfc" id="L56" title="All 2 branches covered.">                            is TableProxyArray -&gt; internalTable[entry.key] = value</span>
-<span class="pc bpc" id="L57" title="1 of 2 branches missed.">                            is TableProxyMap -&gt; internalTable[entry.key] = value</span>
-<span class="pc bpc" id="L58" title="1 of 2 branches missed.">                            is MapType -&gt; internalTable[entry.key] = sandbox.toProxyMap(value)</span>
-<span class="nc" id="L59">                            else -&gt; TODO()</span>
+<span class="fc" id="L50">                        val internalTable = sandbox.state.tableCreateMap(contextExtension.internals.size)</span>
+<span class="fc" id="L51">                        contextExtension.internals.forEach { entry -&gt;</span>
+<span class="fc" id="L52">                            when (val value = entry.value) {</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">                                is StringType -&gt; internalTable[entry.key] = value</span>
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">                                is NumberType -&gt; internalTable[entry.key] = value</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">                                is FunctionType&lt;*, *, *, *&gt; -&gt; internalTable[entry.key] = value</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">                                is TableProxyArray -&gt; internalTable[entry.key] = value</span>
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">                                is TableProxyMap -&gt; internalTable[entry.key] = value</span>
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">                                is MapType -&gt; internalTable[entry.key] = sandbox.toProxyMap(value)</span>
+<span class="nc" id="L59">                                else -&gt; TODO()</span>
+                            }
+<span class="fc" id="L61">                        }</span>
+
+
+<span class="fc" id="L64">                        sandbox.setGlobal(&quot;_internal&quot;, internalTable)</span>
+<span class="fc" id="L65">                        sandbox.state.load(contextExtension.factoryCode)</span>
+
+<span class="fc" id="L67">                        sandbox.state.load(&quot;${contextExtension.name} = extension()()&quot;)</span>
+<span class="fc" id="L68">                        sandbox.unsetGlobal(&quot;_internal&quot;)</span>
+
+<span class="fc" id="L70">                        sandbox.load(CodeType(unitOfWork.code.value))</span>
+
+<span class="fc" id="L72">                        val ctx = sandbox.getGlobalTableMap(&quot;context&quot;)</span>
+<span class="fc" id="L73">                        val stateToSubmit = sandbox.toMapType(ctx.getTableMap(&quot;state&quot;))</span>
+
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">                        connector.complete(execId, ExecResult(), ExecState(stateToSubmit), runnerContext.eventsToSubmit)</span>
+<span class="fc" id="L76">                        log.debug(&quot;Completed exec: $execId&quot;)</span>
+<span class="fc" id="L77">                    } catch (e: ExtensionError) {</span>
+<span class="fc" id="L78">                        val cause = e.cause</span>
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">                        if (cause is ExitError) {</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">                            if (cause.status == NumberType(0.0)) {</span>
+
+<span class="fc" id="L82">                                val ctx = sandbox.getGlobalTableMap(&quot;context&quot;)</span>
+<span class="fc" id="L83">                                val stateToSubmit = sandbox.toMapType(ctx.getTableMap(&quot;state&quot;))</span>
+
+<span class="fc" id="L85">                                connector.complete(</span>
+<span class="fc" id="L86">                                    execId,</span>
+<span class="fc" id="L87">                                    ExecResult(cause.result),</span>
+<span class="fc" id="L88">                                    ExecState(stateToSubmit),</span>
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">                                    runnerContext.eventsToSubmit</span>
+                                )
+<span class="fc" id="L91">                                log.debug(&quot;Completed exec: $execId&quot;)</span>
+                            } else {
+<span class="fc" id="L93">                                connector.fail(execId, ExecResult(cause.result))</span>
+<span class="fc" id="L94">                                log.debug(&quot;Failed exec: $execId&quot;)</span>
+                            }
+
+                        } else {
+<span class="nc" id="L98">                            e.printStackTrace()</span>
+<span class="nc" id="L99">                            connector.fail(</span>
+<span class="nc" id="L100">                                execId,</span>
+<span class="nc" id="L101">                                ExecResult(</span>
+<span class="nc bnc" id="L102" title="All 2 branches missed.">                                    MapType(mutableMapOf(&quot;message&quot; to StringType(e.message ?: &quot;Unknown reason&quot;)))</span>
+                                )
+                            )
+<span class="nc" id="L105">                            log.debug(&quot;Failed exec: $execId&quot;)</span>
                         }
-<span class="fc" id="L61">                    }</span>
-
-
-<span class="fc" id="L64">                    sandbox.setGlobal(&quot;_internal&quot;, internalTable)</span>
-<span class="fc" id="L65">                    sandbox.state.load(contextExtension.factoryCode)</span>
-
-<span class="fc" id="L67">                    sandbox.state.load(&quot;${contextExtension.name} = extension()()&quot;)</span>
-<span class="fc" id="L68">                    sandbox.unsetGlobal(&quot;_internal&quot;)</span>
-
-<span class="fc" id="L70">                    sandbox.load(CodeType(unitOfWork.code.value))</span>
-
-<span class="fc" id="L72">                    val ctx = sandbox.getGlobalTableMap(&quot;context&quot;)</span>
-<span class="fc" id="L73">                    val stateToSubmit = sandbox.toMapType(ctx.getTableMap(&quot;state&quot;))</span>
-
-<span class="pc bpc" id="L75" title="1 of 2 branches missed.">                    connector.complete(execId, ExecResult(), State(stateToSubmit), runnerContext.eventsToSubmit)</span>
-<span class="fc" id="L76">                    log.debug(&quot;Completed exec: $execId&quot;)</span>
-<span class="fc" id="L77">                }</span>
-
-
-<span class="fc" id="L80">        } catch (e: ExtensionError) {</span>
-<span class="fc" id="L81">            val cause = e.cause</span>
-<span class="pc bpc" id="L82" title="1 of 2 branches missed.">            if (cause is ExitError) {</span>
-<span class="fc bfc" id="L83" title="All 2 branches covered.">                if (cause.status == NumberType(0.0)) {</span>
-<span class="pc bpc" id="L84" title="1 of 2 branches missed.">                    connector.complete(execId, ExecResult(cause.result), State(), runnerContext.eventsToSubmit)</span>
-<span class="fc" id="L85">                    log.debug(&quot;Completed exec: $execId&quot;)</span>
-                } else {
-<span class="fc" id="L87">                    connector.fail(execId, ExecResult(cause.result))</span>
-<span class="fc" id="L88">                    log.debug(&quot;Failed exec: $execId&quot;)</span>
-                }
-            } else {
-<span class="nc" id="L91">                e.printStackTrace()</span>
-<span class="nc" id="L92">                connector.fail(</span>
-<span class="nc" id="L93">                    execId,</span>
-<span class="nc" id="L94">                    ExecResult(</span>
-<span class="nc bnc" id="L95" title="All 2 branches missed.">                        MapType(mutableMapOf(&quot;message&quot; to StringType(e.message ?: &quot;Unknown reason&quot;)))</span>
-                    )
-                )
-<span class="nc" id="L98">                log.debug(&quot;Failed exec: $execId&quot;)</span>
-            }
-<span class="nc" id="L100">        } catch (a: AssertionError) {</span>
-<span class="nc" id="L101">            a.printStackTrace()</span>
-<span class="nc" id="L102">            connector.fail(</span>
-<span class="nc" id="L103">                execId,</span>
-<span class="nc" id="L104">                ExecResult(</span>
-<span class="nc bnc" id="L105" title="All 2 branches missed.">                    MapType(mutableMapOf(&quot;message&quot; to StringType(a.message ?: &quot;Unknown reason&quot;)))</span>
+                    }
+<span class="fc" id="L108">                }</span>
+<span class="nc" id="L109">        } catch (a: AssertionError) {</span>
+<span class="nc" id="L110">            a.printStackTrace()</span>
+<span class="nc" id="L111">            connector.fail(</span>
+<span class="nc" id="L112">                execId,</span>
+<span class="nc" id="L113">                ExecResult(</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">                    MapType(mutableMapOf(&quot;message&quot; to StringType(a.message ?: &quot;Unknown reason&quot;)))</span>
                 )
             )
-<span class="nc" id="L108">            log.debug(&quot;Assertion error: $execId - ${a.message}&quot;)</span>
-<span class="fc" id="L109">        } catch (t: Throwable) {</span>
-<span class="fc" id="L110">            t.printStackTrace()</span>
-<span class="fc" id="L111">            connector.fail(</span>
-<span class="fc" id="L112">                execId,</span>
-<span class="fc" id="L113">                ExecResult(</span>
-<span class="pc bpc" id="L114" title="1 of 2 branches missed.">                    MapType(mutableMapOf(&quot;message&quot; to StringType(t.message ?: &quot;Unknown reason&quot;)))</span>
+<span class="nc" id="L117">            log.debug(&quot;Assertion error: $execId - ${a.message}&quot;)</span>
+<span class="fc" id="L118">        } catch (t: Throwable) {</span>
+<span class="fc" id="L119">            t.printStackTrace()</span>
+<span class="fc" id="L120">            connector.fail(</span>
+<span class="fc" id="L121">                execId,</span>
+<span class="fc" id="L122">                ExecResult(</span>
+<span class="pc bpc" id="L123" title="1 of 2 branches missed.">                    MapType(mutableMapOf(&quot;message&quot; to StringType(t.message ?: &quot;Unknown reason&quot;)))</span>
                 )
             )
-<span class="fc" id="L117">            log.debug(&quot;Failed exec: $execId&quot;)</span>
+<span class="fc" id="L126">            log.debug(&quot;Failed exec: $execId&quot;)</span>
         }
-<span class="fc" id="L119">    }</span>
+<span class="fc" id="L128">    }</span>
 
     companion object {
-<span class="fc" id="L122">        private val log = logger(CodeRunnerImpl::class)</span>
+<span class="fc" id="L131">        private val log = logger(CodeRunnerImpl::class)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

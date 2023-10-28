@@ -4,33 +4,34 @@ import io.hamal.lib.domain.vo.EventToSubmit
 import io.hamal.lib.domain.State
 import io.hamal.lib.domain.vo.ExecId
 import io.hamal.lib.domain.vo.ExecResult
+import io.hamal.lib.domain.vo.ExecState
 import io.hamal.lib.sdk.BridgeSdkImpl
 
-<span class="nc" id="L9">class HttpConnector(</span>
-<span class="nc" id="L10">    private val sdk: BridgeSdkImpl</span>
+<span class="nc" id="L10">class HttpConnector(</span>
+<span class="nc" id="L11">    private val sdk: BridgeSdkImpl</span>
 ) : Connector {
 
     override fun poll(): List&lt;UnitOfWork&gt; {
-<span class="nc" id="L14">        return sdk.exec.poll().work.map {</span>
-<span class="nc" id="L15">            UnitOfWork(</span>
-<span class="nc" id="L16">                id = it.id,</span>
-<span class="nc" id="L17">                namespaceId = it.namespaceId,</span>
-<span class="nc" id="L18">                groupId = it.groupId,</span>
-<span class="nc" id="L19">                inputs = it.inputs,</span>
-<span class="nc" id="L20">                state = it.state,</span>
-<span class="nc" id="L21">                code = it.code,</span>
-<span class="nc" id="L22">                correlation = it.correlation,</span>
-<span class="nc" id="L23">                events = it.events</span>
+<span class="nc" id="L15">        return sdk.exec.poll().work.map {</span>
+<span class="nc" id="L16">            UnitOfWork(</span>
+<span class="nc" id="L17">                id = it.id,</span>
+<span class="nc" id="L18">                namespaceId = it.namespaceId,</span>
+<span class="nc" id="L19">                groupId = it.groupId,</span>
+<span class="nc" id="L20">                inputs = it.inputs,</span>
+<span class="nc" id="L21">                state = it.state,</span>
+<span class="nc" id="L22">                code = it.code,</span>
+<span class="nc" id="L23">                correlation = it.correlation,</span>
+<span class="nc" id="L24">                events = it.events</span>
             )
         }
     }
 
-    override fun complete(execId: ExecId, result: ExecResult, state: State, events: List&lt;EventToSubmit&gt;) {
-<span class="nc" id="L29">        sdk.exec.complete(execId, result, state, events)</span>
-<span class="nc" id="L30">    }</span>
+    override fun complete(execId: ExecId, result: ExecResult, state: ExecState, events: List&lt;EventToSubmit&gt;) {
+<span class="nc" id="L30">        sdk.exec.complete(execId, result, state, events)</span>
+<span class="nc" id="L31">    }</span>
 
     override fun fail(execId: ExecId, result: ExecResult) {
-<span class="nc" id="L33">        sdk.exec.fail(execId, result)</span>
-<span class="nc" id="L34">    }</span>
+<span class="nc" id="L34">        sdk.exec.fail(execId, result)</span>
+<span class="nc" id="L35">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

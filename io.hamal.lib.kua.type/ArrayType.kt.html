@@ -2,10 +2,7 @@
 
 import io.hamal.lib.common.domain.DomainId
 import io.hamal.lib.common.snowflake.SnowflakeId
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -13,17 +10,20 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlin.reflect.KClass
 
-<span class="pc bnc" id="L16" title="All 18 branches missed.">@Serializable</span>
+<span class="pc bnc" id="L13" title="All 9 branches missed.">@Serializable</span>
 @SerialName(&quot;ArrayType&quot;)
-<span class="fc" id="L18">data class ArrayType(</span>
-<span class="fc" id="L19">    @Serializable(with = Serializer::class)</span>
-<span class="pc bnc" id="L20" title="All 4 branches missed.">    val value: MutableMap&lt;Int, SerializableType&gt; = mutableMapOf(),</span>
-<span class="fc" id="L21">) : TableType(), Map&lt;Int, SerializableType&gt; {</span>
+<span class="fc" id="L15">data class ArrayType(</span>
+<span class="fc" id="L16">    @Serializable(with = Serializer::class)</span>
+<span class="pc bnc" id="L17" title="All 4 branches missed.">    val value: MutableMap&lt;Int, SerializableType&gt; = mutableMapOf(),</span>
+<span class="fc" id="L18">) : TableType(), Map&lt;Int, SerializableType&gt; {</span>
 
-<span class="fc" id="L23">    override val size get() = value.size</span>
-<span class="pc bnc" id="L24" title="All 4 branches missed.">    override val entries: Set&lt;Map.Entry&lt;Int, SerializableType&gt;&gt; = value.entries</span>
-<span class="pc bnc" id="L25" title="All 4 branches missed.">    override val keys: Set&lt;Int&gt; = value.keys</span>
-<span class="pc bnc" id="L26" title="All 4 branches missed.">    override val values: Collection&lt;SerializableType&gt; = value.values</span>
+<span class="fc" id="L20">    override val size get() = value.size</span>
+    @Transient
+<span class="pc" id="L22">    override val entries: Set&lt;Map.Entry&lt;Int, SerializableType&gt;&gt; = value.entries</span>
+    @Transient
+<span class="pc" id="L24">    override val keys: Set&lt;Int&gt; = value.keys</span>
+    @Transient
+<span class="pc" id="L26">    override val values: Collection&lt;SerializableType&gt; = value.values</span>
 <span class="nc" id="L27">    override fun isEmpty(): Boolean = value.isEmpty()</span>
 <span class="nc" id="L28">    override fun containsValue(value: SerializableType): Boolean = this.value.containsValue(value)</span>
 <span class="nc" id="L29">    override fun containsKey(key: Int): Boolean = this.containsKey(key)</span>

@@ -3,8 +3,8 @@
 import io.hamal.lib.common.domain.StringValueObject
 import io.hamal.lib.common.domain.StringValueObjectSerializer
 import io.hamal.lib.common.snowflake.SnowflakeId
-import io.hamal.lib.domain.vo.base.Inputs
 import io.hamal.lib.domain.vo.base.InputsSerializer
+import io.hamal.lib.domain.vo.base.Map
 import io.hamal.lib.kua.type.MapType
 import kotlinx.serialization.Serializable
 
@@ -17,7 +17,7 @@ import kotlinx.serialization.Serializable
 }
 
 <span class="nc" id="L19">@Serializable(with = ExecInputs.Serializer::class)</span>
-<span class="fc" id="L20">class ExecInputs(override val value: MapType = MapType()) : Inputs() {</span>
+<span class="fc" id="L20">class ExecInputs(override val value: MapType = MapType()) : Map() {</span>
 <span class="fc" id="L21">    internal object Serializer : InputsSerializer&lt;ExecInputs&gt;(::ExecInputs)</span>
 <span class="fc" id="L22">}</span>
 
@@ -51,7 +51,12 @@ import kotlinx.serialization.Serializable
 }
 
 <span class="nc" id="L53">@Serializable(with = ExecResult.Serializer::class)</span>
-<span class="fc" id="L54">class ExecResult(override val value: MapType = MapType()) : Inputs() {</span>
+<span class="fc" id="L54">class ExecResult(override val value: MapType = MapType()) : Map() {</span>
 <span class="fc" id="L55">    internal object Serializer : InputsSerializer&lt;ExecResult&gt;(::ExecResult)</span>
 <span class="fc" id="L56">}</span>
+
+<span class="nc" id="L58">@Serializable(with = ExecState.Serializer::class)</span>
+<span class="fc" id="L59">class ExecState(override val value: MapType = MapType()) : Map() {</span>
+<span class="fc" id="L60">    internal object Serializer : InputsSerializer&lt;ExecState&gt;(::ExecState)</span>
+<span class="fc" id="L61">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

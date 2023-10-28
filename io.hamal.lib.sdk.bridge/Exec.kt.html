@@ -14,7 +14,7 @@ import kotlinx.serialization.Serializable
 <span class="pc bpc" id="L14" title="2 of 9 branches missed.">@Serializable</span>
 <span class="fc" id="L15">data class BridgeExecCompleteReq(</span>
 <span class="fc" id="L16">    override val result: ExecResult,</span>
-<span class="fc" id="L17">    override val state: State,</span>
+<span class="fc" id="L17">    override val state: ExecState,</span>
 <span class="fc" id="L18">    override val events: List&lt;EventToSubmit&gt;</span>
 <span class="fc" id="L19">) : CompleteExecReq</span>
 
@@ -61,7 +61,7 @@ interface BridgeExecService {
     fun complete(
         execId: ExecId,
         result: ExecResult,
-        stateAfterCompletion: State,
+        state: ExecState,
         eventToSubmit: List&lt;EventToSubmit&gt;
     ): BridgeExecCompleteSubmitted
 
@@ -81,12 +81,12 @@ interface BridgeExecService {
     override fun complete(
         execId: ExecId,
         result: ExecResult,
-        stateAfterCompletion: State,
+        state: ExecState,
         eventToSubmit: List&lt;EventToSubmit&gt;
     ): BridgeExecCompleteSubmitted {
 <span class="nc" id="L87">        return template.post(&quot;/b1/execs/{execId}/complete&quot;)</span>
 <span class="nc" id="L88">            .path(&quot;execId&quot;, execId)</span>
-<span class="nc" id="L89">            .body(BridgeExecCompleteReq(result, stateAfterCompletion, eventToSubmit))</span>
+<span class="nc" id="L89">            .body(BridgeExecCompleteReq(result, state, eventToSubmit))</span>
 <span class="nc" id="L90">            .execute(BridgeExecCompleteSubmitted::class)</span>
     }
 

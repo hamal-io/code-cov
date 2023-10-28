@@ -3,7 +3,7 @@
 import io.hamal.lib.common.domain.DomainName
 import io.hamal.lib.common.domain.DomainNameSerializer
 import io.hamal.lib.common.snowflake.SnowflakeId
-import io.hamal.lib.domain.vo.base.Inputs
+import io.hamal.lib.domain.vo.base.Map
 import io.hamal.lib.domain.vo.base.InputsSerializer
 import io.hamal.lib.kua.type.MapType
 import kotlinx.serialization.Serializable
@@ -23,7 +23,7 @@ import kotlinx.serialization.Serializable
 }
 
 <span class="nc" id="L25">@Serializable(with = FuncInputs.Serializer::class)</span>
-<span class="fc" id="L26">class FuncInputs(override val value: MapType = MapType()) : Inputs() {</span>
+<span class="fc" id="L26">class FuncInputs(override val value: MapType = MapType()) : Map() {</span>
 <span class="fc" id="L27">    internal object Serializer : InputsSerializer&lt;FuncInputs&gt;(::FuncInputs)</span>
 <span class="fc" id="L28">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

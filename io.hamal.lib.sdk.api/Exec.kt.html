@@ -28,7 +28,7 @@ import kotlinx.serialization.Serializable
 <span class="fc" id="L28">    )</span>
 <span class="fc" id="L29">}</span>
 
-<span class="pc bpc" id="L31" title="2 of 13 branches missed.">@Serializable</span>
+<span class="pc bpc" id="L31" title="2 of 14 branches missed.">@Serializable</span>
 <span class="fc" id="L32">data class ApiExec(</span>
 <span class="fc" id="L33">    val id: ExecId,</span>
 <span class="pc" id="L34">    val status: ExecStatus,</span>
@@ -36,27 +36,28 @@ import kotlinx.serialization.Serializable
 <span class="fc" id="L36">    val inputs: ExecInputs,</span>
 <span class="fc" id="L37">    val code: Code,</span>
 <span class="pc" id="L38">    val events: List&lt;Event&gt;,</span>
-<span class="pc" id="L39">    val result: ExecResult?</span>
+<span class="pc" id="L39">    val result: ExecResult?,</span>
+<span class="pc" id="L40">    val state: ExecState?</span>
 ) {
-<span class="pc bpc" id="L41" title="2 of 9 branches missed.">    @Serializable</span>
-<span class="fc" id="L42">    data class Code(</span>
-<span class="pc" id="L43">        val id: CodeId?, val version: CodeVersion?, val value: CodeValue?</span>
-<span class="fc" id="L44">    )</span>
-<span class="fc" id="L45">}</span>
+<span class="pc bpc" id="L42" title="2 of 9 branches missed.">    @Serializable</span>
+<span class="fc" id="L43">    data class Code(</span>
+<span class="pc" id="L44">        val id: CodeId?, val version: CodeVersion?, val value: CodeValue?</span>
+<span class="fc" id="L45">    )</span>
+<span class="fc" id="L46">}</span>
 
 interface ApiExecService {
     fun list(groupId: GroupId): List&lt;ApiExecList.Exec&gt;
     fun get(execId: ExecId): ApiExec
 }
 
-<span class="nc" id="L52">internal class ApiExecServiceImpl(</span>
-<span class="nc" id="L53">    private val template: HttpTemplateImpl</span>
+<span class="nc" id="L53">internal class ApiExecServiceImpl(</span>
+<span class="nc" id="L54">    private val template: HttpTemplateImpl</span>
 ) : ApiExecService {
 
     override fun list(groupId: GroupId) =
-<span class="nc" id="L57">        template.get(&quot;/v1/execs&quot;).parameter(&quot;group_ids&quot;, groupId).execute().fold(ApiExecList::class).execs</span>
+<span class="nc" id="L58">        template.get(&quot;/v1/execs&quot;).parameter(&quot;group_ids&quot;, groupId).execute().fold(ApiExecList::class).execs</span>
 
     override fun get(execId: ExecId) =
-<span class="nc" id="L60">        template.get(&quot;/v1/execs/{execId}&quot;).path(&quot;execId&quot;, execId).execute().fold(ApiExec::class)</span>
+<span class="nc" id="L61">        template.get(&quot;/v1/execs/{execId}&quot;).path(&quot;execId&quot;, execId).execute().fold(ApiExec::class)</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

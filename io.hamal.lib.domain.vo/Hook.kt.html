@@ -3,7 +3,7 @@
 import io.hamal.lib.common.domain.DomainName
 import io.hamal.lib.common.domain.DomainNameSerializer
 import io.hamal.lib.common.snowflake.SnowflakeId
-import io.hamal.lib.domain.vo.base.Inputs
+import io.hamal.lib.domain.vo.base.Map
 import io.hamal.lib.domain.vo.base.InputsSerializer
 import io.hamal.lib.kua.type.MapType
 import kotlinx.serialization.Serializable
@@ -22,12 +22,12 @@ import kotlinx.serialization.Serializable
 }
 
 <span class="nc" id="L24">@Serializable(with = HookHeaders.Serializer::class)</span>
-<span class="nc" id="L25">class HookHeaders(override val value: MapType = MapType()) : Inputs() {</span>
+<span class="nc" id="L25">class HookHeaders(override val value: MapType = MapType()) : Map() {</span>
 <span class="nc" id="L26">    internal object Serializer : InputsSerializer&lt;HookHeaders&gt;(::HookHeaders)</span>
 <span class="nc" id="L27">}</span>
 
 <span class="nc" id="L29">@Serializable(with = HookParameters.Serializer::class)</span>
-<span class="nc" id="L30">class HookParameters(override val value: MapType = MapType()) : Inputs() {</span>
+<span class="nc" id="L30">class HookParameters(override val value: MapType = MapType()) : Map() {</span>
 <span class="nc" id="L31">    internal object Serializer : InputsSerializer&lt;HookParameters&gt;(::HookParameters)</span>
 <span class="nc" id="L32">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
