@@ -47,7 +47,7 @@ import kotlin.time.Duration.Companion.milliseconds
 <span class="fc" id="L47">                async.atFixedRate(1.milliseconds) {</span>
 <span class="fc" id="L48">                    consumer.consume(10) { chunkId, evt -&gt;</span>
 <span class="nc" id="L49">                        platformEventContainer[evt::class].forEach { handler -&gt;</span>
-<span class="nc" id="L50">                            val cmdId = CmdId(md5(&quot;${evt.topicName}-${chunkId.value.value}&quot;))</span>
+<span class="nc" id="L50">                            val cmdId = CmdId(md5(&quot;${evt.topicName}-${chunkId.value}&quot;))</span>
 <span class="nc" id="L51">                            handler.handle(cmdId, evt)</span>
 <span class="nc" id="L52">                        }</span>
 <span class="nc" id="L53">                    }</span>

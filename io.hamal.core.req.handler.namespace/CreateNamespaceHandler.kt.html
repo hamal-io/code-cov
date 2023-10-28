@@ -12,7 +12,7 @@ import io.hamal.repository.api.NamespaceCmdRepository
 import io.hamal.repository.api.NamespaceCmdRepository.CreateCmd
 import io.hamal.repository.api.NamespaceQueryRepository
 import io.hamal.repository.api.event.NamespaceCreatedEvent
-import io.hamal.repository.api.submitted_req.SubmittedCreateNamespaceReq
+import io.hamal.repository.api.submitted_req.NamespaceCreateSubmitted
 import org.springframework.stereotype.Component
 
 @Component
@@ -21,17 +21,17 @@ import org.springframework.stereotype.Component
 <span class="fc" id="L21">    val namespaceQueryRepository: NamespaceQueryRepository,</span>
 <span class="fc" id="L22">    val eventEmitter: PlatformEventEmitter,</span>
 <span class="pc" id="L23">    val generateDomainId: GenerateDomainId</span>
-<span class="fc" id="L24">) : ReqHandler&lt;SubmittedCreateNamespaceReq&gt;(SubmittedCreateNamespaceReq::class) {</span>
+<span class="fc" id="L24">) : ReqHandler&lt;NamespaceCreateSubmitted&gt;(NamespaceCreateSubmitted::class) {</span>
 
     /**
      * Creates new namespaces on a best-effort basis. Might throw an exception if used concurrently
      */
-    override fun invoke(req: SubmittedCreateNamespaceReq) {
+    override fun invoke(req: NamespaceCreateSubmitted) {
 <span class="fc" id="L30">        createNamespace(req).also { emitEvent(req.cmdId(), it) }</span>
 <span class="fc" id="L31">    }</span>
 }
 
-private fun CreateNamespaceHandler.createNamespace(req: SubmittedCreateNamespaceReq): Namespace {
+private fun CreateNamespaceHandler.createNamespace(req: NamespaceCreateSubmitted): Namespace {
 <span class="fc" id="L35">    val existingNamespaces = namespaceQueryRepository.list(</span>
 <span class="fc" id="L36">        NamespaceQueryRepository.NamespaceQuery(</span>
 <span class="fc" id="L37">            groupIds = listOf(req.groupId),</span>

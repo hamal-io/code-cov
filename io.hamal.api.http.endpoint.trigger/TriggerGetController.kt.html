@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TriggerGetController.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.api.http.endpoint.trigger</a> &gt; <span class="el_source">TriggerGetController.kt</span></div><h1>TriggerGetController.kt</h1><pre class="source lang-java linenums">package io.hamal.api.http.endpoint.trigger
 
-import io.hamal.core.adapter.GetTriggerPort
+import io.hamal.core.adapter.TriggerGetPort
 import io.hamal.core.component.Retry
 import io.hamal.lib.domain.vo.TriggerId
 import io.hamal.lib.sdk.api.ApiEventTrigger
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 <span class="fc" id="L18">@RestController</span>
 <span class="fc" id="L19">internal class TriggerGetController(</span>
 <span class="fc" id="L20">    private val retry: Retry,</span>
-<span class="fc" id="L21">    private val getTrigger: GetTriggerPort</span>
+<span class="fc" id="L21">    private val getTrigger: TriggerGetPort</span>
 ) {
     @GetMapping(&quot;/v1/triggers/{triggerId}&quot;)
     fun getFunc(

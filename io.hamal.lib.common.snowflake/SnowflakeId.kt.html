@@ -42,13 +42,13 @@ import kotlin.concurrent.withLock
 
     object Serializer : KSerializer&lt;SnowflakeId&gt; {
         override val descriptor: SerialDescriptor
-<span class="fc" id="L45">            get() = PrimitiveSerialDescriptor(&quot;SnowflakeId&quot;, PrimitiveKind.STRING)</span>
+<span class="nc" id="L45">            get() = PrimitiveSerialDescriptor(&quot;SnowflakeId&quot;, PrimitiveKind.STRING)</span>
 
-<span class="fc" id="L47">        override fun deserialize(decoder: Decoder) = SnowflakeId(decoder.decodeString().toLong(16))</span>
+<span class="nc" id="L47">        override fun deserialize(decoder: Decoder) = SnowflakeId(decoder.decodeString().toLong(16))</span>
 
         override fun serialize(encoder: Encoder, value: SnowflakeId) {
-<span class="fc" id="L50">            encoder.encodeString(value.value.toString(16))</span>
-<span class="fc" id="L51">        }</span>
+<span class="nc" id="L50">            encoder.encodeString(value.value.toString(16))</span>
+<span class="nc" id="L51">        }</span>
     }
 }
 

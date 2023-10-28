@@ -8,78 +8,79 @@ import io.hamal.repository.api.CodeQueryRepository
 import io.hamal.repository.api.Extension
 import io.hamal.repository.api.ExtensionQueryRepository
 import io.hamal.repository.api.ExtensionQueryRepository.ExtensionQuery
-import io.hamal.repository.api.submitted_req.SubmittedReqWithGroupId
+import io.hamal.repository.api.submitted_req.ExtensionCreateSubmitted
+import io.hamal.repository.api.submitted_req.ExtensionUpdateSubmitted
 import io.hamal.request.CreateExtensionReq
 import io.hamal.request.UpdateExtensionReq
 import org.springframework.stereotype.Component
 
-interface CreateExtensionPort {
+interface ExtensionExtensionPort {
     operator fun &lt;T : Any&gt; invoke(
         groupId: GroupId,
         req: CreateExtensionReq,
-        responseHandler: (SubmittedReqWithGroupId) -&gt; T
+        responseHandler: (ExtensionCreateSubmitted) -&gt; T
     ): T
 }
 
-interface GetExtensionPort {
+interface ExtensionGetPort {
     operator fun &lt;T : Any&gt; invoke(extId: ExtensionId, responseHandler: (Extension, Code) -&gt; T): T
 }
 
-interface ListExtensionPort {
+interface ExtensionListPort {
     operator fun &lt;T : Any&gt; invoke(
         query: ExtensionQuery,
         responseHandler: (List&lt;Extension&gt;) -&gt; T
     ): T
 }
 
-interface UpdateExtensionPort {
+interface ExtensionUpdatePort {
     operator fun &lt;T : Any&gt; invoke(
         extId: ExtensionId,
         req: UpdateExtensionReq,
-        responseHandler: (SubmittedReqWithGroupId) -&gt; T
+        responseHandler: (ExtensionUpdateSubmitted) -&gt; T
     ): T
 }
 
-interface ExtensionPort : CreateExtensionPort, GetExtensionPort, ListExtensionPort, UpdateExtensionPort
+interface ExtensionPort : ExtensionExtensionPort, ExtensionGetPort, ExtensionListPort, ExtensionUpdatePort
 
-<span class="fc" id="L45">@Component</span>
-<span class="fc" id="L46">class ExtensionAdapter(</span>
-<span class="fc" id="L47">    private val submitRequest: SubmitRequest,</span>
-<span class="fc" id="L48">    private val extensionQueryRepository: ExtensionQueryRepository,</span>
-<span class="fc" id="L49">    private val codeQueryRepository: CodeQueryRepository</span>
+<span class="fc" id="L46">@Component</span>
+<span class="fc" id="L47">class ExtensionAdapter(</span>
+<span class="fc" id="L48">    private val submitRequest: SubmitRequest,</span>
+<span class="fc" id="L49">    private val extensionQueryRepository: ExtensionQueryRepository,</span>
+<span class="fc" id="L50">    private val codeQueryRepository: CodeQueryRepository</span>
 ) : ExtensionPort {
     override fun &lt;T : Any&gt; invoke(
         groupId: GroupId,
         req: CreateExtensionReq,
-        responseHandler: (SubmittedReqWithGroupId) -&gt; T
+        responseHandler: (ExtensionCreateSubmitted) -&gt; T
     ): T {
-<span class="fc" id="L56">        return responseHandler(submitRequest(groupId, req))</span>
+<span class="fc" id="L57">        return responseHandler(submitRequest(groupId, req))</span>
     }
 
     override fun &lt;T : Any&gt; invoke(extId: ExtensionId, responseHandler: (Extension, Code) -&gt; T): T {
-<span class="fc" id="L60">        val ext = extensionQueryRepository.get(extId)</span>
-<span class="fc" id="L61">        val code = codeQueryRepository.get(ext.code.id)</span>
-<span class="fc" id="L62">        return responseHandler(ext, code)</span>
+<span class="fc" id="L61">        val ext = extensionQueryRepository.get(extId)</span>
+<span class="fc" id="L62">        val code = codeQueryRepository.get(ext.code.id)</span>
+<span class="fc" id="L63">        return responseHandler(ext, code)</span>
     }
 
     override fun &lt;T : Any&gt; invoke(
         extId: ExtensionId,
         req: UpdateExtensionReq,
-        responseHandler: (SubmittedReqWithGroupId) -&gt; T
+        responseHandler: (ExtensionUpdateSubmitted) -&gt; T
     ): T {
-<span class="fc" id="L70">        ensureExtensionExists(extId)</span>
-<span class="fc" id="L71">        return responseHandler(submitRequest(extId, req))</span>
+<span class="fc" id="L71">        ensureExtensionExists(extId)</span>
+<span class="fc" id="L72">        return responseHandler(submitRequest(extId, req))</span>
     }
 
     override fun &lt;T : Any&gt; invoke(
         query: ExtensionQuery,
         responseHandler: (List&lt;Extension&gt;) -&gt; T
     ): T {
-<span class="fc" id="L78">        return responseHandler(extensionQueryRepository.list(query))</span>
+<span class="fc" id="L79">        return responseHandler(extensionQueryRepository.list(query))</span>
     }
 
     private fun ensureExtensionExists(extId: ExtensionId) {
-<span class="fc" id="L82">        extensionQueryRepository.get(extId)</span>
-<span class="fc" id="L83">    }</span>
+<span class="fc" id="L83">        extensionQueryRepository.get(extId)</span>
+<span class="fc" id="L84">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

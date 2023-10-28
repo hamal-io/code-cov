@@ -8,7 +8,7 @@ import io.hamal.lib.domain.vo.NamespaceName
 import io.hamal.repository.api.*
 import io.hamal.repository.api.FuncCmdRepository.CreateCmd
 import io.hamal.repository.api.event.FuncCreatedEvent
-import io.hamal.repository.api.submitted_req.SubmittedCreateFuncReq
+import io.hamal.repository.api.submitted_req.FuncCreateSubmitted
 import org.springframework.stereotype.Component
 
 @Component
@@ -17,13 +17,13 @@ import org.springframework.stereotype.Component
 <span class="fc" id="L17">    val funcCmdRepository: FuncCmdRepository,</span>
 <span class="fc" id="L18">    val eventEmitter: PlatformEventEmitter,</span>
 <span class="pc" id="L19">    val namespaceQueryRepository: NamespaceQueryRepository</span>
-<span class="fc" id="L20">) : ReqHandler&lt;SubmittedCreateFuncReq&gt;(SubmittedCreateFuncReq::class) {</span>
-    override fun invoke(req: SubmittedCreateFuncReq) {
+<span class="fc" id="L20">) : ReqHandler&lt;FuncCreateSubmitted&gt;(FuncCreateSubmitted::class) {</span>
+    override fun invoke(req: FuncCreateSubmitted) {
 <span class="fc" id="L22">        createFunc(req).also { emitEvent(req.cmdId(), it) }</span>
 <span class="fc" id="L23">    }</span>
 }
 
-private fun CreateFuncHandler.createFunc(req: SubmittedCreateFuncReq): Func {
+private fun CreateFuncHandler.createFunc(req: FuncCreateSubmitted): Func {
 <span class="fc" id="L27">    val code = codeCmdRepository.create(</span>
 <span class="fc" id="L28">        CodeCmdRepository.CreateCmd(</span>
 <span class="fc" id="L29">            id = req.cmdId(),</span>

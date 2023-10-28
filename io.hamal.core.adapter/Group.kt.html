@@ -7,15 +7,15 @@ import io.hamal.repository.api.GroupQueryRepository.GroupQuery
 import org.springframework.stereotype.Component
 
 
-interface GetGroupPort {
+interface GroupGetPort {
     operator fun &lt;T : Any&gt; invoke(groupId: GroupId, responseHandler: (Group) -&gt; T): T
 }
 
-interface ListGroupsPort {
+interface GroupListPort {
     operator fun &lt;T : Any&gt; invoke(query: GroupQuery, responseHandler: (List&lt;Group&gt;) -&gt; T): T
 }
 
-interface GroupPort : GetGroupPort, ListGroupsPort
+interface GroupPort : GroupGetPort, GroupListPort
 
 <span class="fc" id="L20">@Component</span>
 <span class="fc" id="L21">class GroupAdapter(</span>

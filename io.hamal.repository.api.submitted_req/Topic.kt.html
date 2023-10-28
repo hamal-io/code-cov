@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Topic.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.repository.api.submitted_req</a> &gt; <span class="el_source">Topic.kt</span></div><h1>Topic.kt</h1><pre class="source lang-java linenums">package io.hamal.repository.api.submitted_req
+
+import io.hamal.lib.domain._enum.ReqStatus
+import io.hamal.lib.domain.vo.*
+import kotlinx.serialization.Serializable
+
+<span class="pc bpc" id="L7" title="2 of 12 branches missed.">@Serializable</span>
+<span class="fc" id="L8">data class TopicCreateSubmitted(</span>
+<span class="fc" id="L9">    override val reqId: ReqId,</span>
+<span class="fc" id="L10">    override var status: ReqStatus,</span>
+<span class="fc" id="L11">    val groupId: GroupId,</span>
+<span class="fc" id="L12">    val id: TopicId,</span>
+<span class="fc" id="L13">    val namespaceId: NamespaceId,</span>
+<span class="fc" id="L14">    val name: TopicName</span>
+<span class="fc" id="L15">) : Submitted</span>
+
+
+<span class="pc bpc" id="L18" title="2 of 11 branches missed.">@Serializable</span>
+<span class="fc" id="L19">data class TopicAppendToSubmitted(</span>
+<span class="fc" id="L20">    override val reqId: ReqId,</span>
+<span class="fc" id="L21">    override var status: ReqStatus,</span>
+<span class="fc" id="L22">    val id: TopicId,</span>
+<span class="pc" id="L23">    val groupId: GroupId,</span>
+<span class="fc" id="L24">    val payload: TopicEntryPayload</span>
+<span class="fc" id="L25">) : Submitted</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

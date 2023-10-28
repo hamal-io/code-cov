@@ -8,7 +8,7 @@ import io.hamal.repository.api.ExecCmdRepository.FailCmd
 import io.hamal.repository.api.FailedExec
 import io.hamal.repository.api.StartedExec
 import io.hamal.repository.api.event.ExecutionFailedEvent
-import io.hamal.repository.api.submitted_req.SubmittedFailExecReq
+import io.hamal.repository.api.submitted_req.ExecFailSubmitted
 import org.springframework.stereotype.Component
 
 @Component
@@ -16,9 +16,9 @@ import org.springframework.stereotype.Component
 <span class="fc" id="L16">    private val execQueryRepository: io.hamal.repository.api.ExecQueryRepository,</span>
 <span class="fc" id="L17">    private val execCmdRepository: io.hamal.repository.api.ExecCmdRepository,</span>
 <span class="fc" id="L18">    private val eventEmitter: PlatformEventEmitter</span>
-<span class="fc" id="L19">) : ReqHandler&lt;SubmittedFailExecReq&gt;(SubmittedFailExecReq::class) {</span>
+<span class="fc" id="L19">) : ReqHandler&lt;ExecFailSubmitted&gt;(ExecFailSubmitted::class) {</span>
 
-    override fun invoke(req: SubmittedFailExecReq) {
+    override fun invoke(req: ExecFailSubmitted) {
 <span class="fc" id="L22">        val cmdId = req.cmdId()</span>
 
 <span class="fc" id="L24">        val exec = execQueryRepository.get(req.id)</span>
@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component
 <span class="fc" id="L27">        failExec(req).also { emitFailedEvent(cmdId, it) }</span>
 <span class="fc" id="L28">    }</span>
 
-    private fun failExec(req: SubmittedFailExecReq) =
+    private fun failExec(req: ExecFailSubmitted) =
 <span class="fc" id="L31">        execCmdRepository.fail(FailCmd(req.cmdId(), req.id, req.result))</span>
 
     private fun emitFailedEvent(cmdId: CmdId, exec: FailedExec) {

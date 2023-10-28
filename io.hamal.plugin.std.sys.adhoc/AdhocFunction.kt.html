@@ -12,7 +12,7 @@ import io.hamal.lib.kua.type.ErrorType
 import io.hamal.lib.kua.type.MapType
 import io.hamal.lib.kua.type.StringType
 import io.hamal.lib.sdk.ApiSdk
-import io.hamal.lib.sdk.api.ApiInvokeAdhocReq
+import io.hamal.lib.sdk.api.ApiAdhocInvokeReq
 
 <span class="nc" id="L17">class AdhocFunction(</span>
 <span class="nc" id="L18">    private val sdk: ApiSdk</span>
@@ -24,7 +24,7 @@ import io.hamal.lib.sdk.api.ApiInvokeAdhocReq
 <span class="nc" id="L24">        return try {</span>
 <span class="nc" id="L25">            val res = sdk.adhoc(</span>
 <span class="nc bnc" id="L26" title="All 2 branches missed.">                arg1.findString(&quot;namespace_id&quot;)?.let { NamespaceId(SnowflakeId(it)) } ?: ctx[NamespaceId::class],</span>
-<span class="nc" id="L27">                ApiInvokeAdhocReq(</span>
+<span class="nc" id="L27">                ApiAdhocInvokeReq(</span>
 <span class="nc" id="L28">                    inputs = InvocationInputs(),</span>
 <span class="nc" id="L29">                    code = CodeValue(arg1.getString(&quot;code&quot;))</span>
                 )
@@ -32,9 +32,9 @@ import io.hamal.lib.sdk.api.ApiInvokeAdhocReq
 
 <span class="nc" id="L33">            null to MapType(</span>
 <span class="nc" id="L34">                mutableMapOf(</span>
-<span class="nc" id="L35">                    &quot;req_id&quot; to StringType(res.reqId.value.value.toString(16)),</span>
+<span class="nc" id="L35">                    &quot;id&quot; to StringType(res.id.value.value.toString(16)),</span>
 <span class="nc" id="L36">                    &quot;status&quot; to StringType(res.status.name),</span>
-<span class="nc" id="L37">                    &quot;id&quot; to StringType(res.id.value.toString(16)),</span>
+<span class="nc" id="L37">                    &quot;exec_id&quot; to StringType(res.execId.value.value.toString(16)),</span>
 <span class="nc" id="L38">                    &quot;group_id&quot; to StringType(res.groupId.value.value.toString(16)),</span>
 <span class="nc" id="L39">                    &quot;namespace_id&quot; to StringType(res.namespaceId.value.value.toString(16))</span>
                 )

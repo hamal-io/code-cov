@@ -11,7 +11,7 @@ import io.hamal.lib.domain.vo.NamespaceName
 import io.hamal.repository.api.*
 import io.hamal.repository.api.event.TriggerCreatedEvent
 import io.hamal.repository.api.log.BrokerRepository
-import io.hamal.repository.api.submitted_req.SubmittedCreateTriggerReq
+import io.hamal.repository.api.submitted_req.TriggerCreateSubmitted
 import org.springframework.stereotype.Component
 
 @Component
@@ -22,9 +22,9 @@ import org.springframework.stereotype.Component
 <span class="fc" id="L22">    private val eventBrokerRepository: BrokerRepository,</span>
 <span class="fc" id="L23">    private val namespaceQueryRepository: NamespaceQueryRepository,</span>
 <span class="fc" id="L24">    private val hookQueryRepository: HookQueryRepository</span>
-<span class="fc" id="L25">) : ReqHandler&lt;SubmittedCreateTriggerReq&gt;(SubmittedCreateTriggerReq::class) {</span>
+<span class="fc" id="L25">) : ReqHandler&lt;TriggerCreateSubmitted&gt;(TriggerCreateSubmitted::class) {</span>
 
-    override fun invoke(req: SubmittedCreateTriggerReq) {
+    override fun invoke(req: TriggerCreateSubmitted) {
 <span class="fc" id="L28">        val func = funcQueryRepository.get(req.funcId)</span>
 
 <span class="fc bfc" id="L30" title="All 3 branches covered.">        val trigger = when (req.type) {</span>
@@ -36,7 +36,7 @@ import org.springframework.stereotype.Component
 <span class="fc" id="L36">                    name = req.name,</span>
 <span class="fc" id="L37">                    correlationId = req.correlationId,</span>
 <span class="fc" id="L38">                    funcId = req.funcId,</span>
-<span class="fc bfc" id="L39" title="All 2 branches covered.">                    namespaceId = req.namespaceId ?: namespaceQueryRepository.get(NamespaceName(&quot;hamal&quot;)).id,</span>
+<span class="pc bpc" id="L39" title="1 of 2 branches missed.">                    namespaceId = req.namespaceId ?: namespaceQueryRepository.get(NamespaceName(&quot;hamal&quot;)).id,</span>
 <span class="fc" id="L40">                    inputs = req.inputs,</span>
 <span class="pc bpc" id="L41" title="1 of 2 branches missed.">                    duration = requireNotNull(req.duration) { &quot;duration must not be null&quot; }</span>
                 )
@@ -53,7 +53,7 @@ import org.springframework.stereotype.Component
 <span class="fc" id="L53">                        name = req.name,</span>
 <span class="fc" id="L54">                        correlationId = req.correlationId,</span>
 <span class="fc" id="L55">                        funcId = req.funcId,</span>
-<span class="fc bfc" id="L56" title="All 2 branches covered.">                        namespaceId = req.namespaceId ?: namespaceQueryRepository.get(NamespaceName(&quot;hamal&quot;)).id,</span>
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">                        namespaceId = req.namespaceId ?: namespaceQueryRepository.get(NamespaceName(&quot;hamal&quot;)).id,</span>
 <span class="fc" id="L57">                        inputs = req.inputs,</span>
 <span class="fc" id="L58">                        topicId = topic.id,</span>
                     )
@@ -71,7 +71,7 @@ import org.springframework.stereotype.Component
 <span class="fc" id="L71">                        name = req.name,</span>
 <span class="fc" id="L72">                        correlationId = req.correlationId,</span>
 <span class="fc" id="L73">                        funcId = req.funcId,</span>
-<span class="fc bfc" id="L74" title="All 2 branches covered.">                        namespaceId = req.namespaceId ?: namespaceQueryRepository.get(NamespaceName(&quot;hamal&quot;)).id,</span>
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">                        namespaceId = req.namespaceId ?: namespaceQueryRepository.get(NamespaceName(&quot;hamal&quot;)).id,</span>
 <span class="fc" id="L75">                        inputs = req.inputs,</span>
 <span class="fc" id="L76">                        hookId = hook.id,</span>
 <span class="pc bpc" id="L77" title="1 of 2 branches missed.">                        hookMethods = req.hookMethods ?: setOf(Post)</span>

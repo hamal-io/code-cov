@@ -33,13 +33,15 @@ import io.hamal.lib.sdk.api.ApiCreateSnippetReq
 
 <span class="nc" id="L34">            null to MapType(</span>
 <span class="nc" id="L35">                mutableMapOf(</span>
-<span class="nc" id="L36">                    &quot;req_id&quot; to StringType(res.reqId.value.value.toString(16)),</span>
+<span class="nc" id="L36">                    &quot;id&quot; to StringType(res.id.value.value.toString(16)),</span>
 <span class="nc" id="L37">                    &quot;status&quot; to StringType(res.status.name),</span>
-<span class="nc" id="L38">                    &quot;id&quot; to StringType(res.id.value.toString(16))</span>
+<span class="nc" id="L38">                    &quot;snippet_id&quot; to StringType(res.snippetId.value.value.toString(16)),</span>
+<span class="nc" id="L39">                    &quot;group_id&quot; to StringType(res.groupId.value.value.toString(16)),</span>
                 )
             )
-<span class="nc" id="L41">        } catch (t: Throwable) {</span>
-<span class="nc" id="L42">            ErrorType(t.message!!) to null</span>
+
+<span class="nc" id="L43">        } catch (t: Throwable) {</span>
+<span class="nc" id="L44">            ErrorType(t.message!!) to null</span>
         }
 
     }

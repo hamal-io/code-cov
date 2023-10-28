@@ -14,37 +14,34 @@ import kotlinx.serialization.Serializable
 <span class="pc" id="L14">    override val localAt: LocalAt</span>
 <span class="nc" id="L15">) : AppendExecLogReq</span>
 
+<span class="nc bnc" id="L17" title="All 7 branches missed.">@Serializable</span>
+<span class="nc" id="L18">data class ApiExcLogList(</span>
+<span class="nc" id="L19">    val logs: List&lt;ApiExecLog&gt;</span>
+<span class="nc" id="L20">)</span>
 
-<span class="nc bnc" id="L18" title="All 7 branches missed.">@Serializable</span>
-<span class="nc" id="L19">data class ApiExcLogList(</span>
-<span class="nc" id="L20">    val logs: List&lt;ApiExecLog&gt;</span>
-<span class="nc" id="L21">)</span>
-
-
-<span class="nc bnc" id="L24" title="All 12 branches missed.">@Serializable</span>
-<span class="nc" id="L25">data class ApiExecLog(</span>
-<span class="nc" id="L26">    val id: ExecLogId,</span>
-<span class="nc" id="L27">    val execId: ExecId,</span>
-<span class="nc" id="L28">    val level: ExecLogLevel,</span>
-<span class="nc" id="L29">    val message: ExecLogMessage,</span>
-<span class="nc" id="L30">    val localAt: LocalAt,</span>
-<span class="nc" id="L31">    val remoteAt: RemoteAt</span>
-<span class="nc" id="L32">)</span>
-
+<span class="nc bnc" id="L22" title="All 12 branches missed.">@Serializable</span>
+<span class="nc" id="L23">data class ApiExecLog(</span>
+<span class="nc" id="L24">    val id: ExecLogId,</span>
+<span class="nc" id="L25">    val execId: ExecId,</span>
+<span class="nc" id="L26">    val level: ExecLogLevel,</span>
+<span class="nc" id="L27">    val message: ExecLogMessage,</span>
+<span class="nc" id="L28">    val localAt: LocalAt,</span>
+<span class="nc" id="L29">    val remoteAt: RemoteAt</span>
+<span class="nc" id="L30">)</span>
 
 interface ApiExecLogService {
     fun append(execId: ExecId, req: ApiAppendExecLogCmd)
 }
 
-<span class="nc" id="L39">internal class ApiExecLogServiceImpl(</span>
-<span class="nc" id="L40">    private val template: HttpTemplateImpl</span>
+<span class="nc" id="L36">internal class ApiExecLogServiceImpl(</span>
+<span class="nc" id="L37">    private val template: HttpTemplateImpl</span>
 ) : ApiExecLogService {
     override fun append(execId: ExecId, req: ApiAppendExecLogCmd) {
-<span class="nc" id="L43">        template</span>
-<span class="nc" id="L44">            .post(&quot;/v1/execs/{execId}/logs&quot;)</span>
-<span class="nc" id="L45">            .path(&quot;execId&quot;, execId)</span>
-<span class="nc" id="L46">            .body(req)</span>
-<span class="nc" id="L47">            .execute()</span>
-<span class="nc" id="L48">    }</span>
+<span class="nc" id="L40">        template</span>
+<span class="nc" id="L41">            .post(&quot;/v1/execs/{execId}/logs&quot;)</span>
+<span class="nc" id="L42">            .path(&quot;execId&quot;, execId)</span>
+<span class="nc" id="L43">            .body(req)</span>
+<span class="nc" id="L44">            .execute()</span>
+<span class="nc" id="L45">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

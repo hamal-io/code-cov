@@ -7,21 +7,21 @@ import io.hamal.lib.common.domain.CmdId
 import io.hamal.repository.api.Namespace
 import io.hamal.repository.api.NamespaceCmdRepository
 import io.hamal.repository.api.event.NamespaceCreatedEvent
-import io.hamal.repository.api.submitted_req.SubmittedUpdateNamespaceReq
+import io.hamal.repository.api.submitted_req.NamespaceUpdateSubmitted
 import org.springframework.stereotype.Component
 
 @Component
 <span class="fc" id="L14">class UpdateNamespaceHandler(</span>
 <span class="fc" id="L15">    val namespaceCmdRepository: NamespaceCmdRepository,</span>
 <span class="fc" id="L16">    val eventEmitter: PlatformEventEmitter</span>
-<span class="fc" id="L17">) : ReqHandler&lt;SubmittedUpdateNamespaceReq&gt;(SubmittedUpdateNamespaceReq::class) {</span>
+<span class="fc" id="L17">) : ReqHandler&lt;NamespaceUpdateSubmitted&gt;(NamespaceUpdateSubmitted::class) {</span>
 
-    override fun invoke(req: SubmittedUpdateNamespaceReq) {
+    override fun invoke(req: NamespaceUpdateSubmitted) {
 <span class="fc" id="L20">        updateNamespace(req).also { emitEvent(req.cmdId(), it) }</span>
 <span class="fc" id="L21">    }</span>
 }
 
-private fun UpdateNamespaceHandler.updateNamespace(req: SubmittedUpdateNamespaceReq): Namespace {
+private fun UpdateNamespaceHandler.updateNamespace(req: NamespaceUpdateSubmitted): Namespace {
 <span class="fc" id="L25">    return namespaceCmdRepository.update(</span>
 <span class="fc" id="L26">        req.id,</span>
 <span class="fc" id="L27">        NamespaceCmdRepository.UpdateCmd(</span>

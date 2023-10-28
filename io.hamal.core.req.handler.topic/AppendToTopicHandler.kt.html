@@ -5,15 +5,15 @@ import io.hamal.core.req.handler.cmdId
 import io.hamal.lib.domain.vo.TopicEntryPayload
 import io.hamal.repository.api.log.BrokerRepository
 import io.hamal.repository.api.log.ProtobufAppender
-import io.hamal.repository.api.submitted_req.SubmittedAppendToTopicReq
+import io.hamal.repository.api.submitted_req.TopicAppendToSubmitted
 import org.springframework.stereotype.Component
 
 @Component
 <span class="fc" id="L12">class AppendToTopicHandler(</span>
 <span class="fc" id="L13">    private val eventBrokerRepository: BrokerRepository</span>
-<span class="fc" id="L14">) : ReqHandler&lt;SubmittedAppendToTopicReq&gt;(SubmittedAppendToTopicReq::class) {</span>
+<span class="fc" id="L14">) : ReqHandler&lt;TopicAppendToSubmitted&gt;(TopicAppendToSubmitted::class) {</span>
 
-    override fun invoke(req: SubmittedAppendToTopicReq) {
+    override fun invoke(req: TopicAppendToSubmitted) {
 <span class="fc" id="L17">        val topic = eventBrokerRepository.getTopic(req.id)</span>
 <span class="fc" id="L18">        appender.append(req.cmdId(), topic, req.payload)</span>
 <span class="fc" id="L19">    }</span>

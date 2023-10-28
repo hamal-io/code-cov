@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TriggerCreateController.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.api.http.endpoint.trigger</a> &gt; <span class="el_source">TriggerCreateController.kt</span></div><h1>TriggerCreateController.kt</h1><pre class="source lang-java linenums">package io.hamal.api.http.endpoint.trigger
 
-import io.hamal.api.http.endpoint.req.Assembler
-import io.hamal.core.adapter.CreateTriggerPort
+import io.hamal.api.http.endpoint.accepted
+import io.hamal.core.adapter.TriggerCreatePort
 import io.hamal.core.component.Retry
 import io.hamal.lib.domain.vo.NamespaceId
-import io.hamal.lib.sdk.api.ApiCreateTriggerReq
-import io.hamal.lib.sdk.api.ApiSubmittedReq
-import org.springframework.http.HttpStatus.ACCEPTED
+import io.hamal.lib.sdk.api.ApiSubmitted
+import io.hamal.lib.sdk.api.ApiTriggerCreateReq
+import io.hamal.repository.api.submitted_req.TriggerCreateSubmitted
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -16,17 +16,15 @@ import org.springframework.web.bind.annotation.RestController
 <span class="fc" id="L16">@RestController</span>
 <span class="fc" id="L17">internal class TriggerCreateController(</span>
 <span class="fc" id="L18">    private val retry: Retry,</span>
-<span class="fc" id="L19">    private val createTrigger: CreateTriggerPort</span>
+<span class="fc" id="L19">    private val createTrigger: TriggerCreatePort</span>
 ) {
     @PostMapping(&quot;/v1/namespaces/{namespaceId}/triggers&quot;)
     fun createTrigger(
         @PathVariable namespaceId: NamespaceId,
-        @RequestBody req: ApiCreateTriggerReq
-    ): ResponseEntity&lt;ApiSubmittedReq&gt; {
+        @RequestBody req: ApiTriggerCreateReq
+    ): ResponseEntity&lt;ApiSubmitted&gt; {
 <span class="fc" id="L26">        return retry {</span>
-<span class="fc" id="L27">            createTrigger(namespaceId, req) {</span>
-<span class="fc" id="L28">                ResponseEntity(Assembler.assemble(it), ACCEPTED)</span>
-            }
+<span class="fc" id="L27">            createTrigger(namespaceId, req, TriggerCreateSubmitted::accepted)</span>
         }
     }
 }

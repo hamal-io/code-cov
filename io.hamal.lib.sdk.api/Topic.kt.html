@@ -3,6 +3,7 @@
 import io.hamal.lib.common.KeyedOnce
 import io.hamal.lib.common.domain.Limit
 import io.hamal.lib.common.snowflake.SnowflakeId
+import io.hamal.lib.domain._enum.ReqStatus
 import io.hamal.lib.domain.vo.*
 import io.hamal.lib.http.HttpRequest
 import io.hamal.lib.http.HttpTemplateImpl
@@ -13,124 +14,142 @@ import io.hamal.request.AppendEntryReq
 import io.hamal.request.CreateTopicReq
 import kotlinx.serialization.Serializable
 
-<span class="pc bpc" id="L16" title="2 of 7 branches missed.">@Serializable</span>
-<span class="fc" id="L17">data class ApiCreateTopicReq(</span>
-<span class="fc" id="L18">    override val name: TopicName</span>
-<span class="fc" id="L19">) : CreateTopicReq</span>
+<span class="pc bpc" id="L17" title="2 of 7 branches missed.">@Serializable</span>
+<span class="fc" id="L18">data class ApiTopicCreateReq(</span>
+<span class="fc" id="L19">    override val name: TopicName</span>
+<span class="fc" id="L20">) : CreateTopicReq</span>
 
-<span class="pc bnc" id="L21" title="All 8 branches missed.">@Serializable</span>
-<span class="fc" id="L22">data class ApiAppendEntryReq(</span>
-<span class="fc" id="L23">    override val topicId: TopicId,</span>
-<span class="fc" id="L24">    override val payload: TopicEntryPayload</span>
-<span class="nc" id="L25">) : AppendEntryReq</span>
+<span class="pc bpc" id="L22" title="2 of 11 branches missed.">@Serializable</span>
+<span class="fc" id="L23">data class ApiTopicCreateSubmitted(</span>
+<span class="fc" id="L24">    override val id: ReqId,</span>
+<span class="fc" id="L25">    override val status: ReqStatus,</span>
+<span class="fc" id="L26">    val topicId: TopicId,</span>
+<span class="pc" id="L27">    val groupId: GroupId,</span>
+<span class="pc" id="L28">    val namespaceId: NamespaceId</span>
+<span class="fc" id="L29">) : ApiSubmitted</span>
 
-<span class="pc bpc" id="L27" title="2 of 9 branches missed.">@Serializable</span>
-<span class="fc" id="L28">data class ApiTopicEntryList(</span>
-<span class="pc" id="L29">    val topicId: TopicId,</span>
-<span class="fc" id="L30">    val topicName: TopicName,</span>
-<span class="fc" id="L31">    val entries: List&lt;Entry&gt;</span>
+
+<span class="pc bnc" id="L32" title="All 8 branches missed.">@Serializable</span>
+<span class="fc" id="L33">data class ApiTopicAppendEntryReq(</span>
+<span class="fc" id="L34">    override val topicId: TopicId,</span>
+<span class="fc" id="L35">    override val payload: TopicEntryPayload</span>
+<span class="nc" id="L36">) : AppendEntryReq</span>
+
+<span class="pc bpc" id="L38" title="2 of 9 branches missed.">@Serializable</span>
+<span class="fc" id="L39">data class ApiTopicAppendSubmitted(</span>
+<span class="fc" id="L40">    override val id: ReqId,</span>
+<span class="fc" id="L41">    override val status: ReqStatus,</span>
+<span class="pc" id="L42">    val topicId: TopicId</span>
+<span class="fc" id="L43">) : ApiSubmitted</span>
+
+
+<span class="pc bpc" id="L46" title="2 of 9 branches missed.">@Serializable</span>
+<span class="fc" id="L47">data class ApiTopicEntryList(</span>
+<span class="pc" id="L48">    val topicId: TopicId,</span>
+<span class="fc" id="L49">    val topicName: TopicName,</span>
+<span class="fc" id="L50">    val entries: List&lt;Entry&gt;</span>
 ) {
-<span class="pc bpc" id="L33" title="2 of 8 branches missed.">    @Serializable</span>
-<span class="fc" id="L34">    data class Entry(</span>
-<span class="fc" id="L35">        val id: TopicEntryId,</span>
-<span class="fc" id="L36">        val payload: TopicEntryPayload</span>
-<span class="fc" id="L37">    )</span>
-<span class="fc" id="L38">}</span>
+<span class="pc bpc" id="L52" title="2 of 8 branches missed.">    @Serializable</span>
+<span class="fc" id="L53">    data class Entry(</span>
+<span class="fc" id="L54">        val id: TopicEntryId,</span>
+<span class="fc" id="L55">        val payload: TopicEntryPayload</span>
+<span class="fc" id="L56">    )</span>
+<span class="fc" id="L57">}</span>
 
-<span class="pc bpc" id="L40" title="2 of 8 branches missed.">@Serializable</span>
-<span class="fc" id="L41">data class ApiTopic(</span>
-<span class="fc" id="L42">    val id: TopicId,</span>
-<span class="fc" id="L43">    val name: TopicName</span>
-<span class="fc" id="L44">)</span>
+<span class="pc bpc" id="L59" title="2 of 8 branches missed.">@Serializable</span>
+<span class="fc" id="L60">data class ApiTopic(</span>
+<span class="fc" id="L61">    val id: TopicId,</span>
+<span class="fc" id="L62">    val name: TopicName</span>
+<span class="fc" id="L63">)</span>
 
-<span class="pc bpc" id="L46" title="2 of 7 branches missed.">@Serializable</span>
-<span class="fc" id="L47">data class ApiTopicList(</span>
-<span class="fc" id="L48">    val topics: List&lt;Topic&gt;</span>
+<span class="pc bpc" id="L65" title="2 of 7 branches missed.">@Serializable</span>
+<span class="fc" id="L66">data class ApiTopicList(</span>
+<span class="fc" id="L67">    val topics: List&lt;Topic&gt;</span>
 ) {
-<span class="pc bpc" id="L50" title="2 of 8 branches missed.">    @Serializable</span>
-<span class="fc" id="L51">    data class Topic(</span>
-<span class="pc" id="L52">        val id: TopicId,</span>
-<span class="fc" id="L53">        val name: TopicName</span>
-<span class="fc" id="L54">    )</span>
-<span class="fc" id="L55">}</span>
-
+<span class="pc bpc" id="L69" title="2 of 8 branches missed.">    @Serializable</span>
+<span class="fc" id="L70">    data class Topic(</span>
+<span class="pc" id="L71">        val id: TopicId,</span>
+<span class="fc" id="L72">        val name: TopicName</span>
+<span class="fc" id="L73">    )</span>
+<span class="fc" id="L74">}</span>
 
 interface ApiTopicService {
-    fun append(topicId: TopicId, payload: TopicEntryPayload): ApiSubmittedReqWithId
-    fun create(namespaceId: NamespaceId, req: ApiCreateTopicReq): ApiSubmittedReqWithId
+    fun append(topicId: TopicId, payload: TopicEntryPayload): ApiTopicAppendSubmitted
+    fun create(namespaceId: NamespaceId, req: ApiTopicCreateReq): ApiTopicCreateSubmitted
     fun list(query: TopicQuery): List&lt;ApiTopicList.Topic&gt;
     fun entries(topicId: TopicId): List&lt;ApiTopicEntryList.Entry&gt;
     fun get(topicId: TopicId): ApiTopic
     fun resolve(namespaceId: NamespaceId, topicName: TopicName): TopicId
 
-<span class="nc" id="L66">    data class TopicQuery(</span>
-<span class="nc" id="L67">        var afterId: TopicId = TopicId(SnowflakeId(Long.MAX_VALUE)),</span>
-<span class="nc" id="L68">        var limit: Limit = Limit(25),</span>
-<span class="nc" id="L69">        var topicIds: List&lt;TopicId&gt; = listOf(),</span>
-<span class="nc" id="L70">        var namespaceIds: List&lt;NamespaceId&gt; = listOf(),</span>
-<span class="nc" id="L71">        var groupIds: List&lt;GroupId&gt; = listOf()</span>
+<span class="nc" id="L84">    data class TopicQuery(</span>
+<span class="nc" id="L85">        var afterId: TopicId = TopicId(SnowflakeId(Long.MAX_VALUE)),</span>
+<span class="nc" id="L86">        var limit: Limit = Limit(25),</span>
+<span class="nc" id="L87">        var topicIds: List&lt;TopicId&gt; = listOf(),</span>
+<span class="nc" id="L88">        var namespaceIds: List&lt;NamespaceId&gt; = listOf(),</span>
+<span class="nc" id="L89">        var groupIds: List&lt;GroupId&gt; = listOf()</span>
     ) {
         fun setRequestParameters(req: HttpRequest) {
-<span class="nc" id="L74">            req.parameter(&quot;after_id&quot;, afterId)</span>
-<span class="nc" id="L75">            req.parameter(&quot;limit&quot;, limit)</span>
-<span class="nc bnc" id="L76" title="All 4 branches missed.">            if (topicIds.isNotEmpty()) req.parameter(&quot;topic_ids&quot;, topicIds)</span>
-<span class="nc bnc" id="L77" title="All 4 branches missed.">            if (namespaceIds.isNotEmpty()) req.parameter(&quot;namespace_ids&quot;, namespaceIds)</span>
-<span class="nc bnc" id="L78" title="All 4 branches missed.">            if (groupIds.isNotEmpty()) req.parameter(&quot;group_ids&quot;, groupIds)</span>
-<span class="nc" id="L79">        }</span>
-<span class="nc" id="L80">    }</span>
+<span class="nc" id="L92">            req.parameter(&quot;after_id&quot;, afterId)</span>
+<span class="nc" id="L93">            req.parameter(&quot;limit&quot;, limit)</span>
+<span class="nc bnc" id="L94" title="All 4 branches missed.">            if (topicIds.isNotEmpty()) req.parameter(&quot;topic_ids&quot;, topicIds)</span>
+<span class="nc bnc" id="L95" title="All 4 branches missed.">            if (namespaceIds.isNotEmpty()) req.parameter(&quot;namespace_ids&quot;, namespaceIds)</span>
+<span class="nc bnc" id="L96" title="All 4 branches missed.">            if (groupIds.isNotEmpty()) req.parameter(&quot;group_ids&quot;, groupIds)</span>
+<span class="nc" id="L97">        }</span>
+<span class="nc" id="L98">    }</span>
 }
 
-<span class="nc" id="L83">internal class ApiTopicServiceImpl(</span>
-<span class="nc" id="L84">    private val template: HttpTemplateImpl</span>
+<span class="nc" id="L101">internal class ApiTopicServiceImpl(</span>
+<span class="nc" id="L102">    private val template: HttpTemplateImpl</span>
 ) : ApiTopicService {
 
-    override fun append(topicId: TopicId, payload: TopicEntryPayload) =
-<span class="nc" id="L88">        template.post(&quot;/v1/topics/{topicId}/entries&quot;)</span>
-<span class="nc" id="L89">            .path(&quot;topicId&quot;, topicId)</span>
-<span class="nc" id="L90">            .body(payload)</span>
-<span class="nc" id="L91">            .execute()</span>
-<span class="nc" id="L92">            .fold(ApiSubmittedReqWithId::class)</span>
+    override fun append(topicId: TopicId, payload: TopicEntryPayload): ApiTopicAppendSubmitted =
+<span class="nc" id="L106">        template.post(&quot;/v1/topics/{topicId}/entries&quot;)</span>
+<span class="nc" id="L107">            .path(&quot;topicId&quot;, topicId)</span>
+<span class="nc" id="L108">            .body(payload)</span>
+<span class="nc" id="L109">            .execute()</span>
+<span class="nc" id="L110">            .fold(ApiTopicAppendSubmitted::class)</span>
 
-    override fun create(namespaceId: NamespaceId, req: ApiCreateTopicReq) =
-<span class="nc" id="L95">        template.post(&quot;/v1/namespaces/{namespaceId}/topics&quot;)</span>
-<span class="nc" id="L96">            .path(&quot;namespaceId&quot;, namespaceId)</span>
-<span class="nc" id="L97">            .body(req)</span>
-<span class="nc" id="L98">            .execute()</span>
-<span class="nc" id="L99">            .fold(ApiSubmittedReqWithId::class)</span>
+    override fun create(namespaceId: NamespaceId, req: ApiTopicCreateReq): ApiTopicCreateSubmitted =
+<span class="nc" id="L113">        template.post(&quot;/v1/namespaces/{namespaceId}/topics&quot;)</span>
+<span class="nc" id="L114">            .path(&quot;namespaceId&quot;, namespaceId)</span>
+<span class="nc" id="L115">            .body(req)</span>
+<span class="nc" id="L116">            .execute()</span>
+<span class="nc" id="L117">            .fold(ApiTopicCreateSubmitted::class)</span>
 
     override fun list(query: TopicQuery) =
-<span class="nc" id="L102">        template.get(&quot;/v1/topics&quot;)</span>
-<span class="nc" id="L103">            .also(query::setRequestParameters)</span>
-<span class="nc" id="L104">            .execute()</span>
-<span class="nc" id="L105">            .fold(ApiTopicList::class)</span>
-<span class="nc" id="L106">            .topics</span>
+<span class="nc" id="L120">        template.get(&quot;/v1/topics&quot;)</span>
+<span class="nc" id="L121">            .also(query::setRequestParameters)</span>
+<span class="nc" id="L122">            .execute()</span>
+<span class="nc" id="L123">            .fold(ApiTopicList::class)</span>
+<span class="nc" id="L124">            .topics</span>
 
     override fun entries(topicId: TopicId) =
-<span class="nc" id="L109">        template</span>
-<span class="nc" id="L110">            .get(&quot;/v1/topics/{topicId}/entries&quot;)</span>
-<span class="nc" id="L111">            .path(&quot;topicId&quot;, topicId)</span>
-<span class="nc" id="L112">            .execute()</span>
-<span class="nc" id="L113">            .fold(ApiTopicEntryList::class)</span>
-<span class="nc" id="L114">            .entries</span>
+<span class="nc" id="L127">        template</span>
+<span class="nc" id="L128">            .get(&quot;/v1/topics/{topicId}/entries&quot;)</span>
+<span class="nc" id="L129">            .path(&quot;topicId&quot;, topicId)</span>
+<span class="nc" id="L130">            .execute()</span>
+<span class="nc" id="L131">            .fold(ApiTopicEntryList::class)</span>
+<span class="nc" id="L132">            .entries</span>
 
     override fun get(topicId: TopicId) =
-<span class="nc" id="L117">        template.get(&quot;/v1/topics/{topicId}&quot;)</span>
-<span class="nc" id="L118">            .path(&quot;topicId&quot;, topicId)</span>
-<span class="nc" id="L119">            .execute()</span>
-<span class="nc" id="L120">            .fold(ApiTopic::class)</span>
+<span class="nc" id="L135">        template.get(&quot;/v1/topics/{topicId}&quot;)</span>
+<span class="nc" id="L136">            .path(&quot;topicId&quot;, topicId)</span>
+<span class="nc" id="L137">            .execute()</span>
+<span class="nc" id="L138">            .fold(ApiTopic::class)</span>
 
     override fun resolve(namespaceId: NamespaceId, topicName: TopicName): TopicId {
-<span class="nc" id="L123">        return topicNameCache(topicName) {</span>
-<span class="nc bnc" id="L124" title="All 2 branches missed.">            template.get(&quot;/v1/topics&quot;)</span>
-<span class="nc" id="L125">                .parameter(&quot;namespace_ids&quot;, namespaceId)</span>
-<span class="nc" id="L126">                .parameter(&quot;names&quot;, topicName.value)</span>
-<span class="nc" id="L127">                .execute(ApiTopicList::class)</span>
-<span class="nc" id="L128">                .topics</span>
-<span class="nc bnc" id="L129" title="All 2 branches missed.">                .firstOrNull()?.id</span>
-<span class="nc" id="L130">                ?: throw NoSuchElementException(&quot;Topic not found&quot;)</span>
+<span class="nc" id="L141">        return topicNameCache(topicName) {</span>
+<span class="nc bnc" id="L142" title="All 2 branches missed.">            template.get(&quot;/v1/topics&quot;)</span>
+<span class="nc" id="L143">                .parameter(&quot;namespace_ids&quot;, namespaceId)</span>
+<span class="nc" id="L144">                .parameter(&quot;names&quot;, topicName.value)</span>
+<span class="nc" id="L145">                .execute()</span>
+<span class="nc" id="L146">                .fold(ApiTopicList::class)</span>
+<span class="nc" id="L147">                .topics</span>
+<span class="nc bnc" id="L148" title="All 2 branches missed.">                .firstOrNull()?.id</span>
+<span class="nc" id="L149">                ?: throw NoSuchElementException(&quot;Topic not found&quot;)</span>
         }
     }
 
-<span class="nc" id="L134">    private val topicNameCache: KeyedOnce&lt;TopicName, TopicId&gt; = KeyedOnce.default()</span>
+<span class="nc" id="L153">    private val topicNameCache: KeyedOnce&lt;TopicName, TopicId&gt; = KeyedOnce.default()</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -7,10 +7,7 @@ import io.hamal.lib.common.domain.Limit
 import io.hamal.lib.common.snowflake.SnowflakeId
 import io.hamal.lib.domain.*
 import io.hamal.lib.domain._enum.TriggerType
-import io.hamal.lib.domain.vo.CorrelationId
-import io.hamal.lib.domain.vo.ExecId
-import io.hamal.lib.domain.vo.InvocationInputs
-import io.hamal.lib.domain.vo.TriggerId
+import io.hamal.lib.domain.vo.*
 import io.hamal.repository.api.EventTrigger
 import io.hamal.repository.api.FuncQueryRepository
 import io.hamal.repository.api.TriggerQueryRepository
@@ -24,72 +21,72 @@ import org.springframework.stereotype.Service
 import java.util.concurrent.ScheduledFuture
 import kotlin.time.Duration.Companion.milliseconds
 
-<span class="fc" id="L27">@Service</span>
-<span class="fc" id="L28">internal class EventTriggerService(</span>
-<span class="pc" id="L29">    internal val eventBrokerRepository: BrokerRepository,</span>
-<span class="pc" id="L30">    internal val triggerQueryRepository: TriggerQueryRepository,</span>
-<span class="pc" id="L31">    internal val submitRequest: SubmitRequest,</span>
-<span class="pc" id="L32">    internal val generateDomainId: GenerateDomainId,</span>
-<span class="fc" id="L33">    private val async: Async,</span>
-<span class="fc" id="L34">    private val funcQueryRepository: FuncQueryRepository</span>
+<span class="fc" id="L24">@Service</span>
+<span class="fc" id="L25">internal class EventTriggerService(</span>
+<span class="pc" id="L26">    internal val eventBrokerRepository: BrokerRepository,</span>
+<span class="pc" id="L27">    internal val triggerQueryRepository: TriggerQueryRepository,</span>
+<span class="pc" id="L28">    internal val submitRequest: SubmitRequest,</span>
+<span class="pc" id="L29">    internal val generateDomainId: GenerateDomainId,</span>
+<span class="fc" id="L30">    private val async: Async,</span>
+<span class="fc" id="L31">    private val funcQueryRepository: FuncQueryRepository</span>
 ) {
 
-<span class="fc" id="L37">    private val scheduledTasks = mutableListOf&lt;ScheduledFuture&lt;*&gt;&gt;()</span>
+<span class="fc" id="L34">    private val scheduledTasks = mutableListOf&lt;ScheduledFuture&lt;*&gt;&gt;()</span>
 
-<span class="pc" id="L39">    val triggerConsumers = mutableMapOf&lt;TriggerId, ProtobufBatchConsumer&lt;TopicEntry&gt;&gt;()</span>
+<span class="pc" id="L36">    val triggerConsumers = mutableMapOf&lt;TriggerId, ProtobufBatchConsumer&lt;TopicEntry&gt;&gt;()</span>
 
     @PostConstruct
     fun setup() {
-<span class="fc" id="L43">        scheduledTasks.add(</span>
-<span class="fc" id="L44">            async.atFixedRate(1.milliseconds) {</span>
-<span class="fc" id="L45">                triggerQueryRepository.list(</span>
-<span class="fc" id="L46">                    TriggerQuery(</span>
-<span class="fc" id="L47">                        afterId = TriggerId(SnowflakeId(Long.MAX_VALUE)),</span>
-<span class="fc" id="L48">                        types = listOf(TriggerType.Event),</span>
-<span class="fc" id="L49">                        limit = Limit(10),</span>
-<span class="fc" id="L50">                        groupIds = listOf()</span>
+<span class="fc" id="L40">        scheduledTasks.add(</span>
+<span class="fc" id="L41">            async.atFixedRate(1.milliseconds) {</span>
+<span class="fc" id="L42">                triggerQueryRepository.list(</span>
+<span class="fc" id="L43">                    TriggerQuery(</span>
+<span class="fc" id="L44">                        afterId = TriggerId(SnowflakeId(Long.MAX_VALUE)),</span>
+<span class="fc" id="L45">                        types = listOf(TriggerType.Event),</span>
+<span class="fc" id="L46">                        limit = Limit(10),</span>
+<span class="fc" id="L47">                        groupIds = listOf()</span>
                     )
-<span class="fc" id="L52">                ).forEach { trigger -&gt;</span>
-<span class="pc bpc" id="L53" title="1 of 2 branches missed.">                    require(trigger is EventTrigger)</span>
+<span class="fc" id="L49">                ).forEach { trigger -&gt;</span>
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">                    require(trigger is EventTrigger)</span>
 
-<span class="fc" id="L55">                    val topic = eventBrokerRepository.getTopic(trigger.topicId)</span>
-<span class="fc" id="L56">                    val consumer = ProtobufBatchConsumer(</span>
-<span class="fc" id="L57">                        consumerId = ConsumerId(trigger.id.value.value.toString(16)),</span>
-<span class="fc" id="L58">                        topic = topic,</span>
-<span class="fc" id="L59">                        repository = eventBrokerRepository,</span>
+<span class="fc" id="L52">                    val topic = eventBrokerRepository.getTopic(trigger.topicId)</span>
+<span class="fc" id="L53">                    val consumer = ProtobufBatchConsumer(</span>
+<span class="fc" id="L54">                        consumerId = ConsumerId(trigger.id.value.value.toString(16)),</span>
+<span class="fc" id="L55">                        topic = topic,</span>
+<span class="fc" id="L56">                        repository = eventBrokerRepository,</span>
                         valueClass = TopicEntry::class
                     )
 
-<span class="fc" id="L63">                    triggerConsumers[trigger.id] = consumer</span>
-<span class="fc" id="L64">                    try {</span>
-<span class="fc" id="L65">                        val func = funcQueryRepository.get(trigger.funcId)</span>
-<span class="fc" id="L66">                        consumer.consumeBatch(1) { entries -&gt;</span>
-<span class="nc" id="L67">                            submitRequest(</span>
-<span class="nc" id="L68">                                InvokeExecReq(</span>
-<span class="nc" id="L69">                                    execId = generateDomainId(::ExecId),</span>
-<span class="nc" id="L70">                                    funcId = trigger.funcId,</span>
-<span class="nc bnc" id="L71" title="All 2 branches missed.">                                    correlationId = trigger.correlationId ?: CorrelationId.default,</span>
-<span class="nc" id="L72">                                    inputs = InvocationInputs(),</span>
-<span class="nc" id="L73">                                    code = func.code.toExecCode(),</span>
-<span class="nc" id="L74">                                    events = entries.map {</span>
-<span class="nc" id="L75">                                        Event(</span>
-<span class="nc" id="L76">                                            topic = EventTopic(</span>
-<span class="nc" id="L77">                                                id = topic.id,</span>
-<span class="nc" id="L78">                                                name = topic.name</span>
+<span class="fc" id="L60">                    triggerConsumers[trigger.id] = consumer</span>
+<span class="fc" id="L61">                    try {</span>
+<span class="fc" id="L62">                        val func = funcQueryRepository.get(trigger.funcId)</span>
+<span class="fc" id="L63">                        consumer.consumeBatch(1) { entries -&gt;</span>
+<span class="nc" id="L64">                            submitRequest(</span>
+<span class="nc" id="L65">                                InvokeExecReq(</span>
+<span class="nc" id="L66">                                    execId = generateDomainId(::ExecId),</span>
+<span class="nc" id="L67">                                    funcId = trigger.funcId,</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">                                    correlationId = trigger.correlationId ?: CorrelationId.default,</span>
+<span class="nc" id="L69">                                    inputs = InvocationInputs(),</span>
+<span class="nc" id="L70">                                    code = func.code.toExecCode(),</span>
+<span class="nc" id="L71">                                    events = entries.map {</span>
+<span class="nc" id="L72">                                        Event(</span>
+<span class="nc" id="L73">                                            topic = EventTopic(</span>
+<span class="nc" id="L74">                                                id = topic.id,</span>
+<span class="nc" id="L75">                                                name = topic.name</span>
                                             ),
-<span class="nc" id="L80">                                            id = EventId(it.id.value),</span>
-<span class="nc" id="L81">                                            payload = EventPayload(it.payload.value)</span>
+<span class="nc" id="L77">                                            id = EventId(it.id.value),</span>
+<span class="nc" id="L78">                                            payload = EventPayload(it.payload.value)</span>
                                         )
                                     }
                                 )
                             )
-<span class="nc" id="L86">                        }</span>
-<span class="nc" id="L87">                    } catch (t: Throwable) {</span>
-<span class="nc" id="L88">                        t.printStackTrace()</span>
+<span class="nc" id="L83">                        }</span>
+<span class="nc" id="L84">                    } catch (t: Throwable) {</span>
+<span class="nc" id="L85">                        t.printStackTrace()</span>
                     }
-<span class="fc" id="L90">                }</span>
-<span class="fc" id="L91">            },</span>
+<span class="fc" id="L87">                }</span>
+<span class="fc" id="L88">            },</span>
         )
-<span class="fc" id="L93">    }</span>
+<span class="fc" id="L90">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

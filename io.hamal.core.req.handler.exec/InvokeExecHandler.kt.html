@@ -13,7 +13,7 @@ import io.hamal.repository.api.ExecCmdRepository.PlanCmd
 import io.hamal.repository.api.FuncQueryRepository
 import io.hamal.repository.api.PlannedExec
 import io.hamal.repository.api.event.ExecPlannedEvent
-import io.hamal.repository.api.submitted_req.SubmittedInvokeExecReq
+import io.hamal.repository.api.submitted_req.ExecInvokeSubmitted
 import org.springframework.stereotype.Component
 
 @Component
@@ -21,13 +21,13 @@ import org.springframework.stereotype.Component
 <span class="fc" id="L21">    private val execCmdRepository: ExecCmdRepository,</span>
 <span class="fc" id="L22">    private val eventEmitter: PlatformEventEmitter,</span>
 <span class="fc" id="L23">    private val funcQueryRepository: FuncQueryRepository</span>
-<span class="fc" id="L24">) : ReqHandler&lt;SubmittedInvokeExecReq&gt;(SubmittedInvokeExecReq::class) {</span>
+<span class="fc" id="L24">) : ReqHandler&lt;ExecInvokeSubmitted&gt;(ExecInvokeSubmitted::class) {</span>
 
-    override fun invoke(req: SubmittedInvokeExecReq) {
+    override fun invoke(req: ExecInvokeSubmitted) {
 <span class="fc" id="L27">        planExec(req).also { emitEvent(req.cmdId(), it) }</span>
 <span class="fc" id="L28">    }</span>
 
-    private fun planExec(req: SubmittedInvokeExecReq): PlannedExec {
+    private fun planExec(req: ExecInvokeSubmitted): PlannedExec {
 <span class="fc" id="L31">        val correlationId = req.correlationId</span>
 <span class="fc bfc" id="L32" title="All 2 branches covered.">        val func = req.funcId?.let { funcQueryRepository.get(it) }</span>
 

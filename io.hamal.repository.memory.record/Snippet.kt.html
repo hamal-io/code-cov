@@ -56,15 +56,15 @@ internal object CurrentSnippetProjection {
 
     override fun create(cmd: CreateCmd): Snippet {
 <span class="fc" id="L58">        return lock.withLock {</span>
-<span class="fc" id="L59">            val snippedId = cmd.snippetId</span>
+<span class="fc" id="L59">            val snippetId = cmd.snippetId</span>
 <span class="fc" id="L60">            val cmdId = cmd.id</span>
-<span class="fc bfc" id="L61" title="All 2 branches covered.">            if (commandAlreadyApplied(cmdId, snippedId)) {</span>
-<span class="fc" id="L62">                versionOf(snippedId, cmd.id)</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">            if (commandAlreadyApplied(cmdId, snippetId)) {</span>
+<span class="fc" id="L62">                versionOf(snippetId, cmd.id)</span>
             } else {
 <span class="fc" id="L64">                store(</span>
 <span class="fc" id="L65">                    SnippetCreationRecord(</span>
 <span class="fc" id="L66">                        cmdId = cmd.id,</span>
-<span class="fc" id="L67">                        entityId = snippedId,</span>
+<span class="fc" id="L67">                        entityId = snippetId,</span>
 <span class="fc" id="L68">                        groupId = cmd.groupId,</span>
 <span class="fc" id="L69">                        name = cmd.name,</span>
 <span class="fc" id="L70">                        inputs = cmd.inputs,</span>
@@ -72,7 +72,7 @@ internal object CurrentSnippetProjection {
 <span class="fc" id="L72">                        creatorId = cmd.creatorId</span>
                     )
                 )
-<span class="fc" id="L75">                (currentVersion(snippedId)).also(CurrentSnippetProjection::apply)</span>
+<span class="fc" id="L75">                (currentVersion(snippetId)).also(CurrentSnippetProjection::apply)</span>
             }
         }
     }

@@ -116,8 +116,8 @@ inline fun &lt;reified BODY_TYPE : Any&gt; HttpRequestWithBody.body(body: BODY_T
     }
 
     override fun parameter(key: String, value: SnowflakeId): HttpRequest {
-<span class="fc" id="L119">        parameters.add(HttpParameter(key, value.value.toString(16)))</span>
-<span class="fc" id="L120">        return this</span>
+<span class="nc" id="L119">        parameters.add(HttpParameter(key, value.value.toString(16)))</span>
+<span class="nc" id="L120">        return this</span>
     }
 
     override fun parameter(key: String, value: DomainId): HttpRequest {
@@ -194,17 +194,17 @@ inline fun &lt;reified BODY_TYPE : Any&gt; HttpRequestWithBody.body(body: BODY_T
 
     override fun &lt;RESULT : Any&gt; execute(clazz: KClass&lt;RESULT&gt;): RESULT {
 <span class="fc" id="L196">        return when (val response = execute()) {</span>
-<span class="pc bpc" id="L197" title="1 of 2 branches missed.">            is SuccessHttpResponse -&gt; response.result(clazz)</span>
-<span class="nc bnc" id="L198" title="All 2 branches missed.">            is NoContentHttpResponse -&gt; throw IllegalStateException(&quot;No content was returned from the server&quot;)</span>
-<span class="nc" id="L199">            is ErrorHttpResponse -&gt; throw IllegalStateException(&quot;Http request was not successful&quot;)</span>
+<span class="pc bpc" id="L197" title="1 of 2 branches missed.">            is HttpSuccessResponse -&gt; response.result(clazz)</span>
+<span class="nc bnc" id="L198" title="All 2 branches missed.">            is HttpNoContentResponse -&gt; throw IllegalStateException(&quot;No content was returned from the server&quot;)</span>
+<span class="nc" id="L199">            is HttpErrorResponse -&gt; throw IllegalStateException(&quot;Http request was not successful&quot;)</span>
         }
     }
 
     override fun &lt;VALUE : Any&gt; executeList(clazz: KClass&lt;VALUE&gt;): List&lt;VALUE&gt; {
 <span class="nc" id="L204">        return when (val response = execute()) {</span>
-<span class="nc bnc" id="L205" title="All 2 branches missed.">            is SuccessHttpResponse -&gt; response.resultList(clazz)</span>
-<span class="nc bnc" id="L206" title="All 2 branches missed.">            is NoContentHttpResponse -&gt; throw IllegalStateException(&quot;No content was returned from the server&quot;)</span>
-<span class="nc" id="L207">            is ErrorHttpResponse -&gt; throw IllegalStateException(&quot;Http request was not successful&quot;)</span>
+<span class="nc bnc" id="L205" title="All 2 branches missed.">            is HttpSuccessResponse -&gt; response.resultList(clazz)</span>
+<span class="nc bnc" id="L206" title="All 2 branches missed.">            is HttpNoContentResponse -&gt; throw IllegalStateException(&quot;No content was returned from the server&quot;)</span>
+<span class="nc" id="L207">            is HttpErrorResponse -&gt; throw IllegalStateException(&quot;Http request was not successful&quot;)</span>
         }
     }
 }

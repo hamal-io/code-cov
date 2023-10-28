@@ -8,7 +8,7 @@ import io.hamal.lib.kua.function.FunctionInput1Schema
 import io.hamal.lib.kua.function.FunctionOutput1Schema
 import io.hamal.lib.kua.type.ErrorType
 import io.hamal.lib.kua.type.StringType
-import io.hamal.lib.sdk.api.ApiSubmittedReq
+import io.hamal.lib.sdk.api.ApiSubmitted
 
 <span class="nc" id="L13">class AwaitFunction(</span>
 <span class="nc" id="L14">    private val httpTemplate: HttpTemplateImpl</span>
@@ -20,7 +20,7 @@ import io.hamal.lib.sdk.api.ApiSubmittedReq
 <span class="nc" id="L20">        while (true) {</span>
 <span class="nc" id="L21">            httpTemplate.get(&quot;/v1/reqs/{reqId}&quot;)</span>
 <span class="nc" id="L22">                .path(&quot;reqId&quot;, arg1.value)</span>
-<span class="nc" id="L23">                .execute(ApiSubmittedReq::class)</span>
+<span class="nc" id="L23">                .execute(ApiSubmitted::class)</span>
 <span class="nc" id="L24">                .let {</span>
 <span class="nc bnc" id="L25" title="All 2 branches missed.">                    when (it.status) {</span>
                         ReqStatus.Completed,
@@ -48,7 +48,7 @@ import io.hamal.lib.sdk.api.ApiSubmittedReq
 <span class="nc" id="L48">        while (true) {</span>
 <span class="nc" id="L49">            httpTemplate.get(&quot;/v1/reqs/{reqId}&quot;)</span>
 <span class="nc" id="L50">                .path(&quot;reqId&quot;, arg1.value)</span>
-<span class="nc" id="L51">                .execute(ApiSubmittedReq::class)</span>
+<span class="nc" id="L51">                .execute(ApiSubmitted::class)</span>
 <span class="nc" id="L52">                .let {</span>
 <span class="nc bnc" id="L53" title="All 3 branches missed.">                    when (it.status) {</span>
                         ReqStatus.Completed -&gt; {
@@ -78,7 +78,7 @@ import io.hamal.lib.sdk.api.ApiSubmittedReq
 <span class="nc" id="L78">        while (true) {</span>
 <span class="nc" id="L79">            httpTemplate.get(&quot;/v1/reqs/{reqId}&quot;)</span>
 <span class="nc" id="L80">                .path(&quot;reqId&quot;, arg1.value)</span>
-<span class="nc" id="L81">                .execute(ApiSubmittedReq::class)</span>
+<span class="nc" id="L81">                .execute(ApiSubmitted::class)</span>
 <span class="nc" id="L82">                .let {</span>
 <span class="nc bnc" id="L83" title="All 3 branches missed.">                    when (it.status) {</span>
                         ReqStatus.Completed -&gt; {

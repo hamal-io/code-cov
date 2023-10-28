@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WebConfig.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.core.config</a> &gt; <span class="el_source">WebConfig.kt</span></div><h1>WebConfig.kt</h1><pre class="source lang-java linenums">package io.hamal.core.config
 
 import io.hamal.core.component.*
+import io.hamal.lib.domain._enum.ReqStatus
+import io.hamal.lib.domain.vo.*
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.protobuf.ProtoBuf
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.format.FormatterRegistry
@@ -12,42 +17,78 @@ import org.springframework.web.servlet.config.annotation.PathMatchConfigurer
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 
-<span class="fc" id="L15">@Configuration</span>
-<span class="fc" id="L16">open class WebConfig : WebMvcConfigurer {</span>
+<span class="fc" id="L20">@Configuration</span>
+<span class="fc" id="L21">open class WebConfig : WebMvcConfigurer {</span>
 
     @Bean
     @OptIn(ExperimentalSerializationApi::class)
-<span class="fc" id="L20">    open fun json(): Json = Json {</span>
-<span class="fc" id="L21">        explicitNulls = false</span>
-<span class="fc" id="L22">        ignoreUnknownKeys = true</span>
-<span class="fc" id="L23">        encodeDefaults = true</span>
-<span class="fc" id="L24">    }</span>
-
-    override fun configureMessageConverters(converters: MutableList&lt;HttpMessageConverter&lt;*&gt;&gt;) {
-<span class="fc" id="L27">        super.configureMessageConverters(converters)</span>
-<span class="fc" id="L28">        converters.add(KotlinSerializationJsonHttpMessageConverter(json()))</span>
+<span class="fc" id="L25">    open fun json(): Json = Json {</span>
+<span class="fc" id="L26">        explicitNulls = false</span>
+<span class="fc" id="L27">        ignoreUnknownKeys = true</span>
+<span class="fc" id="L28">        encodeDefaults = true</span>
 <span class="fc" id="L29">    }</span>
 
+    @Bean
+    @OptIn(ExperimentalSerializationApi::class)
+<span class="fc" id="L33">    open fun protobuf(): ProtoBuf = ProtoBuf {</span>
+<span class="fc" id="L34">        encodeDefaults = true</span>
+<span class="fc" id="L35">    }</span>
+
+
+    override fun configureMessageConverters(converters: MutableList&lt;HttpMessageConverter&lt;*&gt;&gt;) {
+<span class="fc" id="L39">        super.configureMessageConverters(converters)</span>
+<span class="fc" id="L40">        converters.add(KotlinSerializationJsonHttpMessageConverter(json()))</span>
+<span class="fc" id="L41">    }</span>
+
     override fun addFormatters(registry: FormatterRegistry) {
-<span class="fc" id="L32">        super.addFormatters(registry)</span>
-<span class="fc" id="L33">        registry.addConverter(AccountIdConverter)</span>
-<span class="fc" id="L34">        registry.addConverter(CodeVersionConverter)</span>
-<span class="fc" id="L35">        registry.addConverter(CorrelationIdConverter)</span>
-<span class="fc" id="L36">        registry.addConverter(ExecIdConverter)</span>
-<span class="fc" id="L37">        registry.addConverter(ExecLogIdConverter)</span>
-<span class="fc" id="L38">        registry.addConverter(FuncIdConverter)</span>
-<span class="fc" id="L39">        registry.addConverter(GroupIdConverter)</span>
-<span class="fc" id="L40">        registry.addConverter(NamespaceIdConverter)</span>
-<span class="fc" id="L41">        registry.addConverter(LimitConverter)</span>
-<span class="fc" id="L42">        registry.addConverter(ReqIdConverter)</span>
-<span class="fc" id="L43">        registry.addConverter(TopicEntryIdConverter)</span>
-<span class="fc" id="L44">        registry.addConverter(TopicIdConverter)</span>
-<span class="fc" id="L45">        registry.addConverter(TopicNameConverter)</span>
-<span class="fc" id="L46">        registry.addConverter(TriggerIdConverter)</span>
-<span class="fc" id="L47">    }</span>
+<span class="fc" id="L44">        super.addFormatters(registry)</span>
+<span class="fc" id="L45">        registry.addConverter(AccountIdConverter)</span>
+<span class="fc" id="L46">        registry.addConverter(CodeVersionConverter)</span>
+<span class="fc" id="L47">        registry.addConverter(CorrelationIdConverter)</span>
+<span class="fc" id="L48">        registry.addConverter(ExecIdConverter)</span>
+<span class="fc" id="L49">        registry.addConverter(ExecLogIdConverter)</span>
+<span class="fc" id="L50">        registry.addConverter(FuncIdConverter)</span>
+<span class="fc" id="L51">        registry.addConverter(GroupIdConverter)</span>
+<span class="fc" id="L52">        registry.addConverter(NamespaceIdConverter)</span>
+<span class="fc" id="L53">        registry.addConverter(LimitConverter)</span>
+<span class="fc" id="L54">        registry.addConverter(ReqIdConverter)</span>
+<span class="fc" id="L55">        registry.addConverter(TopicEntryIdConverter)</span>
+<span class="fc" id="L56">        registry.addConverter(TopicIdConverter)</span>
+<span class="fc" id="L57">        registry.addConverter(TopicNameConverter)</span>
+<span class="fc" id="L58">        registry.addConverter(TriggerIdConverter)</span>
+<span class="fc" id="L59">    }</span>
 
     override fun configurePathMatch(configurer: PathMatchConfigurer) {
-<span class="fc" id="L50">        configurer.setUseTrailingSlashMatch(true)</span>
-<span class="fc" id="L51">    }</span>
+<span class="fc" id="L62">        configurer.setUseTrailingSlashMatch(true)</span>
+<span class="fc" id="L63">    }</span>
 }
+
+<span class="nc bnc" id="L66" title="All 23 branches missed.">@Serializable</span>
+<span class="nc" id="L67">data class Test&lt;ID : SerializableDomainId&gt;(</span>
+<span class="nc" id="L68">    val reqId: ReqId,</span>
+<span class="nc" id="L69">    val status: ReqStatus,</span>
+<span class="nc" id="L70">    val id: ID,</span>
+<span class="nc" id="L71">    val namespaceId: NamespaceId? = null,</span>
+<span class="nc" id="L72">    val groupId: GroupId? = null,</span>
+<span class="nc" id="L73">)</span>
+
+
+fun main() {
+<span class="nc" id="L77">    val j = Json {</span>
+<span class="nc" id="L78">        explicitNulls = false</span>
+<span class="nc" id="L79">        ignoreUnknownKeys = true</span>
+<span class="nc" id="L80">        encodeDefaults = true</span>
+<span class="nc" id="L81">    }</span>
+<span class="nc" id="L82">    println(</span>
+<span class="nc" id="L83">        j.encodeToString(</span>
+<span class="nc" id="L84">            Test&lt;ExecId&gt;(</span>
+<span class="nc" id="L85">                reqId = ReqId(1),</span>
+<span class="nc" id="L86">                status = ReqStatus.Failed,</span>
+<span class="nc" id="L87">                id = ExecId(12),</span>
+<span class="nc" id="L88">                namespaceId = NamespaceId(23),</span>
+<span class="nc" id="L89">                groupId = GroupId(23)</span>
+            )
+        )
+    )
+<span class="nc" id="L93">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

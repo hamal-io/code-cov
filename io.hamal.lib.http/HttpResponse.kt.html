@@ -45,7 +45,7 @@ sealed interface HttpResponse {
 }
 
 
-<span class="fc" id="L48">data class SuccessHttpResponse(</span>
+<span class="fc" id="L48">data class HttpSuccessResponse(</span>
 <span class="fc" id="L49">    override val statusCode: HttpStatusCode,</span>
 <span class="fc" id="L50">    override val headers: HttpHeaders,</span>
 <span class="pc" id="L51">    val inputStream: InputStream,</span>
@@ -63,7 +63,7 @@ sealed interface HttpResponse {
 <span class="fc" id="L63">    override val contentLength = inputStream.available()</span>
 }
 
-<span class="fc" id="L66">data class NoContentHttpResponse(</span>
+<span class="fc" id="L66">data class HttpNoContentResponse(</span>
 <span class="fc" id="L67">    override val statusCode: HttpStatusCode,</span>
 <span class="fc" id="L68">    override val headers: HttpHeaders</span>
 ) : HttpResponse {
@@ -71,7 +71,7 @@ sealed interface HttpResponse {
 }
 
 
-<span class="fc" id="L74">data class ErrorHttpResponse(</span>
+<span class="fc" id="L74">data class HttpErrorResponse(</span>
 <span class="fc" id="L75">    override val statusCode: HttpStatusCode,</span>
 <span class="fc" id="L76">    override val headers: HttpHeaders,</span>
 <span class="pc" id="L77">    val inputStream: InputStream,</span>

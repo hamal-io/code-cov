@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReqGetFunction.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.plugin.std.sys.req</a> &gt; <span class="el_source">ReqGetFunction.kt</span></div><h1>ReqGetFunction.kt</h1><pre class="source lang-java linenums">package io.hamal.plugin.std.sys.req
 
-import io.hamal.lib.http.ErrorHttpResponse
+import io.hamal.lib.http.HttpErrorResponse
+import io.hamal.lib.http.HttpSuccessResponse
 import io.hamal.lib.http.HttpTemplateImpl
-import io.hamal.lib.http.SuccessHttpResponse
 import io.hamal.lib.kua.function.Function1In2Out
 import io.hamal.lib.kua.function.FunctionContext
 import io.hamal.lib.kua.function.FunctionInput1Schema
@@ -10,7 +10,7 @@ import io.hamal.lib.kua.function.FunctionOutput2Schema
 import io.hamal.lib.kua.type.ErrorType
 import io.hamal.lib.kua.type.MapType
 import io.hamal.lib.kua.type.StringType
-import io.hamal.lib.sdk.api.ApiSubmittedReq
+import io.hamal.lib.sdk.api.ApiSubmitted
 
 <span class="nc" id="L15">class ReqGetFunction(</span>
 <span class="nc" id="L16">    private val httpTemplate: HttpTemplateImpl</span>
@@ -23,18 +23,18 @@ import io.hamal.lib.sdk.api.ApiSubmittedReq
 <span class="nc" id="L23">            .path(&quot;reqId&quot;, arg1.value)</span>
 <span class="nc" id="L24">            .execute()</span>
 
-<span class="nc bnc" id="L26" title="All 2 branches missed.">        if (response is SuccessHttpResponse) {</span>
-<span class="nc" id="L27">            return null to response.result(ApiSubmittedReq::class)</span>
+<span class="nc bnc" id="L26" title="All 2 branches missed.">        if (response is HttpSuccessResponse) {</span>
+<span class="nc" id="L27">            return null to response.result(ApiSubmitted::class)</span>
 <span class="nc" id="L28">                .let { exec -&gt;</span>
 <span class="nc" id="L29">                    MapType(</span>
 <span class="nc" id="L30">                        mutableMapOf(</span>
-<span class="nc" id="L31">                            &quot;reqId&quot; to StringType(exec.reqId.value.value.toString(16)),</span>
+<span class="nc" id="L31">                            &quot;reqId&quot; to StringType(exec.id.value.value.toString(16)),</span>
 <span class="nc" id="L32">                            &quot;status&quot; to StringType(exec.status.name)</span>
                         )
                     )
                 }
         } else {
-<span class="nc bnc" id="L37" title="All 2 branches missed.">            require(response is ErrorHttpResponse)</span>
+<span class="nc bnc" id="L37" title="All 2 branches missed.">            require(response is HttpErrorResponse)</span>
 //            return response.error(HamalError::class)
 //                .let { error -&gt;
 //                    ErrorValue(error.message ?: &quot;An unknown error occurred&quot;)

@@ -1,30 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NamespaceUpdateController.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.api.http.endpoint.namespace</a> &gt; <span class="el_source">NamespaceUpdateController.kt</span></div><h1>NamespaceUpdateController.kt</h1><pre class="source lang-java linenums">package io.hamal.api.http.endpoint.namespace
 
-import io.hamal.api.http.endpoint.req.Assembler
-import io.hamal.core.adapter.UpdateNamespacePort
+import io.hamal.api.http.endpoint.accepted
+import io.hamal.core.adapter.NamespaceUpdatePort
 import io.hamal.core.component.Retry
 import io.hamal.lib.domain.vo.NamespaceId
-import io.hamal.lib.sdk.api.ApiUpdateNamespaceReq
-import org.springframework.http.HttpStatus
+import io.hamal.lib.sdk.api.ApiNamespaceUpdateReq
+import io.hamal.lib.sdk.api.ApiSubmitted
+import io.hamal.repository.api.submitted_req.NamespaceUpdateSubmitted
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
-<span class="fc" id="L15">@RestController</span>
-<span class="fc" id="L16">internal class NamespaceUpdateController(</span>
-<span class="fc" id="L17">    private val retry: Retry,</span>
-<span class="fc" id="L18">    private val updateNamespace: UpdateNamespacePort</span>
+<span class="fc" id="L16">@RestController</span>
+<span class="fc" id="L17">internal class NamespaceUpdateController(</span>
+<span class="fc" id="L18">    private val retry: Retry,</span>
+<span class="fc" id="L19">    private val updateNamespace: NamespaceUpdatePort</span>
 ) {
     @PatchMapping(&quot;/v1/namespaces/{namespaceId}&quot;)
-    fun createNamespace(
+    fun updateNamespace(
         @PathVariable(&quot;namespaceId&quot;) namespaceId: NamespaceId,
-        @RequestBody req: ApiUpdateNamespaceReq
-<span class="fc" id="L24">    ) = retry {</span>
-<span class="fc" id="L25">        updateNamespace(namespaceId, req) {</span>
-<span class="fc" id="L26">            ResponseEntity(Assembler.assemble(it), HttpStatus.ACCEPTED)</span>
-        }
-<span class="fc" id="L28">    }</span>
+        @RequestBody req: ApiNamespaceUpdateReq
+<span class="fc" id="L25">    ): ResponseEntity&lt;ApiSubmitted&gt; = retry {</span>
+<span class="fc" id="L26">        updateNamespace(namespaceId, req, NamespaceUpdateSubmitted::accepted)</span>
+<span class="fc" id="L27">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

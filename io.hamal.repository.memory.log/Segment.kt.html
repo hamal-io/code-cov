@@ -42,10 +42,10 @@ import kotlin.concurrent.withLock
 <span class="nc" id="L42">            return listOf()</span>
         }
 <span class="fc" id="L44">        return lock.withLock {</span>
-<span class="fc bfc" id="L45" title="All 2 branches covered.">            if (firstId.value.value == 0L) {</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">            if (firstId.value == 0UL) {</span>
 <span class="fc" id="L46">                store.take(limit)</span>
             } else {
-<span class="fc" id="L48">                store.drop(firstId.value.value.toInt() - 1)</span>
+<span class="fc" id="L48">                store.drop(firstId.value.toInt() - 1)</span>
 <span class="fc" id="L49">                    .take(limit)</span>
             }
         }

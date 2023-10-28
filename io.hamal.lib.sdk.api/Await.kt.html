@@ -4,19 +4,19 @@ import io.hamal.lib.domain._enum.ReqStatus
 import io.hamal.lib.http.HttpTemplateImpl
 
 interface ApiAwaitService {
-<span class="nc" id="L7">    operator fun invoke(req: ApiSubmittedReq) = await(req)</span>
+<span class="nc" id="L7">    operator fun invoke(req: ApiSubmitted) = await(req)</span>
 
-    fun await(req: ApiSubmittedReq)
+    fun await(req: ApiSubmitted)
 }
 
 <span class="nc" id="L12">internal class ApiAwaitServiceImpl(</span>
 <span class="nc" id="L13">    private val template: HttpTemplateImpl</span>
 ) : ApiAwaitService {
-    override fun await(req: ApiSubmittedReq) {
+    override fun await(req: ApiSubmitted) {
 <span class="nc" id="L16">        while (true) {</span>
 <span class="nc" id="L17">            template.get(&quot;/v1/reqs/{reqId}&quot;)</span>
-<span class="nc" id="L18">                .path(&quot;reqId&quot;, req.reqId)</span>
-<span class="nc" id="L19">                .execute(ApiSubmittedReq::class)</span>
+<span class="nc" id="L18">                .path(&quot;reqId&quot;, req.id)</span>
+<span class="nc" id="L19">                .execute(ApiSubmitted::class)</span>
 <span class="nc" id="L20">                .let {</span>
 <span class="nc bnc" id="L21" title="All 3 branches missed.">                    when (it.status) {</span>
                         ReqStatus.Completed -&gt; {
@@ -24,7 +24,7 @@ interface ApiAwaitService {
                         }
 
                         ReqStatus.Failed -&gt; {
-<span class="nc" id="L27">                            throw IllegalStateException(&quot;expected ${req.reqId} to complete but failed&quot;)</span>
+<span class="nc" id="L27">                            throw IllegalStateException(&quot;expected ${req.id} to complete but failed&quot;)</span>
                         }
 
                         else -&gt; {

@@ -40,19 +40,19 @@ internal interface HttpRequestFacade {
 
 <span class="fc" id="L41">        val statusCode = HttpStatusCode.of(httpResponse.statusLine.statusCode)</span>
 <span class="fc bfc" id="L42" title="All 3 branches covered.">        response = when (statusCode) {</span>
-<span class="fc" id="L43">            Ok, Created, Accepted -&gt; SuccessHttpResponse(</span>
+<span class="fc" id="L43">            Ok, Created, Accepted -&gt; HttpSuccessResponse(</span>
 <span class="fc" id="L44">                statusCode = statusCode,</span>
 <span class="fc" id="L45">                headers = httpHeaders,</span>
 <span class="pc bpc" id="L46" title="2 of 4 branches missed.">                inputStream = httpResponse.entity.content?.let(HttpUtils::copyStream) ?: InputStream.nullInputStream(),</span>
 <span class="fc" id="L47">                contentDeserializer = serdeFactory.contentDeserializer</span>
             )
 
-<span class="fc" id="L50">            NoContent -&gt; NoContentHttpResponse(</span>
+<span class="fc" id="L50">            NoContent -&gt; HttpNoContentResponse(</span>
 <span class="fc" id="L51">                statusCode = statusCode,</span>
 <span class="fc" id="L52">                headers = httpHeaders</span>
             )
 
-<span class="fc" id="L55">            else -&gt; ErrorHttpResponse(</span>
+<span class="fc" id="L55">            else -&gt; HttpErrorResponse(</span>
 <span class="fc" id="L56">                statusCode = statusCode,</span>
 <span class="fc" id="L57">                headers = httpHeaders,</span>
 <span class="pc bpc" id="L58" title="2 of 4 branches missed.">                inputStream = httpResponse.entity.content?.let(HttpUtils::copyStream) ?: InputStream.nullInputStream(),</span>

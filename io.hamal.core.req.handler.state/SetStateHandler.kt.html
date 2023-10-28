@@ -7,20 +7,20 @@ import io.hamal.lib.common.domain.CmdId
 import io.hamal.lib.domain.CorrelatedState
 import io.hamal.repository.api.StateCmdRepository
 import io.hamal.repository.api.event.StateUpdatedEvent
-import io.hamal.repository.api.submitted_req.SubmittedSetStateReq
+import io.hamal.repository.api.submitted_req.StateSetSubmitted
 import org.springframework.stereotype.Component
 
 @Component
 <span class="fc" id="L14">class SetStateHandler(</span>
 <span class="fc" id="L15">    val stateCmdRepository: StateCmdRepository,</span>
 <span class="fc" id="L16">    val eventEmitter: PlatformEventEmitter</span>
-<span class="fc" id="L17">) : ReqHandler&lt;SubmittedSetStateReq&gt;(SubmittedSetStateReq::class) {</span>
-    override fun invoke(req: SubmittedSetStateReq) {
+<span class="fc" id="L17">) : ReqHandler&lt;StateSetSubmitted&gt;(StateSetSubmitted::class) {</span>
+    override fun invoke(req: StateSetSubmitted) {
 <span class="fc" id="L19">        updateState(req).also { emitEvent(req.cmdId(), req.state) }</span>
 <span class="fc" id="L20">    }</span>
 }
 
-private fun SetStateHandler.updateState(req: SubmittedSetStateReq) {
+private fun SetStateHandler.updateState(req: StateSetSubmitted) {
 <span class="fc" id="L24">    return stateCmdRepository.set(req.cmdId(), req.state)</span>
 }
 

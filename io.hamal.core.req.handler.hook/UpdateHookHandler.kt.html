@@ -8,20 +8,20 @@ import io.hamal.repository.api.Hook
 import io.hamal.repository.api.HookCmdRepository.UpdateCmd
 import io.hamal.repository.api.HookRepository
 import io.hamal.repository.api.event.HookCreatedEvent
-import io.hamal.repository.api.submitted_req.SubmittedUpdateHookReq
+import io.hamal.repository.api.submitted_req.HookUpdateSubmitted
 import org.springframework.stereotype.Component
 
 @Component
 <span class="fc" id="L15">class UpdateHookHandler(</span>
 <span class="fc" id="L16">    val hookRepository: HookRepository, val eventEmitter: PlatformEventEmitter</span>
-<span class="fc" id="L17">) : ReqHandler&lt;SubmittedUpdateHookReq&gt;(SubmittedUpdateHookReq::class) {</span>
+<span class="fc" id="L17">) : ReqHandler&lt;HookUpdateSubmitted&gt;(HookUpdateSubmitted::class) {</span>
 
-    override fun invoke(req: SubmittedUpdateHookReq) {
+    override fun invoke(req: HookUpdateSubmitted) {
 <span class="fc" id="L20">        updateHook(req).also { emitEvent(req.cmdId(), it) }</span>
 <span class="fc" id="L21">    }</span>
 }
 
-private fun UpdateHookHandler.updateHook(req: SubmittedUpdateHookReq): Hook {
+private fun UpdateHookHandler.updateHook(req: HookUpdateSubmitted): Hook {
 <span class="fc" id="L25">    return hookRepository.update(</span>
 <span class="fc" id="L26">        req.id, UpdateCmd(</span>
 <span class="fc" id="L27">            id = req.cmdId(),</span>

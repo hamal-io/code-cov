@@ -11,7 +11,7 @@ import io.hamal.lib.kua.type.ErrorType
 import io.hamal.lib.kua.type.MapType
 import io.hamal.lib.kua.type.StringType
 import io.hamal.lib.sdk.ApiSdk
-import io.hamal.lib.sdk.api.ApiCreateTopicReq
+import io.hamal.lib.sdk.api.ApiTopicCreateReq
 
 <span class="nc" id="L16">class TopicCreateFunction(</span>
 <span class="nc" id="L17">    private val sdk: ApiSdk</span>
@@ -23,16 +23,16 @@ import io.hamal.lib.sdk.api.ApiCreateTopicReq
 <span class="nc" id="L23">        return try {</span>
 <span class="nc" id="L24">            val res = sdk.topic.create(</span>
 <span class="nc bnc" id="L25" title="All 2 branches missed.">                arg1.findString(&quot;namespace_id&quot;)?.let { NamespaceId(SnowflakeId(it)) } ?: ctx[NamespaceId::class],</span>
-<span class="nc" id="L26">                ApiCreateTopicReq(</span>
+<span class="nc" id="L26">                ApiTopicCreateReq(</span>
 <span class="nc" id="L27">                    name = TopicName(arg1.getString(&quot;name&quot;)),</span>
                 )
             )
 
 <span class="nc" id="L31">            null to MapType(</span>
 <span class="nc" id="L32">                mutableMapOf(</span>
-<span class="nc" id="L33">                    &quot;req_id&quot; to StringType(res.reqId.value.value.toString(16)),</span>
+<span class="nc" id="L33">                    &quot;id&quot; to StringType(res.id.value.value.toString(16)),</span>
 <span class="nc" id="L34">                    &quot;status&quot; to StringType(res.status.name),</span>
-<span class="nc" id="L35">                    &quot;id&quot; to StringType(res.id.value.toString(16)),</span>
+<span class="nc" id="L35">                    &quot;topic_id&quot; to StringType(res.topicId.value.value.toString(16)),</span>
 <span class="nc" id="L36">                    &quot;group_id&quot; to StringType(res.groupId.value.value.toString(16)),</span>
 <span class="nc" id="L37">                    &quot;namespace_id&quot; to StringType(res.namespaceId.value.value.toString(16))</span>
                 )

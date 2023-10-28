@@ -62,7 +62,7 @@ object KotlinJsonHttpContentSerializer : HttpContentSerializer {
 
 
 @OptIn(ExperimentalSerializationApi::class)
-<span class="fc" id="L65">private val jsonDelegate = Json {</span>
+<span class="fc" id="L65">val jsonDelegate = Json {</span>
 <span class="fc" id="L66">    explicitNulls = false</span>
 <span class="fc" id="L67">    ignoreUnknownKeys = true</span>
 <span class="fc" id="L68">    encodeDefaults = true</span>

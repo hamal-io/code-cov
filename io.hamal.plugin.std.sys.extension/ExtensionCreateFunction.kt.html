@@ -11,7 +11,7 @@ import io.hamal.lib.kua.type.ErrorType
 import io.hamal.lib.kua.type.MapType
 import io.hamal.lib.kua.type.StringType
 import io.hamal.lib.sdk.ApiSdk
-import io.hamal.lib.sdk.api.ApiCreateExtensionReq
+import io.hamal.lib.sdk.api.ApiExtensionCreateReq
 
 <span class="nc" id="L16">class ExtensionCreateFunction(</span>
 <span class="nc" id="L17">    private val sdk: ApiSdk</span>
@@ -23,7 +23,7 @@ import io.hamal.lib.sdk.api.ApiCreateExtensionReq
 <span class="nc" id="L23">        return try {</span>
 <span class="nc" id="L24">            val res = sdk.extension.create(</span>
 <span class="nc" id="L25">                ctx[GroupId::class],</span>
-<span class="nc" id="L26">                ApiCreateExtensionReq(</span>
+<span class="nc" id="L26">                ApiExtensionCreateReq(</span>
 <span class="nc" id="L27">                    name = ExtensionName(arg1.getString(&quot;name&quot;)),</span>
 <span class="nc" id="L28">                    code = CodeValue(arg1.getString(&quot;code&quot;))</span>
                 )
@@ -31,13 +31,15 @@ import io.hamal.lib.sdk.api.ApiCreateExtensionReq
 
 <span class="nc" id="L32">            null to MapType(</span>
 <span class="nc" id="L33">                mutableMapOf(</span>
-<span class="nc" id="L34">                    &quot;req_id&quot; to StringType(res.reqId.value.value.toString(16)),</span>
+<span class="nc" id="L34">                    &quot;id&quot; to StringType(res.id.value.value.toString(16)),</span>
 <span class="nc" id="L35">                    &quot;status&quot; to StringType(res.status.name),</span>
-<span class="nc" id="L36">                    &quot;id&quot; to StringType(res.id.value.toString(16))</span>
+<span class="nc" id="L36">                    &quot;extension_id&quot; to StringType(res.extensionId.value.value.toString(16)),</span>
+<span class="nc" id="L37">                    &quot;group_id&quot; to StringType(res.groupId.value.value.toString(16))</span>
                 )
             )
-<span class="nc" id="L39">        } catch (t: Throwable) {</span>
-<span class="nc" id="L40">            ErrorType(t.message!!) to null</span>
+
+<span class="nc" id="L41">        } catch (t: Throwable) {</span>
+<span class="nc" id="L42">            ErrorType(t.message!!) to null</span>
         }
     }
 

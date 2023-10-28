@@ -2,19 +2,19 @@
 
 import io.hamal.core.req.SubmitRequest
 import io.hamal.repository.api.AccountQueryRepository
-import io.hamal.repository.api.submitted_req.SubmittedSignInWithPasswordReq
+import io.hamal.repository.api.submitted_req.AuthSignInWithPasswordSubmitted
 import io.hamal.request.SignInReq
 import org.springframework.stereotype.Component
 
 
-interface SignInPort {
+interface AuthSignInPort {
     operator fun &lt;T : Any&gt; invoke(
         req: SignInReq,
-        responseHandler: (SubmittedSignInWithPasswordReq) -&gt; T
+        responseHandler: (AuthSignInWithPasswordSubmitted) -&gt; T
     ): T
 }
 
-interface AuthPort : SignInPort
+interface AuthPort : AuthSignInPort
 
 
 <span class="fc" id="L20">@Component</span>
@@ -25,7 +25,7 @@ interface AuthPort : SignInPort
 
     override operator fun &lt;T : Any&gt; invoke(
         req: SignInReq,
-        responseHandler: (SubmittedSignInWithPasswordReq) -&gt; T
+        responseHandler: (AuthSignInWithPasswordSubmitted) -&gt; T
     ): T {
 <span class="nc bnc" id="L30" title="All 2 branches missed.">        val account = accountQueryRepository.find(req.name) ?: throw NoSuchElementException(&quot;Account not found&quot;)</span>
 <span class="nc" id="L31">        val password = req.password</span>

@@ -10,7 +10,7 @@ import io.hamal.repository.api.HookCmdRepository
 import io.hamal.repository.api.HookCmdRepository.CreateCmd
 import io.hamal.repository.api.NamespaceQueryRepository
 import io.hamal.repository.api.event.HookCreatedEvent
-import io.hamal.repository.api.submitted_req.SubmittedCreateHookReq
+import io.hamal.repository.api.submitted_req.HookCreateSubmitted
 import org.springframework.stereotype.Component
 
 @Component
@@ -18,13 +18,13 @@ import org.springframework.stereotype.Component
 <span class="fc" id="L18">    val hookCmdRepository: HookCmdRepository,</span>
 <span class="fc" id="L19">    val eventEmitter: PlatformEventEmitter,</span>
 <span class="pc" id="L20">    val namespaceQueryRepository: NamespaceQueryRepository</span>
-<span class="fc" id="L21">) : ReqHandler&lt;SubmittedCreateHookReq&gt;(SubmittedCreateHookReq::class) {</span>
-    override fun invoke(req: SubmittedCreateHookReq) {
+<span class="fc" id="L21">) : ReqHandler&lt;HookCreateSubmitted&gt;(HookCreateSubmitted::class) {</span>
+    override fun invoke(req: HookCreateSubmitted) {
 <span class="fc" id="L23">        createHook(req).also { emitEvent(req.cmdId(), it) }</span>
 <span class="fc" id="L24">    }</span>
 }
 
-private fun CreateHookHandler.createHook(req: SubmittedCreateHookReq): Hook {
+private fun CreateHookHandler.createHook(req: HookCreateSubmitted): Hook {
 <span class="fc" id="L28">    return hookCmdRepository.create(</span>
 <span class="fc" id="L29">        CreateCmd(</span>
 <span class="fc" id="L30">            id = req.cmdId(),</span>

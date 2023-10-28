@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Exec.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.lib.sdk.bridge</a> &gt; <span class="el_source">Exec.kt</span></div><h1>Exec.kt</h1><pre class="source lang-java linenums">package io.hamal.lib.sdk.bridge
 
 import io.hamal.lib.domain.Correlation
-import io.hamal.lib.domain.Event
-import io.hamal.lib.domain.EventToSubmit
 import io.hamal.lib.domain.State
+import io.hamal.lib.domain._enum.ReqStatus
 import io.hamal.lib.domain.vo.*
 import io.hamal.lib.http.HttpTemplateImpl
 import io.hamal.lib.http.body
@@ -12,50 +11,71 @@ import io.hamal.request.CompleteExecReq
 import io.hamal.request.FailExecReq
 import kotlinx.serialization.Serializable
 
-<span class="nc bnc" id="L15" title="All 7 branches missed.">@Serializable</span>
-<span class="nc" id="L16">data class BridgeFailExecReq(</span>
-<span class="nc" id="L17">    override val result: ExecResult</span>
-<span class="nc" id="L18">) : FailExecReq</span>
+<span class="pc bpc" id="L14" title="2 of 9 branches missed.">@Serializable</span>
+<span class="fc" id="L15">data class BridgeExecCompleteReq(</span>
+<span class="fc" id="L16">    override val result: ExecResult,</span>
+<span class="fc" id="L17">    override val state: State,</span>
+<span class="fc" id="L18">    override val events: List&lt;EventToSubmit&gt;</span>
+<span class="fc" id="L19">) : CompleteExecReq</span>
 
-<span class="nc bnc" id="L20" title="All 9 branches missed.">@Serializable</span>
-<span class="nc" id="L21">data class BridgeCompleteExecReq(</span>
-<span class="nc" id="L22">    override val result: ExecResult,</span>
-<span class="nc" id="L23">    override val state: State,</span>
-<span class="nc" id="L24">    override val events: List&lt;EventToSubmit&gt;</span>
-<span class="nc" id="L25">) : CompleteExecReq</span>
+<span class="pc bpc" id="L21" title="2 of 9 branches missed.">@Serializable</span>
+<span class="fc" id="L22">data class BridgeExecCompleteSubmitted(</span>
+<span class="fc" id="L23">    override val id: ReqId,</span>
+<span class="fc" id="L24">    override val status: ReqStatus,</span>
+<span class="fc" id="L25">    val execId: ExecId,</span>
+<span class="fc" id="L26">) : BridgeSubmitted</span>
 
-<span class="nc bnc" id="L27" title="All 7 branches missed.">@Serializable</span>
-<span class="nc" id="L28">data class BridgeUnitOfWorkList(</span>
-<span class="nc" id="L29">    val work: List&lt;UnitOfWork&gt;</span>
+<span class="pc bpc" id="L28" title="2 of 7 branches missed.">@Serializable</span>
+<span class="fc" id="L29">data class BridgeExecFailReq(</span>
+<span class="fc" id="L30">    override val result: ExecResult</span>
+<span class="fc" id="L31">) : FailExecReq</span>
+
+
+<span class="pc bpc" id="L34" title="2 of 9 branches missed.">@Serializable</span>
+<span class="fc" id="L35">data class BridgeExecFailSubmitted(</span>
+<span class="fc" id="L36">    override val id: ReqId,</span>
+<span class="fc" id="L37">    override val status: ReqStatus,</span>
+<span class="fc" id="L38">    val execId: ExecId,</span>
+<span class="fc" id="L39">) : BridgeSubmitted</span>
+
+<span class="nc bnc" id="L41" title="All 7 branches missed.">@Serializable</span>
+<span class="nc" id="L42">data class BridgeUnitOfWorkList(</span>
+<span class="nc" id="L43">    val work: List&lt;UnitOfWork&gt;</span>
 ) {
-<span class="nc bnc" id="L31" title="All 20 branches missed.">    @Serializable</span>
-<span class="nc" id="L32">    data class UnitOfWork(</span>
-<span class="nc" id="L33">        val id: ExecId,</span>
-<span class="nc" id="L34">        val namespaceId: NamespaceId,</span>
-<span class="nc" id="L35">        val groupId: GroupId,</span>
-<span class="nc" id="L36">        val inputs: ExecInputs,</span>
-<span class="nc" id="L37">        val state: State,</span>
-<span class="nc" id="L38">        val code: CodeValue,</span>
-<span class="nc" id="L39">        val correlation: Correlation? = null,</span>
-<span class="nc" id="L40">        val events: List&lt;Event&gt;</span>
-<span class="nc" id="L41">    )</span>
-<span class="nc" id="L42">}</span>
+<span class="nc bnc" id="L45" title="All 20 branches missed.">    @Serializable</span>
+<span class="nc" id="L46">    data class UnitOfWork(</span>
+<span class="nc" id="L47">        val id: ExecId,</span>
+<span class="nc" id="L48">        val namespaceId: NamespaceId,</span>
+<span class="nc" id="L49">        val groupId: GroupId,</span>
+<span class="nc" id="L50">        val inputs: ExecInputs,</span>
+<span class="nc" id="L51">        val state: State,</span>
+<span class="nc" id="L52">        val code: CodeValue,</span>
+<span class="nc" id="L53">        val correlation: Correlation? = null,</span>
+<span class="nc" id="L54">        val events: List&lt;Event&gt;</span>
+<span class="nc" id="L55">    )</span>
+<span class="nc" id="L56">}</span>
 
 
 interface BridgeExecService {
     fun poll(): BridgeUnitOfWorkList
-    fun complete(execId: ExecId, result: ExecResult, stateAfterCompletion: State, eventToSubmit: List&lt;EventToSubmit&gt;)
-    fun fail(execId: ExecId, result: ExecResult)
+    fun complete(
+        execId: ExecId,
+        result: ExecResult,
+        stateAfterCompletion: State,
+        eventToSubmit: List&lt;EventToSubmit&gt;
+    ): BridgeExecCompleteSubmitted
+
+    fun fail(execId: ExecId, result: ExecResult): BridgeExecFailSubmitted
 }
 
-<span class="nc" id="L51">internal class BridgeExecServiceImpl(</span>
-<span class="nc" id="L52">    private val template: HttpTemplateImpl</span>
+<span class="nc" id="L71">internal class BridgeExecServiceImpl(</span>
+<span class="nc" id="L72">    private val template: HttpTemplateImpl</span>
 ) : BridgeExecService {
 
     override fun poll(): BridgeUnitOfWorkList {
-<span class="nc" id="L56">        return template.post(&quot;/v1/dequeue&quot;)</span>
-<span class="nc" id="L57">            .execute()</span>
-<span class="nc" id="L58">            .fold(BridgeUnitOfWorkList::class)</span>
+<span class="nc" id="L76">        return template.post(&quot;/v1/dequeue&quot;)</span>
+<span class="nc" id="L77">            .execute()</span>
+<span class="nc" id="L78">            .fold(BridgeUnitOfWorkList::class)</span>
     }
 
     override fun complete(
@@ -63,21 +83,21 @@ interface BridgeExecService {
         result: ExecResult,
         stateAfterCompletion: State,
         eventToSubmit: List&lt;EventToSubmit&gt;
-    ) {
-<span class="nc" id="L67">        template.post(&quot;/b1/execs/{execId}/complete&quot;)</span>
-<span class="nc" id="L68">            .path(&quot;execId&quot;, execId)</span>
-<span class="nc" id="L69">            .body(BridgeCompleteExecReq(result, stateAfterCompletion, eventToSubmit))</span>
-<span class="nc" id="L70">            .execute()</span>
-<span class="nc" id="L71">    }</span>
+    ): BridgeExecCompleteSubmitted {
+<span class="nc" id="L87">        return template.post(&quot;/b1/execs/{execId}/complete&quot;)</span>
+<span class="nc" id="L88">            .path(&quot;execId&quot;, execId)</span>
+<span class="nc" id="L89">            .body(BridgeExecCompleteReq(result, stateAfterCompletion, eventToSubmit))</span>
+<span class="nc" id="L90">            .execute(BridgeExecCompleteSubmitted::class)</span>
+    }
 
     override fun fail(
         execId: ExecId,
         result: ExecResult
-    ) {
-<span class="nc" id="L77">        template.post(&quot;/b1/execs/{execId}/fail&quot;)</span>
-<span class="nc" id="L78">            .path(&quot;execId&quot;, execId)</span>
-<span class="nc" id="L79">            .body(BridgeFailExecReq(result))</span>
-<span class="nc" id="L80">            .execute()</span>
-<span class="nc" id="L81">    }</span>
+    ): BridgeExecFailSubmitted {
+<span class="nc" id="L97">        return template.post(&quot;/b1/execs/{execId}/fail&quot;)</span>
+<span class="nc" id="L98">            .path(&quot;execId&quot;, execId)</span>
+<span class="nc" id="L99">            .body(BridgeExecFailReq(result))</span>
+<span class="nc" id="L100">            .execute(BridgeExecFailSubmitted::class)</span>
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

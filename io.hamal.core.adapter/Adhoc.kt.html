@@ -2,27 +2,27 @@
 
 import io.hamal.core.req.SubmitRequest
 import io.hamal.lib.domain.vo.NamespaceId
-import io.hamal.repository.api.submitted_req.SubmittedReqWithGroupId
+import io.hamal.repository.api.submitted_req.ExecInvokeSubmitted
 import io.hamal.request.InvokeAdhocReq
 import org.springframework.stereotype.Component
 
 
-interface InvokeAdhocPort {
+interface AdhocInvokePort {
     operator fun &lt;T : Any&gt; invoke(
         namespaceId: NamespaceId,
         req: InvokeAdhocReq,
-        responseHandler: (SubmittedReqWithGroupId) -&gt; T
+        responseHandler: (ExecInvokeSubmitted) -&gt; T
     ): T
 }
 
-interface AdhocPort : InvokeAdhocPort
+interface AdhocPort : AdhocInvokePort
 
 <span class="fc" id="L20">@Component</span>
 <span class="fc" id="L21">class AdhocAdapter(private val submitRequest: SubmitRequest) : AdhocPort {</span>
     override operator fun &lt;T : Any&gt; invoke(
         namespaceId: NamespaceId,
         req: InvokeAdhocReq,
-        responseHandler: (SubmittedReqWithGroupId) -&gt; T
+        responseHandler: (ExecInvokeSubmitted) -&gt; T
 <span class="fc" id="L26">    ): T = responseHandler(submitRequest(namespaceId, req))</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -8,21 +8,21 @@ import io.hamal.repository.api.Snippet
 import io.hamal.repository.api.SnippetCmdRepository.*
 import io.hamal.repository.api.SnippetRepository
 import io.hamal.repository.api.event.SnippetCreatedEvent
-import io.hamal.repository.api.submitted_req.SubmittedUpdateSnippetReq
+import io.hamal.repository.api.submitted_req.SnippetUpdateSubmitted
 import org.springframework.stereotype.Component
 
 @Component
 <span class="fc" id="L15">class UpdateSnippetHandler(</span>
 <span class="fc" id="L16">    val snippetRepository: SnippetRepository,</span>
 <span class="fc" id="L17">    val eventEmitter: PlatformEventEmitter</span>
-<span class="fc" id="L18">) : ReqHandler&lt;SubmittedUpdateSnippetReq&gt;(SubmittedUpdateSnippetReq::class) {</span>
+<span class="fc" id="L18">) : ReqHandler&lt;SnippetUpdateSubmitted&gt;(SnippetUpdateSubmitted::class) {</span>
 
-    override fun invoke(req: SubmittedUpdateSnippetReq) {
+    override fun invoke(req: SnippetUpdateSubmitted) {
 <span class="fc" id="L21">        updateSnippet(req).also { emitEvent(req.cmdId(), it) }</span>
 <span class="fc" id="L22">    }</span>
 }
 
-private fun UpdateSnippetHandler.updateSnippet(req: SubmittedUpdateSnippetReq): Snippet {
+private fun UpdateSnippetHandler.updateSnippet(req: SnippetUpdateSubmitted): Snippet {
 <span class="fc" id="L26">    return snippetRepository.update(</span>
 <span class="fc" id="L27">        req.id, UpdateCmd(</span>
 <span class="fc" id="L28">            id = req.cmdId(),</span>

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SubmitRequest.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.bridge.req</a> &gt; <span class="el_source">SubmitRequest.kt</span></div><h1>SubmitRequest.kt</h1><pre class="source lang-java linenums">package io.hamal.bridge.req
 
 import io.hamal.lib.domain.GenerateDomainId
-import io.hamal.lib.domain.ReqId
+import io.hamal.lib.domain.vo.ReqId
 import io.hamal.lib.domain._enum.ReqStatus
 import io.hamal.lib.domain.vo.ExecId
-import io.hamal.lib.sdk.api.ApiCompleteExecReq
-import io.hamal.lib.sdk.api.ApiFailExecReq
+import io.hamal.lib.sdk.bridge.BridgeExecCompleteReq
+import io.hamal.lib.sdk.bridge.BridgeExecFailReq
 import io.hamal.repository.api.ExecQueryRepository
 import io.hamal.repository.api.ReqCmdRepository
-import io.hamal.repository.api.submitted_req.SubmittedCompleteExecReq
-import io.hamal.repository.api.submitted_req.SubmittedFailExecReq
+import io.hamal.repository.api.submitted_req.ExecCompleteSubmitted
+import io.hamal.repository.api.submitted_req.ExecFailSubmitted
 import org.springframework.stereotype.Component
 
 <span class="fc" id="L15">@Component</span>
@@ -19,9 +19,9 @@ import org.springframework.stereotype.Component
 <span class="fc" id="L19">    private val execQueryRepository: ExecQueryRepository</span>
 ) {
 
-    operator fun invoke(execId: ExecId, req: ApiCompleteExecReq): SubmittedCompleteExecReq {
+    operator fun invoke(execId: ExecId, req: BridgeExecCompleteReq): ExecCompleteSubmitted {
 <span class="fc" id="L23">        val exec = execQueryRepository.get(execId)</span>
-<span class="fc" id="L24">        return SubmittedCompleteExecReq(</span>
+<span class="fc" id="L24">        return ExecCompleteSubmitted(</span>
 <span class="fc" id="L25">            reqId = generateDomainId(::ReqId),</span>
 <span class="fc" id="L26">            status = ReqStatus.Submitted,</span>
 <span class="fc" id="L27">            id = exec.id,</span>
@@ -31,9 +31,9 @@ import org.springframework.stereotype.Component
 <span class="fc" id="L31">        ).also(reqCmdRepository::queue)</span>
     }
 
-    operator fun invoke(execId: ExecId, req: ApiFailExecReq): SubmittedFailExecReq {
+    operator fun invoke(execId: ExecId, req: BridgeExecFailReq): ExecFailSubmitted {
 <span class="fc" id="L35">        val exec = execQueryRepository.get(execId)</span>
-<span class="fc" id="L36">        return SubmittedFailExecReq(</span>
+<span class="fc" id="L36">        return ExecFailSubmitted(</span>
 <span class="fc" id="L37">            reqId = generateDomainId(::ReqId),</span>
 <span class="fc" id="L38">            status = ReqStatus.Submitted,</span>
 <span class="fc" id="L39">            id = exec.id,</span>

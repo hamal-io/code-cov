@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StateGetController.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.api.http.endpoint.state</a> &gt; <span class="el_source">StateGetController.kt</span></div><h1>StateGetController.kt</h1><pre class="source lang-java linenums">package io.hamal.api.http.endpoint.state
 
-import io.hamal.core.adapter.GetStatePort
+import io.hamal.core.adapter.StateGetPort
 import io.hamal.lib.domain.vo.CorrelationId
 import io.hamal.lib.domain.vo.FuncId
 import io.hamal.lib.sdk.api.ApiCorrelatedState
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
 
 <span class="fc" id="L14">@RestController</span>
-<span class="fc" id="L15">internal class StateGetController(private val getState: GetStatePort) {</span>
+<span class="fc" id="L15">internal class StateGetController(private val getState: StateGetPort) {</span>
     @GetMapping(&quot;/v1/funcs/{funcId}/states/{correlationId}&quot;)
     fun getState(
         @PathVariable(&quot;funcId&quot;) funcId: FuncId,

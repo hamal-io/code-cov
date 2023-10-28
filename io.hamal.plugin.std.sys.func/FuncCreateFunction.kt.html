@@ -13,7 +13,7 @@ import io.hamal.lib.kua.type.ErrorType
 import io.hamal.lib.kua.type.MapType
 import io.hamal.lib.kua.type.StringType
 import io.hamal.lib.sdk.ApiSdk
-import io.hamal.lib.sdk.api.ApiCreateFuncReq
+import io.hamal.lib.sdk.api.ApiFuncCreateReq
 
 <span class="nc" id="L18">class FuncCreateFunction(</span>
 <span class="nc" id="L19">    private val sdk: ApiSdk</span>
@@ -25,7 +25,7 @@ import io.hamal.lib.sdk.api.ApiCreateFuncReq
 <span class="nc" id="L25">        return try {</span>
 <span class="nc" id="L26">            val res = sdk.func.create(</span>
 <span class="nc bnc" id="L27" title="All 2 branches missed.">                arg1.findString(&quot;namespace_id&quot;)?.let { NamespaceId(SnowflakeId(it)) } ?: ctx[NamespaceId::class],</span>
-<span class="nc" id="L28">                ApiCreateFuncReq(</span>
+<span class="nc" id="L28">                ApiFuncCreateReq(</span>
 <span class="nc" id="L29">                    name = FuncName(arg1.getString(&quot;name&quot;)),</span>
 <span class="nc" id="L30">                    inputs = FuncInputs(),</span>
 <span class="nc" id="L31">                    code = CodeValue(arg1.getString(&quot;code&quot;))</span>
@@ -34,16 +34,17 @@ import io.hamal.lib.sdk.api.ApiCreateFuncReq
 
 <span class="nc" id="L35">            null to MapType(</span>
 <span class="nc" id="L36">                mutableMapOf(</span>
-<span class="nc" id="L37">                    &quot;req_id&quot; to StringType(res.reqId.value.value.toString(16)),</span>
+<span class="nc" id="L37">                    &quot;id&quot; to StringType(res.id.value.value.toString(16)),</span>
 <span class="nc" id="L38">                    &quot;status&quot; to StringType(res.status.name),</span>
-<span class="nc" id="L39">                    &quot;id&quot; to StringType(res.id.value.toString(16)),</span>
+<span class="nc" id="L39">                    &quot;func_id&quot; to StringType(res.funcId.value.value.toString(16)),</span>
 <span class="nc" id="L40">                    &quot;group_id&quot; to StringType(res.groupId.value.value.toString(16)),</span>
 <span class="nc" id="L41">                    &quot;namespace_id&quot; to StringType(res.namespaceId.value.value.toString(16))</span>
                 )
             )
 
-<span class="nc" id="L45">        } catch (t: Throwable) {</span>
-<span class="nc" id="L46">            ErrorType(t.message!!) to null</span>
+
+<span class="nc" id="L46">        } catch (t: Throwable) {</span>
+<span class="nc" id="L47">            ErrorType(t.message!!) to null</span>
         }
     }
 }

@@ -10,7 +10,7 @@ import io.hamal.repository.api.ExtensionCmdRepository.UpdateCmd
 import io.hamal.repository.api.ExtensionCode
 import io.hamal.repository.api.ExtensionRepository
 import io.hamal.repository.api.event.ExtensionUpdatedEvent
-import io.hamal.repository.api.submitted_req.SubmittedUpdateExtensionReq
+import io.hamal.repository.api.submitted_req.ExtensionUpdateSubmitted
 import org.springframework.stereotype.Component
 
 @Component
@@ -18,14 +18,14 @@ import org.springframework.stereotype.Component
 <span class="fc" id="L18">    val extensionRepository: ExtensionRepository,</span>
 <span class="fc" id="L19">    val codeCmdRepository: CodeCmdRepository,</span>
 <span class="fc" id="L20">    val eventEmitter: PlatformEventEmitter</span>
-<span class="fc" id="L21">) : ReqHandler&lt;SubmittedUpdateExtensionReq&gt;(SubmittedUpdateExtensionReq::class) {</span>
+<span class="fc" id="L21">) : ReqHandler&lt;ExtensionUpdateSubmitted&gt;(ExtensionUpdateSubmitted::class) {</span>
 
-    override fun invoke(req: SubmittedUpdateExtensionReq) {
+    override fun invoke(req: ExtensionUpdateSubmitted) {
 <span class="fc" id="L24">        updateExtension(req).also { emitEvent(req.cmdId(), it) }</span>
 <span class="fc" id="L25">    }</span>
 }
 
-private fun UpdateExtensionHandler.updateExtension(req: SubmittedUpdateExtensionReq): Extension {
+private fun UpdateExtensionHandler.updateExtension(req: ExtensionUpdateSubmitted): Extension {
 <span class="fc" id="L29">    val ext = extensionRepository.get(req.id)</span>
 <span class="fc" id="L30">    val code = codeCmdRepository.update(</span>
 <span class="fc" id="L31">        ext.code.id, CodeCmdRepository.UpdateCmd(</span>

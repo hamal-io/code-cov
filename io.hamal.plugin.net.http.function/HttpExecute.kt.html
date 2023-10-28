@@ -215,7 +215,7 @@ import kotlinx.serialization.json.JsonElement
 <span class="fc" id="L215">}</span>
 
 <span class="fc" id="L217">private fun HttpResponse.content() = when (this) {</span>
-<span class="fc bfc" id="L218" title="All 2 branches covered.">    is SuccessHttpResponse -&gt; {</span>
+<span class="fc bfc" id="L218" title="All 2 branches covered.">    is HttpSuccessResponse -&gt; {</span>
 <span class="fc bfc" id="L219" title="All 2 branches covered.">        if (isNotEmpty) {</span>
 <span class="fc" id="L220">            val el = result(JsonElement::class)</span>
 <span class="fc" id="L221">            el.convertToType()</span>
@@ -224,7 +224,7 @@ import kotlinx.serialization.json.JsonElement
         }
     }
 
-<span class="fc bfc" id="L227" title="All 2 branches covered.">    is ErrorHttpResponse -&gt; {</span>
+<span class="fc bfc" id="L227" title="All 2 branches covered.">    is HttpErrorResponse -&gt; {</span>
 <span class="fc bfc" id="L228" title="All 2 branches covered.">        if (isNotEmpty) {</span>
 <span class="fc" id="L229">            val el = error(JsonElement::class)</span>
 <span class="fc" id="L230">            el.convertToType()</span>

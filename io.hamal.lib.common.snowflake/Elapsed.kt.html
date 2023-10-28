@@ -14,7 +14,7 @@ interface ElapsedSource {
 
 <span class="fc" id="L15">@OptIn(kotlin.time.ExperimentalTime::class)</span>
 <span class="fc" id="L16">class ElapsedSourceImpl(</span>
-<span class="pc" id="L17">    val epoch: Long = 1697125891520</span>
+<span class="pc" id="L17">    val epoch: Long = 1698451200000 // Happy birthday</span>
 ) : ElapsedSource {
     override fun elapsed() =
 <span class="fc" id="L20">        Elapsed(Instant.now().toEpochMilli().milliseconds.minus(epoch.milliseconds).inWholeMilliseconds)</span>

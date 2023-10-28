@@ -33,7 +33,7 @@ internal object CurrentNamespaceProjection {
 <span class="fc" id="L33">    }</span>
 
 <span class="fc" id="L35">    fun find(namespaceId: NamespaceId): Namespace? = projection[namespaceId]</span>
-<span class="pc bpc" id="L36" title="2 of 4 branches missed.">    fun find(namespaceName: NamespaceName): Namespace? = projection.values.find { it.name == namespaceName }</span>
+<span class="nc bnc" id="L36" title="All 4 branches missed.">    fun find(namespaceName: NamespaceName): Namespace? = projection.values.find { it.name == namespaceName }</span>
 
     fun list(query: NamespaceQuery): List&lt;Namespace&gt; {
 <span class="pc bpc" id="L39" title="1 of 4 branches missed.">        return projection.filter { query.namespaceIds.isEmpty() || it.key in query.namespaceIds }</span>
@@ -64,7 +64,7 @@ internal object CurrentNamespaceProjection {
 <span class="fc" id="L64">    }</span>
 }
 
-<span class="fc" id="L67">class MemoryNamespaceRepository :</span>
+<span class="pc" id="L67">class MemoryNamespaceRepository :</span>
 <span class="fc" id="L68">    MemoryRecordRepository&lt;NamespaceId, NamespaceRecord, Namespace&gt;(</span>
 <span class="fc" id="L69">        createDomainObject = CreateNamespaceFromRecords,</span>
         recordClass = NamespaceRecord::class
@@ -111,7 +111,7 @@ internal object CurrentNamespaceProjection {
 
 <span class="fc" id="L112">    override fun find(namespaceId: NamespaceId): Namespace? = CurrentNamespaceProjection.find(namespaceId)</span>
 
-<span class="fc" id="L114">    override fun find(namespaceName: NamespaceName): Namespace? = CurrentNamespaceProjection.find(namespaceName)</span>
+<span class="nc" id="L114">    override fun find(namespaceName: NamespaceName): Namespace? = CurrentNamespaceProjection.find(namespaceName)</span>
 
     override fun list(query: NamespaceQuery): List&lt;Namespace&gt; {
 <span class="fc" id="L117">        return CurrentNamespaceProjection.list(query)</span>
