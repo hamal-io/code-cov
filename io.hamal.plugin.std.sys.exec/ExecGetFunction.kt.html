@@ -5,37 +5,30 @@ import io.hamal.lib.kua.function.Function1In2Out
 import io.hamal.lib.kua.function.FunctionContext
 import io.hamal.lib.kua.function.FunctionInput1Schema
 import io.hamal.lib.kua.function.FunctionOutput2Schema
-import io.hamal.lib.kua.type.*
+import io.hamal.lib.kua.type.ErrorType
+import io.hamal.lib.kua.type.MapType
+import io.hamal.lib.kua.type.StringType
 import io.hamal.lib.sdk.ApiSdk
 
-<span class="nc" id="L11">class ExecGetFunction(</span>
-<span class="nc" id="L12">    private val sdk: ApiSdk</span>
-<span class="nc" id="L13">) : Function1In2Out&lt;StringType, ErrorType, MapType&gt;(</span>
-<span class="nc" id="L14">    FunctionInput1Schema(StringType::class),</span>
-<span class="nc" id="L15">    FunctionOutput2Schema(ErrorType::class, MapType::class)</span>
+<span class="nc" id="L13">class ExecGetFunction(</span>
+<span class="nc" id="L14">    private val sdk: ApiSdk</span>
+<span class="nc" id="L15">) : Function1In2Out&lt;StringType, ErrorType, MapType&gt;(</span>
+<span class="nc" id="L16">    FunctionInput1Schema(StringType::class),</span>
+<span class="nc" id="L17">    FunctionOutput2Schema(ErrorType::class, MapType::class)</span>
 ) {
     override fun invoke(ctx: FunctionContext, arg1: StringType): Pair&lt;ErrorType?, MapType?&gt; {
-<span class="nc" id="L18">        return try {</span>
-<span class="nc" id="L19">            val exec = sdk.exec.get(ExecId(arg1.value))</span>
-<span class="nc" id="L20">            null to MapType().also {</span>
-<span class="nc" id="L21">                it[&quot;id&quot;] = exec.id.value.value.toString(16)</span>
-<span class="nc" id="L22">                it[&quot;status&quot;] = StringType(exec.status.name)</span>
-<span class="nc" id="L23">                it[&quot;inputs&quot;] = MapType() // FIXME</span>
-<span class="nc bnc" id="L24" title="All 6 branches missed.">                exec.correlation?.correlationId?.value?.let { corId -&gt;</span>
-<span class="nc" id="L25">                    it[&quot;correlation_id&quot;] = corId</span>
-<span class="nc" id="L26">                } // FIXME set nil value to table --&gt; makes the api nicer</span>
-<span class="nc" id="L27">                it[&quot;code&quot;] = exec.code.let { code -&gt;</span>
-<span class="nc" id="L28">                    MapType(</span>
-<span class="nc" id="L29">                        mutableMapOf(</span>
-<span class="nc bnc" id="L30" title="All 4 branches missed.">                            &quot;id&quot; to (code.id?.value?.value?.toString(16)?.let(::StringType) ?: NilType),</span>
-<span class="nc bnc" id="L31" title="All 2 branches missed.">                            &quot;version&quot; to (code.version?.value?.let(::NumberType) ?: NilType),</span>
-<span class="nc bnc" id="L32" title="All 4 branches missed.">                            &quot;value&quot; to (code.value?.value?.let(::CodeType) ?: NilType)</span>
-                        )
-                    )
-                }
-<span class="nc" id="L36">            }</span>
-<span class="nc" id="L37">        } catch (t: Throwable) {</span>
-<span class="nc" id="L38">            ErrorType(t.message!!) to null</span>
+<span class="nc" id="L20">        return try {</span>
+<span class="nc" id="L21">            val exec = sdk.exec.get(ExecId(arg1.value))</span>
+<span class="nc" id="L22">            null to MapType().also {</span>
+<span class="nc" id="L23">                it[&quot;id&quot;] = exec.id.value.value.toString(16)</span>
+<span class="nc" id="L24">                it[&quot;status&quot;] = StringType(exec.status.name)</span>
+<span class="nc" id="L25">                it[&quot;inputs&quot;] = MapType() // FIXME</span>
+<span class="nc bnc" id="L26" title="All 6 branches missed.">                exec.correlation?.correlationId?.value?.let { corId -&gt;</span>
+<span class="nc" id="L27">                    it[&quot;correlation_id&quot;] = corId</span>
+<span class="nc" id="L28">                } // FIXME set nil value to table --&gt; makes the api nicer</span>
+<span class="nc" id="L29">            }</span>
+<span class="nc" id="L30">        } catch (t: Throwable) {</span>
+<span class="nc" id="L31">            ErrorType(t.message!!) to null</span>
         }
     }
 }

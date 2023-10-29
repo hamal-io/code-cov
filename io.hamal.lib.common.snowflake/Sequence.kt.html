@@ -29,13 +29,13 @@ interface SequenceSource {
 <span class="pc bpc" id="L29" title="2 of 4 branches missed.">        check(elapsed &gt;= previousCalledAt) { &quot;Elapsed must be monotonic&quot; }</span>
 
 <span class="fc bfc" id="L31" title="All 2 branches covered.">        if (elapsed == previousCalledAt) {</span>
-<span class="fc bfc" id="L32" title="All 2 branches covered.">            if (nextSequence &gt;= maxSequence) {</span>
-<span class="fc" id="L33">                while (true) {</span>
-<span class="fc" id="L34">                    val currentElapsed = elapsedSource()</span>
-<span class="fc bfc" id="L35" title="All 2 branches covered.">                    if (elapsed != currentElapsed) {</span>
-<span class="fc" id="L36">                        nextSequence = 0</span>
-<span class="fc" id="L37">                        previousCalledAt = currentElapsed</span>
-<span class="fc" id="L38">                        break</span>
+<span class="pc bpc" id="L32" title="1 of 2 branches missed.">            if (nextSequence &gt;= maxSequence) {</span>
+<span class="nc" id="L33">                while (true) {</span>
+<span class="nc" id="L34">                    val currentElapsed = elapsedSource()</span>
+<span class="nc bnc" id="L35" title="All 2 branches missed.">                    if (elapsed != currentElapsed) {</span>
+<span class="nc" id="L36">                        nextSequence = 0</span>
+<span class="nc" id="L37">                        previousCalledAt = currentElapsed</span>
+<span class="nc" id="L38">                        break</span>
                     }
                 }
             } else {
