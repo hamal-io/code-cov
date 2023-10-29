@@ -42,13 +42,14 @@ private fun CreateFuncHandler.createFunc(req: FuncCreateSubmitted): Func {
 <span class="fc" id="L42">            inputs = req.inputs,</span>
 <span class="fc" id="L43">            code = FuncCode(</span>
 <span class="fc" id="L44">                id = code.id,</span>
-<span class="fc" id="L45">                version = code.version</span>
+<span class="fc" id="L45">                version = code.version,</span>
+<span class="fc" id="L46">                deployedVersion = code.version</span>
             )
         )
     )
 }
 
 private fun CreateFuncHandler.emitEvent(cmdId: CmdId, func: Func) {
-<span class="fc" id="L52">    eventEmitter.emit(cmdId, FuncCreatedEvent(func))</span>
-<span class="fc" id="L53">}</span>
+<span class="fc" id="L53">    eventEmitter.emit(cmdId, FuncCreatedEvent(func))</span>
+<span class="fc" id="L54">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
