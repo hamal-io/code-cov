@@ -29,44 +29,50 @@ private fun UpdateFuncHandler.updateFunc(req: FuncUpdateSubmitted): Func {
 <span class="fc" id="L29">    val func = funcRepository.get(req.id)</span>
 
 <span class="fc bfc" id="L31" title="All 2 branches covered.">    if (req.deployedVersion != null) {</span>
-<span class="fc" id="L32">        return funcRepository.update(</span>
-<span class="fc" id="L33">            req.id,</span>
-<span class="fc" id="L34">            UpdateCmd(</span>
-<span class="fc" id="L35">                id = req.cmdId(),</span>
-<span class="fc" id="L36">                name = func.name,</span>
-<span class="fc" id="L37">                inputs = func.inputs,</span>
-<span class="fc" id="L38">                code = FuncCode(</span>
-<span class="fc" id="L39">                    id = func.code.id,</span>
-<span class="fc" id="L40">                    version = func.code.version,</span>
-<span class="fc" id="L41">                    deployedVersion = req.deployedVersion!!</span>
-                )
-            )
-        )
+<span class="fc" id="L32">        deployedVersionUpdate(req, func)</span>
     }
 
-<span class="fc" id="L47">    val code = codeCmdRepository.update(</span>
-<span class="fc" id="L48">        func.code.id, CodeCmdRepository.UpdateCmd(</span>
-<span class="fc" id="L49">            id = req.cmdId(),</span>
-<span class="fc" id="L50">            value = req.code</span>
+<span class="fc" id="L35">    val code = codeCmdRepository.update(</span>
+<span class="fc" id="L36">        func.code.id, CodeCmdRepository.UpdateCmd(</span>
+<span class="fc" id="L37">            id = req.cmdId(),</span>
+<span class="fc" id="L38">            value = req.code</span>
         )
     )
 
-<span class="fc" id="L54">    return funcRepository.update(</span>
-<span class="fc" id="L55">        req.id,</span>
-<span class="fc" id="L56">        UpdateCmd(</span>
-<span class="fc" id="L57">            id = req.cmdId(),</span>
-<span class="fc" id="L58">            name = req.name,</span>
-<span class="fc" id="L59">            inputs = req.inputs,</span>
-<span class="fc" id="L60">            code = FuncCode(</span>
-<span class="fc" id="L61">                id = code.id,</span>
-<span class="fc" id="L62">                version = code.version,</span>
-<span class="fc" id="L63">                deployedVersion = func.code.deployedVersion</span>
+<span class="fc" id="L42">    return funcRepository.update(</span>
+<span class="fc" id="L43">        req.id,</span>
+<span class="fc" id="L44">        UpdateCmd(</span>
+<span class="fc" id="L45">            id = req.cmdId(),</span>
+<span class="fc" id="L46">            name = req.name,</span>
+<span class="fc" id="L47">            inputs = req.inputs,</span>
+<span class="fc" id="L48">            code = FuncCode(</span>
+<span class="fc" id="L49">                id = code.id,</span>
+<span class="fc" id="L50">                version = code.version,</span>
+<span class="fc" id="L51">                deployedVersion = func.code.deployedVersion</span>
             )
         )
     )
 }
 
+
+private fun UpdateFuncHandler.deployedVersionUpdate(req: FuncUpdateSubmitted, func: Func): Func {
+<span class="fc" id="L59">    return funcRepository.update(</span>
+<span class="fc" id="L60">        req.id,</span>
+<span class="fc" id="L61">        UpdateCmd(</span>
+<span class="fc" id="L62">            id = req.cmdId(),</span>
+<span class="fc" id="L63">            name = func.name,</span>
+<span class="fc" id="L64">            inputs = func.inputs,</span>
+<span class="fc" id="L65">            code = FuncCode(</span>
+<span class="fc" id="L66">                id = func.code.id,</span>
+<span class="fc" id="L67">                version = func.code.version,</span>
+<span class="fc" id="L68">                deployedVersion = req.deployedVersion!!</span>
+            )
+        )
+    )
+}
+
+
 private fun UpdateFuncHandler.emitEvent(cmdId: CmdId, func: Func) {
-<span class="fc" id="L70">    eventEmitter.emit(cmdId, FuncUpdatedEvent(func))</span>
-<span class="fc" id="L71">}</span>
+<span class="fc" id="L76">    eventEmitter.emit(cmdId, FuncUpdatedEvent(func))</span>
+<span class="fc" id="L77">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
