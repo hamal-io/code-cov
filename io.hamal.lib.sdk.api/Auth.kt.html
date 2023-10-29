@@ -6,14 +6,14 @@ import io.hamal.lib.domain.vo.AuthToken
 import io.hamal.lib.domain.vo.Password
 import io.hamal.lib.domain.vo.ReqId
 import io.hamal.lib.http.HttpTemplateImpl
-import io.hamal.request.SignInReq
+import io.hamal.request.LogInReq
 import kotlinx.serialization.Serializable
 
 <span class="nc bnc" id="L12" title="All 8 branches missed.">@Serializable</span>
-<span class="nc" id="L13">data class ApiSignInReq(</span>
+<span class="nc" id="L13">data class ApiLoginReq(</span>
 <span class="nc" id="L14">    override val name: AccountName,</span>
 <span class="nc" id="L15">    override val password: Password</span>
-<span class="nc" id="L16">) : SignInReq</span>
+<span class="nc" id="L16">) : LogInReq</span>
 
 <span class="pc bnc" id="L18" title="All 9 branches missed.">@Serializable</span>
 <span class="nc" id="L19">data class ApiTokenSubmitted(</span>

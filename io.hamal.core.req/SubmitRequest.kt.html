@@ -77,9 +77,9 @@ import org.springframework.stereotype.Component
 <span class="nc" id="L77">        ).also(reqCmdRepository::queue)</span>
     }
 
-    operator fun invoke(account: Account, password: Password): AuthSignInWithPasswordSubmitted {
+    operator fun invoke(account: Account, password: Password): AuthLoginSubmitted {
 <span class="nc" id="L81">        val encodedPassword = encodePassword(password, account.salt)</span>
-<span class="nc" id="L82">        return AuthSignInWithPasswordSubmitted(</span>
+<span class="nc" id="L82">        return AuthLoginSubmitted(</span>
 <span class="nc" id="L83">            reqId = generateDomainId(::ReqId),</span>
 <span class="nc" id="L84">            status = Submitted,</span>
 <span class="nc" id="L85">            authId = generateDomainId(::AuthId),</span>
