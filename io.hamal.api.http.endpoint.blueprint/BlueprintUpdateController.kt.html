@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BlueprintUpdateController.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.api.http.endpoint.blueprint</a> &gt; <span class="el_source">BlueprintUpdateController.kt</span></div><h1>BlueprintUpdateController.kt</h1><pre class="source lang-java linenums">package io.hamal.api.http.endpoint.blueprint
+
+import io.hamal.api.http.endpoint.accepted
+import io.hamal.core.adapter.BlueprintUpdatePort
+import io.hamal.core.component.Retry
+import io.hamal.lib.domain.vo.BlueprintId
+import io.hamal.lib.sdk.api.ApiSubmitted
+import io.hamal.lib.sdk.api.ApiUpdateBlueprintReq
+import io.hamal.repository.api.submitted_req.BlueprintUpdateSubmitted
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.PatchMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RestController
+
+<span class="fc" id="L16">@RestController</span>
+<span class="fc" id="L17">internal class BlueprintUpdateController(</span>
+<span class="fc" id="L18">    private val retry: Retry,</span>
+<span class="fc" id="L19">    private val updateBlueprint: BlueprintUpdatePort</span>
+) {
+    @PatchMapping(&quot;/v1/blueprints/{bpId}&quot;)
+    fun updateBlueprint(
+        @PathVariable(&quot;bpId&quot;) blueprintId: BlueprintId,
+        @RequestBody req: ApiUpdateBlueprintReq
+<span class="fc" id="L25">    ): ResponseEntity&lt;ApiSubmitted&gt; = retry {</span>
+<span class="fc" id="L26">        updateBlueprint(blueprintId, req, BlueprintUpdateSubmitted::accepted)</span>
+<span class="fc" id="L27">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

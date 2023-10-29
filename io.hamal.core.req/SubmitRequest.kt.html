@@ -28,17 +28,17 @@ import org.springframework.stereotype.Component
 
 <span class="fc" id="L29">@Component</span>
 <span class="fc" id="L30">class SubmitRequest(</span>
-<span class="fc" id="L31">    private val encodePassword: EncodePassword,</span>
-<span class="fc" id="L32">    private val eventBrokerRepository: BrokerRepository,</span>
-<span class="fc" id="L33">    private val extensionQueryRepository: ExtensionQueryRepository,</span>
-<span class="fc" id="L34">    private val funcQueryRepository: FuncQueryRepository,</span>
-<span class="fc" id="L35">    private val generateDomainId: GenerateDomainId,</span>
-<span class="fc" id="L36">    private val generateSalt: GenerateSalt,</span>
-<span class="fc" id="L37">    private val generateToken: GenerateToken,</span>
-<span class="fc" id="L38">    private val hookQueryRepository: HookQueryRepository,</span>
-<span class="fc" id="L39">    private val namespaceQueryRepository: NamespaceQueryRepository,</span>
-<span class="fc" id="L40">    private val reqCmdRepository: ReqCmdRepository,</span>
-<span class="fc" id="L41">    private val snippetQueryRepository: SnippetQueryRepository</span>
+<span class="fc" id="L31">    private val blueprintQueryRepository: BlueprintQueryRepository,</span>
+<span class="fc" id="L32">    private val encodePassword: EncodePassword,</span>
+<span class="fc" id="L33">    private val eventBrokerRepository: BrokerRepository,</span>
+<span class="fc" id="L34">    private val extensionQueryRepository: ExtensionQueryRepository,</span>
+<span class="fc" id="L35">    private val funcQueryRepository: FuncQueryRepository,</span>
+<span class="fc" id="L36">    private val generateDomainId: GenerateDomainId,</span>
+<span class="fc" id="L37">    private val generateSalt: GenerateSalt,</span>
+<span class="fc" id="L38">    private val generateToken: GenerateToken,</span>
+<span class="fc" id="L39">    private val hookQueryRepository: HookQueryRepository,</span>
+<span class="fc" id="L40">    private val namespaceQueryRepository: NamespaceQueryRepository,</span>
+<span class="fc" id="L41">    private val reqCmdRepository: ReqCmdRepository</span>
 ) {
 
     operator fun invoke(req: CreateRootAccountReq): AccountCreateSubmitted {
@@ -225,22 +225,22 @@ import org.springframework.stereotype.Component
 <span class="fc" id="L225">        code = req.code</span>
 <span class="fc" id="L226">    ).also(reqCmdRepository::queue)</span>
 
-<span class="fc" id="L228">    operator fun invoke(groupId: GroupId, accountId: AccountId, req: CreateSnippetReq) = SnippetCreateSubmitted(</span>
+<span class="fc" id="L228">    operator fun invoke(groupId: GroupId, accountId: AccountId, req: CreateBlueprintReq) = BlueprintCreateSubmitted(</span>
 <span class="fc" id="L229">        reqId = generateDomainId(::ReqId),</span>
 <span class="fc" id="L230">        status = Submitted,</span>
 <span class="fc" id="L231">        groupId = groupId,</span>
-<span class="fc" id="L232">        id = generateDomainId(::SnippetId),</span>
+<span class="fc" id="L232">        id = generateDomainId(::BlueprintId),</span>
 <span class="fc" id="L233">        name = req.name,</span>
 <span class="fc" id="L234">        inputs = req.inputs,</span>
 <span class="fc" id="L235">        value = req.value,</span>
 <span class="fc" id="L236">        creatorId = accountId</span>
 <span class="fc" id="L237">    ).also(reqCmdRepository::queue)</span>
 
-<span class="fc" id="L239">    operator fun invoke(snippetId: SnippetId, req: UpdateSnippetReq) = SnippetUpdateSubmitted(</span>
+<span class="fc" id="L239">    operator fun invoke(blueprintId: BlueprintId, req: UpdateBlueprintReq) = BlueprintUpdateSubmitted(</span>
 <span class="fc" id="L240">        reqId = generateDomainId(::ReqId),</span>
 <span class="fc" id="L241">        status = Submitted,</span>
-<span class="fc" id="L242">        groupId = snippetQueryRepository.get(snippetId).groupId,</span>
-<span class="fc" id="L243">        id = snippetId,</span>
+<span class="fc" id="L242">        groupId = blueprintQueryRepository.get(blueprintId).groupId,</span>
+<span class="fc" id="L243">        id = blueprintId,</span>
 <span class="fc" id="L244">        name = req.name,</span>
 <span class="fc" id="L245">        inputs = req.inputs,</span>
 <span class="fc" id="L246">        value = req.value,</span>

@@ -16,7 +16,7 @@ interface ApiSdk {
     val group: ApiGroupService
     val hook: ApiHookService
     val namespace: ApiNamespaceService
-    val snippet: ApiSnippetService
+    val blueprint: ApiBlueprintService
     val topic: ApiTopicService
     val trigger: ApiTriggerService
 }
@@ -71,8 +71,8 @@ interface ApiSdk {
 <span class="nc" id="L71">        ApiNamespaceServiceImpl(template)</span>
     }
 
-<span class="nc" id="L74">    override val snippet: ApiSnippetService by lazy {</span>
-<span class="nc" id="L75">        ApiSnippetServiceImpl(template)</span>
+<span class="nc" id="L74">    override val blueprint: ApiBlueprintService by lazy {</span>
+<span class="nc" id="L75">        ApiBlueprintServiceImpl(template)</span>
     }
 
 <span class="nc" id="L78">    override val topic: ApiTopicService by lazy {</span>

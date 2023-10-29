@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Blueprint.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.core.adapter</a> &gt; <span class="el_source">Blueprint.kt</span></div><h1>Blueprint.kt</h1><pre class="source lang-java linenums">package io.hamal.core.adapter
+
+import io.hamal.core.req.SubmitRequest
+import io.hamal.lib.domain.vo.AccountId
+import io.hamal.lib.domain.vo.BlueprintId
+import io.hamal.lib.domain.vo.GroupId
+import io.hamal.repository.api.Blueprint
+import io.hamal.repository.api.BlueprintQueryRepository
+import io.hamal.repository.api.submitted_req.BlueprintCreateSubmitted
+import io.hamal.repository.api.submitted_req.BlueprintUpdateSubmitted
+import io.hamal.request.CreateBlueprintReq
+import io.hamal.request.UpdateBlueprintReq
+import org.springframework.stereotype.Component
+
+interface BlueprintCreatePort {
+    operator fun &lt;T : Any&gt; invoke(
+        groupId: GroupId,
+        accountId: AccountId,
+        req: CreateBlueprintReq,
+        responseHandler: (BlueprintCreateSubmitted) -&gt; T
+    ): T
+}
+
+interface BlueprintGetPort {
+    operator fun &lt;T : Any&gt; invoke(blueprintId: BlueprintId, responseHandler: (Blueprint) -&gt; T): T
+}
+
+
+interface BlueprintUpdatePort {
+    operator fun &lt;T : Any&gt; invoke(
+        blueprintId: BlueprintId,
+        req: UpdateBlueprintReq,
+        responseHandler: (BlueprintUpdateSubmitted) -&gt; T
+    ): T
+}
+
+interface BlueprintPort : BlueprintCreatePort, BlueprintGetPort, BlueprintUpdatePort
+
+<span class="fc" id="L39">@Component</span>
+<span class="fc" id="L40">class BlueprintAdapter(</span>
+<span class="fc" id="L41">    private val submitRequest: SubmitRequest,</span>
+<span class="fc" id="L42">    private val blueprintQueryRepository: BlueprintQueryRepository,</span>
+) : BlueprintPort {
+    override fun &lt;T : Any&gt; invoke(
+        groupId: GroupId,
+        accountId: AccountId,
+        req: CreateBlueprintReq,
+        responseHandler: (BlueprintCreateSubmitted) -&gt; T
+    ): T {
+<span class="fc" id="L50">        return responseHandler(submitRequest(groupId, accountId, req))</span>
+    }
+
+    override fun &lt;T : Any&gt; invoke(blueprintId: BlueprintId, responseHandler: (Blueprint) -&gt; T): T {
+<span class="fc" id="L54">        return responseHandler(blueprintQueryRepository.get(blueprintId))</span>
+    }
+
+    override fun &lt;T : Any&gt; invoke(
+        blueprintId: BlueprintId,
+        req: UpdateBlueprintReq,
+        responseHandler: (BlueprintUpdateSubmitted) -&gt; T
+    ): T {
+<span class="fc" id="L62">        ensureBlueprintExists(blueprintId)</span>
+<span class="fc" id="L63">        return responseHandler(submitRequest(blueprintId, req))</span>
+    }
+
+<span class="fc" id="L66">    private fun ensureBlueprintExists(blueprintId: BlueprintId) = blueprintQueryRepository.get(blueprintId)</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
