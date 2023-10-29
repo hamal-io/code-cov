@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 <span class="fc" id="L18">    private val createAccount: AccountCreatePort</span>
 ) {
     @PostMapping(&quot;/v1/accounts&quot;)
-    fun createFunc(
+    fun create(
         @RequestBody req: ApiAccountCreateReq
 <span class="nc" id="L23">    ): ResponseEntity&lt;ApiSubmitted&gt; = retry {</span>
 <span class="nc" id="L24">        createAccount(req, Submitted::accepted)</span>

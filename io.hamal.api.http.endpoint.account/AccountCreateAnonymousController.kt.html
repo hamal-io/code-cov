@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AccountCreateAnonymousController.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.api.http.endpoint.account</a> &gt; <span class="el_source">AccountCreateAnonymousController.kt</span></div><h1>AccountCreateAnonymousController.kt</h1><pre class="source lang-java linenums">package io.hamal.api.http.endpoint.account
+
+
+import io.hamal.api.http.endpoint.accepted
+import io.hamal.core.adapter.AccountCreateAnonymousPort
+import io.hamal.core.component.Retry
+import io.hamal.lib.domain.GenerateDomainId
+import io.hamal.lib.domain.vo.AccountId
+import io.hamal.lib.domain.vo.AccountName
+import io.hamal.lib.sdk.api.ApiSubmitted
+import io.hamal.repository.api.submitted_req.Submitted
+import io.hamal.request.CreateAnonymousAccountReq
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RestController
+
+<span class="fc" id="L17">@RestController</span>
+<span class="fc" id="L18">internal class AccountCreateAnonymousController(</span>
+<span class="fc" id="L19">    private val generateDomainId: GenerateDomainId,</span>
+<span class="fc" id="L20">    private val retry: Retry,</span>
+<span class="fc" id="L21">    private val createAccount: AccountCreateAnonymousPort</span>
+) {
+    @PostMapping(&quot;/v1/anonymous-accounts&quot;)
+<span class="nc" id="L24">    fun create(): ResponseEntity&lt;ApiSubmitted&gt; = retry {</span>
+<span class="nc" id="L25">        val id = generateDomainId(::AccountId)</span>
+<span class="nc" id="L26">        createAccount(object : CreateAnonymousAccountReq {</span>
+<span class="nc" id="L27">            override val id = id</span>
+<span class="nc" id="L28">            override val name = AccountName(&quot;anonymous-${id.value}&quot;)</span>
+<span class="nc" id="L29">        }, Submitted::accepted)</span>
+<span class="nc" id="L30">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

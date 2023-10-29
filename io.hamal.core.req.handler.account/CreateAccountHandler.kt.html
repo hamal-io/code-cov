@@ -11,7 +11,7 @@ import io.hamal.lib.domain.vo.NamespaceInputs
 import io.hamal.lib.domain.vo.NamespaceName
 import io.hamal.repository.api.*
 import io.hamal.repository.api.event.AccountCreatedEvent
-import io.hamal.repository.api.submitted_req.AccountCreateWithPasswordSubmitted
+import io.hamal.repository.api.submitted_req.AccountCreateSubmitted
 import org.springframework.stereotype.Component
 import java.time.temporal.ChronoUnit
 
@@ -22,79 +22,69 @@ import java.time.temporal.ChronoUnit
 <span class="fc" id="L22">    val groupCmdRepository: GroupCmdRepository,</span>
 <span class="fc" id="L23">    val namespaceCmdRepository: NamespaceCmdRepository,</span>
 <span class="fc" id="L24">    val eventEmitter: PlatformEventEmitter,</span>
-<span class="fc" id="L25">) : ReqHandler&lt;AccountCreateWithPasswordSubmitted&gt;(AccountCreateWithPasswordSubmitted::class) {</span>
+<span class="fc" id="L25">) : ReqHandler&lt;AccountCreateSubmitted&gt;(AccountCreateSubmitted::class) {</span>
 
-    override fun invoke(req: AccountCreateWithPasswordSubmitted) {
-<span class="fc" id="L28">        createAccount(req)</span>
-<span class="fc" id="L29">            .also { emitEvent(req.cmdId(), it) }</span>
-<span class="fc" id="L30">            .also { createGroup(req) }</span>
-<span class="fc" id="L31">            .also { createNamespace(req) }</span>
-<span class="fc" id="L32">            .also { createPasswordAuth(req) }</span>
-<span class="fc" id="L33">            .also { createTokenAuth(req) }</span>
-<span class="fc" id="L34">    }</span>
+    override fun invoke(req: AccountCreateSubmitted) {
+<span class="fc" id="L28">        createAccount(req).also { emitEvent(req.cmdId(), it) }.also { createGroup(req) }.also { createNamespace(req) }</span>
+<span class="fc" id="L29">            .also { createPasswordAuth(req) }.also { createTokenAuth(req) }</span>
+<span class="fc" id="L30">    }</span>
 }
 
-private fun CreateAccountWithPasswordHandler.createAccount(req: AccountCreateWithPasswordSubmitted): Account {
-<span class="fc" id="L38">    return accountCmdRepository.create(</span>
-<span class="fc" id="L39">        AccountCmdRepository.CreateCmd(</span>
-<span class="fc" id="L40">            id = req.cmdId(),</span>
-<span class="fc" id="L41">            accountId = req.id,</span>
-<span class="fc" id="L42">            accountType = req.type,</span>
-<span class="fc" id="L43">            name = req.name,</span>
-<span class="fc" id="L44">            email = req.email,</span>
-<span class="fc" id="L45">            salt = req.salt</span>
+private fun CreateAccountWithPasswordHandler.createAccount(req: AccountCreateSubmitted): Account {
+<span class="fc" id="L34">    return accountCmdRepository.create(</span>
+<span class="fc" id="L35">        AccountCmdRepository.CreateCmd(</span>
+<span class="fc" id="L36">            id = req.cmdId(),</span>
+<span class="fc" id="L37">            accountId = req.id,</span>
+<span class="fc" id="L38">            accountType = req.type,</span>
+<span class="fc" id="L39">            name = req.name,</span>
+<span class="fc" id="L40">            email = req.email,</span>
+<span class="fc" id="L41">            salt = req.salt</span>
         )
     )
 }
 
-private fun CreateAccountWithPasswordHandler.createGroup(req: AccountCreateWithPasswordSubmitted): Group {
-<span class="fc" id="L51">    return groupCmdRepository.create(</span>
-<span class="fc" id="L52">        GroupCmdRepository.CreateCmd(</span>
-<span class="fc" id="L53">            id = req.cmdId(),</span>
-<span class="fc" id="L54">            groupId = req.groupId,</span>
-<span class="fc" id="L55">            name = GroupName(&quot;${req.name.value}'s Group&quot;),</span>
-<span class="fc" id="L56">            creatorId = req.id</span>
+private fun CreateAccountWithPasswordHandler.createGroup(req: AccountCreateSubmitted): Group {
+<span class="fc" id="L47">    return groupCmdRepository.create(</span>
+<span class="fc" id="L48">        GroupCmdRepository.CreateCmd(</span>
+<span class="fc" id="L49">            id = req.cmdId(), groupId = req.groupId, name = GroupName(&quot;${req.name.value}'s Group&quot;), creatorId = req.id</span>
         )
     )
 }
 
-private fun CreateAccountWithPasswordHandler.createNamespace(req: AccountCreateWithPasswordSubmitted): Namespace {
-<span class="fc" id="L62">    return namespaceCmdRepository.create(</span>
-<span class="fc" id="L63">        NamespaceCmdRepository.CreateCmd(</span>
-<span class="fc" id="L64">            id = req.cmdId(),</span>
-<span class="fc" id="L65">            namespaceId = req.namespaceId,</span>
-<span class="fc" id="L66">            groupId = req.groupId,</span>
-<span class="fc" id="L67">            name = NamespaceName(&quot;root&quot;),</span>
-<span class="fc" id="L68">            inputs = NamespaceInputs()</span>
+private fun CreateAccountWithPasswordHandler.createNamespace(req: AccountCreateSubmitted): Namespace {
+<span class="fc" id="L55">    return namespaceCmdRepository.create(</span>
+<span class="fc" id="L56">        NamespaceCmdRepository.CreateCmd(</span>
+<span class="fc" id="L57">            id = req.cmdId(),</span>
+<span class="fc" id="L58">            namespaceId = req.namespaceId,</span>
+<span class="fc" id="L59">            groupId = req.groupId,</span>
+<span class="fc" id="L60">            name = NamespaceName(&quot;default&quot;),</span>
+<span class="fc" id="L61">            inputs = NamespaceInputs()</span>
         )
     )
 }
 
 
-private fun CreateAccountWithPasswordHandler.createPasswordAuth(req: AccountCreateWithPasswordSubmitted): Auth {
-<span class="fc" id="L75">    return authCmdRepository.create(</span>
-<span class="fc" id="L76">        AuthCmdRepository.CreatePasswordAuthCmd(</span>
-<span class="fc" id="L77">            id = req.cmdId(),</span>
-<span class="fc" id="L78">            authId = req.authenticationId,</span>
-<span class="fc" id="L79">            accountId = req.id,</span>
-<span class="fc" id="L80">            hash = req.hash</span>
+private fun CreateAccountWithPasswordHandler.createPasswordAuth(req: AccountCreateSubmitted): Auth {
+<span class="fc" id="L68">    return authCmdRepository.create(</span>
+<span class="fc" id="L69">        AuthCmdRepository.CreatePasswordAuthCmd(</span>
+<span class="fc" id="L70">            id = req.cmdId(), authId = req.authenticationId, accountId = req.id, hash = req.hash</span>
         )
     )
 }
 
-private fun CreateAccountWithPasswordHandler.createTokenAuth(req: AccountCreateWithPasswordSubmitted): Auth {
-<span class="fc" id="L86">    return authCmdRepository.create(</span>
-<span class="fc" id="L87">        AuthCmdRepository.CreateTokenAuthCmd(</span>
-<span class="fc" id="L88">            id = req.cmdId(),</span>
-<span class="fc" id="L89">            authId = req.authenticationId,</span>
-<span class="fc" id="L90">            accountId = req.id,</span>
-<span class="fc" id="L91">            token = req.token,</span>
-<span class="fc" id="L92">            expiresAt = AuthTokenExpiresAt(TimeUtils.now().plus(30, ChronoUnit.DAYS))</span>
+private fun CreateAccountWithPasswordHandler.createTokenAuth(req: AccountCreateSubmitted): Auth {
+<span class="fc" id="L76">    return authCmdRepository.create(</span>
+<span class="fc" id="L77">        AuthCmdRepository.CreateTokenAuthCmd(</span>
+<span class="fc" id="L78">            id = req.cmdId(),</span>
+<span class="fc" id="L79">            authId = req.authenticationId,</span>
+<span class="fc" id="L80">            accountId = req.id,</span>
+<span class="fc" id="L81">            token = req.token,</span>
+<span class="fc" id="L82">            expiresAt = AuthTokenExpiresAt(TimeUtils.now().plus(30, ChronoUnit.DAYS))</span>
         )
     )
 }
 
 private fun CreateAccountWithPasswordHandler.emitEvent(cmdId: CmdId, account: Account) {
-<span class="fc" id="L98">    eventEmitter.emit(cmdId, AccountCreatedEvent(account))</span>
-<span class="fc" id="L99">}</span>
+<span class="fc" id="L88">    eventEmitter.emit(cmdId, AccountCreatedEvent(account))</span>
+<span class="fc" id="L89">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

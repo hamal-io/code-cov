@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 <span class="fc" id="L13">@RestController</span>
 <span class="fc" id="L14">internal class AccountListController(private val listAccount: AccountListPort) {</span>
     @GetMapping(&quot;/v1/accounts&quot;)
-    fun listAccount(
+    fun list(
         @RequestParam(required = false, name = &quot;after_id&quot;, defaultValue = &quot;7FFFFFFFFFFFFFFF&quot;) afterId: AccountId,
         @RequestParam(required = false, name = &quot;limit&quot;, defaultValue = &quot;100&quot;) limit: Limit
     ): ResponseEntity&lt;ApiAccountList&gt; {

@@ -13,26 +13,27 @@ import kotlinx.serialization.Serializable
 <span class="nc" id="L13">    constructor(value: String) : this(SnowflakeId(value.toLong(16)))</span>
 
 <span class="fc" id="L15">    internal object Serializer : SerializableDomainIdSerializer&lt;AccountId&gt;(::AccountId)</span>
-
-<span class="nc" id="L17">    companion object {</span>
-<span class="fc" id="L18">        val root = AccountId(1)</span>
+<span class="nc" id="L16">    companion object {</span>
+<span class="fc" id="L17">        val root = AccountId(1)</span>
     }
 }
 
-<span class="nc" id="L22">@Serializable(with = AccountName.Serializer::class)</span>
-<span class="fc" id="L23">class AccountName(override val value: String) : DomainName() {</span>
-<span class="fc" id="L24">    internal object Serializer : DomainNameSerializer&lt;AccountName&gt;(::AccountName)</span>
+<span class="nc" id="L21">@Serializable(with = AccountName.Serializer::class)</span>
+<span class="fc" id="L22">class AccountName(override val value: String) : DomainName() {</span>
+<span class="fc" id="L23">    internal object Serializer : DomainNameSerializer&lt;AccountName&gt;(::AccountName)</span>
 }
 
-<span class="nc" id="L27">@Serializable(with = AccountEmail.Serializer::class)</span>
-<span class="fc" id="L28">class AccountEmail(override val value: String) : StringValueObject() {</span>
+<span class="nc" id="L26">@Serializable(with = AccountEmail.Serializer::class)</span>
+<span class="fc" id="L27">class AccountEmail(override val value: String) : StringValueObject() {</span>
     //FIXME validate email
-<span class="fc" id="L30">    internal object Serializer : StringValueObjectSerializer&lt;AccountEmail&gt;(::AccountEmail)</span>
+<span class="fc" id="L29">    internal object Serializer : StringValueObjectSerializer&lt;AccountEmail&gt;(::AccountEmail)</span>
 }
 
 enum class AccountType {
-<span class="fc" id="L34">    Enjoyer,</span>
-<span class="fc" id="L35">    Root,</span>
-<span class="fc" id="L36">    Runner</span>
+<span class="fc" id="L33">    Anonymous,</span>
+<span class="fc" id="L34">    Root,</span>
+<span class="fc" id="L35">    Runner,</span>
+<span class="fc" id="L36">    Service,</span>
+<span class="fc" id="L37">    User</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

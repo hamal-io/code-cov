@@ -37,7 +37,7 @@ import kotlin.concurrent.withLock
 <span class="nc" id="L37">    )</span>
 
 <span class="nc" id="L39">    override fun toString(): String {</span>
-<span class="nc" id="L40">        return &quot;$value&quot;</span>
+<span class="nc" id="L40">        return value.toString(16)</span>
 <span class="nc" id="L41">    }</span>
 
     object Serializer : KSerializer&lt;SnowflakeId&gt; {

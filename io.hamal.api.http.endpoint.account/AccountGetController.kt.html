@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 <span class="fc" id="L15">    private val getAccount: AccountGetPort</span>
 ) {
     @GetMapping(&quot;/v1/accounts/{accountId}&quot;)
-    fun getAccount(
+    fun get(
         @PathVariable(&quot;accountId&quot;) accountId: AccountId,
     ): ResponseEntity&lt;ApiAccount&gt; {
 <span class="nc" id="L21">        return retry {</span>
