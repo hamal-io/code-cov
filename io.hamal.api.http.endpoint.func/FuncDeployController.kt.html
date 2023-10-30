@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FuncDeployController.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.api.http.endpoint.func</a> &gt; <span class="el_source">FuncDeployController.kt</span></div><h1>FuncDeployController.kt</h1><pre class="source lang-java linenums">package io.hamal.api.http.endpoint.func
 
+import io.hamal.api.http.endpoint.accepted
 import io.hamal.core.adapter.FuncDeployPort
 import io.hamal.core.component.Retry
 import io.hamal.lib.domain.vo.CodeVersion
@@ -19,18 +20,17 @@ import org.springframework.web.bind.annotation.RestController
 
 // - func does not exist -- exception
 // - func does exist but version does not -- exception
-<span class="fc" id="L22">@RestController</span>
-<span class="fc" id="L23">internal class FuncDeployController(</span>
-<span class="fc" id="L24">    private val retry: Retry,</span>
-<span class="fc" id="L25">    private val deployPort: FuncDeployPort,</span>
+<span class="fc" id="L23">@RestController</span>
+<span class="fc" id="L24">internal class FuncDeployController(</span>
+<span class="fc" id="L25">    private val retry: Retry,</span>
+<span class="fc" id="L26">    private val deployCodeVersion: FuncDeployPort,</span>
 ) {
     @PostMapping(&quot;/v1/funcs/{funcId}/deploy/{version}&quot;)
     fun deployCodeVersion(
         @PathVariable(&quot;funcId&quot;) funcId: FuncId,
         @PathVariable(&quot;version&quot;) codeVersion: CodeVersion,
-<span class="nc" id="L31">    ): ResponseEntity&lt;ApiSubmitted&gt; = retry {</span>
-//        deployCodeVersion(funcId, codeVersion) { it.accepted() }
-<span class="nc" id="L33">        TODO()</span>
-    }
+<span class="nc" id="L32">    ): ResponseEntity&lt;ApiSubmitted&gt; = retry {</span>
+<span class="nc" id="L33">        deployCodeVersion(funcId, codeVersion) { it.accepted() }</span>
+<span class="nc" id="L34">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

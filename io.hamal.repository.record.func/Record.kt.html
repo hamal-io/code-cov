@@ -16,7 +16,7 @@ import kotlinx.serialization.Transient
 <span class="fc" id="L16">    override var sequence: RecordSequence? = null</span>
 <span class="fc" id="L17">) : Record&lt;FuncId&gt;()</span>
 
-<span class="nc bnc" id="L19" title="All 13 branches missed.">@Serializable</span>
+<span class="nc bnc" id="L19" title="All 14 branches missed.">@Serializable</span>
 @SerialName(&quot;FCR&quot;)
 <span class="fc" id="L21">data class FuncCreationRecord(</span>
 <span class="fc" id="L22">    override val entityId: FuncId,</span>
@@ -25,22 +25,26 @@ import kotlinx.serialization.Transient
 <span class="fc" id="L25">    val namespaceId: NamespaceId,</span>
 <span class="fc" id="L26">    val name: FuncName,</span>
 <span class="fc" id="L27">    val inputs: FuncInputs,</span>
-<span class="fc" id="L28">    val code: FuncCode</span>
-<span class="pc" id="L29">) : FuncRecord()</span>
+<span class="fc" id="L28">    val codeId: CodeId,</span>
+<span class="fc" id="L29">    val codeVersion: CodeVersion</span>
+<span class="pc" id="L30">) : FuncRecord()</span>
 
-<span class="nc bnc" id="L31" title="All 11 branches missed.">@Serializable</span>
+<span class="nc bnc" id="L32" title="All 12 branches missed.">@Serializable</span>
 @SerialName(&quot;FUR&quot;)
-<span class="fc" id="L33">data class FuncUpdatedRecord(</span>
-<span class="fc" id="L34">    override val entityId: FuncId,</span>
-<span class="fc" id="L35">    override val cmdId: CmdId,</span>
-<span class="fc" id="L36">    val name: FuncName,</span>
-<span class="fc" id="L37">    val inputs: FuncInputs,</span>
-<span class="fc" id="L38">    val code: FuncCode</span>
-<span class="pc" id="L39">) : FuncRecord()</span>
+<span class="fc" id="L34">data class FuncUpdatedRecord(</span>
+<span class="fc" id="L35">    override val entityId: FuncId,</span>
+<span class="fc" id="L36">    override val cmdId: CmdId,</span>
+<span class="fc" id="L37">    val name: FuncName,</span>
+<span class="fc" id="L38">    val inputs: FuncInputs,</span>
+<span class="fc" id="L39">    val codeId: CodeId,</span>
+<span class="fc" id="L40">    val codeVersion: CodeVersion</span>
+<span class="pc" id="L41">) : FuncRecord()</span>
 
-// FIXME-53 Add FuncDeploymentRecord(
-//      override val entityId: FuncId,
-//      override val cmdId: CmdId,
-//      val version: CodeVersion
-//)
+
+<span class="nc bnc" id="L44" title="All 9 branches missed.">@Serializable</span>
+<span class="nc" id="L45">data class FuncDeploymentRecord(</span>
+<span class="nc" id="L46">    override val entityId: FuncId,</span>
+<span class="nc" id="L47">    override val cmdId: CmdId,</span>
+<span class="nc" id="L48">    val version: CodeVersion</span>
+<span class="nc" id="L49">) : FuncRecord()</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
