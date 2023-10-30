@@ -29,7 +29,7 @@ private fun UpdateFuncHandler.updateFunc(req: FuncUpdateSubmitted): Func {
 <span class="fc" id="L29">    val func = funcRepository.get(req.id)</span>
 
 <span class="fc bfc" id="L31" title="All 2 branches covered.">    if (req.deployedVersion != null) {</span>
-<span class="fc" id="L32">        deployedVersionUpdate(req, func)</span>
+<span class="fc" id="L32">        return deployedVersionUpdate(req, func)</span>
     }
 
 <span class="fc" id="L35">    val code = codeCmdRepository.update(</span>
@@ -57,11 +57,11 @@ private fun UpdateFuncHandler.updateFunc(req: FuncUpdateSubmitted): Func {
 
 private fun UpdateFuncHandler.deployedVersionUpdate(req: FuncUpdateSubmitted, func: Func): Func {
 <span class="fc" id="L59">    return funcRepository.update(</span>
-<span class="fc" id="L60">        req.id,</span>
+<span class="fc" id="L60">        func.id,</span>
 <span class="fc" id="L61">        UpdateCmd(</span>
 <span class="fc" id="L62">            id = req.cmdId(),</span>
-<span class="fc" id="L63">            name = func.name,</span>
-<span class="fc" id="L64">            inputs = func.inputs,</span>
+<span class="fc" id="L63">            name = null,</span>
+<span class="fc" id="L64">            inputs = null,</span>
 <span class="fc" id="L65">            code = FuncCode(</span>
 <span class="fc" id="L66">                id = func.code.id,</span>
 <span class="fc" id="L67">                version = func.code.version,</span>
