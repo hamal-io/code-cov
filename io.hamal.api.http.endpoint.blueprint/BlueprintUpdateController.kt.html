@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.RestController
 ) {
     @PatchMapping(&quot;/v1/blueprints/{bpId}&quot;)
     fun updateBlueprint(
-        @PathVariable(&quot;bpId&quot;) blueprintId: BlueprintId,
+        @PathVariable(&quot;bpId&quot;) bpId: BlueprintId,
         @RequestBody req: ApiUpdateBlueprintReq
 <span class="fc" id="L25">    ): ResponseEntity&lt;ApiSubmitted&gt; = retry {</span>
-<span class="fc" id="L26">        updateBlueprint(blueprintId, req, BlueprintUpdateSubmitted::accepted)</span>
+<span class="fc" id="L26">        updateBlueprint(bpId, req, BlueprintUpdateSubmitted::accepted)</span>
 <span class="fc" id="L27">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

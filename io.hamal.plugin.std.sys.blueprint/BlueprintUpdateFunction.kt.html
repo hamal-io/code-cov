@@ -4,9 +4,9 @@ import io.hamal.lib.domain.vo.BlueprintId
 import io.hamal.lib.domain.vo.BlueprintInputs
 import io.hamal.lib.domain.vo.BlueprintName
 import io.hamal.lib.domain.vo.CodeValue
-import io.hamal.lib.kua.function.Function2In2Out
+import io.hamal.lib.kua.function.Function1In2Out
 import io.hamal.lib.kua.function.FunctionContext
-import io.hamal.lib.kua.function.FunctionInput2Schema
+import io.hamal.lib.kua.function.FunctionInput1Schema
 import io.hamal.lib.kua.function.FunctionOutput2Schema
 import io.hamal.lib.kua.type.ErrorType
 import io.hamal.lib.kua.type.MapType
@@ -16,19 +16,19 @@ import io.hamal.lib.sdk.api.ApiUpdateBlueprintReq
 
 <span class="nc" id="L17">class BlueprintUpdateFunction(</span>
 <span class="nc" id="L18">    private val sdk: ApiSdk</span>
-<span class="nc" id="L19">) : Function2In2Out&lt;StringType, MapType, ErrorType, MapType&gt;(</span>
-<span class="nc" id="L20">    FunctionInput2Schema(StringType::class, MapType::class),</span>
+<span class="nc" id="L19">) : Function1In2Out&lt;MapType, ErrorType, MapType&gt;(</span>
+<span class="nc" id="L20">    FunctionInput1Schema(MapType::class),</span>
 <span class="nc" id="L21">    FunctionOutput2Schema(ErrorType::class, MapType::class)</span>
 ) {
 
-    override fun invoke(ctx: FunctionContext, arg1: StringType, arg2: MapType): Pair&lt;ErrorType?, MapType?&gt; {
+    override fun invoke(ctx: FunctionContext, arg1: MapType): Pair&lt;ErrorType?, MapType?&gt; {
 <span class="nc" id="L25">        return try {</span>
 <span class="nc" id="L26">            val res = sdk.blueprint.update(</span>
-<span class="nc" id="L27">                BlueprintId(arg1.value),</span>
+<span class="nc" id="L27">                BlueprintId(arg1.getString(&quot;id&quot;)),</span>
 <span class="nc" id="L28">                ApiUpdateBlueprintReq(</span>
-<span class="nc" id="L29">                    name = BlueprintName(arg2.getString(&quot;name&quot;)),</span>
+<span class="nc" id="L29">                    name = BlueprintName(arg1.getString(&quot;name&quot;)),</span>
 <span class="nc" id="L30">                    inputs = BlueprintInputs(),</span>
-<span class="nc" id="L31">                    value = CodeValue(arg2.getString(&quot;value&quot;))</span>
+<span class="nc" id="L31">                    value = CodeValue(arg1.getString(&quot;value&quot;))</span>
                 )
             )
 

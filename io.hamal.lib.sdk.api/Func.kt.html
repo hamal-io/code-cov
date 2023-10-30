@@ -38,113 +38,130 @@ import kotlinx.serialization.Serializable
 <span class="pc" id="L38">    override val code: CodeValue? = null,</span>
 <span class="pc" id="L39">) : UpdateFuncReq</span>
 
-<span class="pc bpc" id="L41" title="2 of 9 branches missed.">@Serializable</span>
-<span class="fc" id="L42">data class ApiFuncUpdateSubmitted(</span>
-<span class="fc" id="L43">    override val id: ReqId,</span>
-<span class="fc" id="L44">    override val status: ReqStatus,</span>
-<span class="fc" id="L45">    val funcId: FuncId</span>
-<span class="fc" id="L46">) : ApiSubmitted</span>
+/*@Serializable
+data class ApiDeploymentSubmitted(
+    override val id: ReqId,
+    override val status: ReqStatus,
+    val funcId: FuncId,
+    val deployedVersion: CodeVersion
+) : ApiSubmitted*/
 
-<span class="pc bpc" id="L48" title="10 of 20 branches missed.">@Serializable</span>
-<span class="pc" id="L49">data class ApiFuncInvokeReq(</span>
-<span class="pc" id="L50">    override val correlationId: CorrelationId? = null,</span>
-<span class="pc" id="L51">    override val inputs: InvocationInputs? = null,</span>
-<span class="pc" id="L52">) : InvokeFuncReq</span>
+<span class="pc bpc" id="L49" title="2 of 9 branches missed.">@Serializable</span>
+<span class="fc" id="L50">data class ApiFuncUpdateSubmitted(</span>
+<span class="fc" id="L51">    override val id: ReqId,</span>
+<span class="fc" id="L52">    override val status: ReqStatus,</span>
+<span class="fc" id="L53">    val funcId: FuncId</span>
+<span class="fc" id="L54">) : ApiSubmitted</span>
 
-<span class="pc bpc" id="L54" title="2 of 7 branches missed.">@Serializable</span>
-<span class="fc" id="L55">data class ApiFuncList(</span>
-<span class="fc" id="L56">    val funcs: List&lt;Func&gt;</span>
+<span class="pc bpc" id="L56" title="10 of 20 branches missed.">@Serializable</span>
+<span class="pc" id="L57">data class ApiFuncInvokeReq(</span>
+<span class="pc" id="L58">    override val correlationId: CorrelationId? = null,</span>
+<span class="pc" id="L59">    override val inputs: InvocationInputs? = null,</span>
+<span class="pc" id="L60">) : InvokeFuncReq</span>
+
+<span class="pc bpc" id="L62" title="2 of 7 branches missed.">@Serializable</span>
+<span class="fc" id="L63">data class ApiFuncList(</span>
+<span class="fc" id="L64">    val funcs: List&lt;Func&gt;</span>
 ) {
-<span class="pc bpc" id="L58" title="2 of 9 branches missed.">    @Serializable</span>
-<span class="fc" id="L59">    data class Func(</span>
-<span class="fc" id="L60">        val id: FuncId,</span>
-<span class="fc" id="L61">        val namespace: Namespace,</span>
-<span class="fc" id="L62">        val name: FuncName</span>
+<span class="pc bpc" id="L66" title="2 of 9 branches missed.">    @Serializable</span>
+<span class="fc" id="L67">    data class Func(</span>
+<span class="fc" id="L68">        val id: FuncId,</span>
+<span class="fc" id="L69">        val namespace: Namespace,</span>
+<span class="fc" id="L70">        val name: FuncName</span>
     ) {
-<span class="pc bpc" id="L64" title="2 of 8 branches missed.">        @Serializable</span>
-<span class="fc" id="L65">        data class Namespace(</span>
-<span class="pc" id="L66">            val id: NamespaceId,</span>
-<span class="fc" id="L67">            val name: NamespaceName</span>
-<span class="fc" id="L68">        )</span>
-<span class="fc" id="L69">    }</span>
-<span class="fc" id="L70">}</span>
+<span class="pc bpc" id="L72" title="2 of 8 branches missed.">        @Serializable</span>
+<span class="fc" id="L73">        data class Namespace(</span>
+<span class="pc" id="L74">            val id: NamespaceId,</span>
+<span class="fc" id="L75">            val name: NamespaceName</span>
+<span class="fc" id="L76">        )</span>
+<span class="fc" id="L77">    }</span>
+<span class="fc" id="L78">}</span>
 
 
-<span class="pc bpc" id="L73" title="2 of 11 branches missed.">@Serializable</span>
-<span class="fc" id="L74">data class ApiFunc(</span>
-<span class="fc" id="L75">    val id: FuncId,</span>
-<span class="fc" id="L76">    val namespace: Namespace,</span>
-<span class="fc" id="L77">    val name: FuncName,</span>
-<span class="fc" id="L78">    val inputs: FuncInputs,</span>
-<span class="fc" id="L79">    val code: Code</span>
+<span class="pc bpc" id="L81" title="2 of 11 branches missed.">@Serializable</span>
+<span class="fc" id="L82">data class ApiFunc(</span>
+<span class="fc" id="L83">    val id: FuncId,</span>
+<span class="fc" id="L84">    val namespace: Namespace,</span>
+<span class="fc" id="L85">    val name: FuncName,</span>
+<span class="fc" id="L86">    val inputs: FuncInputs,</span>
+<span class="fc" id="L87">    val code: Code</span>
 ) {
-<span class="pc bpc" id="L81" title="2 of 8 branches missed.">    @Serializable</span>
-<span class="fc" id="L82">    data class Namespace(</span>
-<span class="pc" id="L83">        val id: NamespaceId,</span>
-<span class="fc" id="L84">        val name: NamespaceName</span>
-<span class="fc" id="L85">    )</span>
+<span class="pc bpc" id="L89" title="2 of 8 branches missed.">    @Serializable</span>
+<span class="fc" id="L90">    data class Namespace(</span>
+<span class="pc" id="L91">        val id: NamespaceId,</span>
+<span class="fc" id="L92">        val name: NamespaceName</span>
+<span class="fc" id="L93">    )</span>
 
-<span class="pc bpc" id="L87" title="2 of 9 branches missed.">    @Serializable</span>
-<span class="fc" id="L88">    data class Code(</span>
-<span class="pc" id="L89">        val id: CodeId,</span>
-<span class="fc" id="L90">        val version: CodeVersion,</span>
-<span class="fc" id="L91">        val value: CodeValue</span>
-<span class="fc" id="L92">    )</span>
-<span class="fc" id="L93">}</span>
+<span class="pc bpc" id="L95" title="2 of 10 branches missed.">    @Serializable</span>
+<span class="fc" id="L96">    data class Code(</span>
+<span class="pc" id="L97">        val id: CodeId,</span>
+<span class="fc" id="L98">        val version: CodeVersion,</span>
+<span class="fc" id="L99">        val value: CodeValue,</span>
+<span class="pc" id="L100">        val deployedVersion: CodeVersion</span>
+<span class="fc" id="L101">    )</span>
+<span class="fc" id="L102">}</span>
 
 interface ApiFuncService {
     fun create(namespaceId: NamespaceId, createFuncReq: ApiFuncCreateReq): ApiFuncCreateSubmitted
+    fun deploy(funcId: FuncId, version: CodeVersion): ApiFuncUpdateSubmitted
     fun list(query: FuncQuery): List&lt;ApiFuncList.Func&gt;
     fun get(funcId: FuncId): ApiFunc
     fun invoke(funcId: FuncId, req: ApiFuncInvokeReq): ApiExecInvokeSubmitted
 
-<span class="nc" id="L101">    data class FuncQuery(</span>
-<span class="nc" id="L102">        var afterId: FuncId = FuncId(SnowflakeId(Long.MAX_VALUE)),</span>
-<span class="nc" id="L103">        var limit: Limit = Limit(25),</span>
-<span class="nc" id="L104">        var funcIds: List&lt;FuncId&gt; = listOf(),</span>
-<span class="nc" id="L105">        var namespaceIds: List&lt;NamespaceId&gt; = listOf(),</span>
-<span class="nc" id="L106">        var groupIds: List&lt;GroupId&gt; = listOf()</span>
+<span class="nc" id="L111">    data class FuncQuery(</span>
+<span class="nc" id="L112">        var afterId: FuncId = FuncId(SnowflakeId(Long.MAX_VALUE)),</span>
+<span class="nc" id="L113">        var limit: Limit = Limit(25),</span>
+<span class="nc" id="L114">        var funcIds: List&lt;FuncId&gt; = listOf(),</span>
+<span class="nc" id="L115">        var namespaceIds: List&lt;NamespaceId&gt; = listOf(),</span>
+<span class="nc" id="L116">        var groupIds: List&lt;GroupId&gt; = listOf()</span>
     ) {
         fun setRequestParameters(req: HttpRequest) {
-<span class="nc" id="L109">            req.parameter(&quot;after_id&quot;, afterId)</span>
-<span class="nc" id="L110">            req.parameter(&quot;limit&quot;, limit)</span>
-<span class="nc bnc" id="L111" title="All 4 branches missed.">            if (funcIds.isNotEmpty()) req.parameter(&quot;func_ids&quot;, funcIds)</span>
-<span class="nc bnc" id="L112" title="All 4 branches missed.">            if (namespaceIds.isNotEmpty()) req.parameter(&quot;namespace_ids&quot;, namespaceIds)</span>
-<span class="nc bnc" id="L113" title="All 4 branches missed.">            if (groupIds.isNotEmpty()) req.parameter(&quot;group_ids&quot;, groupIds)</span>
-<span class="nc" id="L114">        }</span>
-<span class="nc" id="L115">    }</span>
+<span class="nc" id="L119">            req.parameter(&quot;after_id&quot;, afterId)</span>
+<span class="nc" id="L120">            req.parameter(&quot;limit&quot;, limit)</span>
+<span class="nc bnc" id="L121" title="All 4 branches missed.">            if (funcIds.isNotEmpty()) req.parameter(&quot;func_ids&quot;, funcIds)</span>
+<span class="nc bnc" id="L122" title="All 4 branches missed.">            if (namespaceIds.isNotEmpty()) req.parameter(&quot;namespace_ids&quot;, namespaceIds)</span>
+<span class="nc bnc" id="L123" title="All 4 branches missed.">            if (groupIds.isNotEmpty()) req.parameter(&quot;group_ids&quot;, groupIds)</span>
+<span class="nc" id="L124">        }</span>
+<span class="nc" id="L125">    }</span>
 }
 
-<span class="nc" id="L118">internal class ApiFuncServiceImpl(</span>
-<span class="nc" id="L119">    private val template: HttpTemplateImpl</span>
+<span class="nc" id="L128">internal class ApiFuncServiceImpl(</span>
+<span class="nc" id="L129">    private val template: HttpTemplateImpl</span>
 ) : ApiFuncService {
 
     override fun create(namespaceId: NamespaceId, createFuncReq: ApiFuncCreateReq) =
-<span class="nc" id="L123">        template.post(&quot;/v1/namespaces/{namespaceId}/funcs&quot;)</span>
-<span class="nc" id="L124">            .path(&quot;namespaceId&quot;, namespaceId)</span>
-<span class="nc" id="L125">            .body(createFuncReq)</span>
-<span class="nc" id="L126">            .execute()</span>
-<span class="nc" id="L127">            .fold(ApiFuncCreateSubmitted::class)</span>
+<span class="nc" id="L133">        template.post(&quot;/v1/namespaces/{namespaceId}/funcs&quot;)</span>
+<span class="nc" id="L134">            .path(&quot;namespaceId&quot;, namespaceId)</span>
+<span class="nc" id="L135">            .body(createFuncReq)</span>
+<span class="nc" id="L136">            .execute()</span>
+<span class="nc" id="L137">            .fold(ApiFuncCreateSubmitted::class)</span>
+
+    override fun deploy(funcId: FuncId, version: CodeVersion): ApiFuncUpdateSubmitted =
+<span class="nc" id="L140">        template.post(&quot;/v1/funcs/{funcId}/deploy/{version}&quot;)</span>
+<span class="nc" id="L141">            .path(&quot;funcId&quot;, funcId)</span>
+<span class="nc" id="L142">            .path(&quot;version&quot;, version.value.toString())</span>
+<span class="nc" id="L143">            .execute()</span>
+<span class="nc" id="L144">            .fold(ApiFuncUpdateSubmitted::class)</span>
 
     override fun list(query: FuncQuery): List&lt;ApiFuncList.Func&gt; =
-<span class="nc" id="L130">        template.get(&quot;/v1/funcs&quot;)</span>
-<span class="nc" id="L131">            .also(query::setRequestParameters)</span>
-<span class="nc" id="L132">            .execute()</span>
-<span class="nc" id="L133">            .fold(ApiFuncList::class)</span>
-<span class="nc" id="L134">            .funcs</span>
+<span class="nc" id="L147">        template.get(&quot;/v1/funcs&quot;)</span>
+<span class="nc" id="L148">            .also(query::setRequestParameters)</span>
+<span class="nc" id="L149">            .execute()</span>
+<span class="nc" id="L150">            .fold(ApiFuncList::class)</span>
+<span class="nc" id="L151">            .funcs</span>
 
     override fun get(funcId: FuncId) =
-<span class="nc" id="L137">        template.get(&quot;/v1/funcs/{funcId}&quot;)</span>
-<span class="nc" id="L138">            .path(&quot;funcId&quot;, funcId)</span>
-<span class="nc" id="L139">            .execute()</span>
-<span class="nc" id="L140">            .fold(ApiFunc::class)</span>
+<span class="nc" id="L154">        template.get(&quot;/v1/funcs/{funcId}&quot;)</span>
+<span class="nc" id="L155">            .path(&quot;funcId&quot;, funcId)</span>
+<span class="nc" id="L156">            .execute()</span>
+<span class="nc" id="L157">            .fold(ApiFunc::class)</span>
 
     override fun invoke(funcId: FuncId, req: ApiFuncInvokeReq) =
-<span class="nc" id="L143">        template.post(&quot;/v1/funcs/{funcId}/invoke&quot;)</span>
-<span class="nc" id="L144">            .path(&quot;funcId&quot;, funcId)</span>
-<span class="nc" id="L145">            .body(req)</span>
-<span class="nc" id="L146">            .execute()</span>
-<span class="nc" id="L147">            .fold(ApiExecInvokeSubmitted::class)</span>
+<span class="nc" id="L160">        template.post(&quot;/v1/funcs/{funcId}/invoke&quot;)</span>
+<span class="nc" id="L161">            .path(&quot;funcId&quot;, funcId)</span>
+<span class="nc" id="L162">            .body(req)</span>
+<span class="nc" id="L163">            .execute()</span>
+<span class="nc" id="L164">            .fold(ApiExecInvokeSubmitted::class)</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

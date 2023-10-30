@@ -248,11 +248,11 @@ import org.springframework.stereotype.Component
 <span class="fc" id="L248">        creatorId = accountId</span>
 <span class="fc" id="L249">    ).also(reqCmdRepository::queue)</span>
 
-<span class="fc" id="L251">    operator fun invoke(blueprintId: BlueprintId, req: UpdateBlueprintReq) = BlueprintUpdateSubmitted(</span>
+<span class="fc" id="L251">    operator fun invoke(bpId: BlueprintId, req: UpdateBlueprintReq) = BlueprintUpdateSubmitted(</span>
 <span class="fc" id="L252">        reqId = generateDomainId(::ReqId),</span>
 <span class="fc" id="L253">        status = Submitted,</span>
-<span class="fc" id="L254">        groupId = blueprintQueryRepository.get(blueprintId).groupId,</span>
-<span class="fc" id="L255">        id = blueprintId,</span>
+<span class="fc" id="L254">        groupId = blueprintQueryRepository.get(bpId).groupId,</span>
+<span class="fc" id="L255">        id = bpId,</span>
 <span class="fc" id="L256">        name = req.name,</span>
 <span class="fc" id="L257">        inputs = req.inputs,</span>
 <span class="fc" id="L258">        value = req.value,</span>

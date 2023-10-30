@@ -28,7 +28,7 @@ interface BlueprintGetPort {
 
 interface BlueprintUpdatePort {
     operator fun &lt;T : Any&gt; invoke(
-        blueprintId: BlueprintId,
+        bpId: BlueprintId,
         req: UpdateBlueprintReq,
         responseHandler: (BlueprintUpdateSubmitted) -&gt; T
     ): T
@@ -55,12 +55,12 @@ interface BlueprintPort : BlueprintCreatePort, BlueprintGetPort, BlueprintUpdate
     }
 
     override fun &lt;T : Any&gt; invoke(
-        blueprintId: BlueprintId,
+        bpId: BlueprintId,
         req: UpdateBlueprintReq,
         responseHandler: (BlueprintUpdateSubmitted) -&gt; T
     ): T {
-<span class="fc" id="L62">        ensureBlueprintExists(blueprintId)</span>
-<span class="fc" id="L63">        return responseHandler(submitRequest(blueprintId, req))</span>
+<span class="fc" id="L62">        ensureBlueprintExists(bpId)</span>
+<span class="fc" id="L63">        return responseHandler(submitRequest(bpId, req))</span>
     }
 
 <span class="fc" id="L66">    private fun ensureBlueprintExists(blueprintId: BlueprintId) = blueprintQueryRepository.get(blueprintId)</span>
