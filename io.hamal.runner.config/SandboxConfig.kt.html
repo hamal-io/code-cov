@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SandboxConfig.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.runner.config</a> &gt; <span class="el_source">SandboxConfig.kt</span></div><h1>SandboxConfig.kt</h1><pre class="source lang-java linenums">package io.hamal.runner.config
 
+import io.hamal.lib.domain.vo.AuthToken
+import io.hamal.lib.domain.vo.ExecToken
 import io.hamal.lib.kua.NativeLoader
 import io.hamal.lib.kua.NativeLoader.Preference.Jar
 import io.hamal.lib.kua.Sandbox
@@ -17,37 +19,40 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 
-<span class="nc" id="L20">@Configuration</span>
+<span class="nc" id="L22">@Configuration</span>
 @Profile(&quot;!test&quot;)
-<span class="nc" id="L22">open class SandboxConfig {</span>
+<span class="nc" id="L24">open class SandboxConfig {</span>
     @Bean
     open fun sandboxFactory(@Value(&quot;\${io.hamal.runner.api.host}&quot;) apiHost: String): SandboxFactory =
-<span class="nc" id="L25">        RunnerSandboxFactory(apiHost)</span>
+<span class="nc" id="L27">        RunnerSandboxFactory(apiHost)</span>
 }
 
 interface SandboxFactory {
     fun create(ctx: SandboxContext): Sandbox
 }
 
-<span class="nc" id="L32">class RunnerSandboxFactory(</span>
-<span class="nc" id="L33">    private val apiHost: String,</span>
+<span class="nc" id="L34">class RunnerSandboxFactory(</span>
+<span class="nc" id="L35">    private val apiHost: String,</span>
 ) : SandboxFactory {
     override fun create(ctx: SandboxContext): Sandbox {
-<span class="nc" id="L36">        NativeLoader.load(Jar)</span>
+<span class="nc" id="L38">        NativeLoader.load(Jar)</span>
 
-<span class="nc" id="L38">        val sdk = ApiSdkImpl(apiHost)</span>
+<span class="nc" id="L40">        val sdk = ApiSdkImpl(</span>
+<span class="nc" id="L41">            apiHost = apiHost,</span>
+<span class="nc" id="L42">            token = AuthToken(&quot;Bearer ${ctx[ExecToken::class].value}&quot;)</span>
+        )
 
-<span class="nc" id="L40">        return Sandbox(ctx)</span>
-<span class="nc" id="L41">            .register(</span>
-<span class="nc" id="L42">                HttpPluginFactory(),</span>
-<span class="nc" id="L43">                LogPluginFactory(sdk.execLog),</span>
-<span class="nc" id="L44">                DebugPluginFactory(),</span>
-<span class="nc" id="L45">                SysPluginFactory(sdk),</span>
-<span class="nc" id="L46">                EthPluginFactory()</span>
+<span class="nc" id="L45">        return Sandbox(ctx)</span>
+<span class="nc" id="L46">            .register(</span>
+<span class="nc" id="L47">                HttpPluginFactory(),</span>
+<span class="nc" id="L48">                LogPluginFactory(sdk.execLog),</span>
+<span class="nc" id="L49">                DebugPluginFactory(),</span>
+<span class="nc" id="L50">                SysPluginFactory(sdk),</span>
+<span class="nc" id="L51">                EthPluginFactory()</span>
             )
-<span class="nc" id="L48">            .register(</span>
-<span class="nc" id="L49">                DecimalScriptFactory,</span>
-<span class="nc" id="L50">                TelegramScriptFactory</span>
+<span class="nc" id="L53">            .register(</span>
+<span class="nc" id="L54">                DecimalScriptFactory,</span>
+<span class="nc" id="L55">                TelegramScriptFactory</span>
             )
     }
 }
