@@ -21,8 +21,8 @@ import org.springframework.stereotype.Component
 <span class="fc" id="L21">) : ReqHandler&lt;FuncUpdateSubmitted&gt;(FuncUpdateSubmitted::class) {</span>
 
     override fun invoke(req: FuncUpdateSubmitted) {
-<span class="fc bfc" id="L24" title="All 2 branches covered.">        if (req.deployedVersion != null) {</span>
-<span class="fc" id="L25">            deployedVersionUpdate(req).also { emitEvent(req.cmdId(), it) }</span>
+<span class="pc bpc" id="L24" title="1 of 2 branches missed.">        if (req.deployedVersion != null) {</span>
+<span class="nc" id="L25">            deployedVersionUpdate(req).also { emitEvent(req.cmdId(), it) }</span>
         }
 <span class="fc" id="L27">        updateFunc(req).also { emitEvent(req.cmdId(), it) }</span>
 <span class="fc" id="L28">    }</span>
@@ -55,17 +55,17 @@ private fun UpdateFuncHandler.updateFunc(req: FuncUpdateSubmitted): Func {
 
 
 private fun UpdateFuncHandler.deployedVersionUpdate(req: FuncUpdateSubmitted): Func {
-<span class="fc" id="L58">    val func = funcRepository.get(req.id)</span>
-<span class="fc" id="L59">    return funcRepository.update(</span>
-<span class="fc" id="L60">        func.id,</span>
-<span class="fc" id="L61">        UpdateCmd(</span>
-<span class="fc" id="L62">            id = req.cmdId(),</span>
-<span class="fc" id="L63">            name = null,</span>
-<span class="fc" id="L64">            inputs = null,</span>
-<span class="fc" id="L65">            code = FuncCode(</span>
-<span class="fc" id="L66">                id = func.code.id,</span>
-<span class="fc" id="L67">                version = func.code.version,</span>
-<span class="fc" id="L68">                deployedVersion = req.deployedVersion!!</span>
+<span class="nc" id="L58">    val func = funcRepository.get(req.id)</span>
+<span class="nc" id="L59">    return funcRepository.update(</span>
+<span class="nc" id="L60">        func.id,</span>
+<span class="nc" id="L61">        UpdateCmd(</span>
+<span class="nc" id="L62">            id = req.cmdId(),</span>
+<span class="nc" id="L63">            name = null,</span>
+<span class="nc" id="L64">            inputs = null,</span>
+<span class="nc" id="L65">            code = FuncCode(</span>
+<span class="nc" id="L66">                id = func.code.id,</span>
+<span class="nc" id="L67">                version = func.code.version,</span>
+<span class="nc" id="L68">                deployedVersion = req.deployedVersion!!</span>
             )
         )
     )

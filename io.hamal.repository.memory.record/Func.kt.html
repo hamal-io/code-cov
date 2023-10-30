@@ -91,8 +91,8 @@ internal object CurrentFuncProjection {
 
     override fun update(funcId: FuncId, cmd: FuncCmdRepository.UpdateCmd): Func {
 <span class="fc" id="L93">        return lock.withLock {</span>
-<span class="fc bfc" id="L94" title="All 2 branches covered.">            if (commandAlreadyApplied(cmd.id, funcId)) {</span>
-<span class="fc" id="L95">                versionOf(funcId, cmd.id)</span>
+<span class="pc bpc" id="L94" title="1 of 2 branches missed.">            if (commandAlreadyApplied(cmd.id, funcId)) {</span>
+<span class="nc" id="L95">                versionOf(funcId, cmd.id)</span>
             } else {
 <span class="fc" id="L97">                val currentVersion = versionOf(funcId, cmd.id)</span>
 <span class="fc" id="L98">                store(</span>

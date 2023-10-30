@@ -28,11 +28,12 @@ import io.hamal.lib.sdk.ApiSdk
 <span class="nc" id="L28">                mutableMapOf(</span>
 <span class="nc" id="L29">                    &quot;id&quot; to StringType(res.id.value.value.toString(16)),</span>
 <span class="nc" id="L30">                    &quot;status&quot; to StringType(res.status.name),</span>
-<span class="nc" id="L31">                    &quot;func_id_id&quot; to StringType(res.funcId.value.value.toString(16))</span>
+<span class="nc" id="L31">                    &quot;func_id&quot; to StringType(res.funcId.value.value.toString(16))</span>
+                    // FIXME-53 version
                 )
             )
-<span class="nc" id="L34">        } catch (t: Throwable) {</span>
-<span class="nc" id="L35">            ErrorType(t.message!!) to null</span>
+<span class="nc" id="L35">        } catch (t: Throwable) {</span>
+<span class="nc" id="L36">            ErrorType(t.message!!) to null</span>
         }
     }
 }

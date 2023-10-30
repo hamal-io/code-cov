@@ -3,32 +3,26 @@
 import io.hamal.api.http.endpoint.accepted
 import io.hamal.core.adapter.FuncUpdatePort
 import io.hamal.core.component.Retry
-import io.hamal.lib.domain.vo.CodeVersion
 import io.hamal.lib.domain.vo.FuncId
 import io.hamal.lib.sdk.api.ApiFuncUpdateReq
 import io.hamal.lib.sdk.api.ApiSubmitted
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.PatchMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RestController
 
-<span class="fc" id="L13">@RestController</span>
-<span class="fc" id="L14">internal class FuncUpdateController(</span>
-<span class="fc" id="L15">    private val retry: Retry,</span>
-<span class="fc" id="L16">    private val updateFunc: FuncUpdatePort,</span>
+<span class="fc" id="L15">@RestController</span>
+<span class="fc" id="L16">internal class FuncUpdateController(</span>
+<span class="fc" id="L17">    private val retry: Retry,</span>
+<span class="fc" id="L18">    private val updateFunc: FuncUpdatePort,</span>
 ) {
     @PatchMapping(&quot;/v1/funcs/{funcId}&quot;)
     fun updateFunc(
         @PathVariable(&quot;funcId&quot;) funcId: FuncId,
         @RequestBody req: ApiFuncUpdateReq
-<span class="fc" id="L22">    ): ResponseEntity&lt;ApiSubmitted&gt; = retry {</span>
-<span class="fc" id="L23">        updateFunc(funcId, req) { it.accepted() }</span>
-<span class="fc" id="L24">    }</span>
-
-    @PostMapping(&quot;/v1/funcs/{funcId}/deploy/{version}&quot;)
-    fun deployCodeVersion(
-        @PathVariable(&quot;funcId&quot;) funcId: FuncId,
-        @PathVariable(&quot;version&quot;) codeVersion: CodeVersion,
-<span class="fc" id="L30">    ): ResponseEntity&lt;ApiSubmitted&gt; = retry {</span>
-<span class="fc" id="L31">        updateFunc(funcId, codeVersion) { it.accepted() }</span>
-<span class="fc" id="L32">    }</span>
+<span class="fc" id="L24">    ): ResponseEntity&lt;ApiSubmitted&gt; = retry {</span>
+<span class="fc" id="L25">        updateFunc(funcId, req) { it.accepted() }</span>
+<span class="fc" id="L26">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

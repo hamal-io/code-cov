@@ -30,4 +30,13 @@ import kotlinx.serialization.Serializable
 <span class="fc" id="L30">    val code: CodeValue?,</span>
 <span class="fc" id="L31">    val deployedVersion: CodeVersion?</span>
 <span class="fc" id="L32">) : Submitted</span>
+
+<span class="pc bnc" id="L34" title="All 11 branches missed.">@Serializable</span>
+<span class="nc" id="L35">data class FuncDeploySubmitted(</span>
+<span class="nc" id="L36">    override val reqId: ReqId,</span>
+<span class="nc" id="L37">    override var status: ReqStatus,</span>
+<span class="nc" id="L38">    val groupId: GroupId,</span>
+<span class="nc" id="L39">    val id: FuncId,</span>
+<span class="nc" id="L40">    val versionToDeploy: CodeVersion</span>
+<span class="fc" id="L41">) : Submitted</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

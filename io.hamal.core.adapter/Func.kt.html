@@ -8,6 +8,7 @@ import io.hamal.repository.api.*
 import io.hamal.repository.api.FuncQueryRepository.FuncQuery
 import io.hamal.repository.api.submitted_req.ExecInvokeSubmitted
 import io.hamal.repository.api.submitted_req.FuncCreateSubmitted
+import io.hamal.repository.api.submitted_req.FuncDeploySubmitted
 import io.hamal.repository.api.submitted_req.FuncUpdateSubmitted
 import io.hamal.request.CreateFuncReq
 import io.hamal.request.InvokeFuncReq
@@ -38,6 +39,14 @@ interface FuncListPort {
     operator fun &lt;T : Any&gt; invoke(query: FuncQuery, responseHandler: (List&lt;Func&gt;, Map&lt;NamespaceId, Namespace&gt;) -&gt; T): T
 }
 
+interface FuncDeployPort {
+    operator fun &lt;T : Any&gt; invoke(
+        funcId: FuncId,
+        versionToDeploy: CodeVersion,
+        responseHandler: (FuncDeploySubmitted) -&gt; T
+    ): T
+}
+
 interface FuncUpdatePort {
     operator fun &lt;T : Any&gt; invoke(
         funcId: FuncId,
@@ -45,35 +54,30 @@ interface FuncUpdatePort {
         responseHandler: (FuncUpdateSubmitted) -&gt; T
     ): T
 
-    operator fun &lt;T : Any&gt; invoke(
-        funcId: FuncId,
-        deployedVersion: CodeVersion,
-        responseHandler: (FuncUpdateSubmitted) -&gt; T
-    ): T
 }
 
-interface FuncPort : FuncCreatePort, FuncGetPort, FuncInvokePort, FuncListPort, FuncUpdatePort
+interface FuncPort : FuncCreatePort, FuncDeployPort, FuncGetPort, FuncInvokePort, FuncListPort, FuncUpdatePort
 
-<span class="fc" id="L57">@Component</span>
-<span class="fc" id="L58">class FuncAdapter(</span>
-<span class="fc" id="L59">    private val submitRequest: SubmitRequest,</span>
-<span class="fc" id="L60">    private val funcQueryRepository: FuncQueryRepository,</span>
-<span class="fc" id="L61">    private val codeQueryRepository: CodeQueryRepository,</span>
-<span class="fc" id="L62">    private val namespaceQueryRepository: NamespaceQueryRepository</span>
+<span class="fc" id="L61">@Component</span>
+<span class="fc" id="L62">class FuncAdapter(</span>
+<span class="fc" id="L63">    private val submitRequest: SubmitRequest,</span>
+<span class="fc" id="L64">    private val funcQueryRepository: FuncQueryRepository,</span>
+<span class="fc" id="L65">    private val codeQueryRepository: CodeQueryRepository,</span>
+<span class="fc" id="L66">    private val namespaceQueryRepository: NamespaceQueryRepository</span>
 ) : FuncPort {
     override fun &lt;T : Any&gt; invoke(
         namespaceId: NamespaceId,
         req: CreateFuncReq,
         responseHandler: (FuncCreateSubmitted) -&gt; T
     ): T {
-<span class="fc" id="L69">        return responseHandler(submitRequest(namespaceId, req))</span>
+<span class="fc" id="L73">        return responseHandler(submitRequest(namespaceId, req))</span>
     }
 
     override fun &lt;T : Any&gt; invoke(funcId: FuncId, responseHandler: (Func, Code, Namespace) -&gt; T): T {
-<span class="fc" id="L73">        val func = funcQueryRepository.get(funcId)</span>
-<span class="fc" id="L74">        val code = codeQueryRepository.get(func.code.id)</span>
-<span class="fc" id="L75">        val namespaces = namespaceQueryRepository.get(func.namespaceId)</span>
-<span class="fc" id="L76">        return responseHandler(func, code, namespaces)</span>
+<span class="fc" id="L77">        val func = funcQueryRepository.get(funcId)</span>
+<span class="fc" id="L78">        val code = codeQueryRepository.get(func.code.id)</span>
+<span class="fc" id="L79">        val namespaces = namespaceQueryRepository.get(func.namespaceId)</span>
+<span class="fc" id="L80">        return responseHandler(func, code, namespaces)</span>
     }
 
     override fun &lt;T : Any&gt; invoke(
@@ -81,17 +85,17 @@ interface FuncPort : FuncCreatePort, FuncGetPort, FuncInvokePort, FuncListPort, 
         req: InvokeFuncReq,
         responseHandler: (ExecInvokeSubmitted) -&gt; T
     ): T {
-<span class="fc" id="L84">        return responseHandler(submitRequest(funcId, req))</span>
+<span class="fc" id="L88">        return responseHandler(submitRequest(funcId, req))</span>
     }
 
     override fun &lt;T : Any&gt; invoke(
         query: FuncQuery,
         responseHandler: (List&lt;Func&gt;, Map&lt;NamespaceId, Namespace&gt;) -&gt; T
     ): T {
-<span class="fc" id="L91">        val funcs = funcQueryRepository.list(query)</span>
-<span class="fc" id="L92">        val namespaces = namespaceQueryRepository.list(funcs.map(Func::namespaceId))</span>
-<span class="fc" id="L93">            .associateBy(Namespace::id)</span>
-<span class="fc" id="L94">        return responseHandler(funcs, namespaces)</span>
+<span class="fc" id="L95">        val funcs = funcQueryRepository.list(query)</span>
+<span class="fc" id="L96">        val namespaces = namespaceQueryRepository.list(funcs.map(Func::namespaceId))</span>
+<span class="fc" id="L97">            .associateBy(Namespace::id)</span>
+<span class="fc" id="L98">        return responseHandler(funcs, namespaces)</span>
     }
 
     override fun &lt;T : Any&gt; invoke(
@@ -99,21 +103,21 @@ interface FuncPort : FuncCreatePort, FuncGetPort, FuncInvokePort, FuncListPort, 
         req: UpdateFuncReq,
         responseHandler: (FuncUpdateSubmitted) -&gt; T
     ): T {
-<span class="fc" id="L102">        ensureFuncExists(funcId)</span>
-<span class="fc" id="L103">        return responseHandler(submitRequest(funcId, req))</span>
+<span class="fc" id="L106">        ensureFuncExists(funcId)</span>
+<span class="fc" id="L107">        return responseHandler(submitRequest(funcId, req))</span>
     }
 
     override fun &lt;T : Any&gt; invoke(
         funcId: FuncId,
-        deployedVersion: CodeVersion,
-        responseHandler: (FuncUpdateSubmitted) -&gt; T
+        versionToDeploy: CodeVersion,
+        responseHandler: (FuncDeploySubmitted) -&gt; T
     ): T {
-<span class="fc" id="L111">        ensureFuncExists(funcId)</span>
-<span class="fc" id="L112">        return responseHandler(submitRequest(funcId, deployedVersion))</span>
+<span class="nc" id="L115">        ensureFuncExists(funcId)// FIXME we dont have to check it here - its already tested in submitRequst()</span>
+<span class="nc" id="L116">        return responseHandler(submitRequest(funcId, versionToDeploy)) // FIXME-53</span>
     }
 
     private fun ensureFuncExists(funcId: FuncId) {
-<span class="fc" id="L116">        funcQueryRepository.get(funcId)</span>
-<span class="fc" id="L117">    }</span>
+<span class="fc" id="L120">        funcQueryRepository.get(funcId)</span>
+<span class="fc" id="L121">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

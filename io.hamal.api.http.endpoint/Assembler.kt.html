@@ -16,20 +16,20 @@ fun Submitted.accepted(): ResponseEntity&lt;ApiSubmitted&gt; =
 <span class="fc bfc" id="L16" title="All 2 branches covered.">    is ExtensionCreateSubmitted -&gt; ApiExtensionCreateSubmitted(reqId, status, id, groupId)</span>
 <span class="fc bfc" id="L17" title="All 2 branches covered.">    is ExtensionUpdateSubmitted -&gt; ApiExtensionUpdateSubmitted(reqId, status, id)</span>
 <span class="fc bfc" id="L18" title="All 2 branches covered.">    is FuncCreateSubmitted -&gt; ApiFuncCreateSubmitted(reqId, status, id, groupId, namespaceId)</span>
-<span class="fc bfc" id="L19" title="All 2 branches covered.">    is FuncUpdateSubmitted -&gt; ApiFuncUpdateSubmitted(reqId, status, id)</span>
-<span class="fc bfc" id="L20" title="All 2 branches covered.">    is HookCreateSubmitted -&gt; ApiHookCreateSubmitted(reqId, status, id, groupId, namespaceId)</span>
-<span class="fc bfc" id="L21" title="All 2 branches covered.">    is HookUpdateSubmitted -&gt; ApiHookUpdateSubmitted(reqId, status, id)</span>
-<span class="fc bfc" id="L22" title="All 2 branches covered.">    is NamespaceCreateSubmitted -&gt; ApiNamespaceCreateSubmitted(reqId, status, id, groupId)</span>
-<span class="fc bfc" id="L23" title="All 2 branches covered.">    is NamespaceUpdateSubmitted -&gt; ApiNamespaceUpdateSubmitted(reqId, status, id)</span>
-<span class="fc bfc" id="L24" title="All 2 branches covered.">    is StateSetSubmitted -&gt; ApiStateSetSubmitted(reqId, status)</span>
-<span class="fc bfc" id="L25" title="All 2 branches covered.">    is TopicAppendToSubmitted -&gt; ApiTopicAppendSubmitted(reqId, status, id)</span>
-<span class="fc bfc" id="L26" title="All 2 branches covered.">    is TopicCreateSubmitted -&gt; ApiTopicCreateSubmitted(reqId, status, id, groupId, namespaceId)</span>
-<span class="pc bpc" id="L27" title="1 of 2 branches missed.">    is TriggerCreateSubmitted -&gt; ApiTriggerCreateSubmitted(reqId, status, id, groupId, namespaceId)</span>
+<span class="pc bpc" id="L19" title="1 of 2 branches missed.">    is FuncDeploySubmitted -&gt; TODO() // FIXME-53</span>
+<span class="fc bfc" id="L20" title="All 2 branches covered.">    is FuncUpdateSubmitted -&gt; ApiFuncUpdateSubmitted(reqId, status, id)</span>
+<span class="fc bfc" id="L21" title="All 2 branches covered.">    is HookCreateSubmitted -&gt; ApiHookCreateSubmitted(reqId, status, id, groupId, namespaceId)</span>
+<span class="fc bfc" id="L22" title="All 2 branches covered.">    is HookUpdateSubmitted -&gt; ApiHookUpdateSubmitted(reqId, status, id)</span>
+<span class="fc bfc" id="L23" title="All 2 branches covered.">    is NamespaceCreateSubmitted -&gt; ApiNamespaceCreateSubmitted(reqId, status, id, groupId)</span>
+<span class="fc bfc" id="L24" title="All 2 branches covered.">    is NamespaceUpdateSubmitted -&gt; ApiNamespaceUpdateSubmitted(reqId, status, id)</span>
+<span class="fc bfc" id="L25" title="All 2 branches covered.">    is StateSetSubmitted -&gt; ApiStateSetSubmitted(reqId, status)</span>
+<span class="fc bfc" id="L26" title="All 2 branches covered.">    is TopicAppendToSubmitted -&gt; ApiTopicAppendSubmitted(reqId, status, id)</span>
+<span class="fc bfc" id="L27" title="All 2 branches covered.">    is TopicCreateSubmitted -&gt; ApiTopicCreateSubmitted(reqId, status, id, groupId, namespaceId)</span>
+<span class="pc bpc" id="L28" title="1 of 2 branches missed.">    is TriggerCreateSubmitted -&gt; ApiTriggerCreateSubmitted(reqId, status, id, groupId, namespaceId)</span>
 
-<span class="nc bnc" id="L29" title="All 2 branches missed.">    is TestSubmitted,</span>
-<span class="nc bnc" id="L30" title="All 2 branches missed.">    is ExecFailSubmitted,</span>
-<span class="nc bnc" id="L31" title="All 2 branches missed.">    is HookInvokeSubmitted,</span>
-<span class="nc" id="L32">    is ExecCompleteSubmitted -&gt; throw NotImplementedError()</span>
-
+<span class="nc bnc" id="L30" title="All 2 branches missed.">    is TestSubmitted,</span>
+<span class="nc bnc" id="L31" title="All 2 branches missed.">    is ExecFailSubmitted,</span>
+<span class="nc bnc" id="L32" title="All 2 branches missed.">    is HookInvokeSubmitted,</span>
+<span class="nc" id="L33">    is ExecCompleteSubmitted -&gt; throw NotImplementedError()</span>
 <span class="fc" id="L34">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
