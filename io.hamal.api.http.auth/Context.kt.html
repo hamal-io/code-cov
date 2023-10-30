@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Context.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.api.http.auth</a> &gt; <span class="el_source">Context.kt</span></div><h1>Context.kt</h1><pre class="source lang-java linenums">package io.hamal.api.http.auth
+
+import io.hamal.lib.domain.vo.AuthToken
+import io.hamal.repository.api.Account
+import io.hamal.repository.api.Auth
+
+<span class="fc" id="L7">data class AuthContext(</span>
+<span class="pc" id="L8">    val auth: Auth,</span>
+<span class="pc" id="L9">    val account: Account,</span>
+<span class="pc" id="L10">    val token: AuthToken</span>
+) {
+<span class="nc" id="L12">    val accountId get() = auth.accountId</span>
+}
+
+object AuthContextHolder {
+    fun set(context: AuthContext) {
+<span class="fc" id="L17">        store.set(context)</span>
+<span class="fc" id="L18">    }</span>
+
+<span class="nc" id="L20">    fun get(): AuthContext = store.get()!!</span>
+<span class="fc" id="L21">    fun clear() = store.remove()</span>
+<span class="fc" id="L22">    private val store = ThreadLocal&lt;AuthContext?&gt;()</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

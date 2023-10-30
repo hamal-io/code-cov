@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Snippet.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.repository.memory.record</a> &gt; <span class="el_source">Snippet.kt</span></div><h1>Snippet.kt</h1><pre class="source lang-java linenums">package io.hamal.repository.memory.record
+
+import io.hamal.lib.domain.vo.SnippetId
+import io.hamal.repository.api.Snippet
+import io.hamal.repository.api.SnippetCmdRepository.CreateCmd
+import io.hamal.repository.api.SnippetCmdRepository.UpdateCmd
+import io.hamal.repository.api.SnippetQueryRepository.SnippetQuery
+import io.hamal.repository.api.SnippetRepository
+import io.hamal.repository.record.snippet.CreateSnippetFromRecords
+import io.hamal.repository.record.snippet.SnippetCreationRecord
+import io.hamal.repository.record.snippet.SnippetRecord
+import io.hamal.repository.record.snippet.SnippetUpdatedRecord
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
+
+internal object CurrentSnippetProjection {
+<span class="fc" id="L17">    private val projection = mutableMapOf&lt;SnippetId, Snippet&gt;()</span>
+    fun apply(snippet: Snippet) {
+<span class="fc" id="L19">        projection[snippet.id] = snippet</span>
+<span class="fc" id="L20">    }</span>
+
+<span class="fc" id="L22">    fun find(snippetId: SnippetId): Snippet? = projection[snippetId]</span>
+
+    fun list(query: SnippetQuery): List&lt;Snippet&gt; {
+<span class="nc bnc" id="L25" title="All 4 branches missed.">        return projection.filter { query.snippetIds.isEmpty() || it.key in query.snippetIds }</span>
+<span class="nc" id="L26">            .map { it.value }</span>
+<span class="nc" id="L27">            .reversed()</span>
+<span class="nc" id="L28">            .asSequence()</span>
+<span class="nc bnc" id="L29" title="All 2 branches missed.">            .filter { if (query.groupIds.isEmpty()) true else query.groupIds.contains(it.groupId) }</span>
+<span class="nc bnc" id="L30" title="All 2 branches missed.">            .dropWhile { it.id &gt;= query.afterId }</span>
+<span class="nc" id="L31">            .take(query.limit.value)</span>
+<span class="nc" id="L32">            .toList()</span>
+    }
+
+    fun count(query: SnippetQuery): ULong {
+<span class="nc bnc" id="L36" title="All 4 branches missed.">        return projection.filter { query.snippetIds.isEmpty() || it.key in query.snippetIds }</span>
+<span class="nc" id="L37">            .map { it.value }</span>
+<span class="nc" id="L38">            .reversed()</span>
+<span class="nc" id="L39">            .asSequence()</span>
+<span class="nc bnc" id="L40" title="All 2 branches missed.">            .filter { if (query.groupIds.isEmpty()) true else query.groupIds.contains(it.groupId) }</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">            .dropWhile { it.id &gt;= query.afterId }</span>
+<span class="nc" id="L42">            .count()</span>
+<span class="nc" id="L43">            .toULong()</span>
+    }
+
+    fun clear() {
+<span class="fc" id="L47">        projection.clear()</span>
+<span class="fc" id="L48">    }</span>
+}
+
+<span class="pc" id="L51">class MemorySnippetRepository : MemoryRecordRepository&lt;SnippetId, SnippetRecord, Snippet&gt;(</span>
+<span class="fc" id="L52">    createDomainObject = CreateSnippetFromRecords,</span>
+    recordClass = SnippetRecord::class
+), SnippetRepository {
+<span class="fc" id="L55">    private val lock = ReentrantLock()</span>
+
+    override fun create(cmd: CreateCmd): Snippet {
+<span class="fc" id="L58">        return lock.withLock {</span>
+<span class="fc" id="L59">            val snippetId = cmd.snippetId</span>
+<span class="fc" id="L60">            val cmdId = cmd.id</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">            if (commandAlreadyApplied(cmdId, snippetId)) {</span>
+<span class="fc" id="L62">                versionOf(snippetId, cmd.id)</span>
+            } else {
+<span class="fc" id="L64">                store(</span>
+<span class="fc" id="L65">                    SnippetCreationRecord(</span>
+<span class="fc" id="L66">                        cmdId = cmd.id,</span>
+<span class="fc" id="L67">                        entityId = snippetId,</span>
+<span class="fc" id="L68">                        groupId = cmd.groupId,</span>
+<span class="fc" id="L69">                        name = cmd.name,</span>
+<span class="fc" id="L70">                        inputs = cmd.inputs,</span>
+<span class="fc" id="L71">                        value = cmd.value,</span>
+<span class="fc" id="L72">                        creatorId = cmd.creatorId</span>
+                    )
+                )
+<span class="fc" id="L75">                (currentVersion(snippetId)).also(CurrentSnippetProjection::apply)</span>
+            }
+        }
+    }
+
+    override fun update(snippetId: SnippetId, cmd: UpdateCmd): Snippet {
+<span class="fc" id="L81">        return lock.withLock {</span>
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">            if (commandAlreadyApplied(cmd.id, snippetId)) {</span>
+<span class="nc" id="L83">                versionOf(snippetId, cmd.id)</span>
+            } else {
+<span class="fc" id="L85">                val currentVersion = versionOf(snippetId, cmd.id)</span>
+<span class="fc" id="L86">                store(</span>
+<span class="fc" id="L87">                    SnippetUpdatedRecord(</span>
+<span class="fc" id="L88">                        entityId = snippetId,</span>
+<span class="fc" id="L89">                        cmdId = cmd.id,</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">                        name = cmd.name ?: currentVersion.name,</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">                        inputs = cmd.inputs ?: currentVersion.inputs,</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">                        value = cmd.value ?: currentVersion.value</span>
+                    )
+                )
+<span class="fc" id="L95">                (currentVersion(snippetId)).also(CurrentSnippetProjection::apply)</span>
+            }
+        }
+    }
+
+<span class="fc" id="L100">    override fun find(snippetId: SnippetId): Snippet? = CurrentSnippetProjection.find(snippetId)</span>
+
+<span class="nc" id="L102">    override fun list(query: SnippetQuery): List&lt;Snippet&gt; = CurrentSnippetProjection.list(query)</span>
+
+<span class="nc" id="L104">    override fun count(query: SnippetQuery): ULong = CurrentSnippetProjection.count(query)</span>
+
+    override fun clear() {
+<span class="fc" id="L107">        super.clear()</span>
+<span class="fc" id="L108">        CurrentSnippetProjection.clear()</span>
+<span class="fc" id="L109">    }</span>
+
+<span class="nc" id="L111">    override fun close() {}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

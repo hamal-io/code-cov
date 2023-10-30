@@ -75,11 +75,11 @@ import kotlin.concurrent.write
 <span class="nc" id="L75">    override fun close() {}</span>
 
     override fun find(authToken: AuthToken): Auth? {
-<span class="nc" id="L78">        return lock.read {</span>
-<span class="nc" id="L79">            projection.flatMap { it.value }</span>
-<span class="nc" id="L80">                .asSequence()</span>
-<span class="nc" id="L81">                .filterIsInstance&lt;TokenAuth&gt;()</span>
-<span class="nc bnc" id="L82" title="All 4 branches missed.">                .find { it.token == authToken }</span>
+<span class="fc" id="L78">        return lock.read {</span>
+<span class="fc" id="L79">            projection.flatMap { it.value }</span>
+<span class="fc" id="L80">                .asSequence()</span>
+<span class="fc" id="L81">                .filterIsInstance&lt;TokenAuth&gt;()</span>
+<span class="pc bpc" id="L82" title="2 of 4 branches missed.">                .find { it.token == authToken }</span>
         }
     }
 }

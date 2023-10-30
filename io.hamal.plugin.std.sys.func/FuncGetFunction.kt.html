@@ -30,13 +30,12 @@ import io.hamal.lib.sdk.ApiSdk
 <span class="nc" id="L30">                            &quot;name&quot; to StringType(func.name.value),</span>
 <span class="nc" id="L31">                            &quot;code&quot; to CodeType(func.code.value.value),</span>
 <span class="nc" id="L32">                            &quot;code_id&quot; to StringType(func.code.id.value.value.toString(16)),</span>
-<span class="nc" id="L33">                            &quot;code_version&quot; to NumberType(func.code.version.value),</span>
-<span class="nc" id="L34">                            &quot;code_deployed&quot; to NumberType(func.code.deployedVersion.value)</span>
+<span class="nc" id="L33">                            &quot;code_version&quot; to NumberType(func.code.version.value)</span>
                         )
                     )
                 }
-<span class="nc" id="L38">        } catch (t: Throwable) {</span>
-<span class="nc" id="L39">            ErrorType(t.message!!) to null</span>
+<span class="nc" id="L37">        } catch (t: Throwable) {</span>
+<span class="nc" id="L38">            ErrorType(t.message!!) to null</span>
         }
     }
 }

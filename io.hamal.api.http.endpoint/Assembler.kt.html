@@ -8,19 +8,19 @@ fun Submitted.accepted(): ResponseEntity&lt;ApiSubmitted&gt; =
 <span class="fc" id="L8">    ResponseEntity.accepted().body(toApiSubmitted())</span>
 
 <span class="fc" id="L10">fun Submitted.toApiSubmitted(): ApiSubmitted = when (this) {</span>
-<span class="pc bpc" id="L11" title="1 of 2 branches missed.">    is AccountCreateSubmitted -&gt; ApiTokenSubmitted(reqId, status, token)</span>
-<span class="pc bpc" id="L12" title="1 of 2 branches missed.">    is AuthLoginSubmitted -&gt; ApiTokenSubmitted(reqId, status, token)</span>
-<span class="fc bfc" id="L13" title="All 2 branches covered.">    is BlueprintCreateSubmitted -&gt; ApiBlueprintCreateSubmitted(reqId, status, id, groupId)</span>
-<span class="fc bfc" id="L14" title="All 2 branches covered.">    is BlueprintUpdateSubmitted -&gt; ApiBlueprintUpdateSubmitted(reqId, status, id)</span>
-<span class="fc bfc" id="L15" title="All 2 branches covered.">    is ExecInvokeSubmitted -&gt; ApiExecInvokeSubmitted(reqId, status, id, groupId, namespaceId)</span>
-<span class="fc bfc" id="L16" title="All 2 branches covered.">    is ExtensionCreateSubmitted -&gt; ApiExtensionCreateSubmitted(reqId, status, id, groupId)</span>
-<span class="fc bfc" id="L17" title="All 2 branches covered.">    is ExtensionUpdateSubmitted -&gt; ApiExtensionUpdateSubmitted(reqId, status, id)</span>
-<span class="fc bfc" id="L18" title="All 2 branches covered.">    is FuncCreateSubmitted -&gt; ApiFuncCreateSubmitted(reqId, status, id, groupId, namespaceId)</span>
-<span class="fc bfc" id="L19" title="All 2 branches covered.">    is FuncUpdateSubmitted -&gt; ApiFuncUpdateSubmitted(reqId, status, id)</span>
-<span class="fc bfc" id="L20" title="All 2 branches covered.">    is HookCreateSubmitted -&gt; ApiHookCreateSubmitted(reqId, status, id, groupId, namespaceId)</span>
-<span class="fc bfc" id="L21" title="All 2 branches covered.">    is HookUpdateSubmitted -&gt; ApiHookUpdateSubmitted(reqId, status, id)</span>
-<span class="fc bfc" id="L22" title="All 2 branches covered.">    is NamespaceCreateSubmitted -&gt; ApiNamespaceCreateSubmitted(reqId, status, id, groupId)</span>
-<span class="fc bfc" id="L23" title="All 2 branches covered.">    is NamespaceUpdateSubmitted -&gt; ApiNamespaceUpdateSubmitted(reqId, status, id)</span>
+<span class="pc bpc" id="L11" title="1 of 2 branches missed.">    is AccountCreateSubmitted -&gt; ApiTokenSubmitted(reqId, status, id, listOf(groupId), token)</span>
+<span class="pc bpc" id="L12" title="1 of 2 branches missed.">    is AuthLoginSubmitted -&gt; ApiTokenSubmitted(reqId, status, accountId, groupIds, token)</span>
+<span class="fc bfc" id="L13" title="All 2 branches covered.">    is ExecInvokeSubmitted -&gt; ApiExecInvokeSubmitted(reqId, status, id, groupId, namespaceId)</span>
+<span class="fc bfc" id="L14" title="All 2 branches covered.">    is ExtensionCreateSubmitted -&gt; ApiExtensionCreateSubmitted(reqId, status, id, groupId)</span>
+<span class="fc bfc" id="L15" title="All 2 branches covered.">    is ExtensionUpdateSubmitted -&gt; ApiExtensionUpdateSubmitted(reqId, status, id)</span>
+<span class="fc bfc" id="L16" title="All 2 branches covered.">    is FuncCreateSubmitted -&gt; ApiFuncCreateSubmitted(reqId, status, id, groupId, namespaceId)</span>
+<span class="fc bfc" id="L17" title="All 2 branches covered.">    is FuncUpdateSubmitted -&gt; ApiFuncUpdateSubmitted(reqId, status, id)</span>
+<span class="fc bfc" id="L18" title="All 2 branches covered.">    is HookCreateSubmitted -&gt; ApiHookCreateSubmitted(reqId, status, id, groupId, namespaceId)</span>
+<span class="fc bfc" id="L19" title="All 2 branches covered.">    is HookUpdateSubmitted -&gt; ApiHookUpdateSubmitted(reqId, status, id)</span>
+<span class="fc bfc" id="L20" title="All 2 branches covered.">    is NamespaceCreateSubmitted -&gt; ApiNamespaceCreateSubmitted(reqId, status, id, groupId)</span>
+<span class="fc bfc" id="L21" title="All 2 branches covered.">    is NamespaceUpdateSubmitted -&gt; ApiNamespaceUpdateSubmitted(reqId, status, id)</span>
+<span class="fc bfc" id="L22" title="All 2 branches covered.">    is SnippetCreateSubmitted -&gt; ApiSnippetCreateSubmitted(reqId, status, id, groupId)</span>
+<span class="fc bfc" id="L23" title="All 2 branches covered.">    is SnippetUpdateSubmitted -&gt; ApiSnippetUpdateSubmitted(reqId, status, id)</span>
 <span class="fc bfc" id="L24" title="All 2 branches covered.">    is StateSetSubmitted -&gt; ApiStateSetSubmitted(reqId, status)</span>
 <span class="fc bfc" id="L25" title="All 2 branches covered.">    is TopicAppendToSubmitted -&gt; ApiTopicAppendSubmitted(reqId, status, id)</span>
 <span class="fc bfc" id="L26" title="All 2 branches covered.">    is TopicCreateSubmitted -&gt; ApiTopicCreateSubmitted(reqId, status, id, groupId, namespaceId)</span>

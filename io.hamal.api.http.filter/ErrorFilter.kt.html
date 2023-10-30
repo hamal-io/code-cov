@@ -14,8 +14,8 @@ import org.springframework.web.filter.OncePerRequestFilter
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 
 @Component
-@Order(HIGHEST_PRECEDENCE)
-<span class="fc" id="L18">class ErrorApiFilter(</span>
+@Order(HIGHEST_PRECEDENCE + 1)
+<span class="fc" id="L18">class ErrorFilter(</span>
 <span class="fc" id="L19">    private val json: Json</span>
 <span class="fc" id="L20">) : OncePerRequestFilter() {</span>
 
@@ -37,14 +37,15 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 <span class="nc" id="L37">            val statusCode = when (toHandle) {</span>
 <span class="nc bnc" id="L38" title="All 4 branches missed.">                is IllegalArgumentException, is MethodArgumentTypeMismatchException -&gt; SC_BAD_REQUEST</span>
 <span class="nc bnc" id="L39" title="All 2 branches missed.">                is NoSuchElementException -&gt; SC_NOT_FOUND</span>
-<span class="nc" id="L40">                else -&gt; SC_INTERNAL_SERVER_ERROR</span>
+<span class="nc bnc" id="L40" title="All 2 branches missed.">                is IllegalCallerException -&gt; SC_FORBIDDEN</span>
+<span class="nc" id="L41">                else -&gt; SC_INTERNAL_SERVER_ERROR</span>
             }
 
-<span class="nc bnc" id="L43" title="All 4 branches missed.">            val encoded = json.encodeToString(ApiError.serializer(), ApiError(toHandle?.message ?: &quot;Unknown error&quot;))</span>
-<span class="nc" id="L44">            response.status = statusCode</span>
-<span class="nc" id="L45">            response.addHeader(&quot;Content-Type&quot;, &quot;application/json&quot;)</span>
-<span class="nc" id="L46">            response.writer.write(encoded)</span>
+<span class="nc bnc" id="L44" title="All 4 branches missed.">            val encoded = json.encodeToString(ApiError.serializer(), ApiError(toHandle?.message ?: &quot;Unknown error&quot;))</span>
+<span class="nc" id="L45">            response.status = statusCode</span>
+<span class="nc" id="L46">            response.addHeader(&quot;Content-Type&quot;, &quot;application/json&quot;)</span>
+<span class="nc" id="L47">            response.writer.write(encoded)</span>
         }
-<span class="fc" id="L48">    }</span>
+<span class="fc" id="L49">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -5,9 +5,6 @@ import io.hamal.lib.kua.extension.plugin.RunnerPluginExtension
 import io.hamal.lib.kua.extension.plugin.RunnerPluginExtensionFactory
 import io.hamal.lib.sdk.ApiSdkImpl
 import io.hamal.plugin.std.sys.adhoc.AdhocFunction
-import io.hamal.plugin.std.sys.blueprint.BlueprintCreateFunction
-import io.hamal.plugin.std.sys.blueprint.BlueprintGetFunction
-import io.hamal.plugin.std.sys.blueprint.BlueprintUpdateFunction
 import io.hamal.plugin.std.sys.code.CodeGetFunction
 import io.hamal.plugin.std.sys.exec.ExecGetFunction
 import io.hamal.plugin.std.sys.exec.ExecListFunction
@@ -21,6 +18,9 @@ import io.hamal.plugin.std.sys.namespace.NamespaceCreateFunction
 import io.hamal.plugin.std.sys.namespace.NamespaceGetFunction
 import io.hamal.plugin.std.sys.namespace.NamespaceListFunction
 import io.hamal.plugin.std.sys.req.ReqGetFunction
+import io.hamal.plugin.std.sys.snippet.SnippetCreateFunction
+import io.hamal.plugin.std.sys.snippet.SnippetGetFunction
+import io.hamal.plugin.std.sys.snippet.SnippetUpdateFunction
 import io.hamal.plugin.std.sys.topic.*
 import io.hamal.plugin.std.sys.trigger.TriggerCreateFunction
 import io.hamal.plugin.std.sys.trigger.TriggerGetFunction
@@ -39,47 +39,45 @@ import io.hamal.plugin.std.sys.trigger.TriggerListFunction
 <span class="nc" id="L39">                &quot;await_failed&quot; to AwaitFailedFunction(sdk.template),</span>
 
 <span class="nc" id="L41">                &quot;adhoc&quot; to AdhocFunction(sdk),</span>
+<span class="nc" id="L42">                &quot;code_get&quot; to CodeGetFunction(sdk),</span>
 
-<span class="nc" id="L43">                &quot;blueprint_create&quot; to BlueprintCreateFunction(sdk),</span>
-<span class="nc" id="L44">                &quot;blueprint_get&quot; to BlueprintGetFunction(sdk),</span>
-<span class="nc" id="L45">                &quot;blueprint_update&quot; to BlueprintUpdateFunction(sdk),</span>
+<span class="nc" id="L44">                &quot;req_get&quot; to ReqGetFunction(sdk.template),</span>
 
-<span class="nc" id="L47">                &quot;code_get&quot; to CodeGetFunction(sdk),</span>
+<span class="nc" id="L46">                &quot;exec_list&quot; to ExecListFunction(sdk),</span>
+<span class="nc" id="L47">                &quot;exec_get&quot; to ExecGetFunction(sdk),</span>
 
-<span class="nc" id="L49">                &quot;req_get&quot; to ReqGetFunction(sdk.template),</span>
+<span class="nc" id="L49">                &quot;extension_create&quot; to ExtensionCreateFunction(sdk),</span>
+<span class="nc" id="L50">                &quot;extension_get&quot; to ExtensionGetFunction(sdk),</span>
+<span class="nc" id="L51">                &quot;extension_list&quot; to ExtensionListFunction(sdk),</span>
+<span class="nc" id="L52">                &quot;extension_update&quot; to ExtensionUpdateFunction(sdk),</span>
 
-<span class="nc" id="L51">                &quot;exec_list&quot; to ExecListFunction(sdk),</span>
-<span class="nc" id="L52">                &quot;exec_get&quot; to ExecGetFunction(sdk),</span>
+<span class="nc" id="L54">                &quot;func_create&quot; to FuncCreateFunction(sdk),</span>
+<span class="nc" id="L55">                &quot;func_get&quot; to FuncGetFunction(sdk),</span>
+<span class="nc" id="L56">                &quot;func_list&quot; to FuncListFunction(sdk),</span>
+<span class="nc" id="L57">                &quot;func_invoke&quot; to FuncInvokeFunction(sdk),</span>
 
-<span class="nc" id="L54">                &quot;extension_create&quot; to ExtensionCreateFunction(sdk),</span>
-<span class="nc" id="L55">                &quot;extension_get&quot; to ExtensionGetFunction(sdk),</span>
-<span class="nc" id="L56">                &quot;extension_list&quot; to ExtensionListFunction(sdk),</span>
-<span class="nc" id="L57">                &quot;extension_update&quot; to ExtensionUpdateFunction(sdk),</span>
+<span class="nc" id="L59">                &quot;hook_create&quot; to HookCreateFunction(sdk),</span>
+<span class="nc" id="L60">                &quot;hook_get&quot; to HookGetFunction(sdk),</span>
+<span class="nc" id="L61">                &quot;hook_list&quot; to HookListFunction(sdk),</span>
 
-<span class="nc" id="L59">                &quot;func_create&quot; to FuncCreateFunction(sdk),</span>
-<span class="nc" id="L60">                &quot;func_deploy&quot; to FuncDeployFunction(sdk),</span>
-<span class="nc" id="L61">                &quot;func_get&quot; to FuncGetFunction(sdk),</span>
-<span class="nc" id="L62">                &quot;func_list&quot; to FuncListFunction(sdk),</span>
-<span class="nc" id="L63">                &quot;func_invoke&quot; to FuncInvokeFunction(sdk),</span>
+<span class="nc" id="L63">                &quot;namespace_create&quot; to NamespaceCreateFunction(sdk),</span>
+<span class="nc" id="L64">                &quot;namespace_get&quot; to NamespaceGetFunction(sdk),</span>
+<span class="nc" id="L65">                &quot;namespace_list&quot; to NamespaceListFunction(sdk),</span>
 
-<span class="nc" id="L65">                &quot;hook_create&quot; to HookCreateFunction(sdk),</span>
-<span class="nc" id="L66">                &quot;hook_get&quot; to HookGetFunction(sdk),</span>
-<span class="nc" id="L67">                &quot;hook_list&quot; to HookListFunction(sdk),</span>
+<span class="nc" id="L67">                &quot;snippet_create&quot; to SnippetCreateFunction(sdk),</span>
+<span class="nc" id="L68">                &quot;snippet_get&quot; to SnippetGetFunction(sdk),</span>
+<span class="nc" id="L69">                &quot;snippet_update&quot; to SnippetUpdateFunction(sdk),</span>
 
-<span class="nc" id="L69">                &quot;namespace_create&quot; to NamespaceCreateFunction(sdk),</span>
-<span class="nc" id="L70">                &quot;namespace_get&quot; to NamespaceGetFunction(sdk),</span>
-<span class="nc" id="L71">                &quot;namespace_list&quot; to NamespaceListFunction(sdk),</span>
+<span class="nc" id="L71">                &quot;topic_create&quot; to TopicCreateFunction(sdk),</span>
+<span class="nc" id="L72">                &quot;topic_resolve&quot; to TopicResolveFunction(sdk),</span>
+<span class="nc" id="L73">                &quot;topic_list&quot; to TopicListFunction(sdk),</span>
+<span class="nc" id="L74">                &quot;topic_get&quot; to TopicGetFunction(sdk),</span>
+<span class="nc" id="L75">                &quot;topic_entry_append&quot; to TopicEntryAppendFunction(sdk),</span>
+<span class="nc" id="L76">                &quot;topic_entry_list&quot; to TopicEntryListFunction(sdk),</span>
 
-<span class="nc" id="L73">                &quot;topic_create&quot; to TopicCreateFunction(sdk),</span>
-<span class="nc" id="L74">                &quot;topic_resolve&quot; to TopicResolveFunction(sdk),</span>
-<span class="nc" id="L75">                &quot;topic_list&quot; to TopicListFunction(sdk),</span>
-<span class="nc" id="L76">                &quot;topic_get&quot; to TopicGetFunction(sdk),</span>
-<span class="nc" id="L77">                &quot;topic_entry_append&quot; to TopicEntryAppendFunction(sdk),</span>
-<span class="nc" id="L78">                &quot;topic_entry_list&quot; to TopicEntryListFunction(sdk),</span>
-
-<span class="nc" id="L80">                &quot;trigger_create&quot; to TriggerCreateFunction(sdk),</span>
-<span class="nc" id="L81">                &quot;trigger_get&quot; to TriggerGetFunction(sdk),</span>
-<span class="nc" id="L82">                &quot;trigger_list&quot; to TriggerListFunction(sdk)</span>
+<span class="nc" id="L78">                &quot;trigger_create&quot; to TriggerCreateFunction(sdk),</span>
+<span class="nc" id="L79">                &quot;trigger_get&quot; to TriggerGetFunction(sdk),</span>
+<span class="nc" id="L80">                &quot;trigger_list&quot; to TriggerListFunction(sdk)</span>
             )
         )
     }

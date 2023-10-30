@@ -17,7 +17,7 @@ import kotlinx.serialization.Serializable
 <span class="pc" id="L17">    val salt: PasswordSalt</span>
 <span class="fc" id="L18">) : DomainObject&lt;AccountId&gt;</span>
 
-<span class="nc" id="L20">interface AccountRepository : AccountCmdRepository, AccountQueryRepository</span>
+<span class="pc" id="L20">interface AccountRepository : AccountCmdRepository, AccountQueryRepository</span>
 
 interface AccountCmdRepository : CmdRepository {
 
@@ -34,7 +34,7 @@ interface AccountCmdRepository : CmdRepository {
 }
 
 interface AccountQueryRepository {
-<span class="nc bnc" id="L37" title="All 2 branches missed.">    fun get(accountId: AccountId) = find(accountId) ?: throw NoSuchElementException(&quot;Account not found&quot;)</span>
+<span class="pc bpc" id="L37" title="1 of 2 branches missed.">    fun get(accountId: AccountId) = find(accountId) ?: throw NoSuchElementException(&quot;Account not found&quot;)</span>
     fun find(accountId: AccountId): Account?
 <span class="nc bnc" id="L39" title="All 2 branches missed.">    fun get(accountName: AccountName) = find(accountName) ?: throw NoSuchElementException(&quot;Account not found&quot;)</span>
     fun find(accountName: AccountName): Account?

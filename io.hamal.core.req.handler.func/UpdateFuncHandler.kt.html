@@ -9,7 +9,7 @@ import io.hamal.repository.api.Func
 import io.hamal.repository.api.FuncCmdRepository.UpdateCmd
 import io.hamal.repository.api.FuncCode
 import io.hamal.repository.api.FuncRepository
-import io.hamal.repository.api.event.FuncUpdatedEvent
+import io.hamal.repository.api.event.FuncCreatedEvent
 import io.hamal.repository.api.submitted_req.FuncUpdateSubmitted
 import org.springframework.stereotype.Component
 
@@ -27,52 +27,28 @@ import org.springframework.stereotype.Component
 
 private fun UpdateFuncHandler.updateFunc(req: FuncUpdateSubmitted): Func {
 <span class="fc" id="L29">    val func = funcRepository.get(req.id)</span>
-
-<span class="fc bfc" id="L31" title="All 2 branches covered.">    if (req.deployedVersion != null) {</span>
-<span class="fc" id="L32">        return deployedVersionUpdate(req, func)</span>
-    }
-
-<span class="fc" id="L35">    val code = codeCmdRepository.update(</span>
-<span class="fc" id="L36">        func.code.id, CodeCmdRepository.UpdateCmd(</span>
-<span class="fc" id="L37">            id = req.cmdId(),</span>
-<span class="fc" id="L38">            value = req.code</span>
+<span class="fc" id="L30">    val code = codeCmdRepository.update(</span>
+<span class="fc" id="L31">        func.code.id, CodeCmdRepository.UpdateCmd(</span>
+<span class="fc" id="L32">            id = req.cmdId(),</span>
+<span class="fc" id="L33">            value = req.code</span>
         )
     )
 
-<span class="fc" id="L42">    return funcRepository.update(</span>
-<span class="fc" id="L43">        req.id,</span>
-<span class="fc" id="L44">        UpdateCmd(</span>
-<span class="fc" id="L45">            id = req.cmdId(),</span>
-<span class="fc" id="L46">            name = req.name,</span>
-<span class="fc" id="L47">            inputs = req.inputs,</span>
-<span class="fc" id="L48">            code = FuncCode(</span>
-<span class="fc" id="L49">                id = code.id,</span>
-<span class="fc" id="L50">                version = code.version,</span>
-<span class="fc" id="L51">                deployedVersion = func.code.deployedVersion</span>
+<span class="fc" id="L37">    return funcRepository.update(</span>
+<span class="fc" id="L38">        req.id,</span>
+<span class="fc" id="L39">        UpdateCmd(</span>
+<span class="fc" id="L40">            id = req.cmdId(),</span>
+<span class="fc" id="L41">            name = req.name,</span>
+<span class="fc" id="L42">            inputs = req.inputs,</span>
+<span class="fc" id="L43">            code = FuncCode(</span>
+<span class="fc" id="L44">                id = code.id,</span>
+<span class="fc" id="L45">                version = code.version</span>
             )
         )
     )
 }
-
-
-private fun UpdateFuncHandler.deployedVersionUpdate(req: FuncUpdateSubmitted, func: Func): Func {
-<span class="fc" id="L59">    return funcRepository.update(</span>
-<span class="fc" id="L60">        func.id,</span>
-<span class="fc" id="L61">        UpdateCmd(</span>
-<span class="fc" id="L62">            id = req.cmdId(),</span>
-<span class="fc" id="L63">            name = null,</span>
-<span class="fc" id="L64">            inputs = null,</span>
-<span class="fc" id="L65">            code = FuncCode(</span>
-<span class="fc" id="L66">                id = func.code.id,</span>
-<span class="fc" id="L67">                version = func.code.version,</span>
-<span class="fc" id="L68">                deployedVersion = req.deployedVersion!!</span>
-            )
-        )
-    )
-}
-
 
 private fun UpdateFuncHandler.emitEvent(cmdId: CmdId, func: Func) {
-<span class="fc" id="L76">    eventEmitter.emit(cmdId, FuncUpdatedEvent(func))</span>
-<span class="fc" id="L77">}</span>
+<span class="fc" id="L52">    eventEmitter.emit(cmdId, FuncCreatedEvent(func))</span>
+<span class="fc" id="L53">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

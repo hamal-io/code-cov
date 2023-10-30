@@ -32,7 +32,7 @@ internal object CurrentAccountProjection {
 <span class="fc" id="L32">        projection[account.id] = account</span>
 <span class="fc" id="L33">    }</span>
 
-<span class="nc" id="L35">    fun find(accountId: AccountId): Account? = projection[accountId]</span>
+<span class="fc" id="L35">    fun find(accountId: AccountId): Account? = projection[accountId]</span>
 
 <span class="nc bnc" id="L37" title="All 4 branches missed.">    fun find(accountName: AccountName): Account? = projection.values.find { it.name == accountName }</span>
 
@@ -88,7 +88,7 @@ internal object CurrentAccountProjection {
         }
     }
 
-<span class="nc" id="L91">    override fun find(accountId: AccountId): Account? = CurrentAccountProjection.find(accountId)</span>
+<span class="fc" id="L91">    override fun find(accountId: AccountId): Account? = CurrentAccountProjection.find(accountId)</span>
 
 <span class="nc" id="L93">    override fun find(accountName: AccountName): Account? = CurrentAccountProjection.find(accountName)</span>
 

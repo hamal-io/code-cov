@@ -3,7 +3,7 @@
 import io.hamal.lib.domain.Correlation
 import io.hamal.lib.domain._enum.ReqStatus
 import io.hamal.lib.domain.vo.*
-import io.hamal.lib.http.HttpTemplateImpl
+import io.hamal.lib.http.HttpTemplate
 import io.hamal.lib.sdk.fold
 import kotlinx.serialization.Serializable
 
@@ -50,7 +50,7 @@ interface ApiExecService {
 }
 
 <span class="nc" id="L52">internal class ApiExecServiceImpl(</span>
-<span class="nc" id="L53">    private val template: HttpTemplateImpl</span>
+<span class="nc" id="L53">    private val template: HttpTemplate</span>
 ) : ApiExecService {
 
     override fun list(groupId: GroupId) =

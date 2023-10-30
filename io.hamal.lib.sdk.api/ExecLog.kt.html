@@ -2,7 +2,7 @@
 
 import io.hamal.lib.domain._enum.ExecLogLevel
 import io.hamal.lib.domain.vo.*
-import io.hamal.lib.http.HttpTemplateImpl
+import io.hamal.lib.http.HttpTemplate
 import io.hamal.lib.http.body
 import io.hamal.request.AppendExecLogReq
 import kotlinx.serialization.Serializable
@@ -34,7 +34,7 @@ interface ApiExecLogService {
 }
 
 <span class="nc" id="L36">internal class ApiExecLogServiceImpl(</span>
-<span class="nc" id="L37">    private val template: HttpTemplateImpl</span>
+<span class="nc" id="L37">    private val template: HttpTemplate</span>
 ) : ApiExecLogService {
     override fun append(execId: ExecId, req: ApiAppendExecLogCmd) {
 <span class="nc" id="L40">        template</span>

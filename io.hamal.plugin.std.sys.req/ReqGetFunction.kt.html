@@ -2,7 +2,7 @@
 
 import io.hamal.lib.http.HttpErrorResponse
 import io.hamal.lib.http.HttpSuccessResponse
-import io.hamal.lib.http.HttpTemplateImpl
+import io.hamal.lib.http.HttpTemplate
 import io.hamal.lib.kua.function.Function1In2Out
 import io.hamal.lib.kua.function.FunctionContext
 import io.hamal.lib.kua.function.FunctionInput1Schema
@@ -13,7 +13,7 @@ import io.hamal.lib.kua.type.StringType
 import io.hamal.lib.sdk.api.ApiSubmitted
 
 <span class="nc" id="L15">class ReqGetFunction(</span>
-<span class="nc" id="L16">    private val httpTemplate: HttpTemplateImpl</span>
+<span class="nc" id="L16">    private val httpTemplate: HttpTemplate</span>
 <span class="nc" id="L17">) : Function1In2Out&lt;StringType, ErrorType, MapType&gt;(</span>
 <span class="nc" id="L18">    FunctionInput1Schema(StringType::class),</span>
 <span class="nc" id="L19">    FunctionOutput2Schema(ErrorType::class, MapType::class)</span>
