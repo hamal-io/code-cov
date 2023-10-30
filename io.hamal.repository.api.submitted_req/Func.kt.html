@@ -19,7 +19,7 @@ import kotlinx.serialization.Serializable
 <span class="fc" id="L19">) : Submitted</span>
 
 
-<span class="pc bpc" id="L22" title="2 of 13 branches missed.">@Serializable</span>
+<span class="pc bpc" id="L22" title="2 of 14 branches missed.">@Serializable</span>
 <span class="fc" id="L23">data class FuncUpdateSubmitted(</span>
 <span class="fc" id="L24">    override val reqId: ReqId,</span>
 <span class="fc" id="L25">    override var status: ReqStatus,</span>
@@ -27,6 +27,7 @@ import kotlinx.serialization.Serializable
 <span class="fc" id="L27">    val id: FuncId,</span>
 <span class="fc" id="L28">    val name: FuncName?,</span>
 <span class="fc" id="L29">    val inputs: FuncInputs?,</span>
-<span class="fc" id="L30">    val code: CodeValue?</span>
-<span class="fc" id="L31">) : Submitted</span>
+<span class="fc" id="L30">    val code: CodeValue?,</span>
+<span class="fc" id="L31">    val deployedVersion: CodeVersion?</span>
+<span class="fc" id="L32">) : Submitted</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

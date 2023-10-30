@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Blueprint.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hamal-mono</a> &gt; <a href="index.source.html" class="el_package">io.hamal.repository.memory.record</a> &gt; <span class="el_source">Blueprint.kt</span></div><h1>Blueprint.kt</h1><pre class="source lang-java linenums">package io.hamal.repository.memory.record
+
+import io.hamal.lib.domain.vo.BlueprintId
+import io.hamal.repository.api.Blueprint
+import io.hamal.repository.api.BlueprintCmdRepository.CreateCmd
+import io.hamal.repository.api.BlueprintCmdRepository.UpdateCmd
+import io.hamal.repository.api.BlueprintQueryRepository.BlueprintQuery
+import io.hamal.repository.api.BlueprintRepository
+import io.hamal.repository.record.blueprint.BlueprintCreationRecord
+import io.hamal.repository.record.blueprint.BlueprintRecord
+import io.hamal.repository.record.blueprint.BlueprintUpdatedRecord
+import io.hamal.repository.record.blueprint.CreateBlueprintFromRecords
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
+
+internal object CurrentBlueprintProjection {
+<span class="fc" id="L17">    private val projection = mutableMapOf&lt;BlueprintId, Blueprint&gt;()</span>
+    fun apply(blueprint: Blueprint) {
+<span class="fc" id="L19">        projection[blueprint.id] = blueprint</span>
+<span class="fc" id="L20">    }</span>
+
+<span class="fc" id="L22">    fun find(blueprintId: BlueprintId): Blueprint? = projection[blueprintId]</span>
+
+    fun list(query: BlueprintQuery): List&lt;Blueprint&gt; {
+<span class="nc bnc" id="L25" title="All 4 branches missed.">        return projection.filter { query.blueprintIds.isEmpty() || it.key in query.blueprintIds }</span>
+<span class="nc" id="L26">            .map { it.value }</span>
+<span class="nc" id="L27">            .reversed()</span>
+<span class="nc" id="L28">            .asSequence()</span>
+<span class="nc bnc" id="L29" title="All 2 branches missed.">            .filter { if (query.groupIds.isEmpty()) true else query.groupIds.contains(it.groupId) }</span>
+<span class="nc bnc" id="L30" title="All 2 branches missed.">            .dropWhile { it.id &gt;= query.afterId }</span>
+<span class="nc" id="L31">            .take(query.limit.value)</span>
+<span class="nc" id="L32">            .toList()</span>
+    }
+
+    fun count(query: BlueprintQuery): ULong {
+<span class="nc bnc" id="L36" title="All 4 branches missed.">        return projection.filter { query.blueprintIds.isEmpty() || it.key in query.blueprintIds }</span>
+<span class="nc" id="L37">            .map { it.value }</span>
+<span class="nc" id="L38">            .reversed()</span>
+<span class="nc" id="L39">            .asSequence()</span>
+<span class="nc bnc" id="L40" title="All 2 branches missed.">            .filter { if (query.groupIds.isEmpty()) true else query.groupIds.contains(it.groupId) }</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">            .dropWhile { it.id &gt;= query.afterId }</span>
+<span class="nc" id="L42">            .count()</span>
+<span class="nc" id="L43">            .toULong()</span>
+    }
+
+    fun clear() {
+<span class="fc" id="L47">        projection.clear()</span>
+<span class="fc" id="L48">    }</span>
+}
+
+<span class="pc" id="L51">class MemoryBlueprintRepository : MemoryRecordRepository&lt;BlueprintId, BlueprintRecord, Blueprint&gt;(</span>
+<span class="fc" id="L52">    createDomainObject = CreateBlueprintFromRecords,</span>
+    recordClass = BlueprintRecord::class
+), BlueprintRepository {
+<span class="fc" id="L55">    private val lock = ReentrantLock()</span>
+
+    override fun create(cmd: CreateCmd): Blueprint {
+<span class="fc" id="L58">        return lock.withLock {</span>
+<span class="fc" id="L59">            val bpId = cmd.blueprintId</span>
+<span class="fc" id="L60">            val cmdId = cmd.id</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">            if (commandAlreadyApplied(cmdId, bpId)) {</span>
+<span class="fc" id="L62">                versionOf(bpId, cmd.id)</span>
+            } else {
+<span class="fc" id="L64">                store(</span>
+<span class="fc" id="L65">                    BlueprintCreationRecord(</span>
+<span class="fc" id="L66">                        cmdId = cmd.id,</span>
+<span class="fc" id="L67">                        entityId = bpId,</span>
+<span class="fc" id="L68">                        groupId = cmd.groupId,</span>
+<span class="fc" id="L69">                        name = cmd.name,</span>
+<span class="fc" id="L70">                        inputs = cmd.inputs,</span>
+<span class="fc" id="L71">                        value = cmd.value,</span>
+<span class="fc" id="L72">                        creatorId = cmd.creatorId</span>
+                    )
+                )
+<span class="fc" id="L75">                (currentVersion(bpId)).also(CurrentBlueprintProjection::apply)</span>
+            }
+        }
+    }
+
+    override fun update(blueprintId: BlueprintId, cmd: UpdateCmd): Blueprint {
+<span class="fc" id="L81">        return lock.withLock {</span>
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">            if (commandAlreadyApplied(cmd.id, blueprintId)) {</span>
+<span class="nc" id="L83">                versionOf(blueprintId, cmd.id)</span>
+            } else {
+<span class="fc" id="L85">                val currentVersion = versionOf(blueprintId, cmd.id)</span>
+<span class="fc" id="L86">                store(</span>
+<span class="fc" id="L87">                    BlueprintUpdatedRecord(</span>
+<span class="fc" id="L88">                        entityId = blueprintId,</span>
+<span class="fc" id="L89">                        cmdId = cmd.id,</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">                        name = cmd.name ?: currentVersion.name,</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">                        inputs = cmd.inputs ?: currentVersion.inputs,</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">                        value = cmd.value ?: currentVersion.value</span>
+                    )
+                )
+<span class="fc" id="L95">                (currentVersion(blueprintId)).also(CurrentBlueprintProjection::apply)</span>
+            }
+        }
+    }
+
+<span class="fc" id="L100">    override fun find(blueprintId: BlueprintId): Blueprint? = CurrentBlueprintProjection.find(blueprintId)</span>
+
+<span class="nc" id="L102">    override fun list(query: BlueprintQuery): List&lt;Blueprint&gt; = CurrentBlueprintProjection.list(query)</span>
+
+<span class="nc" id="L104">    override fun count(query: BlueprintQuery): ULong = CurrentBlueprintProjection.count(query)</span>
+
+    override fun clear() {
+<span class="fc" id="L107">        super.clear()</span>
+<span class="fc" id="L108">        CurrentBlueprintProjection.clear()</span>
+<span class="fc" id="L109">    }</span>
+
+<span class="nc" id="L111">    override fun close() {}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
