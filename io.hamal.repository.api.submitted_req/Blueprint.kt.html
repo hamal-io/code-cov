@@ -6,10 +6,10 @@ import kotlinx.serialization.Serializable
 
 <span class="pc bpc" id="L7" title="2 of 14 branches missed.">@Serializable</span>
 <span class="fc" id="L8">data class BlueprintCreateSubmitted(</span>
-<span class="fc" id="L9">    override val reqId: ReqId,</span>
+<span class="fc" id="L9">    override val id: ReqId,</span>
 <span class="fc" id="L10">    override var status: ReqStatus,</span>
 <span class="fc" id="L11">    val groupId: GroupId,</span>
-<span class="fc" id="L12">    val id: BlueprintId,</span>
+<span class="fc" id="L12">    val blueprintId: BlueprintId,</span>
 <span class="fc" id="L13">    val creatorId: AccountId,</span>
 <span class="fc" id="L14">    val name: BlueprintName,</span>
 <span class="fc" id="L15">    val inputs: BlueprintInputs,</span>
@@ -19,10 +19,10 @@ import kotlinx.serialization.Serializable
 
 <span class="pc bpc" id="L20" title="2 of 13 branches missed.">@Serializable</span>
 <span class="fc" id="L21">data class BlueprintUpdateSubmitted(</span>
-<span class="fc" id="L22">    override val reqId: ReqId,</span>
+<span class="fc" id="L22">    override val id: ReqId,</span>
 <span class="fc" id="L23">    override var status: ReqStatus,</span>
 <span class="pc" id="L24">    val groupId: GroupId,</span>
-<span class="fc" id="L25">    val id: BlueprintId,</span>
+<span class="fc" id="L25">    val blueprintId: BlueprintId,</span>
 <span class="fc" id="L26">    val name: BlueprintName?,</span>
 <span class="fc" id="L27">    val inputs: BlueprintInputs?,</span>
 <span class="fc" id="L28">    val value: CodeValue?</span>

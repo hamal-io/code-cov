@@ -12,8 +12,8 @@ fun Submitted.accepted(): ResponseEntity&lt;BridgeSubmitted&gt; =
 <span class="fc" id="L12">    ResponseEntity.accepted().body(toBridgeSubmitted())</span>
 
 <span class="fc" id="L14">fun Submitted.toBridgeSubmitted(): BridgeSubmitted = when (this) {</span>
-<span class="fc bfc" id="L15" title="All 2 branches covered.">    is ExecCompleteSubmitted -&gt; BridgeExecCompleteSubmitted(reqId, status, id)</span>
-<span class="pc bpc" id="L16" title="1 of 2 branches missed.">    is ExecFailSubmitted -&gt; BridgeExecFailSubmitted(reqId, status, id)</span>
+<span class="fc bfc" id="L15" title="All 2 branches covered.">    is ExecCompleteSubmitted -&gt; BridgeExecCompleteSubmitted(id, status, execId)</span>
+<span class="pc bpc" id="L16" title="1 of 2 branches missed.">    is ExecFailSubmitted -&gt; BridgeExecFailSubmitted(id, status, execId)</span>
 <span class="nc" id="L17">    else -&gt; throw NotImplementedError()</span>
 <span class="fc" id="L18">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

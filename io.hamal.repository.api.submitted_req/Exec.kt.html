@@ -6,10 +6,10 @@ import kotlinx.serialization.Serializable
 
 <span class="pc bpc" id="L7" title="2 of 16 branches missed.">@Serializable</span>
 <span class="fc" id="L8">data class ExecInvokeSubmitted(</span>
-<span class="fc" id="L9">    override val reqId: ReqId,</span>
+<span class="fc" id="L9">    override val id: ReqId,</span>
 <span class="fc" id="L10">    override var status: ReqStatus,</span>
 <span class="fc" id="L11">    val groupId: GroupId,</span>
-<span class="fc" id="L12">    val id: ExecId,</span>
+<span class="fc" id="L12">    val execId: ExecId,</span>
 <span class="fc" id="L13">    val namespaceId: NamespaceId,</span>
 <span class="fc" id="L14">    val funcId: FuncId?,</span>
 <span class="fc" id="L15">    val correlationId: CorrelationId?,</span>
@@ -20,17 +20,17 @@ import kotlinx.serialization.Serializable
 
 <span class="pc bpc" id="L21" title="2 of 10 branches missed.">@Serializable</span>
 <span class="fc" id="L22">data class ExecFailSubmitted(</span>
-<span class="fc" id="L23">    override val reqId: ReqId,</span>
+<span class="fc" id="L23">    override val id: ReqId,</span>
 <span class="fc" id="L24">    override var status: ReqStatus,</span>
-<span class="fc" id="L25">    val id: ExecId,</span>
+<span class="fc" id="L25">    val execId: ExecId,</span>
 <span class="fc" id="L26">    val result: ExecResult</span>
 <span class="fc" id="L27">) : Submitted</span>
 
 <span class="pc bpc" id="L29" title="2 of 12 branches missed.">@Serializable</span>
 <span class="fc" id="L30">data class ExecCompleteSubmitted(</span>
-<span class="fc" id="L31">    override val reqId: ReqId,</span>
+<span class="fc" id="L31">    override val id: ReqId,</span>
 <span class="fc" id="L32">    override var status: ReqStatus,</span>
-<span class="fc" id="L33">    val id: ExecId,</span>
+<span class="fc" id="L33">    val execId: ExecId,</span>
 <span class="fc" id="L34">    val state: ExecState,</span>
 <span class="fc" id="L35">    val result: ExecResult,</span>
 <span class="fc" id="L36">    val events: List&lt;EventToSubmit&gt;</span>

@@ -6,10 +6,10 @@ import kotlinx.serialization.Serializable
 
 <span class="pc bpc" id="L7" title="2 of 18 branches missed.">@Serializable</span>
 <span class="fc" id="L8">data class AccountCreateSubmitted(</span>
-<span class="fc" id="L9">    override val reqId: ReqId,</span>
+<span class="fc" id="L9">    override val id: ReqId,</span>
 <span class="fc" id="L10">    override var status: ReqStatus,</span>
 <span class="fc" id="L11">    val groupId: GroupId,</span>
-<span class="fc" id="L12">    val id: AccountId,</span>
+<span class="fc" id="L12">    val accountId: AccountId,</span>
 <span class="fc" id="L13">    val type: AccountType,</span>
 <span class="fc" id="L14">    val authenticationId: AuthId,</span>
 <span class="fc" id="L15">    val namespaceId: NamespaceId,</span>

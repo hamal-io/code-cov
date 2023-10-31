@@ -31,7 +31,7 @@ import org.springframework.stereotype.Component
 <span class="fc" id="L31">            FixedRate -&gt; triggerCmdRepository.create(</span>
 <span class="fc" id="L32">                TriggerCmdRepository.CreateFixedRateCmd(</span>
 <span class="fc" id="L33">                    id = req.cmdId(),</span>
-<span class="fc" id="L34">                    triggerId = req.id,</span>
+<span class="fc" id="L34">                    triggerId = req.triggerId,</span>
 <span class="fc" id="L35">                    groupId = func.groupId,</span>
 <span class="fc" id="L36">                    name = req.name,</span>
 <span class="fc" id="L37">                    correlationId = req.correlationId,</span>
@@ -48,7 +48,7 @@ import org.springframework.stereotype.Component
 <span class="fc" id="L48">                triggerCmdRepository.create(</span>
 <span class="fc" id="L49">                    TriggerCmdRepository.CreateEventCmd(</span>
 <span class="fc" id="L50">                        id = req.cmdId(),</span>
-<span class="fc" id="L51">                        triggerId = req.id,</span>
+<span class="fc" id="L51">                        triggerId = req.triggerId,</span>
 <span class="fc" id="L52">                        groupId = func.groupId,</span>
 <span class="fc" id="L53">                        name = req.name,</span>
 <span class="fc" id="L54">                        correlationId = req.correlationId,</span>
@@ -66,7 +66,7 @@ import org.springframework.stereotype.Component
 <span class="fc" id="L66">                triggerCmdRepository.create(</span>
 <span class="fc" id="L67">                    TriggerCmdRepository.CreateHookCmd(</span>
 <span class="fc" id="L68">                        id = req.cmdId(),</span>
-<span class="fc" id="L69">                        triggerId = req.id,</span>
+<span class="fc" id="L69">                        triggerId = req.triggerId,</span>
 <span class="fc" id="L70">                        groupId = func.groupId,</span>
 <span class="fc" id="L71">                        name = req.name,</span>
 <span class="fc" id="L72">                        correlationId = req.correlationId,</span>

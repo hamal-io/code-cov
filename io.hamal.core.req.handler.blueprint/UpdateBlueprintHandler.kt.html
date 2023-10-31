@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component
 
 private fun UpdateBlueprintHandler.updateBlueprint(req: BlueprintUpdateSubmitted): Blueprint {
 <span class="fc" id="L26">    return blueprintRepository.update(</span>
-<span class="fc" id="L27">        req.id, UpdateCmd(</span>
+<span class="fc" id="L27">        req.blueprintId, UpdateCmd(</span>
 <span class="fc" id="L28">            id = req.cmdId(),</span>
 <span class="fc" id="L29">            name = req.name,</span>
 <span class="fc" id="L30">            inputs = req.inputs,</span>

@@ -28,7 +28,7 @@ private fun CreateHookHandler.createHook(req: HookCreateSubmitted): Hook {
 <span class="fc" id="L28">    return hookCmdRepository.create(</span>
 <span class="fc" id="L29">        CreateCmd(</span>
 <span class="fc" id="L30">            id = req.cmdId(),</span>
-<span class="fc" id="L31">            hookId = req.id,</span>
+<span class="fc" id="L31">            hookId = req.hookId,</span>
 <span class="fc" id="L32">            groupId = req.groupId,</span>
 <span class="pc bpc" id="L33" title="1 of 2 branches missed.">            namespaceId = req.namespaceId ?: namespaceQueryRepository.get(NamespaceName(&quot;hamal&quot;)).id,</span>
 <span class="fc" id="L34">            name = req.name</span>

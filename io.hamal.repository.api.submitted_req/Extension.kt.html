@@ -6,10 +6,10 @@ import kotlinx.serialization.Serializable
 
 <span class="pc bpc" id="L7" title="2 of 13 branches missed.">@Serializable</span>
 <span class="fc" id="L8">data class ExtensionCreateSubmitted(</span>
-<span class="fc" id="L9">    override val reqId: ReqId,</span>
+<span class="fc" id="L9">    override val id: ReqId,</span>
 <span class="fc" id="L10">    override var status: ReqStatus,</span>
 <span class="fc" id="L11">    val groupId: GroupId,</span>
-<span class="fc" id="L12">    val id: ExtensionId,</span>
+<span class="fc" id="L12">    val extensionId: ExtensionId,</span>
 <span class="fc" id="L13">    val name: ExtensionName,</span>
 <span class="fc" id="L14">    val codeId: CodeId,</span>
 <span class="fc" id="L15">    val code: CodeValue</span>
@@ -18,10 +18,10 @@ import kotlinx.serialization.Serializable
 
 <span class="pc bpc" id="L19" title="2 of 12 branches missed.">@Serializable</span>
 <span class="fc" id="L20">data class ExtensionUpdateSubmitted(</span>
-<span class="fc" id="L21">    override val reqId: ReqId,</span>
+<span class="fc" id="L21">    override val id: ReqId,</span>
 <span class="fc" id="L22">    override var status: ReqStatus,</span>
 <span class="pc" id="L23">    val groupId: GroupId,</span>
-<span class="fc" id="L24">    val id: ExtensionId,</span>
+<span class="fc" id="L24">    val extensionId: ExtensionId,</span>
 <span class="fc" id="L25">    val name: ExtensionName?,</span>
 <span class="fc" id="L26">    val code: CodeValue?</span>
 <span class="fc" id="L27">) : Submitted</span>

@@ -9,11 +9,11 @@ import kotlin.time.Duration
 
 <span class="pc bpc" id="L10" title="16 of 62 branches missed.">@Serializable</span>
 <span class="fc" id="L11">data class TriggerCreateSubmitted(</span>
-<span class="fc" id="L12">    override val reqId: ReqId,</span>
+<span class="fc" id="L12">    override val id: ReqId,</span>
 <span class="fc" id="L13">    override var status: ReqStatus,</span>
 <span class="fc" id="L14">    val groupId: GroupId,</span>
 <span class="fc" id="L15">    val type: TriggerType,</span>
-<span class="fc" id="L16">    val id: TriggerId,</span>
+<span class="fc" id="L16">    val triggerId: TriggerId,</span>
 <span class="fc" id="L17">    val name: TriggerName,</span>
 <span class="fc" id="L18">    val funcId: FuncId,</span>
 <span class="fc" id="L19">    val inputs: TriggerInputs,</span>

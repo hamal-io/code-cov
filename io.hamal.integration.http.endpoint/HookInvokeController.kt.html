@@ -45,9 +45,9 @@ import org.springframework.web.bind.annotation.*
 <span class="nc" id="L45">        val hook = hookQueryRepository.get(id)</span>
 
 <span class="nc" id="L47">        val result = HookInvokeSubmitted(</span>
-<span class="nc" id="L48">            reqId = generateDomainId(::ReqId),</span>
+<span class="nc" id="L48">            id = generateDomainId(::ReqId),</span>
 <span class="nc" id="L49">            status = Submitted,</span>
-<span class="nc" id="L50">            id = id,</span>
+<span class="nc" id="L50">            hookId = id,</span>
 <span class="nc" id="L51">            groupId = hook.groupId,</span>
 <span class="nc" id="L52">            method = req.method(),</span>
 <span class="nc" id="L53">            headers = req.headers(),</span>
@@ -82,7 +82,7 @@ import org.springframework.web.bind.annotation.*
 <span class="nc" id="L82">        val status: ReqStatus,</span>
 <span class="nc" id="L83">        val id: HookId</span>
     ) {
-<span class="nc" id="L85">        constructor(req: HookInvokeSubmitted) : this(req.reqId, req.status, req.id)</span>
+<span class="nc" id="L85">        constructor(req: HookInvokeSubmitted) : this(req.id, req.status, req.hookId)</span>
 <span class="nc" id="L86">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

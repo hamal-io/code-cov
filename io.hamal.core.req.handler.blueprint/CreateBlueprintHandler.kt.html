@@ -24,7 +24,7 @@ private fun CreateBlueprintHandler.createBlueprint(req: BlueprintCreateSubmitted
 <span class="fc" id="L24">    return blueprintCmdRepository.create(</span>
 <span class="fc" id="L25">        BlueprintCmdRepository.CreateCmd(</span>
 <span class="fc" id="L26">            id = req.cmdId(),</span>
-<span class="fc" id="L27">            blueprintId = req.id,</span>
+<span class="fc" id="L27">            blueprintId = req.blueprintId,</span>
 <span class="fc" id="L28">            groupId = req.groupId,</span>
 <span class="fc" id="L29">            name = req.name,</span>
 <span class="fc" id="L30">            inputs = req.inputs,</span>

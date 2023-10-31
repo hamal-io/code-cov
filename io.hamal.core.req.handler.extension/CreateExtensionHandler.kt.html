@@ -36,7 +36,7 @@ private fun CreateExtensionHandler.createExtension(req: ExtensionCreateSubmitted
 <span class="fc" id="L36">    return extensionCmdRepository.create(</span>
 <span class="fc" id="L37">        CreateCmd(</span>
 <span class="fc" id="L38">            id = req.cmdId(),</span>
-<span class="fc" id="L39">            extId = req.id,</span>
+<span class="fc" id="L39">            extId = req.extensionId,</span>
 <span class="fc" id="L40">            groupId = req.groupId,</span>
 <span class="fc" id="L41">            name = req.name,</span>
 <span class="fc" id="L42">            code = ExtensionCode(</span>

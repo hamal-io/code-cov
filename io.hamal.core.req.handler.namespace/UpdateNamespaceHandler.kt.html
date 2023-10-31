@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component
 
 private fun UpdateNamespaceHandler.updateNamespace(req: NamespaceUpdateSubmitted): Namespace {
 <span class="fc" id="L25">    return namespaceCmdRepository.update(</span>
-<span class="fc" id="L26">        req.id,</span>
+<span class="fc" id="L26">        req.namespaceId,</span>
 <span class="fc" id="L27">        NamespaceCmdRepository.UpdateCmd(</span>
 <span class="fc" id="L28">            id = req.cmdId(),</span>
 <span class="fc" id="L29">            name = req.name,</span>

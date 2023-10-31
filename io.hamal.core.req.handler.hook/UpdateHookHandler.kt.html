@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component
 
 private fun UpdateHookHandler.updateHook(req: HookUpdateSubmitted): Hook {
 <span class="fc" id="L25">    return hookRepository.update(</span>
-<span class="fc" id="L26">        req.id, UpdateCmd(</span>
+<span class="fc" id="L26">        req.hookId, UpdateCmd(</span>
 <span class="fc" id="L27">            id = req.cmdId(),</span>
 <span class="fc" id="L28">            name = req.name,</span>
         )

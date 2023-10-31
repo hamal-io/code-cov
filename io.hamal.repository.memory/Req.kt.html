@@ -17,8 +17,8 @@ import kotlin.concurrent.withLock
 
     override fun queue(req: Submitted) {
 <span class="fc" id="L19">        return lock.withLock {</span>
-<span class="fc" id="L20">            store[req.reqId] = ProtoBuf { }.encodeToByteArray(Submitted.serializer(), req)</span>
-<span class="fc" id="L21">            queue.add(req.reqId)</span>
+<span class="fc" id="L20">            store[req.id] = ProtoBuf { }.encodeToByteArray(Submitted.serializer(), req)</span>
+<span class="fc" id="L21">            queue.add(req.id)</span>
 <span class="fc" id="L22">        }</span>
     }
 
@@ -39,7 +39,7 @@ import kotlin.concurrent.withLock
 <span class="fc" id="L39">        val req = get(reqId)</span>
 <span class="pc bpc" id="L40" title="2 of 4 branches missed.">        check(req.status == ReqStatus.Submitted) { &quot;Req not submitted&quot; }</span>
 <span class="fc" id="L41">        lock.withLock {</span>
-<span class="fc" id="L42">            store[req.reqId] =</span>
+<span class="fc" id="L42">            store[req.id] =</span>
 <span class="fc" id="L43">                ProtoBuf { }.encodeToByteArray(Submitted.serializer(), req.apply { status = ReqStatus.Completed })</span>
 <span class="fc" id="L44">        }</span>
 <span class="fc" id="L45">    }</span>
@@ -48,7 +48,7 @@ import kotlin.concurrent.withLock
 <span class="fc" id="L48">        val req = get(reqId)</span>
 <span class="pc bpc" id="L49" title="2 of 4 branches missed.">        check(req.status == ReqStatus.Submitted) { &quot;Req not submitted&quot; }</span>
 <span class="fc" id="L50">        lock.withLock {</span>
-<span class="fc" id="L51">            store[req.reqId] =</span>
+<span class="fc" id="L51">            store[req.id] =</span>
 <span class="fc" id="L52">                ProtoBuf { }.encodeToByteArray(Submitted.serializer(), req.apply { status = ReqStatus.Failed })</span>
 <span class="fc" id="L53">        }</span>
 <span class="fc" id="L54">    }</span>

@@ -35,7 +35,7 @@ private fun CreateFuncHandler.createFunc(req: FuncCreateSubmitted): Func {
 <span class="fc" id="L35">    return funcCmdRepository.create(</span>
 <span class="fc" id="L36">        CreateCmd(</span>
 <span class="fc" id="L37">            id = req.cmdId(),</span>
-<span class="fc" id="L38">            funcId = req.id,</span>
+<span class="fc" id="L38">            funcId = req.funcId,</span>
 <span class="fc" id="L39">            groupId = req.groupId,</span>
 <span class="pc bpc" id="L40" title="1 of 2 branches missed.">            namespaceId = req.namespaceId ?: namespaceQueryRepository.get(NamespaceName(&quot;hamal&quot;)).id,</span>
 <span class="fc" id="L41">            name = req.name,</span>

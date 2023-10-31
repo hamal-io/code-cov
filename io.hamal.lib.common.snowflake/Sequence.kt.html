@@ -32,7 +32,7 @@ interface SequenceSource {
 <span class="fc bfc" id="L32" title="All 2 branches covered.">            if (nextSequence &gt;= maxSequence) {</span>
 <span class="fc" id="L33">                while (true) {</span>
 <span class="fc" id="L34">                    val currentElapsed = elapsedSource()</span>
-<span class="pc bpc" id="L35" title="1 of 2 branches missed.">                    if (elapsed != currentElapsed) {</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">                    if (elapsed != currentElapsed) {</span>
 <span class="fc" id="L36">                        nextSequence = 0</span>
 <span class="fc" id="L37">                        previousCalledAt = currentElapsed</span>
 <span class="fc" id="L38">                        break</span>

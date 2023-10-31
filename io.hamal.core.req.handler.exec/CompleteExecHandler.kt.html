@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component
     override fun invoke(req: ExecCompleteSubmitted) {
 <span class="fc" id="L31">        val cmdId = req.cmdId()</span>
 
-<span class="fc" id="L33">        val exec = execQueryRepository.get(req.id)</span>
+<span class="fc" id="L33">        val exec = execQueryRepository.get(req.execId)</span>
 <span class="fc bfc" id="L34" title="All 2 branches covered.">        require(exec is StartedExec) { &quot;Exec not in status Started&quot; }</span>
 
 <span class="fc" id="L36">        val namespaceId = exec.namespaceId</span>
@@ -45,7 +45,7 @@ import org.springframework.stereotype.Component
 <span class="fc" id="L45">        execCmdRepository.complete(</span>
 <span class="fc" id="L46">            ExecCmdRepository.CompleteCmd(</span>
 <span class="fc" id="L47">                req.cmdId(),</span>
-<span class="fc" id="L48">                req.id,</span>
+<span class="fc" id="L48">                req.execId,</span>
 <span class="fc" id="L49">                req.result,</span>
 <span class="fc" id="L50">                ExecState(req.state.value)</span>
             )

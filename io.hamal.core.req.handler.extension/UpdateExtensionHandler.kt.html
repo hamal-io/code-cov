@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component
 }
 
 private fun UpdateExtensionHandler.updateExtension(req: ExtensionUpdateSubmitted): Extension {
-<span class="fc" id="L29">    val ext = extensionRepository.get(req.id)</span>
+<span class="fc" id="L29">    val ext = extensionRepository.get(req.extensionId)</span>
 <span class="fc" id="L30">    val code = codeCmdRepository.update(</span>
 <span class="fc" id="L31">        ext.code.id, CodeCmdRepository.UpdateCmd(</span>
 <span class="fc" id="L32">            id = req.cmdId(),</span>
@@ -35,7 +35,7 @@ private fun UpdateExtensionHandler.updateExtension(req: ExtensionUpdateSubmitted
     )
 
 <span class="fc" id="L37">    return extensionRepository.update(</span>
-<span class="fc" id="L38">        req.id, UpdateCmd(</span>
+<span class="fc" id="L38">        req.extensionId, UpdateCmd(</span>
 <span class="fc" id="L39">            id = req.cmdId(),</span>
 <span class="fc" id="L40">            name = req.name,</span>
 <span class="fc" id="L41">            code = ExtensionCode(</span>

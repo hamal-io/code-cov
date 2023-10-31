@@ -7,10 +7,10 @@ import kotlinx.serialization.Serializable
 
 <span class="pc bpc" id="L8" title="2 of 12 branches missed.">@Serializable</span>
 <span class="fc" id="L9">data class NamespaceCreateSubmitted(</span>
-<span class="fc" id="L10">    override val reqId: ReqId,</span>
+<span class="fc" id="L10">    override val id: ReqId,</span>
 <span class="fc" id="L11">    override var status: ReqStatus,</span>
 <span class="fc" id="L12">    val groupId: GroupId,</span>
-<span class="fc" id="L13">    val id: NamespaceId,</span>
+<span class="fc" id="L13">    val namespaceId: NamespaceId,</span>
 <span class="fc" id="L14">    val name: NamespaceName,</span>
 <span class="fc" id="L15">    val inputs: NamespaceInputs</span>
 <span class="fc" id="L16">) : Submitted</span>
@@ -18,10 +18,10 @@ import kotlinx.serialization.Serializable
 
 <span class="pc bpc" id="L19" title="2 of 12 branches missed.">@Serializable</span>
 <span class="fc" id="L20">data class NamespaceUpdateSubmitted(</span>
-<span class="fc" id="L21">    override val reqId: ReqId,</span>
+<span class="fc" id="L21">    override val id: ReqId,</span>
 <span class="fc" id="L22">    override var status: ReqStatus,</span>
 <span class="pc" id="L23">    val groupId: GroupId,</span>
-<span class="fc" id="L24">    val id: NamespaceId,</span>
+<span class="fc" id="L24">    val namespaceId: NamespaceId,</span>
 <span class="fc" id="L25">    val name: NamespaceName,</span>
 <span class="fc" id="L26">    val inputs: NamespaceInputs</span>
 <span class="fc" id="L27">) : Submitted</span>

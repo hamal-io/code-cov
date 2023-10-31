@@ -6,10 +6,10 @@ import kotlinx.serialization.Serializable
 
 <span class="pc bpc" id="L7" title="2 of 12 branches missed.">@Serializable</span>
 <span class="fc" id="L8">data class TopicCreateSubmitted(</span>
-<span class="fc" id="L9">    override val reqId: ReqId,</span>
+<span class="fc" id="L9">    override val id: ReqId,</span>
 <span class="fc" id="L10">    override var status: ReqStatus,</span>
 <span class="fc" id="L11">    val groupId: GroupId,</span>
-<span class="fc" id="L12">    val id: TopicId,</span>
+<span class="fc" id="L12">    val topicId: TopicId,</span>
 <span class="fc" id="L13">    val namespaceId: NamespaceId,</span>
 <span class="fc" id="L14">    val name: TopicName</span>
 <span class="fc" id="L15">) : Submitted</span>
@@ -17,9 +17,9 @@ import kotlinx.serialization.Serializable
 
 <span class="pc bpc" id="L18" title="2 of 11 branches missed.">@Serializable</span>
 <span class="fc" id="L19">data class TopicAppendToSubmitted(</span>
-<span class="fc" id="L20">    override val reqId: ReqId,</span>
+<span class="fc" id="L20">    override val id: ReqId,</span>
 <span class="fc" id="L21">    override var status: ReqStatus,</span>
-<span class="fc" id="L22">    val id: TopicId,</span>
+<span class="fc" id="L22">    val topicId: TopicId,</span>
 <span class="pc" id="L23">    val groupId: GroupId,</span>
 <span class="fc" id="L24">    val payload: TopicEntryPayload</span>
 <span class="fc" id="L25">) : Submitted</span>

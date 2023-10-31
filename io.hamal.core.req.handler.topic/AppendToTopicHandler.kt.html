@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component
 <span class="fc" id="L14">) : ReqHandler&lt;TopicAppendToSubmitted&gt;(TopicAppendToSubmitted::class) {</span>
 
     override fun invoke(req: TopicAppendToSubmitted) {
-<span class="fc" id="L17">        val topic = eventBrokerRepository.getTopic(req.id)</span>
+<span class="fc" id="L17">        val topic = eventBrokerRepository.getTopic(req.topicId)</span>
 <span class="fc" id="L18">        appender.append(req.cmdId(), topic, req.payload)</span>
 <span class="fc" id="L19">    }</span>
 

@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component
      * At least once delivery is good enough for now
      */
     override fun invoke(req: HookInvokeSubmitted) {
-<span class="nc bnc" id="L30" title="All 2 branches missed.">        val hook = hookQueryRepository.find(req.id) ?: return</span>
+<span class="nc bnc" id="L30" title="All 2 branches missed.">        val hook = hookQueryRepository.find(req.hookId) ?: return</span>
 
 <span class="nc" id="L32">        val triggers = triggerQueryRepository.list(</span>
 <span class="nc" id="L33">            TriggerQuery(</span>
