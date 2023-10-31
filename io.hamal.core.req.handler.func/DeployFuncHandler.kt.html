@@ -9,36 +9,32 @@ import io.hamal.repository.api.Func
 import io.hamal.repository.api.FuncCmdRepository
 import io.hamal.repository.api.FuncRepository
 import io.hamal.repository.api.event.FuncDeployedEvent
-import io.hamal.repository.api.event.FuncUpdatedEvent
 import io.hamal.repository.api.submitted_req.FuncDeploySubmitted
 import org.springframework.stereotype.Component
 
 @Component
-<span class="fc" id="L17">class DeployFuncHandler(</span>
-<span class="fc" id="L18">    val funcRepository: FuncRepository,</span>
-<span class="fc" id="L19">    val codeQueryRepository: CodeQueryRepository,</span>
-<span class="fc" id="L20">    val eventEmitter: PlatformEventEmitter</span>
-<span class="fc" id="L21">) : ReqHandler&lt;FuncDeploySubmitted&gt;(FuncDeploySubmitted::class) {</span>
+<span class="fc" id="L16">class DeployFuncHandler(</span>
+<span class="fc" id="L17">    val funcRepository: FuncRepository,</span>
+<span class="pc" id="L18">    val codeQueryRepository: CodeQueryRepository,</span>
+<span class="fc" id="L19">    val eventEmitter: PlatformEventEmitter</span>
+<span class="fc" id="L20">) : ReqHandler&lt;FuncDeploySubmitted&gt;(FuncDeploySubmitted::class) {</span>
 
     override fun invoke(req: FuncDeploySubmitted) {
-<span class="fc" id="L24">        deployVersion(req).also { emitEvent(req.cmdId(), it) }</span>
-<span class="fc" id="L25">    }</span>
+<span class="fc" id="L23">        deployVersion(req).also { emitEvent(req.cmdId(), it) }</span>
+<span class="fc" id="L24">    }</span>
 }
 
 private fun DeployFuncHandler.deployVersion(req: FuncDeploySubmitted): Func {
-<span class="fc" id="L29">    val func = funcRepository.get(req.funcId)</span>
-<span class="fc" id="L30">    codeQueryRepository.get(func.code.id, req.versionToDeploy)</span>
-
-<span class="fc" id="L32">    return funcRepository.deploy(</span>
-<span class="fc" id="L33">        req.funcId,</span>
-<span class="fc" id="L34">        FuncCmdRepository.DeployCmd(</span>
-<span class="fc" id="L35">            id = req.cmdId(),</span>
-<span class="fc" id="L36">            versionToDeploy = req.versionToDeploy</span>
+<span class="fc" id="L28">    return funcRepository.deploy(</span>
+<span class="fc" id="L29">        req.funcId,</span>
+<span class="fc" id="L30">        FuncCmdRepository.DeployCmd(</span>
+<span class="fc" id="L31">            id = req.cmdId(),</span>
+<span class="fc" id="L32">            versionToDeploy = req.versionToDeploy</span>
         )
     )
 }
 
 private fun DeployFuncHandler.emitEvent(cmdId: CmdId, func: Func) {
-<span class="fc" id="L42">    eventEmitter.emit(cmdId, FuncDeployedEvent(func))</span>
-<span class="fc" id="L43">}</span>
+<span class="fc" id="L38">    eventEmitter.emit(cmdId, FuncDeployedEvent(func))</span>
+<span class="fc" id="L39">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

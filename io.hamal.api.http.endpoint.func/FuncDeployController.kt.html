@@ -11,26 +11,17 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
 
-
-// FIXME-53 implement &amp; test this controller
-// - happy cases -- make sure that you create the func and update it a couple of times
-//   -- deploy same code version  - ok
-//   -- deploy prior code version - ok
-//   -- deploy higher code version - ok
-
-// - func does not exist -- exception
-// - func does exist but version does not -- exception
-<span class="fc" id="L23">@RestController</span>
-<span class="fc" id="L24">internal class FuncDeployController(</span>
-<span class="fc" id="L25">    private val retry: Retry,</span>
-<span class="fc" id="L26">    private val deploy: FuncDeployPort,</span>
+<span class="fc" id="L14">@RestController</span>
+<span class="fc" id="L15">internal class FuncDeployController(</span>
+<span class="fc" id="L16">    private val retry: Retry,</span>
+<span class="fc" id="L17">    private val deploy: FuncDeployPort,</span>
 ) {
     @PostMapping(&quot;/v1/funcs/{funcId}/deploy/{version}&quot;)
     fun deployCodeVersion(
         @PathVariable(&quot;funcId&quot;) funcId: FuncId,
         @PathVariable(&quot;version&quot;) codeVersion: CodeVersion,
-<span class="fc" id="L32">    ): ResponseEntity&lt;ApiSubmitted&gt; = retry {</span>
-<span class="fc" id="L33">        deploy(funcId, codeVersion) { it.accepted() }</span>
-<span class="fc" id="L34">    }</span>
+<span class="fc" id="L23">    ): ResponseEntity&lt;ApiSubmitted&gt; = retry {</span>
+<span class="fc" id="L24">        deploy(funcId, codeVersion) { it.accepted() }</span>
+<span class="fc" id="L25">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

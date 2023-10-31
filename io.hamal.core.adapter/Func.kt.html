@@ -112,11 +112,13 @@ interface FuncPort : FuncCreatePort, FuncDeployPort, FuncGetPort, FuncInvokePort
         versionToDeploy: CodeVersion,
         responseHandler: (FuncDeploySubmitted) -&gt; T
     ): T {
-<span class="fc" id="L115">        return responseHandler(submitRequest(funcId, versionToDeploy))</span>
+<span class="fc" id="L115">        val func = funcQueryRepository.get(funcId)</span>
+<span class="fc" id="L116">        codeQueryRepository.get(func.code.id, versionToDeploy)</span>
+<span class="fc" id="L117">        return responseHandler(submitRequest(funcId, versionToDeploy))</span>
     }
 
     private fun ensureFuncExists(funcId: FuncId) {
-<span class="fc" id="L119">        funcQueryRepository.get(funcId)</span>
-<span class="fc" id="L120">    }</span>
+<span class="fc" id="L121">        funcQueryRepository.get(funcId)</span>
+<span class="fc" id="L122">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
