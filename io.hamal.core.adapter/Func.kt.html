@@ -112,11 +112,12 @@ interface FuncPort : FuncCreatePort, FuncDeployPort, FuncGetPort, FuncInvokePort
         versionToDeploy: CodeVersion,
         responseHandler: (FuncDeploySubmitted) -&gt; T
     ): T {
-<span class="nc" id="L115">        return responseHandler(submitRequest(funcId, versionToDeploy)) // FIXME-53</span>
+<span class="nc" id="L115">        ensureFuncExists(funcId)// FIXME we dont have to check it here - its already tested in submitRequst()</span>
+<span class="nc" id="L116">        return responseHandler(submitRequest(funcId, versionToDeploy)) // FIXME-53</span>
     }
 
     private fun ensureFuncExists(funcId: FuncId) {
-<span class="fc" id="L119">        funcQueryRepository.get(funcId)</span>
-<span class="fc" id="L120">    }</span>
+<span class="fc" id="L120">        funcQueryRepository.get(funcId)</span>
+<span class="fc" id="L121">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -5,46 +5,46 @@ import io.hamal.core.req.ReqHandler
 import io.hamal.core.req.handler.cmdId
 import io.hamal.lib.common.domain.CmdId
 import io.hamal.lib.domain.vo.NamespaceName
-import io.hamal.repository.api.CodeCmdRepository
-import io.hamal.repository.api.Func
-import io.hamal.repository.api.FuncCmdRepository
+import io.hamal.repository.api.*
 import io.hamal.repository.api.FuncCmdRepository.CreateCmd
-import io.hamal.repository.api.NamespaceQueryRepository
 import io.hamal.repository.api.event.FuncCreatedEvent
 import io.hamal.repository.api.submitted_req.FuncCreateSubmitted
 import org.springframework.stereotype.Component
 
 @Component
-<span class="fc" id="L18">class CreateFuncHandler(</span>
-<span class="fc" id="L19">    val codeCmdRepository: CodeCmdRepository,</span>
-<span class="fc" id="L20">    val funcCmdRepository: FuncCmdRepository,</span>
-<span class="fc" id="L21">    val eventEmitter: PlatformEventEmitter,</span>
-<span class="pc" id="L22">    val namespaceQueryRepository: NamespaceQueryRepository</span>
-<span class="fc" id="L23">) : ReqHandler&lt;FuncCreateSubmitted&gt;(FuncCreateSubmitted::class) {</span>
+<span class="fc" id="L15">class CreateFuncHandler(</span>
+<span class="fc" id="L16">    val codeCmdRepository: CodeCmdRepository,</span>
+<span class="fc" id="L17">    val funcCmdRepository: FuncCmdRepository,</span>
+<span class="fc" id="L18">    val eventEmitter: PlatformEventEmitter,</span>
+<span class="pc" id="L19">    val namespaceQueryRepository: NamespaceQueryRepository</span>
+<span class="fc" id="L20">) : ReqHandler&lt;FuncCreateSubmitted&gt;(FuncCreateSubmitted::class) {</span>
     override fun invoke(req: FuncCreateSubmitted) {
-<span class="fc" id="L25">        createFunc(req).also { emitEvent(req.cmdId(), it) }</span>
-<span class="fc" id="L26">    }</span>
+<span class="fc" id="L22">        createFunc(req).also { emitEvent(req.cmdId(), it) }</span>
+<span class="fc" id="L23">    }</span>
 }
 
 private fun CreateFuncHandler.createFunc(req: FuncCreateSubmitted): Func {
-<span class="fc" id="L30">    val code = codeCmdRepository.create(</span>
-<span class="fc" id="L31">        CodeCmdRepository.CreateCmd(</span>
-<span class="fc" id="L32">            id = req.cmdId(),</span>
-<span class="fc" id="L33">            codeId = req.codeId,</span>
-<span class="fc" id="L34">            groupId = req.groupId,</span>
-<span class="fc" id="L35">            value = req.code</span>
+<span class="fc" id="L27">    val code = codeCmdRepository.create(</span>
+<span class="fc" id="L28">        CodeCmdRepository.CreateCmd(</span>
+<span class="fc" id="L29">            id = req.cmdId(),</span>
+<span class="fc" id="L30">            codeId = req.codeId,</span>
+<span class="fc" id="L31">            groupId = req.groupId,</span>
+<span class="fc" id="L32">            value = req.code</span>
         )
     )
-<span class="fc" id="L38">    return funcCmdRepository.create(</span>
-<span class="fc" id="L39">        CreateCmd(</span>
-<span class="fc" id="L40">            id = req.cmdId(),</span>
-<span class="fc" id="L41">            funcId = req.id,</span>
-<span class="fc" id="L42">            groupId = req.groupId,</span>
-<span class="pc bpc" id="L43" title="1 of 2 branches missed.">            namespaceId = req.namespaceId ?: namespaceQueryRepository.get(NamespaceName(&quot;hamal&quot;)).id,</span>
-<span class="fc" id="L44">            name = req.name,</span>
-<span class="fc" id="L45">            inputs = req.inputs,</span>
-<span class="fc" id="L46">            codeId = code.id,</span>
-<span class="fc" id="L47">            codeVersion = code.version</span>
+<span class="fc" id="L35">    return funcCmdRepository.create(</span>
+<span class="fc" id="L36">        CreateCmd(</span>
+<span class="fc" id="L37">            id = req.cmdId(),</span>
+<span class="fc" id="L38">            funcId = req.id,</span>
+<span class="fc" id="L39">            groupId = req.groupId,</span>
+<span class="pc bpc" id="L40" title="1 of 2 branches missed.">            namespaceId = req.namespaceId ?: namespaceQueryRepository.get(NamespaceName(&quot;hamal&quot;)).id,</span>
+<span class="fc" id="L41">            name = req.name,</span>
+<span class="fc" id="L42">            inputs = req.inputs,</span>
+<span class="fc" id="L43">            code = FuncCode(</span>
+<span class="fc" id="L44">                id = code.id,</span>
+<span class="fc" id="L45">                version = code.version,</span>
+<span class="fc" id="L46">                deployedVersion = code.version</span>
+            )
         )
     )
 }
