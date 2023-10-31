@@ -16,4 +16,10 @@ import kotlinx.serialization.Serializable
 <span class="pc" id="L16">    val func: Func,</span>
 <span class="fc" id="L17">) : PlatformEvent()</span>
 
+
+<span class="pc bnc" id="L20" title="All 7 branches missed.">@Serializable</span>
+@PlatformEventTopic(&quot;func::deployed&quot;)
+<span class="fc" id="L22">data class FuncDeployedEvent(</span>
+<span class="pc" id="L23">    val func: Func,</span>
+<span class="fc" id="L24">) : PlatformEvent()</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -8,32 +8,33 @@ import io.hamal.lib.kua.function.FunctionInput1Schema
 import io.hamal.lib.kua.function.FunctionOutput2Schema
 import io.hamal.lib.kua.type.ErrorType
 import io.hamal.lib.kua.type.MapType
+import io.hamal.lib.kua.type.NumberType
 import io.hamal.lib.kua.type.StringType
 import io.hamal.lib.sdk.ApiSdk
 
-<span class="nc" id="L14">class FuncDeployFunction(</span>
-<span class="nc" id="L15">    private val sdk: ApiSdk</span>
-<span class="nc" id="L16">) : Function1In2Out&lt;MapType, ErrorType, MapType&gt;(</span>
-<span class="nc" id="L17">    FunctionInput1Schema(MapType::class),</span>
-<span class="nc" id="L18">    FunctionOutput2Schema(ErrorType::class, MapType::class)</span>
+<span class="nc" id="L15">class FuncDeployFunction(</span>
+<span class="nc" id="L16">    private val sdk: ApiSdk</span>
+<span class="nc" id="L17">) : Function1In2Out&lt;MapType, ErrorType, MapType&gt;(</span>
+<span class="nc" id="L18">    FunctionInput1Schema(MapType::class),</span>
+<span class="nc" id="L19">    FunctionOutput2Schema(ErrorType::class, MapType::class)</span>
 ) {
     override fun invoke(ctx: FunctionContext, arg1: MapType): Pair&lt;ErrorType?, MapType?&gt; {
-<span class="nc" id="L21">        return try {</span>
-<span class="nc" id="L22">            val res = sdk.func.deploy(</span>
-<span class="nc" id="L23">                id = FuncId(arg1.getString(&quot;id&quot;)),</span>
-<span class="nc" id="L24">                version = CodeVersion(arg1.getInt(&quot;version&quot;))</span>
+<span class="nc" id="L22">        return try {</span>
+<span class="nc" id="L23">            val res = sdk.func.deploy(</span>
+<span class="nc" id="L24">                id = FuncId(arg1.getString(&quot;id&quot;)),</span>
+<span class="nc" id="L25">                version = CodeVersion(arg1.getInt(&quot;version&quot;))</span>
             )
 
-<span class="nc" id="L27">            null to MapType(</span>
-<span class="nc" id="L28">                mutableMapOf(</span>
-<span class="nc" id="L29">                    &quot;id&quot; to StringType(res.id.value.value.toString(16)),</span>
-<span class="nc" id="L30">                    &quot;status&quot; to StringType(res.status.name),</span>
-<span class="nc" id="L31">                    &quot;func_id&quot; to StringType(res.funcId.value.value.toString(16))</span>
+<span class="nc" id="L28">            null to MapType(</span>
+<span class="nc" id="L29">                mutableMapOf(</span>
+<span class="nc" id="L30">                    &quot;id&quot; to StringType(res.id.value.value.toString(16)),</span>
+<span class="nc" id="L31">                    &quot;status&quot; to StringType(res.status.name),</span>
+<span class="nc" id="L32">                    &quot;func_id&quot; to StringType(res.funcId.value.value.toString(16))</span>
                     // FIXME-53 version
                 )
             )
-<span class="nc" id="L35">        } catch (t: Throwable) {</span>
-<span class="nc" id="L36">            ErrorType(t.message!!) to null</span>
+<span class="nc" id="L36">        } catch (t: Throwable) {</span>
+<span class="nc" id="L37">            ErrorType(t.message!!) to null</span>
         }
     }
 }
